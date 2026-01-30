@@ -1,0 +1,153 @@
+---
+title: WebGPU and TSL Shader Patterns
+description: WebGPU renderer initialization, TSL node-based shaders, compute shaders, and migration from WebGL/GLSL
+tags: [webgpu, tsl, shaders, compute, wgsl, renderer, async-init]
+---
+
+# WebGPU and TSL Shader Patterns
+
+WebGPU is the production standard for Three.js v172+. TSL (Three Shader Language) is a node-based shader system that compiles to WGSL (WebGPU) or GLSL (WebGL fallback).
+
+## Why WebGPU
+
+| Advantage             | Detail                                       |
+| --------------------- | -------------------------------------------- |
+| Lower CPU overhead    | Draw calls processed faster than WebGL       |
+| Compute shaders       | Move physics, particles, and flocking to GPU |
+| Modern GPU features   | Bind groups, storage buffers, indirect draws |
+| Multiplexed pipelines | Multiple render passes without state reset   |
+
+## Mandatory Async Initialization
+
+WebGPU requires asynchronous setup. Rendering before initialization produces black screens or race conditions.
+
+```ts
+import * as THREE from 'three';
+
+const renderer = new THREE.WebGPURenderer({ antialias: true });
+await renderer.init();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+```
+
+In React Three Fiber, pass a custom renderer factory to `<Canvas>`:
+
+```tsx
+'use client';
+
+import { Canvas } from '@react-three/fiber';
+import { Suspense } from 'react';
+import * as THREE from 'three';
+
+export default function Scene() {
+  return (
+    <Suspense fallback={<div>Loading 3D Scene...</div>}>
+      <Canvas
+        shadows
+        camera={{ position: [0, 0, 5], fov: 75 }}
+        gl={(canvas) => {
+          const renderer = new THREE.WebGPURenderer({
+            canvas,
+            antialias: true,
+          });
+          return renderer;
+        }}
+      >
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
+        {/* Scene content */}
+      </Canvas>
+    </Suspense>
+  );
+}
+```
+
+## TSL Basics
+
+TSL looks like JavaScript but describes shader operations as a node graph. It compiles to WGSL for WebGPU or GLSL for WebGL.
+
+### Animated Color
+
+```ts
+import { color, mix, oscSine, timerLocal } from 'three/tsl';
+
+const material = new THREE.MeshStandardNodeMaterial();
+const time = timerLocal();
+const animatedColor = mix(color(0xff0000), color(0x0000ff), oscSine(time));
+material.colorNode = animatedColor;
+```
+
+### Vertex Displacement (Wave Shader)
+
+```ts
+import { positionLocal, timerLocal, sin, float, vec3 } from 'three/tsl';
+
+const material = new THREE.MeshStandardNodeMaterial();
+const time = timerLocal();
+const pos = positionLocal;
+
+const wave = sin(pos.x.add(time)).mul(0.5);
+const newPos = vec3(pos.x, pos.y.add(wave), pos.z);
+
+material.positionNode = newPos;
+```
+
+### UV-Based Texture Mixing
+
+```ts
+import { texture, uv, mix, timerLocal, oscSine } from 'three/tsl';
+
+const tex1 = new THREE.TextureLoader().load('/texture1.jpg');
+const tex2 = new THREE.TextureLoader().load('/texture2.jpg');
+
+const material = new THREE.MeshStandardNodeMaterial();
+const t = oscSine(timerLocal());
+material.colorNode = mix(texture(tex1, uv()), texture(tex2, uv()), t);
+```
+
+## Compute Shaders
+
+Run arbitrary GPU calculations without rendering:
+
+```ts
+import * as THREE from 'three';
+
+const computeNode = new THREE.ComputeNode(({ storage }) => {
+  // GPU-side logic for physics, particle simulation, etc.
+});
+
+await renderer.compute(computeNode);
+```
+
+Use cases: particle systems, physics simulations, flocking algorithms, procedural generation.
+
+## WebGL Fallback Strategy
+
+TSL automatically compiles to GLSL when targeting WebGL. For explicit fallback:
+
+```ts
+async function createRenderer(canvas: HTMLCanvasElement) {
+  if (navigator.gpu) {
+    const renderer = new THREE.WebGPURenderer({ canvas, antialias: true });
+    await renderer.init();
+    return renderer;
+  }
+  return new THREE.WebGLRenderer({ canvas, antialias: true });
+}
+```
+
+Check for WebGPU support before initializing. Enterprise environments and older mobile devices may not support WebGPU.
+
+## TSL vs GLSL Comparison
+
+| GLSL Concept         | TSL Equivalent       |
+| -------------------- | -------------------- |
+| `uniform float time` | `timerLocal()`       |
+| `varying vec2 vUv`   | `uv()`               |
+| `gl_Position`        | `positionNode`       |
+| `gl_FragColor`       | `colorNode`          |
+| `sin(x)`             | `sin(x)` (same name) |
+| `mix(a, b, t)`       | `mix(a, b, t)`       |
+| `texture2D(tex, uv)` | `texture(tex, uv())` |
+
+TSL advantages: automatic cross-compilation, type safety through the node graph, no string-based shader code, easier debugging.

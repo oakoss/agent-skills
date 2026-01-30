@@ -1,0 +1,140 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+Claude Code agent skills, distributed via Vercel's `skills` CLI (`pnpm dlx skills add oakoss/agent-skills`).
+
+- **`skills/`** — Public skills distributed to users
+
+## Commands
+
+```sh
+pnpm format          # Prettier (single quotes, auto-sort package.json)
+pnpm format:check    # Check formatting without writing
+pnpm lint            # markdownlint-cli2 on all .md files
+pnpm lint:fix        # Lint and auto-fix markdown
+pnpm validate:skills # Validate all skills in skills/
+```
+
+Git hooks (via lefthook) run markdown lint + prettier on pre-commit and commitlint on commit-msg.
+
+## Commit Conventions
+
+Conventional commits enforced by commitlint. Max header: 200 chars. Valid scopes: `skills`, `validator`, `docs`, `config`, `deps`, `ci`. Aliases: `fd` (docs fix), `b` (bump deps).
+
+## Skill Standards
+
+Skills follow the [Agent Skills open standard](https://agentskills.io) and work across 27+ agents including Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code, GitHub Copilot, Windsurf, Goose, and Roo Code.
+
+### Directory Structure
+
+```text
+skill-name/
+├── SKILL.md          # Lean index (100-150 lines, no code examples)
+├── references/       # Optional: additional documentation loaded on demand
+│   ├── basic-patterns.md
+│   ├── error-handling.md
+│   └── ...
+├── scripts/          # Optional: executable code agents can run
+└── assets/           # Optional: templates, images, schemas
+```
+
+### SKILL.md Requirements
+
+**Frontmatter** (required):
+
+```yaml
+---
+name: skill-name
+description: 'What it does. Use when X, Y, Z. Use for keyword1, keyword2, keyword3.'
+---
+```
+
+- `name` — lowercase letters, numbers, and hyphens only. 4-64 chars. Must match directory name. Must not start/end with `-` or contain `--`. Cannot contain "anthropic" or "claude". No XML tags.
+- `description` — third-person voice ("Extracts text from PDFs", not "I help you" or "Use this to"). Must include "Use when..." or "Use for..." trigger phrases. Max 1024 chars. No XML tags.
+
+**Optional frontmatter fields**:
+
+| Field                      | Source        | Description                                               |
+| -------------------------- | ------------- | --------------------------------------------------------- |
+| `license`                  | Open standard | License name or reference to bundled file                 |
+| `compatibility`            | Open standard | Environment requirements, max 500 chars                   |
+| `metadata`                 | Open standard | Arbitrary key-value map (author, version, etc.)           |
+| `allowed-tools`            | Open standard | Space-delimited list of pre-approved tools (experimental) |
+| `disable-model-invocation` | Claude Code   | Prevent automatic loading, manual `/name` only            |
+| `user-invocable`           | Claude Code   | Set `false` to hide from `/` menu                         |
+| `model`                    | Claude Code   | Model to use when skill is active                         |
+| `context`                  | Claude Code   | Set `fork` to run in a subagent                           |
+| `agent`                    | Claude Code   | Subagent type when `context: fork` is set                 |
+| `hooks`                    | Claude Code   | Hooks scoped to skill lifecycle                           |
+| `argument-hint`            | Claude Code   | Hint for autocomplete (e.g., `[issue-number]`)            |
+
+**Required sections**: Overview, Quick Reference table, Common Mistakes table, Delegation, References list.
+
+**No code examples in SKILL.md** — all code lives in `references/`.
+
+### Reference Files
+
+- Located at `references/[topic].md`, kebab-case filenames
+- Max 500 lines each (warn at 400)
+- Required frontmatter: `title`, `description`, `tags`
+- Self-contained with code examples, no cross-references between files
+- Topic-scoped (e.g., `mutations.md` not `mut-optimistic-updates.md`)
+
+### Size Thresholds
+
+| File           | Target        | Warn | Max |
+| -------------- | ------------- | ---- | --- |
+| SKILL.md       | 100-150 lines | 400  | 500 |
+| Reference file | —             | 400  | 500 |
+
+Skills under 500 lines can remain as a single SKILL.md without `references/`.
+
+### Naming Rules
+
+- **Directories**: kebab-case, descriptive — no abbreviations (min 4 chars), no leading/trailing `-`, no `--`
+- **Frontmatter `name`**: must match directory name exactly (lowercase letters, numbers, hyphens only)
+- **Reference files**: kebab-case, topic-scoped
+
+### Distribution Compatibility
+
+Skills are installed via Vercel's `skills` CLI. The CLI excludes these files during installation — do not use them in skill directories:
+
+- `README.md`
+- `metadata.json`
+- Files starting with `_`
+
+### Validation
+
+Run `pnpm validate:skills` before committing. The validator checks: frontmatter fields, name length/format, description triggers, line counts, code block language specifiers, required sections, reference link integrity, and CLI-excluded filenames.
+
+Template skill: `tanstack-query/` (lean SKILL.md + 13 reference files).
+
+### Creating a New Skill
+
+1. **Create directory** at `skills/[skill-name]/` with a `SKILL.md`
+2. **Write frontmatter** with descriptive `name` (matching directory) and trigger-rich `description`
+3. **Write required sections**: Overview, Quick Reference table, Common Mistakes table, Delegation, References list
+4. **Extract code examples** into `references/` files if SKILL.md exceeds 150 lines
+5. **Validate** with `pnpm validate:skills skills/[skill-name]`
+
+## Content Guidelines
+
+- **No time-sensitive info** — avoid "as of 2025" or "before version X". Use "current method" and "legacy" sections instead.
+- **Consistent terminology** — pick one term and use it throughout (e.g., always "endpoint", not a mix of "endpoint", "route", "URL").
+- **Forward slashes only** in file paths (`reference/guide.md`, not `reference\guide.md`).
+- **Scripts handle errors** — scripts bundled in skills should handle errors explicitly, not punt to Claude.
+- **One level deep** — reference files link directly from SKILL.md, no nested references between files.
+
+## Code Conventions
+
+Code examples in skills should follow these conventions:
+
+- **TypeScript:** strict mode, inline type imports (`import { type User }`). No `any` without justification. Prefix unused vars with `_`.
+- **Naming:** PascalCase (types), camelCase (vars), SCREAMING_SNAKE_CASE (constants), kebab-case (files).
+- **React:** No React import needed. Props sorted: reserved → boolean → data → callbacks. Use ternary over `&&` for conditional rendering.
+- **Comments:** No comments by default. Only justify with business context (WHY), complex patterns (WHAT), warnings, or external links.
+- **Markdown:** Always specify language on fenced code blocks. No line length limit.
+- **Shell:** Always use non-interactive flags (`-f`, `-y`). Never use interactive modes (`-i`).

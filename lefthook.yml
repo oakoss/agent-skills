@@ -1,0 +1,25 @@
+# lefthook.yml
+no_tty: true # Prevents terminal escape sequence issues
+output:
+  - failure # Only show failed steps
+  - execution_out # Show command output for failures
+
+pre-commit:
+  parallel: true
+  commands:
+    lint-md:
+      glob: '*.md'
+      run: pnpm markdownlint-cli2 --fix {staged_files}
+      stage_fixed: true # Auto-stage Markdown fixes!
+    format:
+      glob: '*.{ts,tsx,js,jsx,cjs,mjs,json,md,mdx,yml,yaml}'
+      run: pnpm prettier -uwl {staged_files}
+      stage_fixed: true # Auto-stage Prettier fixes!
+    validate-skills:
+      glob: 'skills/**/*.md'
+      run: node scripts/validate-skills.ts {staged_files}
+
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm dlx commitlint --edit "$1"

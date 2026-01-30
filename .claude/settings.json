@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "hooks": {},
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "defaultMode": "plan"
+  }
+}
