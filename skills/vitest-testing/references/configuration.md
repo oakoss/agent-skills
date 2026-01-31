@@ -4,6 +4,7 @@ description: Vitest configuration with vitest.config.ts, workspace setup, covera
 tags:
   [
     vitest.config,
+    projects,
     workspace,
     coverage,
     reporters,
@@ -195,35 +196,45 @@ Run coverage:
 vitest --coverage
 ```
 
-## Workspace Configuration
+## Projects Configuration (v3.2+)
 
-Test multiple projects in one workspace:
+Define multiple test projects in a single config. The `projects` option replaces the deprecated `workspace` and removed `vitest.workspace` file:
 
 ```ts
-import { defineWorkspace } from 'vitest/config';
+import { defineConfig } from 'vitest/config';
 
-export default defineWorkspace([
-  {
-    test: {
-      name: 'unit',
-      environment: 'node',
-      include: ['src/**/*.test.ts'],
-    },
+export default defineConfig({
+  test: {
+    projects: [
+      {
+        test: {
+          name: 'unit',
+          environment: 'node',
+          include: ['src/**/*.test.ts'],
+        },
+      },
+      {
+        test: {
+          name: 'browser',
+          environment: 'jsdom',
+          include: ['src/**/*.test.tsx'],
+        },
+      },
+    ],
   },
-  {
-    test: {
-      name: 'browser',
-      environment: 'jsdom',
-      include: ['src/**/*.test.tsx'],
-    },
-  },
-]);
+});
 ```
 
 Or use glob patterns:
 
 ```ts
-export default defineWorkspace(['packages/*']);
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    projects: ['packages/*'],
+  },
+});
 ```
 
 Run specific project:
@@ -232,27 +243,69 @@ Run specific project:
 vitest --project unit
 ```
 
-## Browser Mode
+### Legacy Workspace Migration
 
-Run tests in real browsers:
+If migrating from `vitest.workspace.js`, move config into `vitest.config.ts`:
 
 ```ts
+// Legacy (deprecated in v3.2, removed in v4)
+// import { defineWorkspace } from 'vitest/config';
+// export default defineWorkspace([...])
+
+// Current approach
+import { defineConfig } from 'vitest/config';
+
 export default defineConfig({
   test: {
-    browser: {
-      enabled: true,
-      name: 'chromium',
-      provider: 'playwright',
-      headless: true,
-    },
+    projects: ['./packages/*', { test: { name: 'unit' } }],
   },
 });
 ```
 
-Available browsers:
+## Browser Mode
 
-- `chromium`, `firefox`, `webkit` (Playwright)
-- `chrome`, `edge`, `firefox`, `safari` (WebdriverIO)
+Run tests in real browsers. Use `projects` to run browser and unit tests together:
+
+```ts
+import { defineConfig } from 'vitest/config';
+import { playwright } from '@vitest/browser-playwright';
+
+export default defineConfig({
+  test: {
+    projects: [
+      {
+        test: {
+          name: 'unit',
+          environment: 'node',
+          include: ['tests/unit/**/*.test.ts'],
+        },
+      },
+      {
+        test: {
+          name: 'browser',
+          browser: {
+            enabled: true,
+            provider: playwright(),
+            instances: [{ browser: 'chromium' }],
+          },
+          include: ['tests/browser/**/*.test.ts'],
+        },
+      },
+    ],
+  },
+});
+```
+
+Initialize browser mode quickly:
+
+```bash
+npx vitest init browser
+```
+
+Available browser providers:
+
+- `@vitest/browser-playwright` — Chromium, Firefox, WebKit
+- `@vitest/browser-webdriverio` — Chrome, Edge, Firefox, Safari
 
 ## Reporters
 
@@ -381,23 +434,6 @@ export default defineConfig({
 - `restoreMocks` — restore spies after each test
 - `clearMocks` — clear call history after each test
 
-## Snapshot Settings
-
-Configure snapshot behavior:
-
-```ts
-export default defineConfig({
-  test: {
-    snapshotFormat: {
-      printBasicPrototype: false,
-    },
-    resolveSnapshotPath: (testPath, snapExtension) => {
-      return testPath.replace(/\.test\.([tj]sx?)/, `${snapExtension}.$1`);
-    },
-  },
-});
-```
-
 ## In-Source Testing
 
 Enable tests in source files:
@@ -431,18 +467,7 @@ if (import.meta.vitest) {
 
 ## TypeScript Configuration
 
-Add triple-slash directive for types:
-
-```ts
-/// <reference types="vitest/config" />
-import { defineConfig } from 'vite';
-
-export default defineConfig({
-  test: {},
-});
-```
-
-Or in `tsconfig.json`:
+Add types in `tsconfig.json`:
 
 ```json
 {
@@ -450,23 +475,6 @@ Or in `tsconfig.json`:
     "types": ["vitest/globals", "@testing-library/jest-dom"]
   }
 }
-```
-
-## Alias Configuration
-
-Share aliases with Vite:
-
-```ts
-import { defineConfig } from 'vitest/config';
-import path from 'path';
-
-export default defineConfig({
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
-});
 ```
 
 ## Conditional Config

@@ -7,7 +7,7 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Web Accessibility (WCAG 2.2 AA)
@@ -28,8 +28,10 @@ Build for everyone — accessibility is a requirement, not a feature.
 | ----------------------------------- | ------------------------------------------------------------------------------------ |
 | Target Size Minimum (2.5.8)         | Interactive targets at least 24x24 CSS pixels                                        |
 | Focus Not Obscured Minimum (2.4.11) | Focused element at least partially visible, not hidden by sticky headers or overlays |
+| Focus Appearance (2.4.13)           | Focus indicator has minimum area (2px perimeter) and 3:1 contrast change             |
 | Dragging Movements (2.5.7)          | Provide single-pointer alternative for any drag interaction                          |
 | Redundant Entry (3.3.7)             | Do not require re-entering previously provided information                           |
+| Consistent Help (3.2.6)             | Help mechanisms (chat, phone, FAQ) appear in same relative order across pages        |
 | Accessible Authentication (3.3.8)   | No cognitive function test for login (allow paste, autofill, or alternatives)        |
 
 ## Essential Keyboard Patterns
@@ -73,9 +75,9 @@ Build for everyone — accessibility is a requirement, not a feature.
 | Principle      | Key Requirements                                                                                                                             |
 | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | Perceivable    | Alt text on images, contrast >= 4.5:1, color not sole indicator, text resizable to 200%, captions on video, `prefers-reduced-motion` support |
-| Operable       | Keyboard accessible, visible focus not obscured, targets >= 24px, skip links, dragging alternatives, logical focus order                     |
-| Understandable | `<html lang="en">`, consistent navigation, form labels, error identification, no redundant entry, accessible authentication                  |
-| Robust         | Valid HTML, name/role/value on all UI components, `aria-live` for status messages                                                            |
+| Operable       | Keyboard accessible, visible focus not obscured, focus appearance meets minimum, targets >= 24px, skip links, dragging alternatives          |
+| Understandable | `<html lang="en">`, consistent navigation, consistent help placement, form labels, error identification, no redundant entry, accessible auth |
+| Robust         | Valid HTML, name/role/value on all UI components, `aria-live` for status messages (SC 4.1.1 Parsing is obsolete in WCAG 2.2)                 |
 
 ## Anti-Patterns
 

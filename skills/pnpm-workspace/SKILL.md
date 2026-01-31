@@ -4,7 +4,7 @@ description: 'pnpm workspace monorepo management with filtering, catalogs, and s
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: https://pnpm.io/workspaces
 ---
 
@@ -38,19 +38,23 @@ pnpm workspaces provide built-in monorepo support through `pnpm-workspace.yaml`,
 | Recursive run            | `pnpm -r run <script>`                         | Runs script in all workspace packages                   |
 | Install all              | `pnpm install`                                 | Single lockfile for entire workspace                    |
 | Publish workspace pkg    | `pnpm publish`                                 | Replaces `workspace:` and `catalog:` with real versions |
+| Inject workspace deps    | `inject-workspace-packages=true` in `.npmrc`   | Hard-links instead of symlinks; required for deploy     |
+| Script security (v10+)   | `allowBuilds` in `package.json`                | Lifecycle scripts blocked by default; opt-in per dep    |
 
 ## Common Mistakes
 
-| Mistake                                        | Correct Pattern                                                         |
-| ---------------------------------------------- | ----------------------------------------------------------------------- |
-| Using `workspace:*` then publishing as-is      | pnpm automatically replaces `workspace:*` with real versions on publish |
-| Forgetting to list directory in `packages:`    | Every package directory must match a glob in `pnpm-workspace.yaml`      |
-| Using `npm install` in workspace packages      | Always use `pnpm install` from the workspace root                       |
-| Hardcoding versions duplicated across packages | Use `catalog:` to centralize version definitions                        |
-| Running `pnpm install` inside a sub-package    | Run from workspace root; use `--filter` to target packages              |
-| Expecting `--filter` to match directory names  | `--filter` matches `package.json` `name` field, not directory names     |
-| Not escaping `!` in zsh for exclude filters    | Use `\!` or quote the filter: `--filter="!foo"`                         |
-| Using `workspace:` for non-workspace deps      | `workspace:` protocol only works for packages defined in the workspace  |
+| Mistake                                                 | Correct Pattern                                                         |
+| ------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Using `workspace:*` then publishing as-is               | pnpm automatically replaces `workspace:*` with real versions on publish |
+| Forgetting to list directory in `packages:`             | Every package directory must match a glob in `pnpm-workspace.yaml`      |
+| Using `npm install` in workspace packages               | Always use `pnpm install` from the workspace root                       |
+| Hardcoding versions duplicated across packages          | Use `catalog:` to centralize version definitions                        |
+| Running `pnpm install` inside a sub-package             | Run from workspace root; use `--filter` to target packages              |
+| Expecting `--filter` to match directory names           | `--filter` matches `package.json` `name` field, not directory names     |
+| Not escaping `!` in zsh for exclude filters             | Use `\!` or quote the filter: `--filter="!foo"`                         |
+| Using `workspace:` for non-workspace deps               | `workspace:` protocol only works for packages defined in the workspace  |
+| Lifecycle scripts failing after pnpm 10 upgrade         | pnpm 10 blocks scripts by default; add deps to `allowBuilds` in config  |
+| Using `pnpm deploy` without `inject-workspace-packages` | Set `inject-workspace-packages=true` in `.npmrc` (required in pnpm 10)  |
 
 ## Delegation
 

@@ -23,6 +23,30 @@ button:focus-visible {
 
 Never remove focus outlines without replacement. Use `:focus-visible` to show outlines only for keyboard users. Ensure 3:1 contrast ratio for focus indicators.
 
+## Focus Appearance (WCAG 2.4.13)
+
+The focus indicator must meet minimum size and contrast requirements:
+
+- **Minimum area**: At least as large as a 2px thick perimeter of the unfocused component
+- **Contrast change**: At least 3:1 contrast ratio between the focused and unfocused states
+- **Not fully obscured**: The indicator must not be entirely hidden by author-created content
+
+```css
+/* Meets Focus Appearance minimum */
+button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Also valid: thick ring with contrast */
+a:focus-visible {
+  box-shadow: 0 0 0 3px var(--primary);
+  border-radius: 2px;
+}
+```
+
+Thin 1px outlines or outlines with insufficient contrast against the background may fail this criterion.
+
 ## Focus Not Obscured (WCAG 2.4.11)
 
 When an element receives keyboard focus, it must not be entirely hidden by sticky headers, footers, cookie banners, or other author-created overlays. At least a portion of the focused element must remain visible.

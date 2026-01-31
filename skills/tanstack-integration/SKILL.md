@@ -7,7 +7,8 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
+  source: 'https://tanstack.com'
 ---
 
 # TanStack Integration
@@ -26,14 +27,17 @@ Build the feature with vanilla React first. Only reach for a TanStack library wh
 
 ## Quick Reference
 
-| Library     | Use When                                                    | Skip When                            |
-| ----------- | ----------------------------------------------------------- | ------------------------------------ |
-| **Query**   | Caching, background refetch, optimistic updates, pagination | Simple one-time fetches, static data |
-| **Router**  | Type-safe routing, search params, code splitting            | Few routes, simple navigation        |
-| **Start**   | Full-stack SSR with Router+Query, server functions          | Client-only apps                     |
-| **Table**   | Sorting, filtering, pagination, column management           | Static tables, < 20 rows             |
-| **Form**    | Multi-step forms, dynamic fields, async validation          | Simple 3-4 field forms               |
-| **Virtual** | 1000+ item lists, infinite scroll, large grids              | < 100 items, performance is fine     |
+| Library     | Use When                                                     | Skip When                            |
+| ----------- | ------------------------------------------------------------ | ------------------------------------ |
+| **Query**   | Caching, background refetch, optimistic updates, pagination  | Simple one-time fetches, static data |
+| **Router**  | Type-safe routing, search params, code splitting             | Few routes, simple navigation        |
+| **Start**   | Full-stack SSR with Router+Query, server functions           | Client-only apps                     |
+| **Table**   | Sorting, filtering, pagination, column management            | Static tables, < 20 rows             |
+| **Form**    | Multi-step forms, dynamic fields, async validation           | Simple 3-4 field forms               |
+| **Virtual** | 1000+ item lists, infinite scroll, large grids               | < 100 items, performance is fine     |
+| **DB**      | Reactive local-first data, cross-collection joins, sync      | Simple fetch-and-display             |
+| **Store**   | Shared reactive state, derived computations, cross-framework | Component-local state (useState)     |
+| **Pacer**   | Debounce, throttle, rate limit, async queuing                | Simple setTimeout/setInterval        |
 
 ## Configuration Scope
 
@@ -82,6 +86,8 @@ Place configuration at the narrowest scope that covers all consumers.
 | Not resetting page on filter change in tables               | Set `page: 1` when search or filter params change                                  |
 
 ## Delegation
+
+> For library-specific patterns, delegate to the corresponding skill: `tanstack-query`, `tanstack-router`, `tanstack-start`, `tanstack-table`, `tanstack-form`, `tanstack-virtual`, `tanstack-db`, `tanstack-store`, `tanstack-pacer`, or `tanstack-devtools`.
 
 - **TanStack library selection and adoption strategy**: Use `Explore` agent
 - **Router+Query integration setup across routes**: Use `Task` agent

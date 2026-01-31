@@ -4,7 +4,7 @@ description: 'tsdown TypeScript bundler built on Rolldown for libraries and pack
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: 'https://tsdown.dev/'
 ---
 
@@ -44,6 +44,7 @@ tsdown is an elegant library bundler built on Rolldown (Rust-based), providing a
 | Programmatic API  | `import { build }`           | Use in Node.js scripts                       |
 | Banner/Footer     | `banner: { js: '...' }`      | Prepend/append to output files               |
 | onSuccess hook    | `onSuccess: async () => {}`  | Run after successful build                   |
+| Node protocol     | `nodeProtocol: true`         | Add/strip `node:` prefix on built-in imports |
 
 ## Common Mistakes
 

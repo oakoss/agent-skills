@@ -188,6 +188,25 @@ Auto-mocked functions return `undefined` by default. Configure them in your test
 vi.mocked(api.fetchUser).mockResolvedValue({ id: '1', name: 'Alice' });
 ```
 
+## Spy-Only Module Mocking (v3.2+)
+
+Spy on all exports without replacing them. Useful in browser mode where module objects are sealed:
+
+```ts
+import { vi } from 'vitest';
+import * as math from './math';
+
+vi.mock('./math', { spy: true });
+
+test('spies on real implementation', () => {
+  expect(math.add(1, 2)).toBe(3);
+  expect(vi.mocked(math.add)).toHaveBeenCalledWith(1, 2);
+
+  vi.mocked(math.add).mockReturnValue(0);
+  expect(math.add(1, 2)).toBe(0);
+});
+```
+
 ## Mocking Classes
 
 Mock class constructors and methods:

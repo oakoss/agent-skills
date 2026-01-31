@@ -4,7 +4,7 @@ description: 'Mermaid diagram syntax for flowcharts, sequence diagrams, ERDs, cl
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: 'https://mermaid.js.org/intro/'
 ---
 
@@ -20,17 +20,27 @@ Mermaid is a JavaScript-based diagramming tool that renders Markdown-inspired te
 
 ## Quick Reference
 
-| Diagram       | Declaration       | Key Points                                           |
-| ------------- | ----------------- | ---------------------------------------------------- |
-| Flowchart     | `flowchart TD`    | Directions: TB, TD, BT, RL, LR. Supports subgraphs   |
-| Sequence      | `sequenceDiagram` | Participants, messages, loops, alt/opt/par blocks    |
-| ER Diagram    | `erDiagram`       | Crow's foot notation, PK/FK/UK attributes            |
-| Class Diagram | `classDiagram`    | UML relationships, visibility modifiers, annotations |
-| State Diagram | `stateDiagram-v2` | Transitions, composite states, forks/joins, choice   |
-| Gantt Chart   | `gantt`           | Sections, tasks with dates/durations, milestones     |
-| Pie Chart     | `pie`             | Labels with numeric values, optional title           |
-| Mindmap       | `mindmap`         | Indentation-based hierarchy, multiple node shapes    |
-| Git Graph     | `gitGraph`        | Commits, branches, merges, cherry-picks, tags        |
+| Diagram        | Declaration          | Key Points                                           |
+| -------------- | -------------------- | ---------------------------------------------------- |
+| Flowchart      | `flowchart TD`       | Directions: TB, TD, BT, RL, LR. Supports subgraphs   |
+| Sequence       | `sequenceDiagram`    | Participants, messages, loops, alt/opt/par blocks    |
+| ER Diagram     | `erDiagram`          | Crow's foot notation, PK/FK/UK attributes            |
+| Class Diagram  | `classDiagram`       | UML relationships, visibility modifiers, annotations |
+| State Diagram  | `stateDiagram-v2`    | Transitions, composite states, forks/joins, choice   |
+| Gantt Chart    | `gantt`              | Sections, tasks with dates/durations, milestones     |
+| Pie Chart      | `pie`                | Labels with numeric values, optional title           |
+| Mindmap        | `mindmap`            | Indentation-based hierarchy, multiple node shapes    |
+| Git Graph      | `gitGraph`           | Commits, branches, merges, cherry-picks, tags        |
+| Architecture   | `architecture-beta`  | Services in groups, directional edges (T/B/L/R)      |
+| Block Diagram  | `block-beta`         | Column layout, block arrows, nested blocks           |
+| Timeline       | `timeline`           | Time periods with events, sections for grouping      |
+| Sankey         | `sankey-beta`        | Flow quantities between nodes, CSV-like data format  |
+| XY Chart       | `xychart-beta`       | Bar and line charts with x/y axes                    |
+| Quadrant Chart | `quadrantChart`      | Four-quadrant plot with labeled axes and data points |
+| Kanban         | `kanban`             | Columns with task cards, assignees, priorities       |
+| Packet         | `packet-beta`        | Network packet structure with bit-range fields       |
+| Requirement    | `requirementDiagram` | Requirements, elements, and verification links       |
+| C4 Diagram     | `C4Context`          | C4 model: Context, Container, Component, Deployment  |
 
 ## Common Mistakes
 
@@ -60,3 +70,4 @@ Mermaid is a JavaScript-based diagramming tool that renders Markdown-inspired te
 - [Entity-relationship diagrams: entities, attributes, and cardinality](references/entity-relationship.md)
 - [Class diagrams: classes, methods, relationships, and annotations](references/class-diagrams.md)
 - [Other diagrams: Gantt, pie, mindmap, state, and git graph](references/other-diagrams.md)
+- [Architecture, block, timeline, Sankey, XY chart, quadrant, kanban, packet, requirement, and C4 diagrams](references/extended-diagrams.md)

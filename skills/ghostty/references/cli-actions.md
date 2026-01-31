@@ -97,6 +97,12 @@ List current keybind configuration:
 ghostty +list-keybinds
 ```
 
+List only the built-in default keybinds:
+
+```bash
+ghostty +list-keybinds --default
+```
+
 ### Color Reference
 
 List all named RGB colors:

@@ -7,7 +7,8 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
+  source: 'https://react.dev'
 ---
 
 # React
@@ -22,26 +23,29 @@ Comprehensive React skill covering component architecture, performance optimizat
 
 ## Quick Reference
 
-| Pattern               | API / Approach                   | Key Points                                          |
-| --------------------- | -------------------------------- | --------------------------------------------------- |
-| Data fetching         | `use(dataPromise)`               | Replaces useEffect+useState fetch pattern           |
-| Form handling         | `useActionState(action, init)`   | Built-in pending states and error handling          |
-| Optimistic UI         | `useOptimistic(state, updateFn)` | Instant feedback while server processes             |
-| Non-urgent updates    | `useTransition()`                | Mark updates as interruptible                       |
-| Effect events         | `useEffectEvent(fn)`             | Reactive values without re-triggering effects       |
-| Unique IDs            | `useId()`                        | Hydration-safe IDs for accessibility                |
-| Server state          | React Query / `useSuspenseQuery` | Caching, deduplication, background refetch          |
-| Client state (local)  | `useState` / `useRef`            | Single component or transient values                |
-| Client state (global) | Zustand / Context                | Cross-component client-only state                   |
-| Derived state         | Compute during render            | Never sync derived values with effects              |
-| Lazy initialization   | `useState(() => expensive())`    | Avoid eager computation on every render             |
-| Component types       | Page, Feature, UI                | Route entry, business logic, reusable primitives    |
-| Memoization           | Trust React Compiler first       | Manual useMemo/useCallback only when needed         |
-| Code splitting        | `React.lazy()` + Suspense        | Lazy-load heavy components                          |
-| Parallel fetches      | `Promise.all()`                  | Eliminate sequential await waterfalls               |
-| Request dedup         | `React.cache()`                  | Per-request server-side deduplication               |
-| Abort server work     | `cacheSignal()`                  | Cancel expensive async work when client disconnects |
-| State preservation    | `<Activity>`                     | Hide UI while keeping state mounted                 |
+| Pattern               | API / Approach                    | Key Points                                          |
+| --------------------- | --------------------------------- | --------------------------------------------------- |
+| Data fetching         | `use(dataPromise)`                | Replaces useEffect+useState fetch pattern           |
+| Form handling         | `useActionState(action, init)`    | Built-in pending states and error handling          |
+| Optimistic UI         | `useOptimistic(state, updateFn)`  | Instant feedback while server processes             |
+| Non-urgent updates    | `useTransition()`                 | Mark updates as interruptible                       |
+| Effect events         | `useEffectEvent(fn)`              | Reactive values without re-triggering effects       |
+| Form pending status   | `useFormStatus()`                 | Read parent form pending state from child component |
+| Unique IDs            | `useId()`                         | Hydration-safe IDs for accessibility                |
+| Server state          | React Query / `useSuspenseQuery`  | Caching, deduplication, background refetch          |
+| Client state (local)  | `useState` / `useRef`             | Single component or transient values                |
+| Client state (global) | Zustand / Context                 | Cross-component client-only state                   |
+| Derived state         | Compute during render             | Never sync derived values with effects              |
+| Lazy initialization   | `useState(() => expensive())`     | Avoid eager computation on every render             |
+| Component types       | Page, Feature, UI                 | Route entry, business logic, reusable primitives    |
+| Memoization           | Trust React Compiler first        | Manual useMemo/useCallback only when needed         |
+| Ref as prop           | `ref` prop on function components | No `forwardRef` needed in React 19                  |
+| Ref cleanup           | Return function from ref callback | Cleanup runs on detach instead of `null` call       |
+| Code splitting        | `React.lazy()` + Suspense         | Lazy-load heavy components                          |
+| Parallel fetches      | `Promise.all()`                   | Eliminate sequential await waterfalls               |
+| Request dedup         | `React.cache()`                   | Per-request server-side deduplication               |
+| Abort server work     | `cacheSignal()`                   | Cancel expensive async work when client disconnects |
+| State preservation    | `<Activity>`                      | Hide UI while keeping state mounted                 |
 
 ## Common Mistakes
 
@@ -55,6 +59,7 @@ Comprehensive React skill covering component architecture, performance optimizat
 | Using Math.random() or Date for IDs                         | Use `useId()` for hydration-safe unique identifiers                                                     |
 | Putting reactive values in effect deps to read latest value | Use `useEffectEvent` to access latest values without re-triggering effects                              |
 | Creating object literals as effect dependencies             | Hoist static objects outside the component or use primitive dependencies                                |
+| Using `forwardRef` in React 19 projects                     | Pass `ref` directly as a prop; `forwardRef` is deprecated in React 19                                   |
 | Mutating props or state during render                       | Follow Rules of React for React Compiler compatibility: pure renders, no side effects                   |
 
 ## Delegation

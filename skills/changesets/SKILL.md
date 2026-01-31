@@ -4,7 +4,7 @@ description: 'Changesets for versioning and changelog management in monorepos. U
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: 'https://github.com/changesets/changesets'
 ---
 
@@ -38,16 +38,17 @@ Changesets is a versioning and changelog management tool focused on multi-packag
 
 ## Configuration Quick Reference
 
-| Option                       | Default                       | Description                                                   |
-| ---------------------------- | ----------------------------- | ------------------------------------------------------------- |
-| `changelog`                  | `"@changesets/cli/changelog"` | Changelog generator package or `false` to disable             |
-| `commit`                     | `false`                       | Auto-commit on `version` and `add` commands                   |
-| `access`                     | `"restricted"`                | npm publish access; set `"public"` for public scoped packages |
-| `baseBranch`                 | `"main"`                      | Branch used for change detection                              |
-| `linked`                     | `[]`                          | Groups of packages that share highest bump type               |
-| `fixed`                      | `[]`                          | Groups of packages that share exact version                   |
-| `ignore`                     | `[]`                          | Packages excluded from changeset versioning                   |
-| `updateInternalDependencies` | `"patch"`                     | When to bump dependents: `"patch"` or `"minor"`               |
+| Option                       | Default                         | Description                                                   |
+| ---------------------------- | ------------------------------- | ------------------------------------------------------------- |
+| `changelog`                  | `"@changesets/cli/changelog"`   | Changelog generator package or `false` to disable             |
+| `commit`                     | `false`                         | Auto-commit on `version` and `add` commands                   |
+| `access`                     | `"restricted"`                  | npm publish access; set `"public"` for public scoped packages |
+| `baseBranch`                 | `"main"`                        | Branch used for change detection                              |
+| `linked`                     | `[]`                            | Groups of packages that share highest bump type               |
+| `fixed`                      | `[]`                            | Groups of packages that share exact version                   |
+| `ignore`                     | `[]`                            | Packages excluded from changeset versioning                   |
+| `updateInternalDependencies` | `"patch"`                       | When to bump dependents: `"patch"` or `"minor"`               |
+| `privatePackages`            | `{ version: true, tag: false }` | Version/tag behavior for `"private": true` packages           |
 
 ## Quick Reference
 

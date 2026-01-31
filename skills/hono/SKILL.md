@@ -4,7 +4,7 @@ description: 'Hono ultrafast web framework for edge and server runtimes. Use whe
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: 'https://hono.dev/docs/'
 ---
 
@@ -43,6 +43,9 @@ Hono is a small, ultrafast web framework built on Web Standards that runs on any
 | Not found         | `app.notFound((c) => ...)`                  | Custom 404 handler                          |
 | Environment       | `c.env.BINDING_KEY`                         | Access runtime bindings/env vars            |
 | Adapter helper    | `env(c)` from `hono/adapter`                | Unified env access across runtimes          |
+| WebSocket         | `upgradeWebSocket()` from runtime adapter   | WebSocket helper with RPC support           |
+| Test client       | `testClient(app)` from `hono/testing`       | Type-safe testing without HTTP server       |
+| JSX streaming     | `jsxRenderer({ stream: true })`             | SSR streaming with Suspense support         |
 
 ## Common Mistakes
 
@@ -74,3 +77,4 @@ Hono is a small, ultrafast web framework built on Web Standards that runs on any
 - [Zod validator middleware and request validation](references/validation.md)
 - [RPC client and end-to-end type safety](references/rpc-client.md)
 - [Runtime adapters for Cloudflare, Bun, Node.js, Deno, and more](references/adapters.md)
+- [Testing with testClient, WebSocket helper, and JSX streaming](references/testing-and-websocket.md)

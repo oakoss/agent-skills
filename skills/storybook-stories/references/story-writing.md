@@ -371,4 +371,5 @@ export const Example: Story = {
 
 - `autodocs` - Generate documentation automatically
 - `!dev` - Hide in dev mode
+- `!test` - Exclude from test runner
 - `test-only` - Only show in test runner

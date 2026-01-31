@@ -4,7 +4,7 @@ description: 'Extracts design data from Figma via the REST API and converts desi
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Figma Developer
@@ -28,6 +28,7 @@ Automates the Figma-to-code bridge using the Figma REST API. Extracts design tok
 | Get components     | `GET /v1/files/:key/components`                         | Lists all published components with metadata         |
 | Get component sets | `GET /v1/files/:key/component_sets`                     | Returns variant groupings for components             |
 | Get variables      | `GET /v1/files/:key/variables/local`                    | Extracts Figma Variables (colors, spacing, etc.)     |
+| Publish variables  | `POST /v1/variables`                                    | Publishes local variables organization-wide          |
 | Token extraction   | Parse styles from file response, transform to CSS/JSON  | No built-in "extract tokens" endpoint exists         |
 | CI sync            | GitHub Actions cron + `peter-evans/create-pull-request` | Auto-sync PRs on Figma file changes                  |
 

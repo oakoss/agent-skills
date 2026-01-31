@@ -35,9 +35,9 @@ npx wrangler login
 | `wrangler r2 bucket create BUCKET_NAME`       | Create an R2 bucket                  |
 | `wrangler kv namespace create NS_NAME`        | Create a KV namespace                |
 
-## wrangler.toml Configuration
+## Configuration File
 
-The primary configuration file for Workers and Pages projects. Supports both TOML (`wrangler.toml`) and JSON (`wrangler.json` / `wrangler.jsonc`) formats.
+The primary configuration file for Workers and Pages projects. Supports both JSON (`wrangler.json` / `wrangler.jsonc`) and TOML (`wrangler.toml`) formats. **`wrangler.jsonc` is recommended for new projects** -- it provides JSON Schema validation, IDE autocompletion, and inline comments. Some newer Wrangler features are only available in the JSON format.
 
 ### Minimal Worker Config
 

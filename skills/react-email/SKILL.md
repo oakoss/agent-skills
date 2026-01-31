@@ -10,7 +10,7 @@ description: >
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: https://react.email/docs
 ---
 
@@ -43,6 +43,9 @@ React Email is a library for building responsive HTML emails using React compone
 | Render plain text  | `render(<Email />, { plainText: true })` | Strips HTML, returns text                                   |
 | Pretty output      | `render(<Email />, { pretty: true })`    | Formatted HTML for debugging                                |
 | Preview server     | `email dev`                              | Local dev server with hot reload                            |
+| Markdown content   | `Markdown`                               | Renders Markdown as email-compatible HTML                   |
+| Code blocks        | `CodeBlock`                              | Syntax-highlighted code with theme support                  |
+| Inline code        | `CodeInline`                             | Monospace inline code spans                                 |
 
 ## Common Mistakes
 

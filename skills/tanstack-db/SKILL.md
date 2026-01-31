@@ -4,7 +4,7 @@ description: 'TanStack DB reactive client-side database with live queries and op
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: 'https://tanstack.com/db/latest'
 ---
 
@@ -35,7 +35,16 @@ TanStack DB is a reactive client store built on differential dataflow that exten
 | Update              | `collection.update(key, (draft) => { ... })`                | Immer-style draft mutation, syncs via `onUpdate`      |
 | Delete              | `collection.delete(key)`                                    | Optimistic delete, syncs via `onDelete` handler       |
 | Electric sync       | `electricCollectionOptions({ shapeOptions: {...} })`        | Real-time Postgres sync via ElectricSQL               |
+| Live query coll.    | `liveQueryCollectionOptions({ query })`                     | Derived collection from live query definition         |
 | Local storage       | `localStorageCollectionOptions({...})`                      | Persistent local data, syncs across tabs              |
+
+## Sync Modes (v0.5+)
+
+| Mode            | Behavior                                             | Use Case                          |
+| --------------- | ---------------------------------------------------- | --------------------------------- |
+| Eager (default) | Loads all records on collection init                 | Small datasets (< 1k rows)        |
+| On-demand       | Loads only what queries request (predicate pushdown) | Large datasets, selective loading |
+| Progressive     | Fast first paint, full dataset syncs in background   | Best of both, scales to 100k+     |
 
 ## Common Mistakes
 

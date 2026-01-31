@@ -186,6 +186,23 @@ keybind = ctrl+a>1=goto_tab:1
 keybind = ctrl+a>2=goto_tab:2
 ```
 
+## Command Palette
+
+Ghostty includes a built-in command palette. Add custom entries with the `command-palette-entry` config key:
+
+```text
+command-palette-entry = title:Reset Font Style, action:csi:0m
+command-palette-entry = title:Crash Report, description:View crash reports, action:crash:main
+```
+
+Clear all default entries by setting to empty:
+
+```text
+command-palette-entry =
+```
+
+The `action` syntax mirrors keybind actions.
+
 ## Launch Command
 
 Set the default command instead of the login shell:

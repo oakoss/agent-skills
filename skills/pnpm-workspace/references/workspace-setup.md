@@ -277,6 +277,17 @@ catalogs:
 }
 ```
 
+## inject-workspace-packages
+
+Hard-links all local workspace dependencies instead of symlinking them. Required for `pnpm deploy` in pnpm 10+:
+
+```ini
+# .npmrc
+inject-workspace-packages=true
+```
+
+When enabled, workspace packages are injected as if they were regular dependencies (hard-linked from the store). This is useful for bundlers that do not follow symlinks and for `pnpm deploy` to create proper lockfiles for deployed projects.
+
 ## Shared Lockfile
 
 pnpm workspaces use a single `pnpm-lock.yaml` at the workspace root. This provides:

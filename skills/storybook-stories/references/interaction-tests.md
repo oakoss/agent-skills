@@ -13,16 +13,16 @@ Play functions execute after a story renders, simulating user interactions and v
 ### Imports
 
 ```tsx
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { expect, fn } from 'storybook/test';
 ```
 
-The `@storybook/test` package provides instrumented versions of Testing Library and Vitest for debugging in the Interactions panel.
+Storybook 9 provides `canvas`, `userEvent`, and `step` directly in the play function context. The `storybook/test` package (replacing `@storybook/test`) provides `expect`, `fn`, and other utilities.
 
 ### Basic Pattern
 
 ```tsx
 import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { expect, fn } from 'storybook/test';
 import { Button } from './button';
 
 const meta = {
@@ -37,8 +37,7 @@ export const ClickInteraction: Story = {
     children: 'Click me',
     onPress: fn(),
   },
-  play: async ({ args, canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async ({ args, canvas, userEvent }) => {
     const button = canvas.getByRole('button');
 
     await userEvent.click(button);
@@ -51,13 +50,11 @@ Always await `userEvent` methods for proper logging in the Interactions panel.
 
 ## Canvas Scoping
 
-Use `within(canvasElement)` to scope queries to the story's DOM.
+The `canvas` object is provided directly in the play context, scoped to the story's DOM.
 
 ```tsx
 export const FormInteraction: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
+  play: async ({ canvas, userEvent }) => {
     const emailInput = canvas.getByLabelText('Email');
     const passwordInput = canvas.getByLabelText('Password');
     const submitButton = canvas.getByRole('button', { name: 'Submit' });
@@ -71,15 +68,17 @@ export const FormInteraction: Story = {
 
 ### Portal Components
 
-For components that render in portals (modals, tooltips, dropdowns), query from `body`:
+For components that render in portals (modals, tooltips, dropdowns), query from `body` using `within`:
 
 ```tsx
+import { expect, fn } from 'storybook/test';
+import { within } from '@storybook/test';
+
 export const DialogInteraction: Story = {
   args: {
     onOpenChange: fn(),
   },
-  play: async ({ args, canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async ({ args, canvas, canvasElement, userEvent }) => {
     const body = within(canvasElement.ownerDocument.body);
 
     const trigger = canvas.getByRole('button', { name: 'Open Dialog' });
@@ -245,7 +244,7 @@ await expect(args.onPress).not.toHaveBeenCalled();
 
 ## Mocking Event Handlers
 
-Use `fn()` from `@storybook/test` to create mock functions:
+Use `fn()` from `storybook/test` to create mock functions:
 
 ```tsx
 export const WithCallbacks: Story = {
@@ -254,8 +253,7 @@ export const WithCallbacks: Story = {
     onBlur: fn(),
     onFocus: fn(),
   },
-  play: async ({ args, canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async ({ args, canvas, userEvent }) => {
     const input = canvas.getByRole('textbox');
 
     await userEvent.click(input);
@@ -279,9 +277,7 @@ export const AsyncUpdate: Story = {
   args: {
     onSave: fn(),
   },
-  play: async ({ args, canvasElement }) => {
-    const canvas = within(canvasElement);
-
+  play: async ({ args, canvas, userEvent }) => {
     const button = canvas.getByRole('button', { name: 'Save' });
     await userEvent.click(button);
 
@@ -304,9 +300,7 @@ Reuse setup across stories:
 
 ```tsx
 export const FilledForm: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
+  play: async ({ canvas, userEvent }) => {
     await userEvent.type(canvas.getByLabelText('Email'), 'test@example.com');
     await userEvent.type(canvas.getByLabelText('Password'), 'password123');
   },
@@ -319,11 +313,11 @@ export const SubmittedForm: Story = {
   play: async (context) => {
     await FilledForm.play?.(context);
 
-    const canvas = within(context.canvasElement);
+    const { args, canvas, userEvent } = context;
     const submitButton = canvas.getByRole('button', { name: 'Submit' });
 
     await userEvent.click(submitButton);
-    await expect(context.args.onSubmit).toHaveBeenCalledTimes(1);
+    await expect(args.onSubmit).toHaveBeenCalledTimes(1);
   },
 };
 
@@ -331,7 +325,7 @@ export const ValidationError: Story = {
   play: async (context) => {
     await FilledForm.play?.(context);
 
-    const canvas = within(context.canvasElement);
+    const { canvas, userEvent } = context;
 
     await userEvent.clear(canvas.getByLabelText('Email'));
     await userEvent.tab();
@@ -346,16 +340,11 @@ Always use optional chaining `?.()` when calling composed play functions.
 
 ## Step Function
 
-Group related interactions for better debugging:
+Group related interactions for better debugging. The `step` helper is available directly in the play context:
 
 ```tsx
-import { expect, userEvent, within } from '@storybook/test';
-import { step } from '@storybook/test';
-
 export const MultiStepForm: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
+  play: async ({ canvas, step, userEvent }) => {
     await step('Fill personal information', async () => {
       await userEvent.type(canvas.getByLabelText('Name'), 'John Doe');
       await userEvent.type(canvas.getByLabelText('Email'), 'john@example.com');
@@ -376,14 +365,42 @@ export const MultiStepForm: Story = {
 
 Steps appear as collapsible groups in the Interactions panel.
 
+## beforeEach Hook
+
+Set up mocks and preconditions before the story renders:
+
+```tsx
+import { expect, fn } from 'storybook/test';
+
+export const WithMockedData: Story = {
+  args: {
+    getUsers: fn(),
+    onSubmit: fn(),
+  },
+  beforeEach: async ({ args }) => {
+    args.getUsers.mockResolvedValue([
+      { id: '1', name: 'Alice' },
+      { id: '2', name: 'Bob' },
+    ]);
+  },
+  play: async ({ args, canvas, userEvent }) => {
+    const usersList = canvas.getAllByRole('listitem');
+    await expect(usersList).toHaveLength(2);
+
+    const submitButton = canvas.getByRole('button', { name: 'Submit' });
+    await userEvent.click(submitButton);
+
+    await expect(args.onSubmit).toHaveBeenCalled();
+  },
+};
+```
+
 ## Debugging Failed Tests
 
 ### Log Element State
 
 ```tsx
-play: async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
-
+play: async ({ canvas }) => {
   console.log(canvas.getByRole('button').outerHTML);
 
   canvas.debug();

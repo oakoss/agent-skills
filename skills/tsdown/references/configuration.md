@@ -235,6 +235,27 @@ export default defineConfig({
 });
 ```
 
+## Node Protocol Handling
+
+Control how Node.js built-in module imports are handled in output.
+
+```ts
+import { defineConfig } from 'tsdown';
+
+export default defineConfig({
+  entry: ['src/index.ts'],
+  nodeProtocol: true,
+});
+```
+
+| Value     | Behavior                                                  |
+| --------- | --------------------------------------------------------- |
+| `true`    | Adds `node:` prefix to built-ins (`fs` becomes `node:fs`) |
+| `'strip'` | Removes `node:` prefix (`node:fs` becomes `fs`)           |
+| `false`   | Keeps imports as-is (default)                             |
+
+Use `true` for modern Node.js targets (v16+), `'strip'` for older runtimes.
+
 ## Multiple Configurations
 
 Build multiple outputs with different settings in a single run.

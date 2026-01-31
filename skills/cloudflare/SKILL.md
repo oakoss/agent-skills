@@ -4,7 +4,7 @@ description: 'Cloudflare Workers, KV, D1, R2, Pages, and Wrangler CLI. Use when 
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: https://developers.cloudflare.com/workers
 ---
 
@@ -36,21 +36,28 @@ Cloudflare Workers is a serverless edge compute platform that runs JavaScript, T
 | Worker deploy         | `wrangler deploy`                                    | Reads wrangler.toml for config               |
 | Dev server            | `wrangler dev`                                       | Local development with bindings              |
 | Secrets               | `wrangler secret put SECRET_NAME`                    | Encrypted, not in wrangler.toml              |
+| Static assets         | `assets: { directory: "./dist" }`                    | Served without invoking Worker by default    |
+| Workflows             | `export class MyWorkflow extends WorkflowEntrypoint` | Durable multi-step execution engine          |
+| Hyperdrive            | `env.HYPERDRIVE.connectionString`                    | Connection pooling for external PostgreSQL   |
+| Queues produce        | `env.QUEUE.send(message)`                            | Async message passing between Workers        |
+| Config format         | `wrangler.jsonc` (recommended for new projects)      | JSON with comments; preferred over TOML      |
 
 ## Common Mistakes
 
-| Mistake                                   | Correct Pattern                                         |
-| ----------------------------------------- | ------------------------------------------------------- |
-| Accessing bindings as globals             | Access via `env` parameter in module format             |
-| Storing secrets in wrangler.toml          | Use `wrangler secret put` for encrypted values          |
-| Using KV for strong consistency           | Use D1 or Durable Objects for consistent reads          |
-| Not binding parameters in D1 queries      | Always use `.prepare().bind()` to prevent SQL injection |
-| Exceeding KV value size (25 MiB)          | Use R2 for objects larger than 25 MiB                   |
-| Forgetting `await` on storage operations  | KV, D1, R2 methods are all async                        |
-| Using `fetch()` without passing `signal`  | Pass `request.signal` for automatic cancellation        |
-| Creating D1 database in Worker code       | Create with `wrangler d1 create`, bind in config        |
-| Missing `compatibility_date` in config    | Always set to avoid breaking changes                    |
-| Returning non-Response from fetch handler | Must return a `Response` object                         |
+| Mistake                                   | Correct Pattern                                               |
+| ----------------------------------------- | ------------------------------------------------------------- |
+| Accessing bindings as globals             | Access via `env` parameter in module format                   |
+| Storing secrets in wrangler.toml          | Use `wrangler secret put` for encrypted values                |
+| Using KV for strong consistency           | Use D1 or Durable Objects for consistent reads                |
+| Not binding parameters in D1 queries      | Always use `.prepare().bind()` to prevent SQL injection       |
+| Exceeding KV value size (25 MiB)          | Use R2 for objects larger than 25 MiB                         |
+| Forgetting `await` on storage operations  | KV, D1, R2 methods are all async                              |
+| Using `fetch()` without passing `signal`  | Pass `request.signal` for automatic cancellation              |
+| Creating D1 database in Worker code       | Create with `wrangler d1 create`, bind in config              |
+| Missing `compatibility_date` in config    | Always set to avoid breaking changes                          |
+| Returning non-Response from fetch handler | Must return a `Response` object                               |
+| Using `wrangler.toml` for new projects    | Use `wrangler.jsonc` for new projects; has better IDE support |
+| Using KV for relational queries           | Use D1 for SQL queries; KV is key-value only                  |
 
 ## Delegation
 

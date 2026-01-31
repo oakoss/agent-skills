@@ -7,7 +7,7 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: 'https://vercel.com/docs'
 ---
 
@@ -41,6 +41,9 @@ Vercel is a cloud platform for deploying frontend frameworks and serverless func
 | Monorepo             | Root directory setting per project   | One repo, multiple Vercel projects                 |
 | GitHub integration   | Automatic on push                    | Zero-config CI/CD with preview per branch          |
 | Programmatic config  | `vercel.ts` with `@vercel/config`    | Typed, dynamic configuration alternative           |
+| Fluid compute        | Enabled by default for new projects  | Multi-request workers, 300s default duration       |
+| Rolling releases     | Incremental rollout with monitoring  | Gradual traffic shift with auto-rollback triggers  |
+| Firewall rules       | `vercel.json` WAF configuration      | Block threats via dashboard, API, or config file   |
 
 ## Common Mistakes
 
@@ -52,7 +55,7 @@ Vercel is a cloud platform for deploying frontend frameworks and serverless func
 | Using Node.js APIs in edge functions                       | Edge runtime uses V8 only; `fs`, `path`, `process` are unavailable                         |
 | Exceeding 1024 static redirects                            | Use `bulkRedirects` property for large redirect sets (CSV/JSON/JSONL)                      |
 | Creating QueryClient or fetching in edge without streaming | Use streaming responses for long operations in edge functions                              |
-| Setting `maxDuration` above plan limit                     | Hobby: 60s max, Pro: 300s max, Enterprise: 900s max                                        |
+| Setting `maxDuration` above plan limit                     | Fluid compute default: 300s; Hobby: 60s, Pro: 300s, Enterprise: 900s max                   |
 | Conflicting DNS records for custom domain                  | Remove duplicate A records; keep only the Vercel-pointing record                           |
 | Not awaiting build in CI before deploy                     | Use `vercel build` then `vercel deploy --prebuilt` for reliable CI deploys                 |
 | Ignoring monorepo root directory setting                   | Set root directory per project in Vercel dashboard for correct builds                      |

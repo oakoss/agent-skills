@@ -4,7 +4,7 @@ description: 'Writes and maintains Storybook stories and interaction tests using
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: https://storybook.js.org/docs
 ---
 
@@ -25,10 +25,11 @@ Storybook is a frontend workshop for building UI components in isolation. Storie
 | Basic story            | `export const Default: Story = { args }`               | Use args for simple single components  |
 | Complex story          | `export const Example: Story = { render }`             | Use render for multi-component layouts |
 | Meta configuration     | `const meta = { component, args } satisfies Meta`      | Define defaults and argTypes           |
-| Interaction test       | `play: async ({ canvasElement, args })`                | Use within(canvasElement) for scoping  |
+| Interaction test       | `play: async ({ canvas, userEvent, args })`            | canvas and userEvent provided directly |
 | User interaction       | `await userEvent.click(element)`                       | Always await userEvent methods         |
 | Query elements         | `canvas.getByRole('button')`                           | Prefer getByRole over other queries    |
 | Assertions             | `await expect(args.onPress).toHaveBeenCalled()`        | Use storybook/test assertions          |
+| beforeEach hook        | `beforeEach: async ({ args }) => {}`                   | Setup mocks before story renders       |
 | Play composition       | `await OtherStory.play?.(context)`                     | Reuse setup across stories             |
 | Autodocs               | `tags: ['autodocs']`                                   | Enable automatic documentation         |
 | Controls customization | `argTypes: { variant: { control: 'select' } }`         | Configure control panel                |
@@ -44,7 +45,7 @@ Storybook is a frontend workshop for building UI components in isolation. Storie
 | ------------------------------------------ | -------------------------------------------------------- |
 | Using args with multi-component layouts    | Use render for complex compositions                      |
 | Not awaiting userEvent methods             | Always await: `await userEvent.click(button)`            |
-| Querying outside canvas scope              | Use `within(canvasElement)` for non-portal elements      |
+| Using within(canvasElement) manually       | Destructure `canvas` from play context directly          |
 | Using getByTestId first                    | Prefer getByRole, getByLabelText, getByText              |
 | Missing default args at meta level         | Add args to meta to prevent placeholder controls         |
 | Exposing non-serializable props            | Disable className, ref, style in argTypes                |

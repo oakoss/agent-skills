@@ -46,6 +46,11 @@ Covers CI/CD pipeline design, deployment platform selection, and production infr
 | Caching only `bun.lockb` without considering `bun.lock`   | Bun 1.2+ uses text-based `bun.lock`; hash whichever lockfile format the project uses |
 | Skipping preview deployments for PRs                      | Every PR should get a preview URL for testing before merge                           |
 
+## Relationship to Other Skills
+
+> If the `github-actions` skill is available, delegate detailed workflow authoring, matrix strategies, and composite actions to it. This skill covers CI/CD architecture and platform selection; `github-actions` covers workflow syntax depth.
+> If the `deployment-strategy` skill is available, delegate deployment pattern selection (blue-green, canary, rolling) to it. This skill covers platform selection and CI pipeline mechanics.
+
 ## Delegation
 
 - **Audit existing CI workflow security and permissions**: Use `Explore` agent to scan workflow YAML files for broad permissions, unpinned actions, and exposed secrets

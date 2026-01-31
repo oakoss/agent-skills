@@ -67,6 +67,21 @@ function ShippingStep({ billingAddress }: { billingAddress: Address }) {
 }
 ```
 
+## Consistent Help (WCAG 3.2.6)
+
+If a website provides help mechanisms (human contact details, automated chat, self-help links, FAQ), those mechanisms must appear in the same relative order on each page. The help does not need to be on every page, but when present, it must be consistently placed.
+
+```html
+<!-- Footer help section: same order on every page -->
+<footer>
+  <nav aria-label="Help">
+    <a href="/faq">FAQ</a>
+    <a href="/contact">Contact Us</a>
+    <a href="/chat">Live Chat</a>
+  </nav>
+</footer>
+```
+
 ## Accessible Authentication (WCAG 3.3.8)
 
 Login flows must not require cognitive function tests (like remembering a password from memory without paste). Allow password managers (do not block paste), support autofill with `autocomplete` attributes, and provide alternatives to CAPTCHAs.

@@ -11,7 +11,7 @@ description: >
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: 'https://docs.github.com/en/actions'
 ---
 
@@ -48,6 +48,7 @@ GitHub Actions is a CI/CD platform that automates build, test, and deployment pi
 | Step outputs        | `echo "key=value" >> "$GITHUB_OUTPUT"`           | Pass data between steps and jobs            |
 | Service containers  | `services: postgres: image: postgres:16`         | Sidecar containers for integration tests    |
 | Timeout             | `timeout-minutes: 30`                            | Fail fast on hung jobs or steps             |
+| Attestations        | `actions/attest-build-provenance@v3`             | SLSA build provenance for supply chain      |
 
 ## Expressions and Contexts
 
@@ -67,7 +68,7 @@ GitHub Actions is a CI/CD platform that automates build, test, and deployment pi
 
 | Mistake                                      | Correct Pattern                                                            |
 | -------------------------------------------- | -------------------------------------------------------------------------- |
-| Using `actions/checkout@v2` or older tags    | Pin to current major version (`@v4`) or commit SHA                         |
+| Using `actions/checkout@v4` or older tags    | Pin to current major version (`@v6`) or commit SHA                         |
 | Missing `persist-credentials: false`         | Set on checkout when using custom tokens or OIDC                           |
 | Broad `permissions` at workflow level        | Set `permissions: {}` at workflow level, grant per-job                     |
 | Cache key without dependency file hash       | Include `hashFiles('**/pnpm-lock.yaml')` in cache key                      |

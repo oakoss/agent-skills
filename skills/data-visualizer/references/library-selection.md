@@ -123,6 +123,37 @@ function createBarChart(data: Array<{ name: string; value: number }>) {
 }
 ```
 
+## ResponsiveContainer Advanced Props
+
+Recharts `ResponsiveContainer` supports aspect ratio mode and resize callbacks:
+
+```tsx
+<ResponsiveContainer width="100%" aspect={2}>
+  <LineChart data={data}>
+    <Line dataKey="value" stroke="#8884d8" />
+  </LineChart>
+</ResponsiveContainer>
+
+<ResponsiveContainer
+  width="100%"
+  height={400}
+  debounce={300}
+  onResize={(width, height) => console.log(`${width}x${height}`)}
+>
+  <BarChart data={data}>
+    <Bar dataKey="value" fill="#82ca9d" />
+  </BarChart>
+</ResponsiveContainer>
+```
+
+| Prop       | Type     | Purpose                                       |
+| ---------- | -------- | --------------------------------------------- |
+| `width`    | string   | Percentage or number (`"100%"`, `500`)        |
+| `height`   | number   | Fixed height in pixels                        |
+| `aspect`   | number   | Width-to-height ratio (alternative to height) |
+| `debounce` | number   | Debounce resize events in ms                  |
+| `onResize` | function | Callback with `(width, height)` on resize     |
+
 ## Comparison
 
 | Feature           | Recharts         | Chart.js               | D3.js               |

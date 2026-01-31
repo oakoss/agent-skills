@@ -181,6 +181,34 @@ Dependencies between packages in a fixed group are **not** considered for additi
 | Use case       | Related packages that evolve independently | Packages that must always be in sync |
 | Example        | Design system components                   | SDK core + framework bindings        |
 
+## Private Packages
+
+Control how private packages (those with `"private": true` in `package.json`) are handled during versioning:
+
+```json
+{
+  "privatePackages": {
+    "version": true,
+    "tag": true
+  }
+}
+```
+
+| Sub-option | Default | Description                          |
+| ---------- | ------- | ------------------------------------ |
+| `version`  | `true`  | Update version and changelog         |
+| `tag`      | `false` | Create git tags for private packages |
+
+Set to `false` to completely skip private packages:
+
+```json
+{
+  "privatePackages": false
+}
+```
+
+This is useful for managing application versions and non-npm packages within a monorepo. Applications with `"private": true` can still get versioned changelogs and git tags without being published to npm.
+
 ## Ignore Patterns
 
 Exclude packages from Changesets versioning entirely:

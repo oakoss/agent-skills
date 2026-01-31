@@ -7,7 +7,8 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
+  source: 'https://tanstack.com/query/latest/docs'
 ---
 
 # TanStack Query

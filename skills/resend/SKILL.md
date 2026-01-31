@@ -1,10 +1,10 @@
 ---
 name: resend
-description: 'Resend email API for sending transactional and marketing emails. Use when integrating email delivery, managing domains, handling webhooks, or building email workflows with React Email.'
+description: 'Resend email API for sending transactional and marketing emails. Use when integrating email delivery, managing domains, handling webhooks, building email workflows with React Email, managing contacts, or sending broadcasts. Use for resend, email, transactional, broadcast, contacts, segments, webhooks, domain.'
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: https://resend.com/docs
 ---
 
@@ -20,22 +20,26 @@ Resend is a modern email API built for developers, providing programmatic email 
 
 ## Quick Reference
 
-| Pattern         | API                                         | Key Points                                                    |
-| --------------- | ------------------------------------------- | ------------------------------------------------------------- |
-| Send email      | `resend.emails.send({ from, to, subject })` | Returns `{ data, error }`, supports html/text/react content   |
-| Send with React | `resend.emails.send({ react: <Email /> })`  | Node.js SDK only, renders React Email components server-side  |
-| Batch send      | `resend.batch.send([...emails])`            | Multiple emails in one request, no attachments/scheduling     |
-| Schedule email  | `emails.send({ scheduled_at })`             | ISO 8601 or natural language, cancel before send window       |
-| Attachments     | `emails.send({ attachments: [...] })`       | Max 40MB total after encoding, supports content or path       |
-| Idempotent send | `emails.send(params, { idempotencyKey })`   | Prevents duplicate sends on retry                             |
-| Retrieve email  | `resend.emails.get(emailId)`                | Check delivery status and metadata                            |
-| Add domain      | `resend.domains.create({ name })`           | Returns DNS records for SPF, DKIM, MX                         |
-| Verify domain   | `resend.domains.verify(domainId)`           | Triggers DNS record check                                     |
-| List domains    | `resend.domains.list()`                     | Returns all domains with status                               |
-| Create webhook  | Dashboard or API                            | Subscribe to email lifecycle events                           |
-| Verify webhook  | `resend.webhooks.verify({ payload, ... })`  | Validates Svix signature headers                              |
-| Tags            | `emails.send({ tags: [...] })`              | Key-value pairs for categorization, ASCII only, max 256 chars |
-| Custom headers  | `emails.send({ headers: {...} })`           | Add custom email headers                                      |
+| Pattern          | API                                         | Key Points                                                    |
+| ---------------- | ------------------------------------------- | ------------------------------------------------------------- |
+| Send email       | `resend.emails.send({ from, to, subject })` | Returns `{ data, error }`, supports html/text/react content   |
+| Send with React  | `resend.emails.send({ react: <Email /> })`  | Node.js SDK only, renders React Email components server-side  |
+| Batch send       | `resend.batch.send([...emails])`            | Multiple emails in one request, no attachments/scheduling     |
+| Schedule email   | `emails.send({ scheduled_at })`             | ISO 8601 or natural language, cancel before send window       |
+| Attachments      | `emails.send({ attachments: [...] })`       | Max 40MB total after encoding, supports content or path       |
+| Idempotent send  | `emails.send(params, { idempotencyKey })`   | Prevents duplicate sends on retry                             |
+| Retrieve email   | `resend.emails.get(emailId)`                | Check delivery status and metadata                            |
+| Add domain       | `resend.domains.create({ name })`           | Returns DNS records for SPF, DKIM, MX                         |
+| Verify domain    | `resend.domains.verify(domainId)`           | Triggers DNS record check                                     |
+| List domains     | `resend.domains.list()`                     | Returns all domains with status                               |
+| Create webhook   | Dashboard or API                            | Subscribe to email lifecycle events                           |
+| Verify webhook   | `resend.webhooks.verify({ payload, ... })`  | Validates Svix signature headers                              |
+| Tags             | `emails.send({ tags: [...] })`              | Key-value pairs for categorization, ASCII only, max 256 chars |
+| Custom headers   | `emails.send({ headers: {...} })`           | Add custom email headers                                      |
+| Create contact   | `resend.contacts.create({ email, ... })`    | Global contacts with custom properties                        |
+| List contacts    | `resend.contacts.list()`                    | Returns all contacts                                          |
+| Create broadcast | `resend.broadcasts.create({ from, ... })`   | Bulk email to a segment, supports template variables          |
+| Send broadcast   | `resend.broadcasts.send(id, { segmentId })` | Delivers broadcast to a segment of contacts                   |
 
 ## Common Mistakes
 
@@ -61,5 +65,6 @@ Resend is a modern email API built for developers, providing programmatic email 
 ## References
 
 - [Sending emails, batch sending, attachments, scheduling, and idempotency](references/sending-emails.md)
+- [Contacts, Segments, Broadcasts, template variables, and bulk sending](references/contacts-and-broadcasts.md)
 - [Domain verification, DNS records, and sender identity management](references/domain-management.md)
 - [Webhook events, signature verification, and event handling](references/webhooks.md)

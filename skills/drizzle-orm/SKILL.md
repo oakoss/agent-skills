@@ -4,7 +4,7 @@ description: 'Drizzle ORM for type-safe SQL with PostgreSQL, MySQL, and SQLite. 
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: 'https://orm.drizzle.team/docs/overview'
 ---
 
@@ -34,6 +34,10 @@ Drizzle ORM is a lightweight, type-safe TypeScript ORM that maps directly to SQL
 | Apply migrations    | `drizzle-kit migrate` or `migrate()` in code                           | Applies pending migrations to database                |
 | Push schema         | `drizzle-kit push`                                                     | Direct schema push without migration files            |
 | Prepared statements | `db.select().from(t).where(eq(t.id, sql.placeholder('id'))).prepare()` | Reusable parameterized queries                        |
+| Views               | `pgView('name').as(qb => ...)`                                         | Regular and materialized views                        |
+| $count utility      | `db.$count(table, filter?)`                                            | Shorthand count, usable as subquery                   |
+| Generated columns   | `text().generatedAlwaysAs(() => sql\`...\`)`                           | Computed columns (virtual or stored)                  |
+| Check constraints   | `check('name', sql\`condition\`)`                                      | Row-level validation at database level                |
 
 ## Common Mistakes
 
@@ -72,3 +76,4 @@ Drizzle ORM is a lightweight, type-safe TypeScript ORM that maps directly to SQL
 - [Relations: one, many, nested with clauses, self-referencing](references/relations.md)
 - [Migrations: drizzle-kit generate, migrate, push, pull, studio](references/migrations.md)
 - [Filter operators: eq, ne, gt, lt, like, inArray, sql template](references/filters-and-operators.md)
+- [Views, materialized views, generated columns, check constraints, $count, batch API](references/views-and-advanced.md)

@@ -70,7 +70,12 @@ npm install --save-dev @figma/rest-api-spec
 Type usage:
 
 ```ts
-import { type GetFileResponse } from '@figma/rest-api-spec';
+import {
+  type GetFileResponse,
+  type GetLocalVariablesResponse,
+  type GetLocalVariablesPathParams,
+  type PostVariablesRequestBody,
+} from '@figma/rest-api-spec';
 ```
 
 ## Figma File Organization

@@ -5,11 +5,18 @@ license: MIT
 metadata:
   author: oakoss
   version: '1.0'
+  source: 'https://tailwindcss.com/docs'
 ---
 
 # Tailwind CSS (v4+)
 
-Tailwind CSS v4 skill covering CSS-first configuration, design tokens, component patterns, shadcn/ui integration, dark mode, container queries, migration from v3, and custom utilities. Not for Tailwind v3 legacy projects that will not upgrade.
+## Overview
+
+Tailwind CSS v4 skill covering CSS-first configuration, design tokens, component patterns, shadcn/ui integration, dark mode, container queries, migration from v3, and custom utilities.
+
+**When to use:** Configuring Tailwind themes, building utility-first components, implementing dark mode, using container queries, migrating from v3, integrating shadcn/ui, troubleshooting build errors.
+
+**When NOT to use:** Tailwind v3 legacy projects that will not upgrade, projects using a different styling approach (CSS Modules, styled-components) without plans to adopt Tailwind.
 
 ## Quick Reference
 

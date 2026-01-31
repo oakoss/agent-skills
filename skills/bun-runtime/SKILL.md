@@ -7,7 +7,7 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: https://bun.sh/docs
 ---
 
@@ -37,6 +37,8 @@ Bun is an all-in-one JavaScript and TypeScript runtime that includes a fast pack
 | Add package      | `bun add <pkg>`                           | `-d` for dev, `-g` for global                            |
 | Run script       | `bun run <script>`                        | Runs package.json scripts or files directly              |
 | Execute binary   | `bunx <pkg>`                              | Like npx, runs without installing                        |
+| S3 client        | `new S3Client(opts)` / `s3.file(key)`     | Built-in S3-compatible storage client                    |
+| HTML imports     | `import page from './index.html'`         | Fullstack: import HTML as route handler                  |
 
 ## Common Mistakes
 

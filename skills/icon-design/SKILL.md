@@ -7,7 +7,7 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Icon Design
@@ -47,7 +47,7 @@ Select the right icon for the job. Maps concepts to icons across three modern li
 | **Heroicons** | Tailwind projects, minimal style | `@heroicons/react`      |
 | **Phosphor**  | Weight variations needed         | `@phosphor-icons/react` |
 
-Default recommendation: Lucide (1,500+ icons, excellent React integration).
+Default recommendation: Lucide (1,600+ icons, excellent React integration, dynamic loading via `lucide-react/dynamic`).
 
 ## Selection Process
 

@@ -239,6 +239,78 @@ const hash = Bun.password.hashSync('password');
 const isValid = Bun.password.verifySync('password', hash);
 ```
 
+## S3 Client
+
+Bun includes a built-in S3 client compatible with any S3-compatible storage (AWS, R2, MinIO).
+
+### Basic S3 Operations
+
+```ts
+import { S3Client } from 'bun';
+
+const s3 = new S3Client({
+  accessKeyId: Bun.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: Bun.env.AWS_SECRET_ACCESS_KEY,
+  region: 'us-east-1',
+  bucket: 'my-bucket',
+});
+
+const file = s3.file('uploads/photo.jpg');
+const exists = await file.exists();
+const content = await file.text();
+
+await s3.file('output.json').write(JSON.stringify({ key: 'value' }));
+```
+
+### List Objects
+
+```ts
+import { s3 } from 'bun';
+
+const objects = await s3.list({ prefix: 'uploads/' });
+for (const obj of objects) {
+  console.log(obj.key, obj.size);
+}
+```
+
+### Presigned URLs
+
+```ts
+const url = s3.presign('uploads/photo.jpg', {
+  expiresIn: 3600,
+  method: 'GET',
+});
+```
+
+## HTML Imports (Fullstack)
+
+Import HTML files directly as route handlers. Bun automatically bundles associated scripts and styles.
+
+```ts
+import homepage from './index.html';
+import dashboard from './dashboard.html';
+
+Bun.serve({
+  routes: {
+    '/': homepage,
+    '/dashboard': dashboard,
+  },
+  fetch(req) {
+    return new Response('Not Found', { status: 404 });
+  },
+});
+```
+
+### Production Build
+
+```ts
+await Bun.build({
+  entrypoints: ['./index.html'],
+  outdir: './dist',
+  minify: true,
+});
+```
+
 ## Utility Functions
 
 ### Bun.sleep()

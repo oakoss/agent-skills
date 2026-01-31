@@ -12,7 +12,7 @@ Detailed comparison of Lucide, Heroicons, and Phosphor icon libraries.
 
 | Feature            | Lucide            | Heroicons                       | Phosphor                |
 | ------------------ | ----------------- | ------------------------------- | ----------------------- |
-| **Icons**          | 1,500+            | 316                             | 7,000+                  |
+| **Icons**          | 1,600+            | 316                             | 7,000+                  |
 | **Weights**        | 1                 | 4 (outline, solid, mini, micro) | 6 (thin to fill)        |
 | **Package**        | `lucide-react`    | `@heroicons/react`              | `@phosphor-icons/react` |
 | **Size (gzip)**    | ~5KB per icon set | ~3KB                            | ~7KB                    |
@@ -35,7 +35,28 @@ import { Home, Settings, User } from 'lucide-react'
 <Settings className="w-6 h-6" strokeWidth={1.5} />
 ```
 
-Strengths: Large library with frequent updates, excellent React integration, PascalCase component names, customizable stroke width.
+Strengths: Large library with frequent updates, excellent React integration, PascalCase component names, customizable stroke width, dynamic loading via `lucide-react/dynamic`.
+
+### Dynamic Icon Loading
+
+For icons loaded by name (from database, CMS, etc.), use the `DynamicIcon` component. Not recommended for static usage due to build performance impacts:
+
+```tsx
+import { DynamicIcon } from 'lucide-react/dynamic';
+
+<DynamicIcon name="camera" color="red" size={48} />;
+```
+
+### Custom Icons from @lucide/lab
+
+Use the generic `Icon` component to render experimental icons from `@lucide/lab`:
+
+```tsx
+import { Icon } from 'lucide-react';
+import { coconut } from '@lucide/lab';
+
+<Icon iconNode={coconut} size={24} />;
+```
 
 Limitations: No weight variations (outline only), some inconsistency from community contributions.
 

@@ -4,7 +4,8 @@ description: 'Controls the Ghostty terminal emulator via CLI actions and configu
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
+  source: 'https://ghostty.org/docs'
 ---
 
 # Ghostty Skill
@@ -24,7 +25,7 @@ Ghostty is a fast, feature-rich, cross-platform terminal emulator that uses plat
 | List CLI actions | `ghostty +list-actions`             | Shows keybind actions, not CLI actions            |
 | List themes      | `ghostty +list-themes`              | Interactive TUI preview; `--color=dark` to filter |
 | List fonts       | `ghostty +list-fonts`               | Uses Ghostty's font discovery                     |
-| List keybinds    | `ghostty +list-keybinds`            | Shows current keybind configuration               |
+| List keybinds    | `ghostty +list-keybinds`            | Add `--default` for defaults only                 |
 | List colors      | `ghostty +list-colors`              | Named RGB colors available in config              |
 | Show config      | `ghostty +show-config`              | Add `--default --docs` for all options            |
 | Validate config  | `ghostty +validate-config`          | Check config file for errors                      |

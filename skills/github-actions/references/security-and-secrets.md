@@ -127,7 +127,7 @@ jobs:
       contents: read
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - run: npm build
 
   publish:
@@ -136,7 +136,7 @@ jobs:
       packages: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - run: npm publish
 ```
 
@@ -182,7 +182,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -203,7 +203,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: google-github-actions/auth@v2
         with:
@@ -228,7 +228,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: azure/login@v2
         with:
@@ -259,7 +259,7 @@ The OIDC token includes claims that cloud providers use for authorization:
 
 ```yaml
 # Vulnerable - tag can be moved to malicious code
-- uses: actions/checkout@v4
+- uses: actions/checkout@v6
 
 # Secure - pinned to exact commit
 - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -286,7 +286,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - run: npm test

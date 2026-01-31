@@ -103,7 +103,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - run: pnpm lint
 
   test:
@@ -111,9 +111,9 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        node: [18, 20, 22]
+        node: [20, 22, 24]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
@@ -125,7 +125,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     environment: production
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - run: ./deploy.sh
 ```
 
@@ -148,7 +148,7 @@ Pin OS versions for reproducibility in production workflows.
 ```yaml
 steps:
   - name: Checkout
-    uses: actions/checkout@v4
+    uses: actions/checkout@v6
     with:
       fetch-depth: 0
 

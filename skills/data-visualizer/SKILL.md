@@ -4,7 +4,7 @@ description: 'Charts, dashboards, and data visualizations using Recharts, Chart.
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Data Visualizer
@@ -44,6 +44,7 @@ Build charts, dashboards, and interactive data visualizations using modern libra
 | Approach               | Implementation                                    |
 | ---------------------- | ------------------------------------------------- |
 | Container-based sizing | `<ResponsiveContainer width="100%" height={300}>` |
+| Aspect ratio mode      | `<ResponsiveContainer width="100%" aspect={2}>`   |
 | Mobile-aware           | Reduce `strokeWidth`, `height` on small screens   |
 | Label simplification   | Fewer axis labels on mobile                       |
 

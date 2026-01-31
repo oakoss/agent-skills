@@ -192,6 +192,39 @@ const highValueCustomers = createLiveQueryCollection((q) =>
 );
 ```
 
+## Live Query Collections
+
+Create reusable live query definitions as collections using `liveQueryCollectionOptions`:
+
+```ts
+import { createCollection, liveQueryCollectionOptions, eq } from '@tanstack/db';
+
+const activeUsers = createCollection(
+  liveQueryCollectionOptions({
+    query: (q) =>
+      q
+        .from({ user: usersCollection })
+        .where(({ user }) => eq(user.active, true))
+        .select(({ user }) => ({
+          id: user.id,
+          name: user.name,
+        })),
+  }),
+);
+```
+
+Use `createLiveQueryCollection` for inline creation without options wrapper:
+
+```ts
+import { createLiveQueryCollection, eq } from '@tanstack/db';
+
+const activeTodos = createLiveQueryCollection((q) =>
+  q
+    .from({ todos: todoCollection })
+    .where(({ todos }) => eq(todos.completed, false)),
+);
+```
+
 ## Query Method Chain
 
 The query builder follows a SQL-like fluent API:

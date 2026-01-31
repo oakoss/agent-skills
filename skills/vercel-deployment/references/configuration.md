@@ -221,11 +221,13 @@ Configure serverless function behavior per-route or globally:
 }
 ```
 
-| Plan       | Default Duration | Max Duration |
-| ---------- | ---------------- | ------------ |
-| Hobby      | 10s              | 60s          |
-| Pro        | 15s              | 300s         |
-| Enterprise | 15s              | 900s         |
+| Plan       | Default Duration | Max Duration | Fluid Compute |
+| ---------- | ---------------- | ------------ | ------------- |
+| Hobby      | 10s              | 60s          | 300s default  |
+| Pro        | 15s              | 300s         | 300s default  |
+| Enterprise | 15s              | 900s         | 900s max      |
+
+Fluid Compute is enabled by default for new projects. It allows a single worker to handle multiple concurrent requests, improving resource utilization and reducing cold starts. Functions using Fluid Compute get a default execution time of 300s and are billed only for active CPU time.
 
 ## Regions
 

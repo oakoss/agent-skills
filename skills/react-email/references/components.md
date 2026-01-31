@@ -312,6 +312,72 @@ const Email = () => {
 };
 ```
 
+## Markdown Component
+
+Renders Markdown content as email-compatible HTML with customizable styles.
+
+```tsx
+import { Markdown, Html } from '@react-email/components';
+
+const Email = () => {
+  return (
+    <Html lang="en" dir="ltr">
+      <Markdown
+        markdownCustomStyles={{
+          h1: { color: 'red' },
+          h2: { color: 'blue' },
+          codeInline: { background: 'grey' },
+        }}
+        markdownContainerStyles={{
+          padding: '12px',
+          border: 'solid 1px black',
+        }}
+      >
+        {`# Hello, World!
+
+This is **bold** and this is _italic_.`}
+      </Markdown>
+    </Html>
+  );
+};
+```
+
+## CodeBlock Component
+
+Renders code with syntax highlighting. Supports multiple themes and languages.
+
+```tsx
+import { CodeBlock, dracula } from '@react-email/code-block';
+
+const Email = () => {
+  const code = `export default async (req, res) => {
+  const html = await render(EmailTemplate({ firstName: 'John' }));
+  return Response.json({ html });
+}`;
+
+  return (
+    <CodeBlock code={code} lineNumbers theme={dracula} language="javascript" />
+  );
+};
+```
+
+## CodeInline Component
+
+Renders inline code spans for email-safe monospace formatting.
+
+```tsx
+import { CodeInline } from '@react-email/code-inline';
+
+const Email = () => {
+  return (
+    <Text>
+      Run <CodeInline>npm install @react-email/components</CodeInline> to get
+      started.
+    </Text>
+  );
+};
+```
+
 ## Full Template Example
 
 ```tsx
