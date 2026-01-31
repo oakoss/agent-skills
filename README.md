@@ -1,6 +1,6 @@
 # agent-skills
 
-A curated collection of 91 [agent skills](https://agentskills.io) for Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code, GitHub Copilot, Windsurf, Goose, and [27+ other agents](https://agentskills.io). Each skill is hand-written and enriched against official documentation — not auto-generated from docs.
+A curated collection of 98 [agent skills](https://agentskills.io) for Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code, GitHub Copilot, Windsurf, Goose, and [27+ other agents](https://agentskills.io). Each skill is hand-written and enriched against official documentation — not auto-generated from docs.
 
 ## Install
 
@@ -112,6 +112,8 @@ pnpm dlx skills add oakoss/agent-skills --list
 | [repo-updater](skills/repo-updater)           | Multi-repo synchronization with AI-assisted review             |
 | [github-actions](skills/github-actions)       | GitHub Actions workflow authoring for CI/CD pipelines          |
 | [vercel-deployment](skills/vercel-deployment) | Vercel deployment, preview environments, edge functions        |
+| [pnpm-workspace](skills/pnpm-workspace)       | pnpm workspace monorepo management, filtering, and catalogs    |
+| [cloudflare](skills/cloudflare)               | Cloudflare Workers, KV, D1, R2, Pages, and Wrangler CLI        |
 
 ### Database & ORM
 
@@ -121,9 +123,12 @@ pnpm dlx skills add oakoss/agent-skills --list
 
 ### Backend & API
 
-| Skill               | Description                                               |
-| ------------------- | --------------------------------------------------------- |
-| [hono](skills/hono) | Hono ultrafast web framework for edge and server runtimes |
+| Skill                                           | Description                                                   |
+| ----------------------------------------------- | ------------------------------------------------------------- |
+| [hono](skills/hono)                             | Hono ultrafast web framework for edge and server runtimes     |
+| [resend](skills/resend)                         | Resend email API for transactional and marketing emails       |
+| [react-email](skills/react-email)               | Build responsive HTML emails with React Email components      |
+| [stripe-integration](skills/stripe-integration) | Stripe payment integration, subscriptions, webhooks, Elements |
 
 ### Build Tools & Publishing
 
@@ -132,6 +137,7 @@ pnpm dlx skills add oakoss/agent-skills --list
 | [tsdown](skills/tsdown)                         | tsdown TypeScript bundler built on Rolldown for libraries       |
 | [changesets](skills/changesets)                 | Changesets for versioning and changelog management in monorepos |
 | [package-publishing](skills/package-publishing) | npm package publishing patterns for modern TypeScript libraries |
+| [bun-runtime](skills/bun-runtime)               | Bun JavaScript runtime, bundler, and package manager            |
 
 ### Diagrams & Visualization
 
@@ -167,13 +173,14 @@ pnpm dlx skills add oakoss/agent-skills --list
 
 ### Content, SEO & Documentation
 
-| Skill                                                 | Description                                            |
-| ----------------------------------------------------- | ------------------------------------------------------ |
-| [docs](skills/docs)                                   | Technical documentation writing and diagram generation |
-| [seo-optimizer](skills/seo-optimizer)                 | SEO architecture and content strategy                  |
-| [localization-engineer](skills/localization-engineer) | Internationalization (i18n) and localization (l10n)    |
-| [pdf-tools](skills/pdf-tools)                         | PDF extraction, generation, modification, form filling |
-| [tldr-expert](skills/tldr-expert)                     | Semantic code intelligence and token optimization      |
+| Skill                                                 | Description                                             |
+| ----------------------------------------------------- | ------------------------------------------------------- |
+| [docs](skills/docs)                                   | Technical documentation writing and diagram generation  |
+| [seo-optimizer](skills/seo-optimizer)                 | SEO architecture and content strategy                   |
+| [localization-engineer](skills/localization-engineer) | Internationalization (i18n) and localization (l10n)     |
+| [pdf-tools](skills/pdf-tools)                         | PDF extraction, generation, modification, form filling  |
+| [tldr-expert](skills/tldr-expert)                     | Semantic code intelligence and token optimization       |
+| [content-humanizer](skills/content-humanizer)         | Make AI-generated prose sound natural and human-written |
 
 ### Performance & Optimization
 
