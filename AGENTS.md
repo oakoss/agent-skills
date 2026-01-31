@@ -129,7 +129,10 @@ metadata:
 
 - `license: MIT` — all skills in this repo are MIT licensed
 - `metadata.author: oakoss` — identifies the skill author/org
-- `metadata.version` — tracks skill content version (bump on significant changes)
+- `metadata.version` — tracks skill content version, semver minor/major:
+  - `1.0` → `1.1` for content updates (new references, enriched patterns, API updates)
+  - `1.x` → `2.0` for breaking changes (renamed skill, restructured references, removed content)
+  - History is tracked via git log, not changelog files
 
 **Required sections**: Overview, Quick Reference table, Common Mistakes table, Delegation, References list.
 
