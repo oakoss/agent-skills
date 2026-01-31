@@ -1,5 +1,5 @@
 # lefthook.yml
-no_tty: true # Prevents terminal escape sequence issues
+no_tty: true # Prevents terminal escape sequence issues with beads hooks
 output:
   - failure # Only show failed steps
   - execution_out # Show command output for failures
@@ -7,6 +7,10 @@ output:
 pre-commit:
   parallel: true
   commands:
+    bd-flush:
+      run: TERM=dumb bd hooks run pre-commit --quiet
+      skip:
+        - run: '[ ! -d .beads ]'
     lint-md:
       glob: '*.md'
       run: pnpm markdownlint-cli2 --fix {staged_files}
@@ -18,6 +22,27 @@ pre-commit:
     validate-skills:
       glob: 'skills/**/*.md'
       run: node scripts/validate-skills.ts {staged_files}
+
+post-merge:
+  commands:
+    bd-import:
+      run: TERM=dumb bd hooks run post-merge --quiet
+      skip:
+        - run: '[ ! -d .beads ]'
+
+post-checkout:
+  commands:
+    bd-import:
+      run: TERM=dumb bd hooks run post-checkout {1} {2} {3} --quiet
+      skip:
+        - run: '[ ! -d .beads ]'
+
+pre-push:
+  commands:
+    bd-sync:
+      run: TERM=dumb bd hooks run pre-push --quiet
+      skip:
+        - run: '[ ! -d .beads ]'
 
 commit-msg:
   commands:
