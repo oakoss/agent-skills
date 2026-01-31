@@ -32,7 +32,7 @@ Available for: Linux x86_64, Linux ARM64, macOS Intel, macOS Apple Silicon, Wind
 
 ## Claude Code Configuration
 
-Add to `~/.claude/settings.json`:
+Add to `~/.claude/settings.json` (global) or `.claude/settings.json` (project):
 
 ```json
 {
@@ -52,7 +52,51 @@ Add to `~/.claude/settings.json`:
 }
 ```
 
-**Important:** Restart Claude Code after adding the hook.
+**Important:** Restart Claude Code after adding the hook. Alternatively, use the `/hooks` interactive menu to add hooks (takes effect immediately without restart).
+
+Hook settings can be placed in three locations:
+
+| Location                      | Scope          | Committed |
+| ----------------------------- | -------------- | --------- |
+| `~/.claude/settings.json`     | All projects   | No        |
+| `.claude/settings.json`       | Single project | Yes       |
+| `.claude/settings.local.json` | Single project | No        |
+
+## Claude Code Hook API Context
+
+DCG uses the `PreToolUse` hook event, which fires before any tool call. Claude Code supports additional hook events and types that may be relevant for layered safety:
+
+| Hook Event           | When It Fires                     | Relevant to DCG           |
+| -------------------- | --------------------------------- | ------------------------- |
+| `PreToolUse`         | Before tool execution (can block) | Primary DCG hook          |
+| `PostToolUse`        | After tool succeeds               | Audit logging             |
+| `PostToolUseFailure` | After tool fails                  | Error tracking            |
+| `PermissionRequest`  | When permission dialog appears    | Alternative to PreToolUse |
+| `Stop`               | When Claude finishes responding   | Session summary           |
+| `SubagentStop`       | When subagent finishes            | Subagent safety           |
+
+Hook types beyond `"type": "command"` (what DCG uses):
+
+- `"type": "prompt"` -- sends hook input to a Claude model for yes/no judgment
+- `"type": "agent"` -- spawns a subagent that can read files and run tools to verify conditions
+
+DCG uses `"type": "command"` for deterministic, sub-millisecond blocking. Prompt/agent hooks are useful for complementary checks requiring judgment.
+
+### Structured JSON Output
+
+In addition to exit codes, PreToolUse hooks can return structured JSON on stdout for finer control:
+
+```json
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "permissionDecision": "deny",
+    "permissionDecisionReason": "git reset --hard destroys uncommitted changes. Use git stash first."
+  }
+}
+```
+
+DCG uses exit codes (simpler, faster) rather than JSON output, but the JSON format supports three decisions: `"allow"`, `"deny"`, and `"ask"` (escalate to user).
 
 ## CLI Usage
 

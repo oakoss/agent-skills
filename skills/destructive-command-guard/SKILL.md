@@ -4,7 +4,7 @@ description: 'Blocks dangerous commands before execution via a Rust-based Claude
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Destructive Command Guard
