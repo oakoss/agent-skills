@@ -114,6 +114,23 @@ description: 'What it does. Use when X, Y, Z. Use for keyword1, keyword2, keywor
 | `hooks`                    | Claude Code   | Hooks scoped to skill lifecycle                           |
 | `argument-hint`            | Claude Code   | Hint for autocomplete (e.g., `[issue-number]`)            |
 
+**Project conventions** — all skills in this repo SHOULD include:
+
+```yaml
+---
+name: skill-name
+description: 'What it does. Use when X, Y, Z. Use for keyword1, keyword2, keyword3.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
+---
+```
+
+- `license: MIT` — all skills in this repo are MIT licensed
+- `metadata.author: oakoss` — identifies the skill author/org
+- `metadata.version` — tracks skill content version (bump on significant changes)
+
 **Required sections**: Overview, Quick Reference table, Common Mistakes table, Delegation, References list.
 
 **No code examples in SKILL.md** — all code lives in `references/`.

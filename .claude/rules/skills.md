@@ -33,6 +33,15 @@ skill-name/
 
 **Optional fields (Claude Code):** `disable-model-invocation`, `user-invocable`, `model`, `context`, `agent`, `hooks`, `argument-hint`.
 
+**Project conventions** — all skills in this repo SHOULD include:
+
+```yaml
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
+```
+
 ## SKILL.md Required Sections
 
 1. **YAML frontmatter** — `name` and `description`
