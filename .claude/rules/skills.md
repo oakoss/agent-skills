@@ -42,6 +42,10 @@ metadata:
   version: '1.0'
 ```
 
+**Encouraged optional field:**
+
+- `metadata.source` — URL to the official documentation used as the source of truth (e.g., `https://tanstack.com/router/latest/docs`)
+
 ## SKILL.md Required Sections
 
 1. **YAML frontmatter** — `name` and `description`

@@ -133,6 +133,7 @@ metadata:
   - `1.0` → `1.1` for content updates (new references, enriched patterns, API updates)
   - `1.x` → `2.0` for breaking changes (renamed skill, restructured references, removed content)
   - History is tracked via git log, not changelog files
+- `metadata.source` (optional, encouraged) — URL to the official documentation used as the source of truth when writing/enriching the skill (e.g., `https://tanstack.com/router/latest/docs`). Helps future enrichment sessions know what to verify against.
 
 **Required sections**: Overview, Quick Reference table, Common Mistakes table, Delegation, References list.
 
