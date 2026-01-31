@@ -15,7 +15,7 @@ Use navigation APIs created from `next-intl/navigation` with the shared routing 
 import { createNavigation } from 'next-intl/navigation';
 import { routing } from './routing';
 
-export const { Link, redirect, usePathname, useRouter } =
+export const { Link, redirect, usePathname, useRouter, getPathname } =
   createNavigation(routing);
 ```
 

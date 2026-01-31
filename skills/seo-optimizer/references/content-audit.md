@@ -148,3 +148,23 @@ After auditing, document findings with:
 3. **Category-by-category analysis** -- specific issues found per section
 4. **Priority fixes** -- high/medium/low ranked action items
 5. **Implementation checklist** -- verification steps after making fixes
+
+## Core Web Vitals Performance Check
+
+While not scored in the 30-point content audit, performance directly impacts rankings. Verify these thresholds on every audited page:
+
+| Metric | Good     | Needs Improvement | Poor    |
+| ------ | -------- | ----------------- | ------- |
+| LCP    | <= 2.5s  | 2.5s - 4.0s       | > 4.0s  |
+| INP    | <= 200ms | 200ms - 500ms     | > 500ms |
+| CLS    | <= 0.1   | 0.1 - 0.25        | > 0.25  |
+
+Common performance fixes for content pages:
+
+| Issue                           | Fix                                                        |
+| ------------------------------- | ---------------------------------------------------------- |
+| LCP image loads slowly          | Use WebP/AVIF, set explicit dimensions, preload LCP image  |
+| INP delayed by heavy JS         | Code-split, defer non-critical scripts, reduce third-party |
+| CLS from images without size    | Set `width` and `height` attributes on all `<img>` tags    |
+| CLS from web font reflow        | Use `font-display: swap` and preload critical fonts        |
+| CLS from injected ads or embeds | Reserve space with CSS `min-height` for dynamic content    |

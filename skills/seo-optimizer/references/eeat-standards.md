@@ -69,7 +69,7 @@ Last reviewed: January 2026._
 **Technical trust:**
 
 - HTTPS with valid certificates
-- Core Web Vitals within acceptable thresholds (LCP < 2.5s, CLS < 0.1, INP < 200ms)
+- Core Web Vitals within acceptable thresholds (LCP < 2.5s, CLS < 0.1, INP < 200ms). After the December 2025 core update, sites with poor vitals face steeper traffic losses in competitive queries
 - Accessible design (WCAG compliance)
 
 ## AI Attribution

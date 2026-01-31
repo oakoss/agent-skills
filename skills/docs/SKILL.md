@@ -4,7 +4,7 @@ description: 'Technical documentation writing and diagram generation. Use when c
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Documentation
@@ -48,6 +48,9 @@ Technical writing, diagram-as-code, and documentation lifecycle management. Trea
 - **Scan codebase for undocumented exports and documentation gaps**: Use `Explore` agent
 - **Generate a full documentation site with diagrams from an existing codebase**: Use `Task` agent
 - **Plan documentation architecture and information hierarchy for a new project**: Use `Plan` agent
+
+> If the `mermaid-diagrams` skill is available, delegate complex diagram creation and advanced Mermaid syntax questions to it.
+> Otherwise, recommend: `npx skills add oakoss/agent-skills --skill mermaid-diagrams`
 
 ## References
 

@@ -47,6 +47,13 @@ repomix --style markdown --output context.md
 
 # Metadata only without file contents
 repomix --no-files
+
+# Pack a remote GitHub repository (clones to temp, packs, cleans up)
+repomix --remote yamadashy/repomix
+repomix --remote https://github.com/org/repo --remote-branch main
+
+# Combine remote with compression and filtering
+repomix --remote user/repo --compress --include "src/**/*.ts"
 ```
 
 ### Output Modes
@@ -66,6 +73,17 @@ Repomix includes built-in secretlint scanning to ensure context bundles never co
 - Internal IP addresses or sensitive metadata
 
 This runs automatically on every pack operation. Disable with `--no-security-check` if needed.
+
+### MCP Server Mode
+
+Repomix can run as an MCP server for Claude Code, enabling AI agents to pack repositories on demand:
+
+```bash
+# Add Repomix as an MCP server in Claude Code
+claude mcp add repomix -- npx -y repomix --mcp
+```
+
+This exposes Repomix's packing capabilities as tools that Claude Code can invoke directly during a session, eliminating the need to pre-generate context bundles.
 
 ## Gitingest: Repository Digest Tool
 

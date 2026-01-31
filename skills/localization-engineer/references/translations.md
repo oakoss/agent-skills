@@ -54,6 +54,10 @@ export default async function HomePage() {
 }
 ```
 
+## ICU Message Syntax
+
+next-intl uses ICU MessageFormat for interpolation, pluralization, and selection. The ICU MessageFormat 2.0 specification reached stable status in CLDR 47 (March 2025), introducing extensible formatters and a new data model. next-intl currently uses the ICU MessageFormat 1.0 syntax shown below, which remains fully supported.
+
 ## Variables
 
 Message files use ICU message syntax for interpolation:

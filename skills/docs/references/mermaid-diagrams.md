@@ -17,6 +17,12 @@ Never use static images for technical docs. Use raw Mermaid syntax in Markdown. 
 | Database schema         | ERD              |
 | Branching / release     | Gitgraph         |
 | Lifecycle / transitions | State Diagram    |
+| Task boards / workflow  | Kanban           |
+| Timeline / milestones   | Timeline         |
+| Hierarchical concepts   | Mindmap          |
+| System topology         | Architecture     |
+| Network packet layout   | Packet           |
+| Priority / positioning  | Quadrant Chart   |
 
 ## Sequence Diagrams
 
@@ -70,6 +76,37 @@ gitGraph
     checkout main
     merge feature/oidc tag: "v1.0.0"
     commit id: "Hotfix"
+```
+
+## Kanban Diagrams
+
+Visualize task workflow states with columns and task metadata:
+
+```mermaid
+kanban
+  Todo
+    [Design schema]
+    [Write tests]
+  In Progress
+    [Implement API]@{ assigned: 'alice', priority: 'High' }
+  Done
+    [Set up CI]
+```
+
+## Architecture Diagrams
+
+Map system topology with services and connections:
+
+```mermaid
+architecture-beta
+    group api(cloud)[API]
+
+    service db(database)[Database] in api
+    service server(server)[Server] in api
+    service disk(disk)[Storage] in api
+
+    db:L -- R:server
+    server:L -- R:disk
 ```
 
 ## Anti-Patterns
