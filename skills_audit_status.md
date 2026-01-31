@@ -210,7 +210,7 @@ Each skill should own its own integration surface via reference files rather tha
 - `tanstack-router` should have `references/query-prefetching.md`
 - `tanstack-form` should have `references/shadcn-fields.md`, `references/rac-fields.md`
 
-This causes some duplication across skills but makes each skill fully self-contained — a user installing one skill gets everything they need without knowing about or installing other skills. Reference files covering the same integration from different angles (e.g., Query's cache invalidation perspective vs Router's loader perspective) will overlap but not be identical.
+Integration reference files should be minimal — cover the key patterns and gotchas for the integration surface, then recommend adding the companion skill for full coverage (e.g., `> For full TanStack Router coverage: npx skills add oakoss/agent-skills@tanstack-router`). This keeps reference files lean, avoids heavy duplication, and creates natural cross-skill discovery.
 
 **Action item**: Deprecate `tanstack-integration` and migrate its content into the individual TanStack skills as integration reference files. Each skill owns its own integrations.
 
