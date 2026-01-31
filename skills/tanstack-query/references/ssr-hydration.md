@@ -92,4 +92,18 @@ function Dashboard() {
 }
 ```
 
-**Key principle:** Decouple data fetching from rendering. Initiate fetches in loaders, not components.
+**Alternative:** Use `useSuspenseQueries` for parallel fetching within components:
+
+```tsx
+function Dashboard() {
+  const [posts, comments] = useSuspenseQueries({
+    queries: [
+      { queryKey: ['posts'], queryFn: fetchPosts },
+      { queryKey: ['comments'], queryFn: fetchComments },
+    ],
+  });
+  // Both fetch in parallel, no waterfall
+}
+```
+
+**Key principle:** Decouple data fetching from rendering. Initiate fetches in loaders, or use `useSuspenseQueries` for parallel fetching in components.

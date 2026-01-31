@@ -111,13 +111,59 @@ export const Route = createFileRoute('/posts/$postId')({
     return { post };
   },
   notFoundComponent: () => <div>Post not found</div>,
-  errorComponent: ({ error, reset }) => (
-    <div>
-      <p>Error: {error?.message}</p>
-      <button onClick={reset}>Retry</button>
-    </div>
-  ),
+  errorComponent: PostErrorComponent,
 });
 ```
 
 Not-found errors bubble up the route tree. Use `notFound({ data })` to pass context to the 404 component.
+
+### Error Component Implementation
+
+The `errorComponent` receives `error` and `reset`. Guard against undefined error (see Known Issues #12 for aborted loader edge case):
+
+```tsx
+import {
+  ErrorComponent,
+  type ErrorComponentProps,
+} from '@tanstack/react-router';
+import { useQueryErrorResetBoundary } from '@tanstack/react-query';
+
+function PostErrorComponent({ error, reset }: ErrorComponentProps) {
+  const { reset: resetQuery } = useQueryErrorResetBoundary();
+
+  if (!error) return null;
+
+  return (
+    <div role="alert">
+      <ErrorComponent error={error} />
+      <button
+        onClick={() => {
+          resetQuery();
+          reset();
+        }}
+      >
+        Retry
+      </button>
+    </div>
+  );
+}
+```
+
+When using TanStack Query, call `useQueryErrorResetBoundary().reset()` before the router `reset()` to clear Query's error state and allow refetching.
+
+### notFound with Data
+
+Pass context to the not-found component:
+
+```ts
+export const Route = createFileRoute('/posts/$postId')({
+  loader: async ({ params }) => {
+    const post = await fetchPost(params.postId);
+    if (!post) throw notFound({ data: { postId: params.postId } });
+    return { post };
+  },
+  notFoundComponent: ({ data }) => (
+    <div>Post {data.postId} not found</div>
+  ),
+});
+```

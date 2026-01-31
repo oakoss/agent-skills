@@ -97,3 +97,101 @@ export function getRouter() {
 | `defaultNotFoundComponent` | `Component`                                   | Built-in | Global 404 page                 |
 | `scrollRestoration`        | `boolean`                                     | `false`  | Restore scroll on navigation    |
 | `defaultStructuralSharing` | `boolean`                                     | `true`   | Optimize loader data re-renders |
+| `defaultPendingComponent`  | `Component`                                   | None     | Shown during route transitions  |
+| `defaultPendingMs`         | `number`                                      | `1000`   | Delay before showing pending UI |
+| `defaultPendingMinMs`      | `number`                                      | `500`    | Minimum time pending UI shows   |
+
+## DefaultCatchBoundary Component
+
+Global error boundary for unhandled route errors:
+
+```tsx
+import {
+  ErrorComponent,
+  Link,
+  rootRouteId,
+  useMatch,
+  useRouter,
+} from '@tanstack/react-router';
+
+function DefaultCatchBoundary({ error }: { error: unknown }) {
+  const router = useRouter();
+  const isRoot = useMatch({
+    strict: false,
+    select: (state) => state.id === rootRouteId,
+  });
+
+  return (
+    <div>
+      <ErrorComponent error={error} />
+      <div>
+        <button onClick={() => router.invalidate()}>Try Again</button>
+        {isRoot ? (
+          <a href="/">Home</a>
+        ) : (
+          <Link
+            to="/"
+            onClick={(e) => {
+              e.preventDefault();
+              router.navigate({ to: '/' });
+            }}
+          >
+            Home
+          </Link>
+        )}
+      </div>
+    </div>
+  );
+}
+```
+
+## DefaultNotFound Component
+
+Global 404 component for unmatched routes:
+
+```tsx
+function DefaultNotFound() {
+  return (
+    <div>
+      <p>Page not found</p>
+      <Link to="/">Go home</Link>
+    </div>
+  );
+}
+```
+
+## DefaultPendingComponent
+
+Shown after `defaultPendingMs` delay to avoid flash for fast transitions:
+
+```tsx
+function DefaultPendingComponent() {
+  return <div className="route-loading-indicator" />;
+}
+```
+
+Timing: if navigation completes within `defaultPendingMs`, no pending UI flashes. Once shown, it stays for at least `defaultPendingMinMs` to prevent layout thrash.
+
+## SSR with TanStack Query
+
+Dehydrate Query cache for SSR hydration:
+
+```tsx
+import { routerWithQueryClient } from '@tanstack/react-router-with-query';
+
+export function createAppRouter() {
+  const queryClient = new QueryClient();
+
+  const router = routerWithQueryClient(
+    createRouter({
+      routeTree,
+      context: { queryClient },
+    }),
+    queryClient,
+  );
+
+  return router;
+}
+```
+
+Install `@tanstack/react-router-with-query` for automatic dehydration/hydration of Query cache during SSR.

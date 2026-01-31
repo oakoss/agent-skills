@@ -15,6 +15,9 @@ tags:
     createIsomorphicFn,
     environment,
     VITE_,
+    zod,
+    env-validation,
+    server-ts,
     feature,
     naming,
     imports,
@@ -161,6 +164,34 @@ const getUser = createServerFn().handler(async () => {
 export function AppHeader() {
   return <h1>{import.meta.env.VITE_APP_NAME}</h1>;
 }
+```
+
+Validated environment with Zod (recommended for server-side):
+
+```ts
+// src/lib/env.server.ts
+import { z } from 'zod';
+
+const envSchema = z.object({
+  DATABASE_URL: z.string().url(),
+  JWT_SECRET: z.string().min(32),
+  STRIPE_SECRET_KEY: z.string().startsWith('sk_'),
+  NODE_ENV: z
+    .enum(['development', 'production', 'test'])
+    .default('development'),
+});
+
+export const env = envSchema.parse(process.env);
+```
+
+Use `*.server.ts` suffix for files that must never be imported by client code. Vite tree-shakes server-only imports, but the suffix makes intent explicit and prevents accidental bundling:
+
+```ts
+// src/lib/db.server.ts — only importable in server context
+import { env } from './env.server';
+import { drizzle } from 'drizzle-orm/postgres-js';
+
+export const db = drizzle(env.DATABASE_URL);
 ```
 
 Type-safe environment variables:

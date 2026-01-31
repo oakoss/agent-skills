@@ -16,6 +16,10 @@ Strategic patterns for combining TanStack libraries in production applications. 
 
 **When NOT to use:** Simple client-only apps with one TanStack library, or projects not using TanStack Router.
 
+## Adoption Methodology
+
+Build the feature with vanilla React first. Only reach for a TanStack library when you hit a specific pain point it solves (caching, type-safe routes, complex forms). Avoid the "man with a hammer" anti-pattern where every problem looks like it needs a TanStack solution.
+
 ## Quick Reference
 
 | Library     | Use When                                                    | Skip When                            |
@@ -26,6 +30,16 @@ Strategic patterns for combining TanStack libraries in production applications. 
 | **Table**   | Sorting, filtering, pagination, column management           | Static tables, < 20 rows             |
 | **Form**    | Multi-step forms, dynamic fields, async validation          | Simple 3-4 field forms               |
 | **Virtual** | 1000+ item lists, infinite scroll, large grids              | < 100 items, performance is fine     |
+
+## Hook Placement Decision Tree
+
+| Scope                     | Where                           | Example                                        |
+| ------------------------- | ------------------------------- | ---------------------------------------------- |
+| All packages in monorepo  | Shared package `queryClient.ts` | Default `staleTime`, `gcTime`, error handlers  |
+| One package/module        | Module-level `queryOptions()`   | Feature-specific stale times, retry logic      |
+| Single route or component | Inline options on hook          | One-off `refetchInterval`, `select` transforms |
+
+Place configuration at the narrowest scope that covers all consumers. Package-level defaults handle common cases; override per-module or per-query only when behavior diverges.
 
 ## Setup Checklist
 
@@ -70,6 +84,7 @@ Strategic patterns for combining TanStack libraries in production applications. 
 - [Router+Query setup and SSR integration](references/router-query-setup.md)
 - [Loader data flow and parallel loading patterns](references/loader-patterns.md)
 - [Form+Query integration, Zod validation, field arrays, and mutation patterns](references/form-query-integration.md)
+- [End-to-end flows: form submission, infinite scroll, auth-protected routes](references/end-to-end-flows.md)
 - [Caching coordination and anti-patterns](references/caching-coordination.md)
 - [Recommended libraries for React + TanStack projects](references/recommended-libraries.md)
 - [Debugging guide: DevTools, profiling, memory leaks, error boundaries](references/debugging-guide.md)

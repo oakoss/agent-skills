@@ -118,6 +118,31 @@ const createPost = useMutation({
 });
 ```
 
+## Single Source of Truth Rules
+
+1. **Query owns the cache.** Never store server data in Zustand, Context, or component state alongside Query. If you need derived data, use `select` in the query hook.
+2. **Disable Router cache.** Set `defaultPreloadStaleTime: 0` so Router always defers to Query for freshness decisions.
+3. **One query key per entity.** Avoid duplicating the same data under different query keys. Use query key factories to keep keys consistent.
+4. **Invalidate, don't manually set.** After mutations, prefer `invalidateQueries` over `setQueryData` unless you need instant optimistic feedback.
+
+```tsx
+const postKeys = {
+  all: ['posts'] as const,
+  lists: () => [...postKeys.all, 'list'] as const,
+  list: (filters: PostFilters) => [...postKeys.lists(), filters] as const,
+  details: () => [...postKeys.all, 'detail'] as const,
+  detail: (id: string) => [...postKeys.details(), id] as const,
+};
+
+const updatePost = useMutation({
+  mutationFn: (data: UpdatePostInput) => api.updatePost(data.id, data),
+  onSuccess: (_result, variables) => {
+    queryClient.invalidateQueries({ queryKey: postKeys.detail(variables.id) });
+    queryClient.invalidateQueries({ queryKey: postKeys.lists() });
+  },
+});
+```
+
 ## Key Points
 
 - `defaultPreloadStaleTime: 0` means "always ask Query"

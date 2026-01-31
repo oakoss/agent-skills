@@ -9,8 +9,11 @@ tags:
     manualFiltering,
     pageCount,
     queryKey,
+    query-key-factory,
     keepPreviousData,
     placeholderData,
+    optimistic,
+    prefetch,
     URL,
     searchParams,
   ]
@@ -147,6 +150,38 @@ const table = useReactTable({
 });
 ```
 
+## Query Key Factory
+
+Structure query keys hierarchically so invalidation works at any level:
+
+```tsx
+const userKeys = {
+  all: ['users'] as const,
+  lists: () => [...userKeys.all, 'list'] as const,
+  list: (pagination: PaginationState, sorting: SortingState, filter: string) =>
+    [...userKeys.lists(), pagination, sorting, filter] as const,
+  details: () => [...userKeys.all, 'detail'] as const,
+  detail: (id: string) => [...userKeys.details(), id] as const,
+};
+```
+
+Then use in queries and invalidation:
+
+```tsx
+const { data } = useQuery({
+  queryKey: userKeys.list(pagination, sorting, search),
+  queryFn: () => fetchUsers(pagination, sorting, search),
+  placeholderData: keepPreviousData,
+});
+
+const deleteMutation = useMutation({
+  mutationFn: deleteUser,
+  onSettled: () => {
+    queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+  },
+});
+```
+
 ## Query Options Factory
 
 Extract query configuration into a reusable factory function:
@@ -160,7 +195,7 @@ function usersQueryOptions(
   filter: string,
 ) {
   return queryOptions({
-    queryKey: ['users', 'list', pagination, sorting, filter],
+    queryKey: userKeys.list(pagination, sorting, filter),
     queryFn: () =>
       getUsers({
         data: {
@@ -279,6 +314,56 @@ const deleteMutation = useMutation({
 });
 ```
 
+## Optimistic Inline Edit
+
+```tsx
+const editMutation = useMutation({
+  mutationFn: (updated: User) =>
+    fetch(`/api/users/${updated.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updated),
+    }),
+  onMutate: async (updated) => {
+    const queryKey = userKeys.list(pagination, sorting, search);
+    await queryClient.cancelQueries({ queryKey });
+    const previous = queryClient.getQueryData(queryKey);
+
+    queryClient.setQueryData(queryKey, (old: UsersResponse) => ({
+      ...old,
+      data: old.data.map((user) =>
+        user.id === updated.id ? { ...user, ...updated } : user,
+      ),
+    }));
+
+    return { previous, queryKey };
+  },
+  onError: (_err, _updated, context) => {
+    if (context) {
+      queryClient.setQueryData(context.queryKey, context.previous);
+    }
+  },
+  onSettled: () => {
+    queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+  },
+});
+```
+
+## Reset Page on Filter Change
+
+When filters change, reset to the first page to avoid empty results:
+
+```tsx
+const handleFilterChange = (updater: Updater<ColumnFiltersState>) => {
+  setColumnFilters(updater);
+  setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+};
+
+const table = useReactTable({
+  // ...
+  onColumnFiltersChange: handleFilterChange,
+});
+```
+
 ## Prefetching Next Page
 
 ```tsx
@@ -311,6 +396,4 @@ if (!allowedColumns.includes(sortBy) || !allowedOrders.includes(sortOrder)) {
 
 1. **Add database indexes** for sorted/filtered columns
 2. **Use `placeholderData`** to show old data while fetching
-3. **Debounce search inputs** to reduce API calls
-4. **Cache API responses** with `staleTime`
-5. **Use cursor-based pagination** for very large datasets (>100k rows)
+3. **Debounce search inputs** to reduce API calls; **use cursor-based pagination** for >100k rows

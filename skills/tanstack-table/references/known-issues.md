@@ -1,6 +1,6 @@
 ---
 title: Known Issues
-description: 12 documented TanStack Table issues with symptoms, causes, sources, and solutions including infinite re-renders, React Compiler incompatibility, and server-side bugs
+description: 15 documented TanStack Table issues with symptoms, causes, sources, and solutions including infinite re-renders, React Compiler incompatibility, column filtering, and row selection bugs
 tags:
   [
     bugs,
@@ -11,10 +11,12 @@ tags:
     selection,
     pagination,
     pinning,
+    filtering,
     DevTools,
     TypeScript,
     getValue,
     workaround,
+    debugging,
   ]
 ---
 
@@ -198,10 +200,104 @@ cell: (info) => {
 };
 ```
 
+## Issue 13: Column Filter Not Resetting Page
+
+- **Symptom:** Changing a column filter shows empty results or wrong page
+- **Cause:** `pageIndex` stays at current value when filters narrow the result set
+- **Fix:** Reset `pageIndex` to 0 when filters change
+
+```tsx
+const handleFilterChange = (updater: Updater<ColumnFiltersState>) => {
+  setColumnFilters(updater);
+  setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+};
+```
+
+## Issue 14: Row Selection State Uses String Keys
+
+- **Symptom:** `rowSelection` state keys don't match your data IDs
+- **Cause:** TanStack Table uses row index as key by default, not your data's ID field
+- **Fix:** Set `getRowId` to use your data's unique identifier
+
+```tsx
+const table = useReactTable({
+  data,
+  columns,
+  getRowId: (row) => row.id,
+  enableRowSelection: true,
+  state: { rowSelection },
+  onRowSelectionChange: setRowSelection,
+  getCoreRowModel: getCoreRowModel(),
+});
+```
+
+Without `getRowId`, selection breaks across page changes because indices shift.
+
+## Issue 15: Column Filter Value Type Mismatch
+
+- **Symptom:** `column.setFilterValue()` doesn't filter correctly, or filter clears unexpectedly
+- **Cause:** Filter value type doesn't match what the filter function expects
+- **Fix:** Match value types between `setFilterValue` and `filterFn`
+
+```tsx
+// For range filters, pass a tuple
+column.setFilterValue([min, max]);
+
+// For select filters, pass the exact value type
+column.setFilterValue('active'); // string, not { label: 'Active', value: 'active' }
+
+// To clear a filter, pass undefined (not null or empty string)
+column.setFilterValue(undefined);
+```
+
 ## Debugging Tips
 
-1. **React DevTools** — Look for unnecessary re-renders
-2. **Console.log query keys** — Ensure they update when state changes
-3. **React Profiler** — Measure render performance
-4. **Network tab** — Verify API calls match expectations
-5. **Log state handlers** — Add logs in `onPaginationChange`, `onSortingChange`, etc.
+### Diagnosing Re-Render Loops
+
+```tsx
+// Log what's causing re-renders
+useEffect(() => {
+  console.log('data ref changed');
+}, [data]);
+
+useEffect(() => {
+  console.log('columns ref changed');
+}, [columns]);
+
+useEffect(() => {
+  console.log('table state changed', table.getState());
+});
+```
+
+If `data ref changed` fires repeatedly, data is not memoized.
+
+### Verifying Query Key Sync
+
+```tsx
+const queryKey = ['users', pagination, sorting, filters];
+console.log('queryKey:', JSON.stringify(queryKey));
+```
+
+Check the Network tab to confirm each state change triggers exactly one API call. Multiple calls indicate unstable references in the query key.
+
+### State Handler Debugging
+
+```tsx
+onPaginationChange: (updater) => {
+  const next =
+    typeof updater === 'function' ? updater(pagination) : updater;
+  console.log('pagination:', pagination, '->', next);
+  setPagination(next);
+},
+```
+
+### Common Debugging Checklist
+
+| Symptom                       | First Check                            | Likely Cause                             |
+| ----------------------------- | -------------------------------------- | ---------------------------------------- |
+| Table doesn't update          | React DevTools: check for re-renders   | React Compiler + missing `'use no memo'` |
+| Filter shows wrong results    | Log `columnFilters` state              | Value type mismatch or stale state       |
+| Selection lost on page change | Check `getRowId` config                | Missing `getRowId`, using index keys     |
+| API called multiple times     | Network tab: count requests per action | Unstable query key references            |
+| Empty table after filter      | Log `pageIndex` on filter change       | Page not reset to 0                      |
+| Sort not applying server-side | Log query key after sort click         | `sorting` not in query key               |

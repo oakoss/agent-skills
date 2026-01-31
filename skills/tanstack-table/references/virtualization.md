@@ -10,6 +10,8 @@ tags:
     overscan,
     estimateSize,
     performance,
+    profiler,
+    memoization,
     large-dataset,
     1000-rows,
   ]
@@ -183,17 +185,72 @@ const rowVirtualizer = useVirtualizer({
 });
 ```
 
+## Memoization Strategy
+
+Memoize at three levels to minimize re-renders:
+
+```tsx
+// Level 1: Stable data reference
+const data = useMemo(() => apiResponse?.data ?? [], [apiResponse?.data]);
+
+// Level 2: Stable column definitions (define outside component or useMemo)
+const columns = useMemo<ColumnDef<User>[]>(
+  () => [
+    { accessorKey: 'name', header: 'Name', size: 200 },
+    { accessorKey: 'email', header: 'Email', size: 250 },
+  ],
+  [],
+);
+
+// Level 3: Memoize expensive cell renderers
+const StatusCell = memo(({ status }: { status: string }) => (
+  <Badge variant={status === 'active' ? 'default' : 'secondary'}>
+    {status}
+  </Badge>
+));
+```
+
+Columns defined inline without `useMemo` create new references every render, causing the entire table to re-render. This is the most common performance mistake.
+
 ## Measuring Performance
+
+### React Profiler
+
+Wrap the table to measure render cost:
 
 ```tsx
 import { Profiler } from 'react';
 
-<Profiler
-  id="Table"
-  onRender={(id, phase, actualDuration) => {
-    console.log(`${id} ${phase} took ${actualDuration}ms`);
-  }}
->
+function onRender(
+  id: string,
+  phase: string,
+  actualDuration: number,
+  baseDuration: number,
+) {
+  if (actualDuration > 16) {
+    console.warn(
+      `${id} ${phase}: ${actualDuration.toFixed(1)}ms (base: ${baseDuration.toFixed(1)}ms)`,
+    );
+  }
+}
+
+<Profiler id="VirtualTable" onRender={onRender}>
   <VirtualizedTable data={data} columns={columns} />
 </Profiler>;
 ```
+
+**Key metrics:**
+
+- `actualDuration` > 16ms means the render takes longer than one frame (60fps)
+- `baseDuration` shows the cost without memoization
+- Compare both to see memoization effectiveness
+
+### Performance Checklist
+
+| Check                         | How to Verify                       | Target             |
+| ----------------------------- | ----------------------------------- | ------------------ |
+| Data reference stable         | React DevTools highlight updates    | No flash on scroll |
+| Columns reference stable      | Log `useMemo` deps changes          | Zero after mount   |
+| Cell renderers memoized       | Profiler `actualDuration`           | < 16ms per frame   |
+| Overscan tuned                | Scroll smoothness vs DOM node count | 5-15 rows          |
+| No DevTools during benchmarks | Close React DevTools extension      | Required           |

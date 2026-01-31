@@ -11,6 +11,8 @@ tags:
     error-handling,
     server-error,
     validation,
+    result-type,
+    try-catch,
   ]
 ---
 
@@ -97,6 +99,83 @@ function handleServerError(error: unknown): { error: string; code: string } {
 | Resource not found   | 404    | `NOT_FOUND`        | Use `notFound()`             |
 | Conflict (duplicate) | 409    | `CONFLICT`         | Specific conflict message    |
 | Server error         | 500    | `INTERNAL_ERROR`   | Generic message, log details |
+
+## Try-Catch vs Result Types
+
+Two approaches to error handling in server functions, each with trade-offs:
+
+### Try-Catch: Exceptions as Control Flow
+
+Server functions throw errors, callers wrap in try-catch:
+
+```ts
+export const deletePost = createServerFn({ method: 'POST' })
+  .inputValidator(z.object({ id: z.string() }))
+  .handler(async ({ data }) => {
+    const post = await db.posts.findUnique({ where: { id: data.id } });
+    if (!post) {
+      setResponseStatus(404);
+      throw new AppError('Post not found', 'NOT_FOUND', 404);
+    }
+    await db.posts.delete({ where: { id: data.id } });
+    return { success: true };
+  });
+```
+
+```tsx
+// Caller must remember to catch
+try {
+  await deletePost({ data: { id: postId } });
+  toast.success('Deleted');
+} catch (error) {
+  if (error instanceof AppError) {
+    toast.error(error.message);
+  }
+}
+```
+
+### Result Types: Errors as Values
+
+Server functions return discriminated unions, callers check the result:
+
+```ts
+type Result<T> =
+  | { ok: true; data: T }
+  | { ok: false; error: string; code: string };
+
+export const deletePost = createServerFn({ method: 'POST' })
+  .inputValidator(z.object({ id: z.string() }))
+  .handler(async ({ data }): Promise<Result<{ success: true }>> => {
+    const post = await db.posts.findUnique({ where: { id: data.id } });
+    if (!post) {
+      return { ok: false, error: 'Post not found', code: 'NOT_FOUND' };
+    }
+    await db.posts.delete({ where: { id: data.id } });
+    return { ok: true, data: { success: true } };
+  });
+```
+
+```tsx
+// Compiler forces error check via type narrowing
+const result = await deletePost({ data: { id: postId } });
+if (result.ok) {
+  toast.success('Deleted');
+} else {
+  toast.error(result.error);
+}
+```
+
+### Comparison
+
+| Aspect            | Try-Catch               | Result Types               |
+| ----------------- | ----------------------- | -------------------------- |
+| Type safety       | Errors are untyped      | Compiler enforces checks   |
+| Forgotten checks  | Silent runtime bugs     | Type error at compile time |
+| Redirect/notFound | Works naturally (throw) | Must be handled separately |
+| Verbosity         | Less boilerplate        | More explicit              |
+| Composition       | try-catch nesting       | Flat conditional chains    |
+
+**Recommendation**: Use result types for business logic errors (validation, not found, forbidden). Use exceptions for truly exceptional cases (redirect, notFound, infrastructure failures).
 
 ## Anti-Patterns
 

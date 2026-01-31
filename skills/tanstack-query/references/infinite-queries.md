@@ -27,7 +27,7 @@ const todosInfiniteOptions = infiniteQueryOptions({
 useInfiniteQuery(todosInfiniteOptions);
 ```
 
-Memory optimization with `maxPages` (requires bi-directional pagination):
+Memory optimization with `maxPages` limits how many pages are kept in cache. When the user scrolls forward past the limit, old pages are dropped. Requires `getPreviousPageParam` so dropped pages can be re-fetched when scrolling back (bi-directional pagination):
 
 ```tsx
 useInfiniteQuery({
@@ -36,9 +36,11 @@ useInfiniteQuery({
   initialPageParam: 0,
   getNextPageParam: (lastPage) => lastPage.nextCursor,
   getPreviousPageParam: (firstPage) => firstPage.prevCursor,
-  maxPages: 3,
+  maxPages: 3, // Only keep 3 pages in memory at a time
 });
 ```
+
+Without `maxPages`, infinite queries accumulate all fetched pages in memory and refetch all of them on invalidation. For long lists, this causes memory bloat and slow refetches.
 
 ## Intersection Observer Auto-Loading
 

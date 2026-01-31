@@ -16,6 +16,11 @@ tags:
     vite-plugin,
     wrangler,
     bindings,
+    D1,
+    KV,
+    R2,
+    adapter,
+    prerender,
   ]
 ---
 
@@ -49,13 +54,54 @@ compatibility_flags = ["nodejs_compat"]
 main = "@tanstack/react-start/server-entry"
 ```
 
-Access bindings in server functions:
+Access bindings (D1, KV, R2) in server functions via `request.context.cloudflare.env`:
 
 ```ts
 export const getUser = createServerFn().handler(async ({ request }) => {
   const env = request.context.cloudflare.env;
-  const result = await env.DB.prepare('SELECT * FROM users').all();
-  return result.results;
+
+  // D1 database
+  const result = await env.DB.prepare('SELECT * FROM users WHERE id = ?')
+    .bind(userId)
+    .first();
+
+  // KV storage
+  const cached = await env.CACHE.get('user:123', 'json');
+  await env.CACHE.put('user:123', JSON.stringify(result), {
+    expirationTtl: 3600,
+  });
+
+  // R2 object storage
+  const file = await env.BUCKET.get('avatar.png');
+
+  return result;
+});
+```
+
+Conditional logic for prerendering with bindings (bindings are unavailable at build time):
+
+```ts
+export const Route = createFileRoute('/users')({
+  loader: async ({ context }) => {
+    if (typeof context.cloudflare === 'undefined') {
+      return { users: [] };
+    }
+    const env = context.cloudflare.env;
+    const { results } = await env.DB.prepare('SELECT * FROM users').all();
+    return { users: results };
+  },
+});
+```
+
+Alternatively, disable prerendering on routes that use bindings:
+
+```ts
+export const Route = createFileRoute('/users')({
+  prerender: false,
+  loader: async ({ context }) => {
+    const env = context.cloudflare.env;
+    return { users: await env.DB.prepare('SELECT * FROM users').all() };
+  },
 });
 ```
 
@@ -145,6 +191,19 @@ export default defineConfig({
 ```
 
 Output: `.output/public` (host on GitHub Pages, S3, any static host).
+
+## Adapter Comparison
+
+| Adapter            | Plugin                                 | Runtime | Edge | Static | Best For                     |
+| ------------------ | -------------------------------------- | ------- | ---- | ------ | ---------------------------- |
+| Cloudflare Workers | `@cloudflare/vite-plugin`              | Workers | Yes  | No     | Edge-first, D1/KV/R2         |
+| Cloudflare Pages   | `@cloudflare/vite-plugin`              | Workers | Yes  | Yes    | Static + edge functions      |
+| Vercel             | `nitro/vite` (`preset: 'vercel'`)      | Node    | No   | Yes    | One-click deploy, serverless |
+| Netlify            | `@netlify/vite-plugin-tanstack-start`  | Node    | No   | Yes    | Netlify ecosystem            |
+| Node.js / Docker   | `nitro/vite` (`preset: 'node-server'`) | Node    | No   | No     | VPS, Railway, self-hosted    |
+| AWS Lambda         | `nitro/vite` (`preset: 'aws-lambda'`)  | Node    | No   | No     | AWS serverless               |
+| Bun                | `nitro/vite` (`preset: 'bun'`)         | Bun     | No   | No     | Bun runtime (React 19 only)  |
+| Static             | `nitro/vite` (`preset: 'static'`)      | None    | No   | Yes    | GitHub Pages, S3, CDN        |
 
 ## Deployment Notes
 

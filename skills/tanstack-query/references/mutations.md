@@ -246,6 +246,60 @@ const queryClient = new QueryClient({
 });
 ```
 
+## useMutationState for Cross-Component Tracking
+
+Track mutation state from any component without prop drilling:
+
+```tsx
+import { useMutationState } from '@tanstack/react-query';
+
+function GlobalLoadingIndicator() {
+  const pendingCount = useMutationState({
+    filters: { status: 'pending' },
+    select: (mutation) => mutation.state.status,
+  }).length;
+
+  if (pendingCount === 0) return null;
+  return <Spinner />;
+}
+```
+
+Show optimistic items from a sibling component:
+
+```tsx
+function OptimisticTodoList() {
+  const { data: todos } = useQuery({
+    queryKey: ['todos'],
+    queryFn: fetchTodos,
+  });
+
+  const pendingTodos = useMutationState({
+    filters: { mutationKey: ['addTodo'], status: 'pending' },
+    select: (mutation) => mutation.state.variables as CreateTodoInput,
+  });
+
+  return (
+    <ul>
+      {todos?.map((todo) => (
+        <TodoItem key={todo.id} todo={todo} />
+      ))}
+      {pendingTodos.map((todo, i) => (
+        <TodoItem key={`pending-${i}`} todo={todo} isPending />
+      ))}
+    </ul>
+  );
+}
+```
+
+`useMutationState` returns a snapshot array that updates when matching mutations change. Combine with `mutationKey` on `useMutation` to enable filtering:
+
+```tsx
+const addTodo = useMutation({
+  mutationKey: ['addTodo'],
+  mutationFn: createTodoFn,
+});
+```
+
 ## Query with Server Functions
 
 ```tsx

@@ -26,6 +26,40 @@ const queryClient = new QueryClient({
 });
 ```
 
+## fetchStatus vs status
+
+Queries have two orthogonal status axes:
+
+| Axis          | Values                        | Meaning                           |
+| ------------- | ----------------------------- | --------------------------------- |
+| `status`      | `pending`, `error`, `success` | Does the query have data?         |
+| `fetchStatus` | `fetching`, `paused`, `idle`  | Is the queryFn currently running? |
+
+Combined states:
+
+| status    | fetchStatus | Meaning                                  |
+| --------- | ----------- | ---------------------------------------- |
+| `success` | `fetching`  | Has data, background refetch in progress |
+| `success` | `idle`      | Has data, nothing happening              |
+| `pending` | `fetching`  | No data yet, first fetch in progress     |
+| `pending` | `paused`    | No data, fetch paused (offline)          |
+| `error`   | `idle`      | Failed, not retrying                     |
+| `error`   | `fetching`  | Failed previously, retrying now          |
+
+Use `isPaused` to detect when a query is waiting for network:
+
+```tsx
+const { data, isPending, isPaused } = useQuery({
+  queryKey: ['todos'],
+  queryFn: fetchTodos,
+});
+
+if (isPaused) return <OfflineBanner />;
+if (isPending) return <Spinner />;
+```
+
+`isPaused` is `true` when `fetchStatus === 'paused'`. This happens when a query wants to fetch but can't because the device is offline (in `online` or `offlineFirst` network mode).
+
 ## Mutation Persistence
 
 Persist mutations across page reloads/app restarts:

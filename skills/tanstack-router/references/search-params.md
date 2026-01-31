@@ -36,6 +36,26 @@ export const Route = createFileRoute('/search')({
 
 Use `.catch()` to silently fix malformed params. Use `.default()` + `errorComponent` to show validation errors.
 
+## Validation with Valibot
+
+Valibot is a lighter alternative to Zod with the same adapter pattern:
+
+```ts
+import { valibotValidator, fallback } from '@tanstack/valibot-adapter';
+import * as v from 'valibot';
+
+const searchSchema = v.object({
+  page: fallback(v.pipe(v.number(), v.integer(), v.minValue(1)), 1),
+  sort: v.optional(v.picklist(['name', 'date'])),
+});
+
+export const Route = createFileRoute('/search')({
+  validateSearch: valibotValidator(searchSchema),
+});
+```
+
+Install: `npm install @tanstack/valibot-adapter valibot`
+
 ## Updating Search Params
 
 ```ts

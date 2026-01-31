@@ -14,6 +14,10 @@ tags:
     protected-routes,
     login,
     logout,
+    createIsomorphicFn,
+    getRequestHeaders,
+    better-auth,
+    header-forwarding,
   ]
 ---
 
@@ -130,6 +134,67 @@ export const Route = createRootRouteWithContext()({
   },
 });
 ```
+
+## Advanced Auth Patterns
+
+### Forward Headers to External APIs
+
+Server functions originate from the Start server, not the browser. Cookies and auth headers must be forwarded manually:
+
+```ts
+import { createServerFn } from '@tanstack/react-start';
+import { getRequestHeaders } from '@tanstack/react-start/server';
+
+export const getExternalUser = createServerFn().handler(async () => {
+  const headers = getRequestHeaders();
+
+  const response = await fetch('https://api.example.com/me', {
+    headers: {
+      Cookie: headers.get('cookie') || '',
+      Authorization: headers.get('authorization') || '',
+    },
+  });
+
+  return response.json();
+});
+```
+
+### createIsomorphicFn for Cookie Maintenance
+
+Use `createIsomorphicFn` to avoid header forwarding for read operations. On the client, the browser attaches cookies automatically. On the server, headers are forwarded explicitly:
+
+```ts
+import { createIsomorphicFn } from '@tanstack/react-start';
+import { getRequestHeaders } from '@tanstack/react-start/server';
+
+const fetchUser = createIsomorphicFn()
+  .client(async () => {
+    const res = await fetch('/api/user', { credentials: 'include' });
+    return res.json();
+  })
+  .server(async () => {
+    const headers = getRequestHeaders();
+    const res = await fetch('https://api.example.com/user', {
+      headers: { Cookie: headers.get('cookie') || '' },
+    });
+    return res.json();
+  });
+```
+
+### Better Auth Integration
+
+Use the `reactStartCookies()` plugin to handle cookie synchronization:
+
+```ts
+import { betterAuth } from 'better-auth';
+import { reactStartCookies } from 'better-auth/plugins';
+
+export const auth = betterAuth({
+  plugins: [reactStartCookies()],
+});
+```
+
+Without this plugin, session cookies may not be set or refreshed properly in TanStack Start server functions.
 
 ## Security Anti-Patterns
 

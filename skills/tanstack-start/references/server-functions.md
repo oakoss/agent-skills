@@ -4,6 +4,7 @@ description: createServerFn patterns including validation, authentication, reque
 tags:
   [
     createServerFn,
+    useServerFn,
     server-function,
     inputValidator,
     handler,
@@ -205,6 +206,57 @@ const streamData = createServerFn().handler(async () => {
     headers: { 'Content-Type': 'text/event-stream' },
   });
 });
+```
+
+## useServerFn Hook
+
+Wraps a server function for use in components with pending state tracking:
+
+```tsx
+import { useServerFn } from '@tanstack/react-start';
+
+function DeleteButton({ postId }: { postId: string }) {
+  const deletePostFn = useServerFn(deletePost);
+
+  const handleDelete = async () => {
+    const result = await deletePostFn({ data: { id: postId } });
+    if ('error' in result) {
+      toast.error(result.error);
+    }
+  };
+
+  return <button onClick={handleDelete}>Delete</button>;
+}
+```
+
+Use with TanStack Query mutations for optimistic updates and cache invalidation:
+
+```tsx
+import { useServerFn } from '@tanstack/react-start';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+function CreatePostButton() {
+  const queryClient = useQueryClient();
+  const createPostFn = useServerFn(createPost);
+
+  const mutation = useMutation({
+    mutationFn: createPostFn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+    },
+  });
+
+  return (
+    <button
+      disabled={mutation.isPending}
+      onClick={() =>
+        mutation.mutate({ data: { title: 'New Post', content: '...' } })
+      }
+    >
+      {mutation.isPending ? 'Creating...' : 'Create Post'}
+    </button>
+  );
+}
 ```
 
 ## Validation Schema Composition

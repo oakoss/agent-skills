@@ -1,7 +1,7 @@
 ---
 name: tanstack-table
 description: |
-  TanStack Table v8 headless data tables for React. Covers column definitions, sorting, filtering (fuzzy/faceted), server-side pagination with TanStack Query, infinite scroll, virtualization (TanStack Virtual), column/row pinning, row expanding/grouping, and reusable Shadcn-styled components. Prevents 12 documented errors including infinite re-renders, React Compiler incompatibility, and server-side state mismatches.
+  TanStack Table v8 headless data tables for React. Covers column definitions, sorting, filtering (fuzzy/faceted), server-side pagination with TanStack Query, infinite scroll, virtualization (TanStack Virtual), column/row pinning, row expanding/grouping, and reusable Shadcn-styled components. Prevents 15 documented errors including infinite re-renders, React Compiler incompatibility, and server-side state mismatches.
 
   Use when building data tables, fixing table performance, implementing server-side pagination, adding filtering/sorting, or debugging table state issues.
 ---
@@ -29,6 +29,7 @@ TanStack Table is a **headless** table library — it provides state management 
 | Column visibility | `onColumnVisibilityChange`                           | Toggle with `column.toggleVisibility()`      |
 | Column pinning    | `enableColumnPinning` + `initialState.columnPinning` | Don't pin group columns (known bug)          |
 | Row expanding     | `getExpandedRowModel()` + `getSubRows`               | For nested/tree data                         |
+| Column resizing   | `enableColumnResizing` + `columnResizeMode`          | `onChange` for live, `onEnd` for performant  |
 | Row grouping      | `getGroupedRowModel()` + `aggregationFn`             | Performance degrades at 10k+ rows            |
 | Server-side       | `manual*: true` flags + include state in queryKey    | All state in query key for proper refetching |
 | Infinite scroll   | `useInfiniteQuery` + flatten pages                   | Combine with TanStack Virtual for best perf  |
@@ -46,6 +47,7 @@ TanStack Table is a **headless** table library — it provides state management 
 | Hide column       | `column.toggleVisibility()`    |
 | Get original data | `row.original`                 |
 | Pin column        | `column.pin('left')`           |
+| Resize column     | `header.getResizeHandler()`    |
 | Expand row        | `row.toggleExpanded()`         |
 
 ## Row Models
@@ -70,6 +72,7 @@ TanStack Table is a **headless** table library — it provides state management 
 | Using v7 `useTable` / `Header` / `accessor` | Use v8 `useReactTable` / `header` / `accessorKey`          |
 | Pinning group columns                       | Pin individual columns within the group, not parent        |
 | Grouping on 10k+ rows                       | Use server-side grouping or disable for large datasets     |
+| Column filter not clearing on page change   | Reset `pageIndex` to 0 when filters change                 |
 | Missing `'use no memo'` with React Compiler | Add directive to components using `useReactTable`          |
 
 ## Delegation
@@ -88,5 +91,5 @@ TanStack Table is a **headless** table library — it provides state management 
 - [Virtualization for large datasets](references/virtualization.md)
 - [Column and row pinning](references/column-row-pinning.md)
 - [Row expanding and grouping](references/expanding-grouping.md)
-- [Known issues and solutions (12 documented)](references/known-issues.md)
+- [Known issues and solutions (15 documented)](references/known-issues.md)
 - [v7 to v8 migration guide](references/v7-migration.md)

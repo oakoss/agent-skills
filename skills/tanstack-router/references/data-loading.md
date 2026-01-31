@@ -152,6 +152,43 @@ export const Route = createFileRoute('/posts')({
 });
 ```
 
+### Preventing Unnecessary Re-Fetches
+
+Without `loaderDeps`, the loader re-runs on every search param change. With `loaderDeps`, it only re-runs when the returned value changes (compared via structural sharing):
+
+```ts
+export const Route = createFileRoute('/products')({
+  validateSearch: z.object({
+    page: z.number().default(1),
+    sort: z.enum(['name', 'price']).default('name'),
+    highlight: z.string().optional(),
+  }),
+  loaderDeps: ({ search }) => ({
+    page: search.page,
+    sort: search.sort,
+  }),
+  loader: async ({ deps }) => fetchProducts(deps),
+});
+```
+
+Changing `highlight` (cosmetic param) does not re-run the loader. Only `page` and `sort` trigger re-fetches. Return only the values the loader actually uses.
+
+When using TanStack Query, `loaderDeps` and `queryKey` serve complementary roles: `loaderDeps` controls when the loader re-runs, and `queryKey` controls Query's cache identity. Keep them aligned:
+
+```ts
+const productOpts = (deps: { page: number; sort: string }) =>
+  queryOptions({
+    queryKey: ['products', deps],
+    queryFn: () => fetchProducts(deps),
+  });
+
+export const Route = createFileRoute('/products')({
+  loaderDeps: ({ search }) => ({ page: search.page, sort: search.sort }),
+  loader: ({ deps, context: { queryClient } }) =>
+    queryClient.ensureQueryData(productOpts(deps)),
+});
+```
+
 ## Automatic Suspense
 
 Every route wraps in `<Suspense>` and `<ErrorBoundary>` automatically. Route components only need happy-path rendering:

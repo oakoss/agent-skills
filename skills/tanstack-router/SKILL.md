@@ -78,4 +78,5 @@ Use this skill for TanStack Router file-based routing, route loaders, search par
 - [Navigation](references/navigation.md) — Link, active styling, relative navigation, hash, route masks, blocker, scroll restoration
 - [Auth and Context](references/auth-and-context.md) — beforeLoad, context inheritance, pathless layouts, dependency injection
 - [Code Splitting](references/code-splitting.md) — lazy routes, virtual routes, auto splitting, preloading
+- [Virtual File Routes](references/virtual-routes.md) — rootRoute, route, index, layout, physical builders, mixing file-based and code-based routing
 - [Known Issues](references/known-issues.md) — 20 documented issues with fixes, anti-patterns

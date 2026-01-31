@@ -153,6 +153,31 @@ function isApiError(error: unknown): error is z.infer<typeof apiErrorSchema> {
 }
 ```
 
+## ESLint Plugin
+
+`@tanstack/eslint-plugin-query` catches common mistakes at lint time:
+
+```bash
+pnpm add -D @tanstack/eslint-plugin-query
+```
+
+Key rules:
+
+| Rule                            | What It Catches                                              |
+| ------------------------------- | ------------------------------------------------------------ |
+| `exhaustive-deps`               | Missing variables in `queryKey` that `queryFn` depends on    |
+| `stable-query-client`           | Creating `QueryClient` inside component body (no `useState`) |
+| `no-rest-destructuring`         | Destructuring query result breaks type narrowing             |
+| `infinite-query-property-order` | Wrong property order in infinite query options               |
+| `no-unstable-deps`              | Unstable references in `queryKey` (inline objects/arrays)    |
+
+```ts
+// eslint.config.ts
+import pluginQuery from '@tanstack/eslint-plugin-query';
+
+export default [...pluginQuery.configs['flat/recommended']];
+```
+
 ## End-to-End Type Safety
 
 For full-stack TypeScript, consider:

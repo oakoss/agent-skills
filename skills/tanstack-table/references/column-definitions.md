@@ -15,6 +15,8 @@ tags:
     pagination,
     sorting,
     filtering,
+    resizing,
+    resize,
   ]
 ---
 
@@ -216,6 +218,82 @@ const table = useReactTable({
 | `getPageCount()`       | Total pages            |
 | `getCanNextPage()`     | Can go forward         |
 | `getCanPreviousPage()` | Can go back            |
+
+## Column Resizing
+
+### Basic Setup
+
+```tsx
+const table = useReactTable({
+  data,
+  columns,
+  getCoreRowModel: getCoreRowModel(),
+  enableColumnResizing: true,
+  columnResizeMode: 'onChange', // Live resize preview
+});
+```
+
+### Resize Modes
+
+| Mode       | Behavior                                 | Performance |
+| ---------- | ---------------------------------------- | ----------- |
+| `onChange` | Columns resize live while dragging       | Lower       |
+| `onEnd`    | Columns resize only after drag completes | Higher      |
+
+Use `onEnd` for tables with many columns or expensive cell renderers.
+
+### Resize Handle
+
+```tsx
+{
+  table.getHeaderGroups().map((headerGroup) => (
+    <tr key={headerGroup.id}>
+      {headerGroup.headers.map((header) => (
+        <th key={header.id} style={{ width: header.getSize() }}>
+          {flexRender(header.column.columnDef.header, header.getContext())}
+          <div
+            onMouseDown={header.getResizeHandler()}
+            onTouchStart={header.getResizeHandler()}
+            className={`resize-handle ${header.column.getIsResizing() ? 'isResizing' : ''}`}
+          />
+        </th>
+      ))}
+    </tr>
+  ));
+}
+```
+
+### Column Width Styles
+
+Apply widths to both `<th>` and `<td>` elements:
+
+```tsx
+style={{
+  width: header.getSize(),
+  minWidth: header.column.columnDef.minSize,
+  maxWidth: header.column.columnDef.maxSize,
+}}
+```
+
+### Size Constraints
+
+```tsx
+const columns = [
+  {
+    accessorKey: 'name',
+    header: 'Name',
+    size: 200, // Default width
+    minSize: 100, // Minimum resize width
+    maxSize: 400, // Maximum resize width
+    enableResizing: true, // Per-column toggle (default: true)
+  },
+  {
+    id: 'actions',
+    size: 60,
+    enableResizing: false, // Fixed-width column
+  },
+];
+```
 
 ## Rendering with flexRender
 

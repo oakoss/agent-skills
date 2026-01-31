@@ -17,6 +17,7 @@ Full-stack React framework built on TanStack Router. Type-safe server functions,
 | `createServerFn({ method: 'POST' })` | Mutations that change data                          |
 | `.inputValidator(zodSchema)`         | Input validation before handler                     |
 | `.handler(async ({ data }) => {})`   | Server-side logic                                   |
+| `useServerFn(fn)`                    | Wrap server function for component use              |
 | `createIsomorphicFn()`               | Different implementations per environment           |
 | `createServerOnlyFn()`               | Server-only utility — crashes if called from client |
 | `createClientOnlyFn()`               | Client-only utility — crashes if called from server |
@@ -83,6 +84,8 @@ Full-stack React framework built on TanStack Router. Type-safe server functions,
 | `Date.now()` in render                       | Pass timestamp from loader (hydration mismatch) |
 | Missing `nodejs_compat` flag                 | Required in `wrangler.toml` for Cloudflare      |
 | GET for mutations                            | Use POST for create/update/delete               |
+| Cookies not forwarded to external APIs       | Use `getRequestHeaders()` to forward manually   |
+| Unvalidated server env vars                  | Validate with Zod in `.server.ts` files         |
 
 ## Delegation
 
@@ -90,13 +93,13 @@ Use this skill for TanStack Start server functions, middleware, SSR/streaming, r
 
 ## References
 
-- [Server Functions](references/server-functions.md) — createServerFn, validation, auth, request context, response headers, file uploads, streaming
+- [Server Functions](references/server-functions.md) — createServerFn, useServerFn, validation, auth, request context, response headers, file uploads, streaming
 - [Middleware](references/middleware.md) — composition, function-level middleware, global middleware
 - [SSR and Streaming](references/ssr-and-streaming.md) — Suspense, prerendering, ISR, cache-control, hydration safety
-- [Route Protection](references/route-protection.md) — beforeLoad, pathless layouts, session security
+- [Route Protection](references/route-protection.md) — beforeLoad, pathless layouts, session security, header forwarding, Better Auth
 - [API Routes](references/api-routes.md) — createFileRoute server handlers, REST patterns, route-level middleware, webhooks, health check
-- [Deployment](references/deployment.md) — Vite plugins for Cloudflare, Netlify, Nitro presets, Docker, Cloudflare bindings
+- [Deployment](references/deployment.md) — Vite plugins, adapter comparison, Cloudflare D1/KV/R2 bindings, Docker, prerendering
 - [SEO and Head Management](references/seo.md) — head property, meta tags, Open Graph, Twitter Cards, favicons, SEO helper
-- [Error Handling](references/error-handling.md) — structured errors, ApiResult type, status codes, anti-patterns
-- [File Organization](references/file-organization.md) — entry points, plugin config, execution boundaries, feature-based structure, environment config
+- [Error Handling](references/error-handling.md) — discriminated unions, try-catch vs result types, status codes, anti-patterns
+- [File Organization](references/file-organization.md) — entry points, plugin config, execution boundaries, Zod env validation, .server.ts convention
 - [Known Issues](references/known-issues.md) — 10 documented issues with workarounds
