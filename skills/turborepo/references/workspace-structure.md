@@ -201,6 +201,23 @@ Extract shared code to `packages/`, not `apps/web/shared/`.
 
 Always use `turbo run` in code (package.json, CI, scripts). The shorthand `turbo <task>` is only for one-off terminal commands.
 
+## JSONC Support
+
+Use `turbo.jsonc` instead of `turbo.json` to add comments to configuration:
+
+```jsonc
+{
+  "$schema": "https://turborepo.dev/schema.json",
+  // Build all dependencies first
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+    },
+  },
+}
+```
+
 ## Lockfile
 
 A lockfile is required for reproducible builds, dependency understanding, and cache correctness.

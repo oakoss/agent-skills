@@ -24,8 +24,8 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node-version }}
       - run: pnpm install && pnpm run lint && pnpm test
@@ -42,7 +42,7 @@ jobs:
   ci:
     uses: ./.github/workflows/standard-ci.yml
     with:
-      node-version: '20'
+      node-version: '22'
 ```
 
 ## Dynamic Matrix Testing
@@ -56,10 +56,10 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        node: [20, 22]
+        node: [22, 24]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
       - run: pnpm install && pnpm test
@@ -103,9 +103,9 @@ description: Install dependencies and setup environment
 runs:
   using: composite
   steps:
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@v6
       with:
-        node-version: '20'
+        node-version: '22'
     - uses: pnpm/action-setup@v4
     - run: pnpm install --frozen-lockfile
       shell: bash
@@ -127,7 +127,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
+      - uses: actions/checkout@v6 # pin to SHA in production
 ```
 
 ## AI-Assisted Automation

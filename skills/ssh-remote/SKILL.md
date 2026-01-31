@@ -1,288 +1,83 @@
 ---
 name: ssh-remote
-description: 'SSH remote access patterns and utilities. Use when connecting to servers, managing SSH keys, setting up tunnels, or transferring files.'
+description: |
+  SSH remote access patterns and secure shell utilities. Covers connections, config management, key generation (Ed25519, FIDO2), tunneling, port forwarding, file transfers, and multiplexing.
+
+  Use when connecting to servers, managing SSH keys, setting up tunnels, transferring files over SSH, configuring jump hosts, or hardening SSH access.
 ---
 
-# SSH Skill
-
-Use SSH for secure remote access, file transfers, and tunneling.
-
-## Basic Connection
-
-Connect to server:
-
-```bash
-ssh user@hostname
-```
-
-Connect on specific port:
-
-```bash
-ssh -p 2222 user@hostname
-```
-
-Connect with specific identity:
-
-```bash
-ssh -i ~/.ssh/my_key user@hostname
-```
-
-## SSH Config
-
-Config file location:
-
-```sh
-~/.ssh/config
-```
-
-Example config entry:
-
-```sh
-Host myserver
-    HostName 192.168.1.100
-    User deploy
-    Port 22
-    IdentityFile ~/.ssh/myserver_key
-    ForwardAgent yes
-```
-
-Then connect with just:
-
-```bash
-ssh myserver
-```
-
-## Running Remote Commands
-
-Execute single command:
-
-```bash
-ssh user@host "ls -la /var/log"
-```
-
-Execute multiple commands:
-
-```bash
-ssh user@host "cd /app && git pull && pm2 restart all"
-```
-
-Run with pseudo-terminal (for interactive):
-
-```bash
-ssh -t user@host "htop"
-```
-
-## File Transfer with SCP
-
-Copy file to remote:
-
-```bash
-scp local.txt user@host:/remote/path/
-```
-
-Copy file from remote:
-
-```bash
-scp user@host:/remote/file.txt ./local/
-```
-
-Copy directory recursively:
-
-```bash
-scp -r ./local_dir user@host:/remote/path/
-```
-
-## File Transfer with rsync (preferred)
-
-Sync directory to remote:
-
-```bash
-rsync -avz ./local/ user@host:/remote/path/
-```
-
-Sync from remote:
-
-```bash
-rsync -avz user@host:/remote/path/ ./local/
-```
-
-With progress and compression:
-
-```bash
-rsync -avzP ./local/ user@host:/remote/path/
-```
-
-Dry run first:
-
-```bash
-rsync -avzn ./local/ user@host:/remote/path/
-```
-
-## Port Forwarding (Tunnels)
-
-Local forward (access remote service locally):
-
-```bash
-ssh -L 8080:localhost:80 user@host
-# Now localhost:8080 connects to host's port 80
-```
-
-Local forward to another host:
-
-```bash
-ssh -L 5432:db-server:5432 user@jumphost
-# Access db-server:5432 via localhost:5432
-```
-
-Remote forward (expose local service to remote):
-
-```bash
-ssh -R 9000:localhost:3000 user@host
-# Remote's port 9000 connects to your local 3000
-```
-
-Dynamic SOCKS proxy:
-
-```bash
-ssh -D 1080 user@host
-# Use localhost:1080 as SOCKS5 proxy
-```
-
-## Jump Hosts / Bastion
-
-Connect through jump host:
-
-```bash
-ssh -J jumphost user@internal-server
-```
-
-Multiple jumps:
-
-```bash
-ssh -J jump1,jump2 user@internal-server
-```
-
-In config file:
-
-```sh
-Host internal
-    HostName 10.0.0.50
-    User deploy
-    ProxyJump bastion
-```
-
-## Key Management
-
-Generate new key (Ed25519, recommended):
-
-```bash
-ssh-keygen -t ed25519 -C "your_email@example.com"
-```
-
-Generate RSA key (legacy compatibility):
-
-```bash
-ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
-```
-
-Copy public key to server:
-
-```bash
-ssh-copy-id user@host
-```
-
-Copy specific key:
-
-```bash
-ssh-copy-id -i ~/.ssh/mykey.pub user@host
-```
-
-## SSH Agent
-
-Start agent:
-
-```bash
-eval "$(ssh-agent -s)"
-```
-
-Add key to agent:
-
-```bash
-ssh-add ~/.ssh/id_ed25519
-```
-
-Add with macOS keychain:
-
-```bash
-ssh-add --apple-use-keychain ~/.ssh/id_ed25519
-```
-
-List loaded keys:
-
-```bash
-ssh-add -l
-```
-
-## Multiplexing (Connection Sharing)
-
-In ~/.ssh/config:
-
-```sh
-Host *
-    ControlMaster auto
-    ControlPath ~/.ssh/sockets/%r@%h-%p
-    ControlPersist 600
-```
-
-Create socket directory:
-
-```bash
-mkdir -p ~/.ssh/sockets
-```
-
-## Known Hosts
-
-Remove old host key:
-
-```bash
-ssh-keygen -R hostname
-```
-
-Scan and add host key:
-
-```bash
-ssh-keyscan hostname >> ~/.ssh/known_hosts
-```
-
-## Debugging
-
-Verbose output:
-
-```bash
-ssh -v user@host
-```
-
-Very verbose:
-
-```bash
-ssh -vv user@host
-```
-
-Maximum verbosity:
-
-```bash
-ssh -vvv user@host
-```
+# SSH Remote Access
+
+## Overview
+
+SSH (Secure Shell) provides encrypted remote access, file transfer, and tunneling over untrusted networks. OpenSSH is the standard implementation on Linux, macOS, and Windows (via built-in client). The client configuration lives at `~/.ssh/config` and supports per-host settings, identity management, and connection reuse.
+
+**When to use:** Remote server management, secure file transfers, port forwarding, jump host traversal, automated deployments, SOCKS proxying.
+
+**When NOT to use:** High-throughput bulk data transfer across WANs (use Globus or similar), GUI-heavy remote desktop (use VNC/RDP), container orchestration (use kubectl/docker CLI).
+
+## Quick Reference
+
+| Pattern           | Command / Directive                      | Key Points                             |
+| ----------------- | ---------------------------------------- | -------------------------------------- |
+| Basic connect     | `ssh user@host`                          | Add `-p PORT` for non-default port     |
+| Identity file     | `ssh -i ~/.ssh/key user@host`            | Specify private key explicitly         |
+| Remote command    | `ssh user@host "command"`                | Add `-t` for interactive commands      |
+| SSH config alias  | `Host myserver` block in `~/.ssh/config` | Simplifies repeated connections        |
+| File copy (rsync) | `rsync -avzP src user@host:dest`         | Preferred over scp for all transfers   |
+| File copy (scp)   | `scp file user@host:path`                | Legacy protocol; uses SFTP internally  |
+| Local tunnel      | `ssh -L local:remote_host:remote_port`   | Access remote services locally         |
+| Remote tunnel     | `ssh -R remote:localhost:local_port`     | Expose local services to remote        |
+| SOCKS proxy       | `ssh -D 1080 user@host`                  | Dynamic port forwarding                |
+| Jump host         | `ssh -J jump user@target`                | ProxyJump, available since OpenSSH 7.3 |
+| Key generation    | `ssh-keygen -t ed25519`                  | Ed25519 recommended for all new keys   |
+| FIDO2 key         | `ssh-keygen -t ed25519-sk`               | Hardware-backed, requires OpenSSH 8.2+ |
+| Agent             | `ssh-add ~/.ssh/key`                     | Cache key passphrase for session       |
+| Multiplexing      | `ControlMaster auto` in config           | Reuse TCP connections across sessions  |
+| Debug             | `ssh -v user@host`                       | Up to `-vvv` for maximum verbosity     |
+
+## Key Type Recommendations
+
+| Algorithm          | Recommendation                     | Notes                                                     |
+| ------------------ | ---------------------------------- | --------------------------------------------------------- |
+| Ed25519            | Default for all new keys           | 256-bit, fast, secure, supported on OpenSSH 6.5+          |
+| Ed25519-SK (FIDO2) | Strongest option with hardware key | Requires physical security key, OpenSSH 8.2+              |
+| RSA 4096           | Legacy compatibility only          | Use only when Ed25519 is unsupported by the remote system |
+| ECDSA              | Avoid                              | Implementation concerns; prefer Ed25519                   |
+
+## File Transfer Decision Guide
+
+| Scenario                             | Tool                       | Why                                       |
+| ------------------------------------ | -------------------------- | ----------------------------------------- |
+| Recurring syncs or large directories | `rsync -avzP`              | Delta sync, compression, resume, progress |
+| Quick one-off file copy              | `scp` or `rsync`           | scp is simpler; rsync is more capable     |
+| Interactive file browsing            | `sftp`                     | Tab completion, directory navigation      |
+| High-bandwidth WAN transfers         | Specialized tools (Globus) | SSH buffer limits reduce WAN throughput   |
 
 ## Common Mistakes
 
-| Mistake                                           | Correct Pattern                                                          |
-| ------------------------------------------------- | ------------------------------------------------------------------------ |
-| Using RSA keys for new setups                     | Generate Ed25519 keys (`ssh-keygen -t ed25519`) — faster and more secure |
-| Typing passphrase repeatedly during sessions      | Use `ssh-agent` and `ssh-add` to cache keys for the session              |
-| Connecting through multiple hops with nested SSH  | Use `-J` (ProxyJump) for clean bastion/jump host traversal               |
-| Using `scp` for large or recurring file transfers | Prefer `rsync -avzP` for compression, progress, and resumable transfers  |
-| Running interactive commands without `-t` flag    | Use `ssh -t user@host "htop"` to allocate a pseudo-terminal              |
+| Mistake                                          | Correct Pattern                                                             |
+| ------------------------------------------------ | --------------------------------------------------------------------------- |
+| Using RSA keys for new setups                    | Generate Ed25519 keys -- faster, smaller, and equally secure                |
+| Using `scp` for large or recurring transfers     | Use `rsync -avzP` for compression, progress, and resumable delta sync       |
+| Typing passphrase repeatedly during sessions     | Use `ssh-agent` and `ssh-add` to cache keys for the session                 |
+| Connecting through multiple hops with nested SSH | Use `-J` (ProxyJump) for clean bastion/jump host traversal                  |
+| Running interactive commands without `-t` flag   | Use `ssh -t user@host "htop"` to allocate a pseudo-terminal                 |
+| Using `ForwardAgent yes` through untrusted hosts | Use ProxyJump instead -- agent forwarding exposes keys to compromised hosts |
+| Setting `ControlPath` without `%h`, `%p`, `%r`   | Include all three tokens to ensure unique sockets per connection            |
+| Disabling host key checking globally             | Only use `StrictHostKeyChecking no` in trusted, ephemeral environments      |
+| Not using `IdentitiesOnly yes`                   | Prevents offering every loaded key to every server                          |
+
+## Security Checklist
+
+- Generate Ed25519 keys with strong passphrases
+- Set `PasswordAuthentication no` on servers
+- Set `PermitRootLogin prohibit-password` or `no`
+- Use `IdentitiesOnly yes` in client config
+- Restrict keys with `command=` and `from=` in `authorized_keys`
+- Use FIDO2 hardware keys (`ed25519-sk`) for high-security environments
+- Install `fail2ban` on servers to block brute-force attempts
+- Consider SSH certificate authentication for fleet management
 
 ## Delegation
 
@@ -290,11 +85,9 @@ ssh -vvv user@host
 - **Multi-host deployment or bulk file transfers**: Use `Task` agent
 - **Network architecture and bastion host planning**: Use `Plan` agent
 
-## Security Tips
+## References
 
-- Use Ed25519 keys (faster, more secure than RSA)
-- Set `PasswordAuthentication no` on servers
-- Use `fail2ban` on servers to block brute force
-- Keep keys encrypted with passphrases
-- Use `ssh-agent` to avoid typing passphrase repeatedly
-- Restrict key usage with `command=` in authorized_keys
+- [Connections, SSH config, and remote commands](references/connections.md)
+- [File transfers with rsync and scp](references/file-transfer.md)
+- [Port forwarding, SOCKS proxy, and jump hosts](references/tunneling.md)
+- [Key management, FIDO2 keys, agent, and security hardening](references/key-management.md)

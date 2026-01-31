@@ -101,7 +101,9 @@ Allow `turbo watch` to restart tasks on dependency changes:
 ### Monorepo Structure Validation
 
 - Use `turbo boundaries` to enforce package isolation
-- Run `turbo run build --dry-run` to verify task graph
+- Run `turbo run build --dry` to verify task graph
+- Run `turbo query` to explore package and task graphs via GraphQL
+- Run `turbo ls` to list all packages in the monorepo
 - Use `--filter` to test specific packages in isolation
 
 ## Anti-Patterns

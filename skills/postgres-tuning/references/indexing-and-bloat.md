@@ -81,21 +81,49 @@ For semantic search and AI embeddings:
 ```sql
 CREATE INDEX idx_embeddings_vector
 ON embeddings USING hnsw (embedding_vector vector_cosine_ops)
-WITH (m = 16, ef_construction = 128);
+WITH (m = 16, ef_construction = 64);
 ```
 
-| Parameter         | Effect                                                            | Default |
-| ----------------- | ----------------------------------------------------------------- | ------- |
-| `m`               | Connections per node (higher = better recall, more memory)        | 16      |
-| `ef_construction` | Build-time search breadth (higher = better quality, slower build) | 64      |
+| Parameter         | Effect                                                            | Default | Recommended Range |
+| ----------------- | ----------------------------------------------------------------- | ------- | ----------------- |
+| `m`               | Connections per node (higher = better recall, more memory)        | 16      | 5-48              |
+| `ef_construction` | Build-time search breadth (higher = better quality, slower build) | 64      | 64-256            |
 
-Increase both values if recall is too low. Decrease if index build time is excessive.
+At query time, control search breadth with `ef_search` (default 40, max 1000):
+
+```sql
+SET hnsw.ef_search = 100;
+```
+
+Increase `m` and `ef_construction` if recall is too low. Decrease if index build time is excessive. Indexes build faster when the graph fits into `maintenance_work_mem`.
 
 ## UUIDv7 Migration
 
-Random UUIDv4 primary keys cause B-tree page splits because new values are randomly distributed. UUIDv7 is time-ordered, providing sequential inserts.
+Random UUIDv4 primary keys cause B-tree page splits because new values are randomly distributed. UUIDv7 is time-ordered (RFC 9562), providing sequential inserts.
+
+### PostgreSQL 18 (Built-in)
 
 ```sql
+CREATE TABLE transactions (
+  id uuid DEFAULT uuidv7() PRIMARY KEY,
+  amount numeric NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+
+-- Extract timestamp from a UUIDv7 value
+SELECT uuid_extract_timestamp(id) FROM transactions LIMIT 1;
+
+-- uuidv4() is a PG18 alias for gen_random_uuid()
+```
+
+The built-in `uuidv7()` guarantees monotonic ordering within the same backend process, even for sub-millisecond generation.
+
+### Pre-PostgreSQL 18 (Extension)
+
+```sql
+-- Requires pg_uuidv7 extension
+CREATE EXTENSION pg_uuidv7;
+
 CREATE TABLE transactions (
   id uuid DEFAULT uuid_generate_v7() PRIMARY KEY,
   amount numeric NOT NULL,
@@ -103,7 +131,7 @@ CREATE TABLE transactions (
 );
 ```
 
-**Benefits:** 30% faster insertions, better cache locality, reduced index fragmentation. The time component also enables rough time-based ordering without a separate timestamp column.
+**Benefits:** Better B-tree insert locality, reduced index fragmentation. The time component enables rough time-based ordering without a separate timestamp column.
 
 ## Autovacuum Tuning
 

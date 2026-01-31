@@ -69,17 +69,37 @@ WHERE is_public = true;
 
 This prevents exposure of password hashes, internal IDs, or other sensitive fields through the public-facing API layer.
 
-## Audit Logging with Temporal History
+## Audit Logging with Trigger-Based History
 
-Use the native PostgreSQL system versioning pattern to maintain a complete history of all changes:
+PostgreSQL does not have native SQL:2011 system versioning (SYSTEM_TIME periods). Use trigger-based audit logging to maintain a complete history of all changes:
 
 ```sql
-ALTER TABLE sensitive_data
-  ADD COLUMN valid_from TIMESTAMPTZ GENERATED ALWAYS AS ROW START;
-ALTER TABLE sensitive_data
-  ADD COLUMN valid_to TIMESTAMPTZ GENERATED ALWAYS AS ROW END;
-ALTER TABLE sensitive_data
-  ADD PERIOD FOR SYSTEM_TIME (valid_from, valid_to);
-ALTER TABLE sensitive_data
-  SET (system_versioning = ON);
+CREATE TABLE sensitive_data_history (
+  history_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  operation TEXT NOT NULL CHECK (operation IN ('INSERT', 'UPDATE', 'DELETE')),
+  changed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  changed_by TEXT NOT NULL DEFAULT current_user,
+  row_data JSONB NOT NULL
+);
+
+CREATE OR REPLACE FUNCTION audit_trigger()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF TG_OP = 'DELETE' THEN
+    INSERT INTO sensitive_data_history (operation, row_data)
+    VALUES (TG_OP, to_jsonb(OLD));
+    RETURN OLD;
+  ELSE
+    INSERT INTO sensitive_data_history (operation, row_data)
+    VALUES (TG_OP, to_jsonb(NEW));
+    RETURN NEW;
+  END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER sensitive_data_audit
+AFTER INSERT OR UPDATE OR DELETE ON sensitive_data
+FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 ```
+
+For Supabase projects, the `security-audit` skill covers PGAudit configuration and advanced audit trail patterns in more detail.

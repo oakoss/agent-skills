@@ -51,14 +51,23 @@ git rebase --onto new-base old-base branch-to-rebase
 Graphite automates the rebase/restack process:
 
 ```bash
-# Create a new branch in the stack
-gt create -m "feat: add database schema"
+# Create a new branch with a commit in the stack
+gt create -am "feat: add database schema"
+
+# Insert a branch mid-stack (rebases subsequent branches automatically)
+gt create --insert -am "fix: add missing migration"
 
 # Push all branches in the stack as separate PRs
-gt submit
+gt submit --stack
+
+# Modify the current branch and restack descendants
+gt modify
 
 # Automatically rebase all dependent branches when a parent changes
 gt restack
+
+# Pull trunk changes and restack; clean up merged branches
+gt sync
 ```
 
 ## Benefits

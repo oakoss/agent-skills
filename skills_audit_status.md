@@ -12,7 +12,7 @@ Plan: `.claude/plans/splendid-sparking-dragonfly.md`
 | 2     | `agent-skills-2rd` | React & Frontend Core            | 8      | done    | All 8 skills enriched, validated     |
 | 3     | `agent-skills-31d` | Testing & Quality                | 5      | done    | All 5 skills enriched, validated     |
 | 4     | `agent-skills-cm4` | Security & Auth                  | 5      | done    | All 5 skills enriched, validated     |
-| 5     | `agent-skills-6rv` | DevOps, Git & Infra              | 8      | pending | blocked by Phase 0                   |
+| 5     | `agent-skills-6rv` | DevOps, Git & Infra              | 8      | done    | All 8 skills enriched, validated     |
 | 6     | `agent-skills-ays` | AI, Agents & Orchestration       | 8      | pending | blocked by Phase 0                   |
 | 7     | `agent-skills-5f4` | UX, Design & Visualization       | 9      | pending | blocked by Phase 0                   |
 | 8     | `agent-skills-r6d` | Content, Tools & Specialized     | 10     | pending | blocked by Phase 0                   |
@@ -20,7 +20,7 @@ Plan: `.claude/plans/splendid-sparking-dragonfly.md`
 | 10    | `agent-skills-5z4` | New skills recommendations       | --     | pending | blocked by Batches 1-9               |
 | 11    | `agent-skills-7h2` | Final validation pass            | --     | pending | blocked by Phase 10                  |
 
-**Total skills: 69** | **Completed: 24/69** | **Phases done: 5/12**
+**Total skills: 69** | **Completed: 32/69** | **Phases done: 6/12**
 
 ## Dependency Chain
 
@@ -86,14 +86,14 @@ Phase 0 (fix warnings)
 
 | Skill           | Sources Read | Docs Validated | Enriched | Validated |
 | --------------- | ------------ | -------------- | -------- | --------- |
-| git-workflow    |              |                |          |           |
-| github          |              |                |          |           |
-| ci-cd           |              |                |          |           |
-| turborepo       |              |                |          |           |
-| ssh-remote      |              |                |          |           |
-| postgres-tuning |              |                |          |           |
-| db-enforcer     |              |                |          |           |
-| repo-updater    |              |                |          |           |
+| git-workflow    | done         | done           | done     | done      |
+| github          | done         | done           | done     | done      |
+| ci-cd           | done         | done           | done     | done      |
+| turborepo       | done         | done           | done     | done      |
+| ssh-remote      | done         | done           | done     | done      |
+| postgres-tuning | done         | done           | done     | done      |
+| db-enforcer     | done         | done           | done     | done      |
+| repo-updater    | done         | done           | done     | done      |
 
 ### Batch 6: AI, Agents & Orchestration (Phase 6)
 
@@ -162,3 +162,4 @@ Phase 0 (fix warnings)
 | 2026-01-30 | 2     | Batch 2 complete — 8 React & Frontend Core skills enriched |
 | 2026-01-30 | 3     | Batch 3 complete — 5 Testing & Quality skills enriched     |
 | 2026-01-30 | 4     | Batch 4 complete — 5 Security & Auth skills enriched       |
+| 2026-01-30 | 5     | Batch 5 complete — 8 DevOps, Git & Infra skills enriched   |

@@ -34,9 +34,12 @@ footer (optional)
 | `refactor` | Code changes (neither fix nor feature)    |
 | `perf`     | Performance improvements                  |
 | `test`     | Adding or correcting tests                |
-| `chore`    | Dependencies, tooling, build              |
+| `build`    | Build system or external dependencies     |
 | `ci`       | CI configuration changes                  |
+| `chore`    | Tooling, maintenance, non-src changes     |
 | `revert`   | Revert a previous commit                  |
+
+The spec only mandates `feat` and `fix`. The other types are community conventions adopted from the Angular convention and widely used by commitlint.
 
 ## Scopes
 
@@ -76,37 +79,6 @@ git commit -m "docs: update README installation steps"
 
 # Breaking change
 git commit -m "feat(api)!: change authentication endpoint response format"
-```
-
-## PR Creation
-
-```bash
-gh pr create --title "feat(auth): add user authentication" --body "$(cat <<'EOF'
-## Summary
-- Add login/logout functionality
-- Add session management
-- Add auth middleware
-
-## Test plan
-- [ ] Verify login flow works
-- [ ] Verify logout clears session
-- [ ] Verify protected routes redirect
-EOF
-)"
-```
-
-### PR Template
-
-```markdown
-## Summary
-
-<1-3 bullet points describing the change>
-
-## Test plan
-
-- [ ] Unit tests pass
-- [ ] Manual testing completed
-- [ ] Edge cases verified
 ```
 
 ## Full Workflow

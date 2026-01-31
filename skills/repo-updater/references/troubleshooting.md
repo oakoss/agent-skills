@@ -70,6 +70,13 @@ When ntm (Named Tmux Manager) is available, RU uses its robot mode API:
 ## Installation
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Dicklesworthstone/repo_updater/main/install.sh | bash
+brew install dicklesworthstone/tap/ru
+ru doctor
+```
+
+Alternative (curl):
+
+```bash
+curl -fsSL "https://raw.githubusercontent.com/Dicklesworthstone/repo_updater/main/install.sh?ru_cb=$(date +%s)" | bash
 ru doctor
 ```

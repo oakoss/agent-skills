@@ -5,7 +5,7 @@ description: 'Designs git workflows covering branching strategies, trunk-based d
 
 # Git Workflow
 
-Covers branching strategies, conventional commits, CI/CD automation, repository hygiene, and git internals. GitHub CLI usage is handled by a separate skill.
+Covers branching strategies, conventional commits, CI/CD automation, repository hygiene, and git internals. GitHub CLI usage is handled by a separate `github` skill; this skill focuses on git workflow patterns and CI/CD configuration.
 
 ## Quick Reference
 
@@ -21,6 +21,7 @@ Covers branching strategies, conventional commits, CI/CD automation, repository 
 | Versioning  | Semantic Release or Changesets (never manual)             |
 | Branches    | Max 48 hours lifespan; auto-prune stale/merged            |
 | Secrets     | OIDC Connect in pipelines; never hardcode tokens          |
+| Signing     | Sign commits with SSH or GPG keys for verified authorship |
 
 ## Branch Naming
 
@@ -31,6 +32,24 @@ Covers branching strategies, conventional commits, CI/CD automation, repository 
 | chore    | Maintenance        | `chore/update-deps`    |
 | docs     | Documentation      | `docs/api-reference`   |
 | refactor | Code restructuring | `refactor/auth-module` |
+
+## Conventional Commit Types
+
+| Type       | Purpose                               | Version Bump |
+| ---------- | ------------------------------------- | ------------ |
+| `feat`     | New features                          | Minor        |
+| `fix`      | Bug fixes                             | Patch        |
+| `docs`     | Documentation only                    | None         |
+| `style`    | Formatting, no logic changes          | None         |
+| `refactor` | Neither fix nor feature               | None         |
+| `perf`     | Performance improvements              | Patch        |
+| `test`     | Adding or correcting tests            | None         |
+| `build`    | Build system or external dependencies | None         |
+| `ci`       | CI configuration changes              | None         |
+| `chore`    | Tooling, maintenance, non-src changes | None         |
+| `revert`   | Revert a previous commit              | Varies       |
+
+Append `!` after type/scope for breaking changes (major version bump).
 
 ## Pre-Merge Checks
 
@@ -52,20 +71,23 @@ Auto-merge is acceptable for low-risk PRs when pipeline succeeds.
 | Broken main branch                     | Treat as emergency; revert offending commit, then fix forward on a branch          |
 | Lost commits or data recovery          | Use git reflog and object inspection (`git cat-file`, `git fsck`)                  |
 | CI pipeline failures                   | Check reusable workflow versions; verify OIDC permissions                          |
-| Stacked PR conflicts after rebase      | Restack entire chain from base; Graphite handles automatically                     |
+| Stacked PR conflicts after rebase      | Restack entire chain from base; Graphite handles automatically with `gt restack`   |
+| Large file accidentally committed      | Use `git filter-repo` to remove from history (not `git filter-branch`)             |
 
 ## Common Mistakes
 
-| Mistake                                               | Correct Pattern                                          |
-| ----------------------------------------------------- | -------------------------------------------------------- |
-| Keeping feature branches alive longer than 48 hours   | Merge or rebase daily; break large work into stacked PRs |
-| Committing directly to main without branch protection | Enable branch protection rules requiring CI and review   |
-| Using merge commits that clutter history              | Rebase and squash to maintain linear history             |
-| Hardcoding tokens in GitHub Actions workflows         | Use OIDC Connect for authentication in CI/CD pipelines   |
-| Creating monolithic CI workflows in a single file     | Split into reusable workflows and composite actions      |
-| `Fix bug` as commit message                           | `fix(scope): correct bug description` (conventional)     |
-| `feat: Added feature` (past tense)                    | `feat: add feature` (imperative mood, lowercase)         |
-| Pushing to main directly                              | Create feature branch first                              |
+| Mistake                                               | Correct Pattern                                               |
+| ----------------------------------------------------- | ------------------------------------------------------------- |
+| Keeping feature branches alive longer than 48 hours   | Merge or rebase daily; break large work into stacked PRs      |
+| Committing directly to main without branch protection | Enable branch protection rules requiring CI and review        |
+| Using merge commits that clutter history              | Rebase and squash to maintain linear history                  |
+| Hardcoding tokens in GitHub Actions workflows         | Use OIDC Connect for authentication in CI/CD pipelines        |
+| Creating monolithic CI workflows in a single file     | Split into reusable workflows and composite actions           |
+| `Fix bug` as commit message                           | `fix(scope): correct bug description` (conventional)          |
+| `feat: Added feature` (past tense)                    | `feat: add feature` (imperative mood, lowercase)              |
+| Using `git filter-branch` for history rewriting       | Use `git filter-repo` (faster, safer, officially recommended) |
+| Pushing to main directly                              | Create feature branch first                                   |
+| Unsigned commits in shared repositories               | Configure commit signing with SSH or GPG keys                 |
 
 ## Delegation
 
@@ -78,7 +100,7 @@ Auto-merge is acceptable for low-risk PRs when pipeline succeeds.
 - [branching-strategies.md](references/branching-strategies.md) -- Git Flow, GitHub Flow, GitLab Flow, One-Flow comparison and selection criteria
 - [trunk-based-development.md](references/trunk-based-development.md) -- Core principles, workflow steps, feature flags, and anti-patterns
 - [stacked-changes.md](references/stacked-changes.md) -- Stacked PRs concept, manual stacking, Graphite automation, best practices
-- [conventional-commits.md](references/conventional-commits.md) -- Commit format, types, scopes, rules, PR creation, full workflow
+- [conventional-commits.md](references/conventional-commits.md) -- Commit format, types, scopes, breaking changes, and full workflow
 - [github-actions.md](references/github-actions.md) -- Reusable workflows, matrix testing, deployment environments, security
 - [git-internals.md](references/git-internals.md) -- Object model, SHA hashing, index, references, packfiles, garbage collection
 - [automation-scripts.md](references/automation-scripts.md) -- Branch pruning, semantic release, security scanning, stacked PR helpers

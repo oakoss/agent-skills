@@ -10,7 +10,7 @@ tags: [tasks, dependsOn, outputs, inputs, transit-nodes, persistent, turbo-json]
 
 ```json
 {
-  "$schema": "https://turborepo.dev/schema.v2.json",
+  "$schema": "https://turborepo.dev/schema.json",
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -112,16 +112,17 @@ Files considered when calculating task hash. Defaults to all tracked files.
 
 ## Task Options Reference
 
-| Option           | Default | Description                                            |
-| ---------------- | ------- | ------------------------------------------------------ |
-| `cache`          | `true`  | Enable/disable caching                                 |
-| `persistent`     | `false` | Long-running tasks that don't exit                     |
-| `interactive`    | `false` | Allow stdin input                                      |
-| `interruptible`  | `false` | Allow `turbo watch` to restart                         |
-| `outputLogs`     | `full`  | `full`, `hash-only`, `new-only`, `errors-only`, `none` |
-| `with`           | -       | Run tasks alongside (concurrent, not sequential)       |
-| `description`    | -       | Human-readable task description                        |
-| `passThroughEnv` | -       | Available at runtime but NOT in cache hash             |
+| Option           | Default | Description                                             |
+| ---------------- | ------- | ------------------------------------------------------- |
+| `cache`          | `true`  | Enable/disable caching                                  |
+| `persistent`     | `false` | Long-running tasks that don't exit                      |
+| `interactive`    | `false` | Allow stdin input                                       |
+| `interruptible`  | `false` | Allow `turbo watch` to restart                          |
+| `outputLogs`     | `full`  | `full`, `hash-only`, `new-only`, `errors-only`, `none`  |
+| `with`           | -       | Sidecar tasks that run alongside (concurrent)           |
+| `description`    | -       | Human-readable task description                         |
+| `passThroughEnv` | -       | Available at runtime but NOT in cache hash              |
+| `extends`        | -       | Inherit from another package's task (composable config) |
 
 ## Package Configurations
 
@@ -160,3 +161,20 @@ Use per-package `turbo.json` instead of cluttering root with `package#task` over
 ```
 
 Packages run one-shot `dev` scripts; apps override with `persistent: true`. Use with `turbo watch dev`.
+
+## Composable Configuration (Turborepo 2.7+)
+
+Package configurations can extend from any workspace package, not just root:
+
+```json
+{
+  "extends": ["@repo/turbo-config"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["$TURBO_EXTENDS$", "codegen"]
+    }
+  }
+}
+```
+
+`$TURBO_EXTENDS$` appends to inherited arrays instead of replacing them. Without it, the local `dependsOn` completely overrides the inherited value.

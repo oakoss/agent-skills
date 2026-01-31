@@ -27,9 +27,9 @@ git cat-file -t <hash>
 git cat-file -p HEAD^{tree}
 ```
 
-## Object Identification (SHA-256)
+## Object Identification
 
-Git uses SHA hashing for collision resistance and content verification. Every object (blob, tree, commit, tag) gets a unique hash.
+Git uses SHA-1 hashing by default for collision resistance and content verification. Every object (blob, tree, commit, tag) gets a unique hash. SHA-256 support is available via `git init --object-format=sha256` and is expected to become the default in Git 3.0.
 
 ```bash
 # Hash a file to see what Git would name it
@@ -112,6 +112,10 @@ git verify-pack -v .git/objects/pack/*.idx
 # Find large objects in history
 git rev-list --objects --all | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' | sort -k3 -n -r | head -20
 
-# Remove a file from all history (use with caution)
-git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch path/to/large-file' HEAD
+# Remove a file from all history using git-filter-repo (recommended)
+# Install: pip install git-filter-repo
+git filter-repo --invert-paths --path path/to/large-file
+
+# Legacy approach (deprecated, slow, unsafe — avoid)
+# git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch path/to/large-file' HEAD
 ```

@@ -14,9 +14,9 @@ tags:
 
 # PostgreSQL Integrity
 
-## Native UUIDv7 Support
+## Native UUIDv7 Support (PostgreSQL 18+)
 
-PostgreSQL 18 introduces native `uuidv7()` generation. This is the preferred primary key format, combining global uniqueness with sequential ordering for significantly improved B-tree index performance and reduced page splits.
+PostgreSQL 18 introduces the native `uuidv7()` function (RFC 9562). This is the preferred primary key format, combining global uniqueness with sequential ordering for significantly improved B-tree index performance and reduced page splits. The implementation includes a 12-bit sub-millisecond timestamp fraction that guarantees monotonicity within a session.
 
 ```sql
 CREATE TABLE users (
@@ -25,17 +25,26 @@ CREATE TABLE users (
 );
 ```
 
-## Virtual Generated Columns
+For PostgreSQL versions before 18, use the `pgcrypto` extension with `gen_random_uuid()` (UUIDv4) or install a third-party extension for UUIDv7 support.
 
-Generated columns that default to VIRTUAL occupy zero disk space and are calculated on the fly during SELECT.
+**Security note:** UUIDv7 embeds a 48-bit timestamp, leaking creation time. Avoid exposing UUIDv7 primary keys in public-facing APIs where creation time is sensitive.
+
+## Virtual Generated Columns (PostgreSQL 18+)
+
+PostgreSQL 18 introduces virtual generated columns that occupy zero disk space and are calculated on the fly during SELECT. Virtual is the default kind in PostgreSQL 18; the `VIRTUAL` keyword is optional.
 
 ```sql
 CREATE TABLE products (
   price_cents INTEGER NOT NULL,
   tax_rate DECIMAL NOT NULL,
+  -- VIRTUAL is default in PG 18, STORED writes to disk
   total_price_cents INTEGER GENERATED ALWAYS AS (price_cents * (1 + tax_rate)) VIRTUAL
 );
 ```
+
+**Limitations of virtual columns:** Cannot be indexed (indexing support planned for PostgreSQL 19), cannot use user-defined types or functions in the generation expression, and cannot be logically replicated.
+
+For PostgreSQL versions before 18, only `STORED` generated columns are available.
 
 ## Advanced CHECK Constraints
 

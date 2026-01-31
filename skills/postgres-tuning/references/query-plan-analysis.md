@@ -11,6 +11,16 @@ Optimizing queries without analyzing execution plans is guesswork. Use `EXPLAIN 
 ## The Standard EXPLAIN Call
 
 ```sql
+-- PG18: BUFFERS is auto-included with ANALYZE
+EXPLAIN (ANALYZE, VERBOSE, SETTINGS)
+SELECT o.id, o.status, c.name
+FROM orders o
+JOIN customers c ON c.id = o.customer_id
+WHERE o.status = 'pending'
+ORDER BY o.created_at DESC
+LIMIT 50;
+
+-- Pre-PG18: explicitly include BUFFERS
 EXPLAIN (ANALYZE, BUFFERS, VERBOSE, SETTINGS)
 SELECT o.id, o.status, c.name
 FROM orders o
@@ -76,7 +86,7 @@ Sorts both sides and merges. Efficient when both inputs are already sorted or ha
 
 ## B-tree Skip Scans (PostgreSQL 18)
 
-PostgreSQL 18 can skip irrelevant parts of a composite index's leading column.
+PostgreSQL 18 can skip irrelevant parts of a composite index's leading column, using repeated targeted index searches for each distinct value in the prefix.
 
 **Scenario:** Index on `(tenant_id, status)`, query filters only on `status`:
 
@@ -89,7 +99,19 @@ SELECT * FROM orders WHERE status = 'pending';
 | Pre-18             | Cannot use the index (needs `tenant_id` prefix)            |
 | 18+                | Skips through `tenant_id` values to find matching `status` |
 
-This eliminates the need for redundant single-column indexes in many multi-tenant schemas.
+**When skip scan works best:**
+
+- Low cardinality (few distinct values) in the skipped prefix column
+- Equality conditions on the trailing column (not ranges or inequalities)
+- Narrow result sets and covering indexes (Index-Only Scans)
+
+**When skip scan does NOT help:**
+
+- High-cardinality prefix columns (millions of distinct values create too many probes)
+- Range predicates (`>`, `<`, `BETWEEN`) on trailing columns -- equality only
+- Large result sets where sequential or bitmap scans are more efficient
+
+This can reduce the number of indexes needed, lowering storage costs and improving write performance. The planner enables skip scan automatically based on table statistics.
 
 ## work_mem Tuning
 

@@ -1,37 +1,46 @@
 ---
 name: turborepo
 description: |
-  Turborepo monorepo build system and orchestration. Covers task pipelines, dependsOn syntax, caching configuration, remote cache, filtering, CI optimization, environment variables, workspace management, watch mode, and package boundaries.
+  Turborepo monorepo build system and orchestration. Covers task pipelines, dependsOn syntax, caching configuration, remote cache, filtering, CI optimization, environment variables, workspace management, watch mode, package boundaries, and code generation.
 
-  Use when configuring tasks, creating packages, setting up monorepo, sharing code between apps, running changed packages, debugging cache, optimizing CI, or resolving workspace dependencies.
+  Use when configuring tasks, creating packages, setting up monorepo, sharing code between apps, running changed packages, debugging cache, optimizing CI, resolving workspace dependencies, enforcing package boundaries, or generating code.
 ---
 
 # Turborepo
 
 ## Overview
 
-Build system for JavaScript/TypeScript monorepos. Caches task outputs and runs tasks in parallel based on dependency graph. Always create package tasks (not root tasks), use `turbo run` in scripts, and let `dependsOn` manage execution order.
+Build system for JavaScript/TypeScript monorepos. Caches task outputs and runs tasks in parallel based on dependency graph. Always create package tasks (not root tasks), use `turbo run` in scripts, and let `dependsOn` manage execution order. Configuration uses `turbo.json` (or `turbo.jsonc` for comments).
 
-**When to use:** Monorepo task orchestration, build caching, CI optimization, workspace dependency management.
+**When to use:** Monorepo task orchestration, build caching, CI optimization, workspace dependency management, package boundary enforcement.
 
 **When NOT to use:** Single-package projects, non-JavaScript monorepos, projects without build steps.
 
 ## Quick Reference
 
-| Pattern                 | Syntax                                | Key Points                                      |
-| ----------------------- | ------------------------------------- | ----------------------------------------------- |
-| Dependency build        | `"dependsOn": ["^build"]`             | Build dependencies first                        |
-| Same-package task       | `"dependsOn": ["codegen"]`            | Run in same package first                       |
-| Specific package        | `"dependsOn": ["pkg#task"]`           | Named package's task                            |
-| Parallel lint/typecheck | Transit Nodes pattern                 | Cache invalidation without sequential execution |
-| Dev server              | `"persistent": true, "cache": false`  | Long-running, non-cacheable                     |
-| Watch mode              | `turbo watch dev`                     | Re-run on file changes                          |
-| Filter by package       | `--filter=web`                        | Single package                                  |
-| Filter with deps        | `--filter=web...`                     | Package + dependencies                          |
-| Changed packages        | `--affected`                          | Changed + dependents                            |
-| Debug cache             | `--summarize` or `--dry`              | See hash inputs                                 |
-| Package config          | `turbo.json` with `"extends": ["//"]` | Per-package overrides                           |
-| Env vars in hash        | `"env": ["API_URL"]`                  | Cache invalidation on change                    |
+| Pattern                 | Syntax                                           | Key Points                                      |
+| ----------------------- | ------------------------------------------------ | ----------------------------------------------- |
+| Schema                  | `"$schema": "https://turborepo.dev/schema.json"` | Always include in turbo.json                    |
+| Dependency build        | `"dependsOn": ["^build"]`                        | Build dependencies first                        |
+| Same-package task       | `"dependsOn": ["codegen"]`                       | Run in same package first                       |
+| Specific package        | `"dependsOn": ["pkg#task"]`                      | Named package's task                            |
+| Parallel lint/typecheck | Transit Nodes pattern                            | Cache invalidation without sequential execution |
+| Dev server              | `"persistent": true, "cache": false`             | Long-running, non-cacheable                     |
+| Sidecar tasks           | `"with": ["api#dev"]`                            | Run tasks concurrently alongside                |
+| Watch mode              | `turbo watch dev`                                | Re-run on file changes                          |
+| Filter by package       | `--filter=web`                                   | Single package                                  |
+| Filter with deps        | `--filter=web...`                                | Package + dependencies                          |
+| Changed packages        | `--affected`                                     | Changed + dependents                            |
+| Debug cache             | `--summarize` or `--dry`                         | See hash inputs                                 |
+| Package config          | `turbo.json` with `"extends": ["//"]`            | Per-package overrides                           |
+| Composable config       | `"extends": ["@repo/config"]`                    | Extend from any workspace package               |
+| Extend arrays           | `"$TURBO_EXTENDS$"` in arrays                    | Append to inherited config instead of replacing |
+| Env vars in hash        | `"env": ["API_URL"]`                             | Cache invalidation on change                    |
+| Boundaries              | `turbo boundaries`                               | Enforce package isolation and import rules      |
+| Query graph             | `turbo query`                                    | GraphQL interface to package/task graphs        |
+| Code generation         | `turbo generate`                                 | Scaffold new packages and components            |
+| List packages           | `turbo ls`                                       | List all packages in monorepo                   |
+| Devtools                | `turbo devtools`                                 | Visual Package Graph and Task Graph explorer    |
 
 ## Decision Trees
 
@@ -44,7 +53,9 @@ Configure a task?
 +-- Specify build outputs          -> outputs key
 +-- Handle environment variables   -> env key or globalEnv
 +-- Dev/watch tasks                -> persistent: true, cache: false
++-- Sidecar tasks (run alongside)  -> with key
 +-- Package-specific config        -> Package turbo.json with extends: ["//"]
++-- Composable config              -> extends from any workspace package
 +-- Global settings                -> globalEnv, globalDependencies, cacheDir
 ```
 
@@ -70,6 +81,18 @@ Filter packages?
 +-- Changed + dependents           -> --affected
 ```
 
+### Explore Repository
+
+```text
+Explore repository?
++-- List all packages              -> turbo ls
++-- Query dependency graph         -> turbo query
++-- Visualize graphs               -> turbo devtools
++-- Check boundary violations      -> turbo boundaries
++-- Generate new package           -> turbo generate workspace
++-- Run custom generator           -> turbo generate run [name]
+```
+
 ## Common Mistakes
 
 | Mistake                                                                   | Correct Pattern                                                                                        |
@@ -79,6 +102,8 @@ Filter packages?
 | Chaining turbo tasks with `&&` in package scripts                         | Use `dependsOn` in `turbo.json` to declare task ordering                                               |
 | Not adding environment variables to the `env` key in turbo.json           | Declare all build-affecting env vars in `env` so cache hashes correctly                                |
 | Using `--parallel` flag to bypass dependency ordering                     | Configure `dependsOn` correctly or use transit nodes for parallel tasks with proper cache invalidation |
+| Using outdated schema URL                                                 | Use `https://turborepo.dev/schema.json` in `$schema` field                                             |
+| Overriding inherited arrays in package configs                            | Use `$TURBO_EXTENDS$` in arrays to append instead of replace                                           |
 
 ## Delegation
 
@@ -94,3 +119,4 @@ Filter packages?
 - [Workspace structure and package management](references/workspace-structure.md)
 - [Environment variables and modes](references/environment-variables.md)
 - [Watch mode, dev tasks, and anti-patterns](references/dev-and-anti-patterns.md)
+- [Boundaries, query, and code generation](references/boundaries-and-tooling.md)
