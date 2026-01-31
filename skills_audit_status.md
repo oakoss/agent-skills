@@ -14,13 +14,13 @@ Plan: `.claude/plans/splendid-sparking-dragonfly.md`
 | 4     | `agent-skills-cm4` | Security & Auth                  | 5      | done    | All 5 skills enriched, validated     |
 | 5     | `agent-skills-6rv` | DevOps, Git & Infra              | 8      | done    | All 8 skills enriched, validated     |
 | 6     | `agent-skills-ays` | AI, Agents & Orchestration       | 8      | done    | All 8 skills enriched, validated     |
-| 7     | `agent-skills-5f4` | UX, Design & Visualization       | 9      | pending | blocked by Phase 0                   |
+| 7     | `agent-skills-5f4` | UX, Design & Visualization       | 9      | done    | All 9 skills enriched, validated     |
 | 8     | `agent-skills-r6d` | Content, Tools & Specialized     | 10     | pending | blocked by Phase 0                   |
 | 9     | `agent-skills-jxc` | Remaining                        | 10     | pending | blocked by Phase 0                   |
 | 10    | `agent-skills-5z4` | New skills recommendations       | --     | pending | blocked by Batches 1-9               |
 | 11    | `agent-skills-7h2` | Final validation pass            | --     | pending | blocked by Phase 10                  |
 
-**Total skills: 69** | **Completed: 40/69** | **Phases done: 7/12**
+**Total skills: 69** | **Completed: 49/69** | **Phases done: 8/12**
 
 ## Dependency Chain
 
@@ -112,15 +112,15 @@ Phase 0 (fix warnings)
 
 | Skill             | Sources Read | Docs Validated | Enriched | Validated |
 | ----------------- | ------------ | -------------- | -------- | --------- |
-| ux-designer       |              |                |          |           |
-| ui-ux-polish      |              |                |          |           |
-| brand-designer    |              |                |          |           |
-| icon-design       |              |                |          |           |
-| data-visualizer   |              |                |          |           |
-| figma-developer   |              |                |          |           |
-| responsive-images |              |                |          |           |
-| threejs           |              |                |          |           |
-| accessibility     |              |                |          |           |
+| ux-designer       | done         | done           | done     | done      |
+| ui-ux-polish      | done         | done           | done     | done      |
+| brand-designer    | done         | done           | done     | done      |
+| icon-design       | done         | done           | done     | done      |
+| data-visualizer   | done         | done           | done     | done      |
+| figma-developer   | done         | done           | done     | done      |
+| responsive-images | done         | done           | done     | done      |
+| threejs           | done         | done           | done     | done      |
+| accessibility     | done         | done           | done     | done      |
 
 ### Batch 8: Content, Tools & Specialized (Phase 8)
 
@@ -164,3 +164,4 @@ Phase 0 (fix warnings)
 | 2026-01-30 | 4     | Batch 4 complete — 5 Security & Auth skills enriched       |
 | 2026-01-30 | 5     | Batch 5 complete — 8 DevOps, Git & Infra skills enriched   |
 | 2026-01-30 | 6     | Batch 6 complete — 8 AI, Agents & Orchestration enriched   |
+| 2026-01-30 | 7     | Batch 7 complete — 9 UX, Design & Visualization enriched   |
