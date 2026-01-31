@@ -7,7 +7,7 @@ description: >
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Content Humanizer
@@ -22,18 +22,21 @@ Content humanizer transforms AI-generated prose into writing that reads as natur
 
 ## Quick Reference
 
-| Pattern             | Technique             | Key Points                                                       |
-| ------------------- | --------------------- | ---------------------------------------------------------------- |
-| Flat rhythm         | Sentence variation    | Mix short (5-word) and long (20+ word) sentences                 |
-| Passive voice       | Active rewriting      | Subject performs the action; aim for 80-90% active               |
-| Abstract claims     | Concrete language     | Replace "significant improvement" with specific numbers          |
-| Hedging phrases     | Direct assertion      | Delete "it's worth noting" and state the fact                    |
-| Filler vocabulary   | Plain language        | "utilize" becomes "use", "leverage" becomes "use"                |
-| Over-qualification  | Confident tone        | Remove unnecessary caveats and balanced-to-a-fault phrasing      |
-| List addiction      | Prose conversion      | Convert mechanical bullet lists into flowing paragraphs          |
-| Generic transitions | Contextual connectors | Replace "furthermore" and "moreover" with idea-specific links    |
-| Uniform paragraphs  | Varied structure      | Break predictable paragraph lengths and opening patterns         |
-| Missing voice       | Brand calibration     | Define audience, formality level, and personality before editing |
+| Pattern             | Technique             | Key Points                                                        |
+| ------------------- | --------------------- | ----------------------------------------------------------------- |
+| Flat rhythm         | Sentence variation    | Mix short (5-word) and long (20+ word) sentences                  |
+| Passive voice       | Active rewriting      | Subject performs the action; aim for 80-90% active                |
+| Abstract claims     | Concrete language     | Replace "significant improvement" with specific numbers           |
+| Hedging phrases     | Direct assertion      | Delete "it's worth noting" and state the fact                     |
+| Filler vocabulary   | Plain language        | "utilize" becomes "use", "leverage" becomes "use"                 |
+| Over-qualification  | Confident tone        | Remove unnecessary caveats and balanced-to-a-fault phrasing       |
+| List addiction      | Prose conversion      | Convert mechanical bullet lists into flowing paragraphs           |
+| Generic transitions | Contextual connectors | Replace "furthermore" and "moreover" with idea-specific links     |
+| Uniform paragraphs  | Varied structure      | Break predictable paragraph lengths and opening patterns          |
+| Missing voice       | Brand calibration     | Define audience, formality level, and personality before editing  |
+| No E-E-A-T signals  | Experience injection  | Add first-person anecdotes, specific data, authoritative sources  |
+| Low burstiness      | Length variation      | Alternate 3-word and 25-word sentences to break uniformity        |
+| Low perplexity      | Word unpredictability | Replace formulaic phrases with domain-specific, concrete language |
 
 ## Common Mistakes
 
@@ -62,3 +65,4 @@ Content humanizer transforms AI-generated prose into writing that reads as natur
 - [Writing patterns: sentence variation, active voice, concrete language, and rhythm](references/writing-patterns.md)
 - [Tone and voice: brand consistency, audience adaptation, and formality levels](references/tone-and-voice.md)
 - [AI pattern removal: detecting and rewriting common AI tells](references/ai-pattern-removal.md)
+- [Advanced patterns: E-E-A-T signals, burstiness, perplexity variation, and structural rhythm](references/advanced-patterns.md)
