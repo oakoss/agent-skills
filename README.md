@@ -1,6 +1,6 @@
 # agent-skills
 
-A curated collection of 103 [agent skills](https://agentskills.io) for Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code, GitHub Copilot, Windsurf, Goose, and [27+ other agents](https://agentskills.io). Each skill is hand-written and enriched against official documentation — not auto-generated from docs.
+A curated collection of 105 [agent skills](https://agentskills.io) for Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code, GitHub Copilot, Windsurf, Goose, and [27+ other agents](https://agentskills.io). Each skill is hand-written and enriched against official documentation — not auto-generated from docs.
 
 ## Install
 
@@ -57,6 +57,7 @@ pnpm dlx skills add oakoss/agent-skills --list
 | [hydration-guardian](skills/hydration-guardian)         | React/Next.js hydration mismatch debugging                           |
 | [tiptap](skills/tiptap)                                 | Rich text editors with Tiptap and ProseMirror                        |
 | [threejs](skills/threejs)                               | 3D web experiences with Three.js, WebGPU, React Three Fiber          |
+| [react-performance](skills/react-performance)           | React rendering optimization, code splitting, and profiling          |
 | [react-error-handling](skills/react-error-handling)     | React error boundaries, fallback UIs, and error recovery patterns    |
 | [css-animation-patterns](skills/css-animation-patterns) | CSS animations, transitions, scroll-driven effects, view transitions |
 | [remotion](skills/remotion)                             | Programmatic video creation in React with Remotion                   |
@@ -100,20 +101,21 @@ pnpm dlx skills add oakoss/agent-skills --list
 
 ### DevOps, Git & Infrastructure
 
-| Skill                                         | Description                                                    |
-| --------------------------------------------- | -------------------------------------------------------------- |
-| [git-workflow](skills/git-workflow)           | Branching strategies, trunk-based development, stacked changes |
-| [github](skills/github)                       | GitHub CLI for repos, issues, PRs, actions, releases           |
-| [ci-cd](skills/ci-cd)                         | CI/CD pipelines, GitHub Actions, deployment strategies         |
-| [turborepo](skills/turborepo)                 | Monorepo build system, task pipelines, caching                 |
-| [ssh-remote](skills/ssh-remote)               | SSH remote access, key management, tunnels, transfers          |
-| [postgres-tuning](skills/postgres-tuning)     | PostgreSQL 17/18+ performance tuning and optimization          |
-| [db-enforcer](skills/db-enforcer)             | PostgreSQL and Prisma database integrity enforcement           |
-| [repo-updater](skills/repo-updater)           | Multi-repo synchronization with AI-assisted review             |
-| [github-actions](skills/github-actions)       | GitHub Actions workflow authoring for CI/CD pipelines          |
-| [vercel-deployment](skills/vercel-deployment) | Vercel deployment, preview environments, edge functions        |
-| [pnpm-workspace](skills/pnpm-workspace)       | pnpm workspace monorepo management, filtering, and catalogs    |
-| [cloudflare](skills/cloudflare)               | Cloudflare Workers, KV, D1, R2, Pages, and Wrangler CLI        |
+| Skill                                             | Description                                                      |
+| ------------------------------------------------- | ---------------------------------------------------------------- |
+| [git-workflow](skills/git-workflow)               | Branching strategies, trunk-based development, stacked changes   |
+| [github](skills/github)                           | GitHub CLI for repos, issues, PRs, actions, releases             |
+| [ci-cd](skills/ci-cd)                             | CI/CD pipelines, GitHub Actions, deployment strategies           |
+| [turborepo](skills/turborepo)                     | Monorepo build system, task pipelines, caching                   |
+| [ssh-remote](skills/ssh-remote)                   | SSH remote access, key management, tunnels, transfers            |
+| [postgres-tuning](skills/postgres-tuning)         | PostgreSQL 17/18+ performance tuning and optimization            |
+| [db-enforcer](skills/db-enforcer)                 | PostgreSQL and Prisma database integrity enforcement             |
+| [repo-updater](skills/repo-updater)               | Multi-repo synchronization with AI-assisted review               |
+| [github-actions](skills/github-actions)           | GitHub Actions workflow authoring for CI/CD pipelines            |
+| [deployment-strategy](skills/deployment-strategy) | Blue-green, canary, rolling deployments, rollback, feature flags |
+| [vercel-deployment](skills/vercel-deployment)     | Vercel deployment, preview environments, edge functions          |
+| [pnpm-workspace](skills/pnpm-workspace)           | pnpm workspace monorepo management, filtering, and catalogs      |
+| [cloudflare](skills/cloudflare)                   | Cloudflare Workers, KV, D1, R2, Pages, and Wrangler CLI          |
 
 ### Database & ORM
 
