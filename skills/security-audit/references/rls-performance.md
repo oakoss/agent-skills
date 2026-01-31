@@ -10,10 +10,10 @@ Each RLS policy is essentially a hidden `WHERE` clause added to every query. If 
 
 ## Mandatory Indexing
 
-Any column used in a `USING` or `WITH CHECK` clause MUST be indexed.
+Any column used in a `USING` or `WITH CHECK` clause MUST be indexed. Without indexes, RLS adds a sequential scan to every query, causing 100x+ slowdowns on large tables.
 
 ```sql
--- If policy is auth.uid() = user_id, then user_id needs a B-Tree index
+-- If policy is (select auth.uid()) = user_id, then user_id needs a B-Tree index
 CREATE INDEX idx_sensitive_data_user_id ON sensitive_data(user_id);
 
 -- For team-based access
@@ -21,6 +21,22 @@ CREATE INDEX idx_sensitive_data_team_id ON sensitive_data(team_id);
 CREATE INDEX idx_team_members_user_id ON team_members(user_id);
 CREATE INDEX idx_team_members_team_id ON team_members(team_id);
 ```
+
+## Wrap auth Functions in SELECT
+
+Supabase recommends wrapping `auth.uid()` and `auth.jwt()` in a subselect. This triggers an `initPlan` optimization that caches the result instead of calling the function per row.
+
+```sql
+-- BAD: auth.uid() called per row
+CREATE POLICY user_access ON documents
+FOR SELECT USING (auth.uid() = user_id);
+
+-- GOOD: Wrapped in select, result cached via initPlan
+CREATE POLICY user_access ON documents
+FOR SELECT USING ((select auth.uid()) = user_id);
+```
+
+This optimization only works when the function result does not depend on row data.
 
 ## Wrapping in Stable Functions
 
@@ -31,7 +47,7 @@ CREATE OR REPLACE FUNCTION check_membership(org_id uuid)
 RETURNS boolean AS $$
   SELECT EXISTS (
     SELECT 1 FROM memberships
-    WHERE organization_id = org_id AND user_id = auth.uid()
+    WHERE organization_id = org_id AND user_id = (select auth.uid())
   );
 $$ LANGUAGE sql STABLE;
 
@@ -62,31 +78,52 @@ What to look for:
 | Sequential Scan | Bad    | Missing index on RLS column       |
 | Nested Loop     | Check  | May indicate inefficient subquery |
 
-## Hardened RLS Policy Example
+## Separate Policies per Operation
+
+Supabase recommends creating separate policies for SELECT, INSERT, UPDATE, and DELETE instead of using `FOR ALL`. An UPDATE requires a matching SELECT policy to function correctly.
 
 ```sql
 -- Enable RLS
 ALTER TABLE sensitive_data ENABLE ROW LEVEL SECURITY;
 
--- Team-based access policy
-CREATE POLICY user_team_access ON sensitive_data
+-- Separate SELECT policy (team-based access)
+CREATE POLICY team_select ON sensitive_data
 FOR SELECT
 TO authenticated
 USING (
   team_id IN (
-    SELECT team_id FROM team_members WHERE user_id = auth.uid()
+    SELECT team_id FROM team_members WHERE user_id = (select auth.uid())
   )
 );
 
--- Never use service_role key for client-side operations
--- It bypasses all RLS policies
+-- Separate INSERT policy
+CREATE POLICY team_insert ON sensitive_data
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  team_id IN (
+    SELECT team_id FROM team_members WHERE user_id = (select auth.uid())
+  )
+);
+```
+
+## Add Explicit Filters in Application Code
+
+RLS policies act as implicit WHERE clauses, but always add explicit filters in application queries too. This helps Postgres build a better query plan.
+
+```sql
+-- Even though RLS filters by user_id, add it explicitly
+SELECT * FROM documents WHERE user_id = (select auth.uid());
 ```
 
 ## Performance Checklist
 
 - [ ] All columns in RLS `USING` clauses are indexed
+- [ ] `auth.uid()` and `auth.jwt()` wrapped in `(select ...)` subselects
 - [ ] Complex subqueries are wrapped in `STABLE` functions
+- [ ] Separate policies per operation (SELECT, INSERT, UPDATE, DELETE)
 - [ ] RLS logic stays within the same schema
 - [ ] `EXPLAIN ANALYZE` shows Index Scan (not Sequential Scan)
+- [ ] Application queries include explicit filters matching RLS conditions
 - [ ] Tested with production-scale data volumes
 - [ ] `service_role` key is never used client-side

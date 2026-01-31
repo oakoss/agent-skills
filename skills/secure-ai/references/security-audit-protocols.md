@@ -125,7 +125,8 @@ const alerts: MonitoringAlert[] = [
 - [ ] Monthly review of agent access patterns
 - [ ] Quarterly penetration testing of AI endpoints
 - [ ] Semi-annual review of system prompt security
-- [ ] Annual compliance audit against OWASP AI Top 10
+- [ ] Annual compliance audit against OWASP Top 10 for LLM Applications
+- [ ] AI-BOM inventory reviewed and updated
 
 ## Incident Response
 

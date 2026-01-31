@@ -52,17 +52,42 @@ FOR EACH ROW EXECUTE FUNCTION process_audit();
 For high-compliance environments (HIPAA, SOC2), use the `pgaudit` extension:
 
 - Logs full SQL statements and their parameters
-- Can be configured to log only specific tables or roles
-- Provides statement-level and object-level auditing
+- Supports session-level and object-level auditing
+- Can be scoped per database, per role, or globally
 
 ```sql
--- Enable pgaudit
+-- Enable pgaudit (requires shared_preload_libraries = 'pgaudit' in postgresql.conf)
 CREATE EXTENSION IF NOT EXISTS pgaudit;
 
 -- Configure audit logging
 ALTER SYSTEM SET pgaudit.log = 'write, ddl';
 ALTER SYSTEM SET pgaudit.log_catalog = off;
+ALTER SYSTEM SET pgaudit.log_parameter = on;
+ALTER SYSTEM SET pgaudit.log_statement_once = on;
 ALTER SYSTEM SET pgaudit.log_level = 'log';
+```
+
+### PGAudit Log Classes
+
+| Class    | Logged Operations                                |
+| -------- | ------------------------------------------------ |
+| read     | SELECT and COPY when source is a relation        |
+| write    | INSERT, UPDATE, DELETE, TRUNCATE, COPY when dest |
+| function | Function calls and DO blocks                     |
+| role     | GRANT, REVOKE, CREATE/ALTER/DROP ROLE            |
+| ddl      | All DDL not in the role class                    |
+| misc     | Miscellaneous (DISCARD, FETCH, CHECKPOINT)       |
+| misc_set | Miscellaneous SET commands (e.g., SET role)      |
+| all      | All of the above                                 |
+
+### Per-Database or Per-Role Scoping
+
+```sql
+-- Audit all writes on a specific database
+ALTER DATABASE finance SET pgaudit.log = 'read, write';
+
+-- Audit everything for a specific role
+ALTER ROLE auditor SET pgaudit.log = 'all';
 ```
 
 ## Log Integrity

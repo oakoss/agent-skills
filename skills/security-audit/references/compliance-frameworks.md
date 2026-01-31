@@ -1,152 +1,210 @@
 ---
-title: Compliance Frameworks
-description: GDPR, HIPAA, SOC2, and PCI-DSS regulatory requirements, implementation checklists, and data protection patterns
-tags: [compliance, gdpr, hipaa, soc2, pci-dss, data-protection, privacy]
+title: Database Compliance
+description: Database-specific compliance requirements for GDPR, HIPAA, SOC2, and PCI-DSS including data retention, encryption, audit logging, and access controls
+tags: [compliance, gdpr, hipaa, soc2, pci-dss, data-retention, database-audit]
 ---
 
-# Compliance Frameworks
+# Database Compliance
 
-## GDPR (General Data Protection Regulation)
+Database-specific compliance requirements and implementation patterns. For general compliance framework overviews and application-level controls, see the `security` skill.
 
-**Scope**: EU data subjects
+## GDPR: Database Requirements
 
-### Key Requirements
+### Right to Erasure Implementation
 
-- Lawful basis for processing (consent, contract, legitimate interest)
-- Data subject rights (access, rectification, erasure, portability)
-- Privacy by design and default
-- Data breach notification (72 hours)
-- Data Protection Impact Assessment (DPIA) for high-risk processing
+```sql
+-- Cascade delete with audit trail
+CREATE OR REPLACE FUNCTION delete_user_data(target_user_id uuid)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  -- Log the deletion request before executing
+  INSERT INTO audit.deletion_log (user_id, requested_at)
+  VALUES (target_user_id, now());
 
-### Implementation Checklist
-
-- [ ] Consent mechanism for data collection
-- [ ] Data subject access request (DSAR) process
-- [ ] Right to erasure ("right to be forgotten") implementation
-- [ ] Data portability export (JSON/CSV)
-- [ ] Privacy policy and cookie banner
-- [ ] Data Processing Agreement (DPA) with vendors
-- [ ] Breach notification process (72-hour window)
-- [ ] Data retention policy with automated cleanup
-
-### Technical Implementation
-
-```ts
-// Data export endpoint (right to portability)
-async function exportUserData(userId: string) {
-  const userData = await db.user.findUnique({
-    where: { id: userId },
-    include: { posts: true, comments: true, settings: true },
-  });
-  return JSON.stringify(userData, null, 2);
-}
-
-// Data deletion endpoint (right to erasure)
-async function deleteUserData(userId: string) {
-  await db.$transaction([
-    db.comment.deleteMany({ where: { authorId: userId } }),
-    db.post.deleteMany({ where: { authorId: userId } }),
-    db.session.deleteMany({ where: { userId } }),
-    db.user.delete({ where: { id: userId } }),
-  ]);
-  await auditLog({ action: 'USER_DELETION', userId });
-}
+  -- Delete in dependency order
+  DELETE FROM comments WHERE author_id = target_user_id;
+  DELETE FROM posts WHERE author_id = target_user_id;
+  DELETE FROM sessions WHERE user_id = target_user_id;
+  DELETE FROM users WHERE id = target_user_id;
+END;
+$$;
 ```
 
-## HIPAA (Health Insurance Portability and Accountability Act)
+### Data Retention Automation
 
-**Scope**: Healthcare data in the US
+```sql
+-- Automated cleanup of expired data
+CREATE OR REPLACE FUNCTION cleanup_expired_data()
+RETURNS void
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  -- Remove sessions older than retention period
+  DELETE FROM sessions WHERE expires_at < now();
 
-### Key Requirements
+  -- Anonymize inactive user data past retention period
+  UPDATE users
+  SET email = 'anonymized-' || id || '@deleted.local',
+      name = 'Deleted User',
+      anonymized_at = now()
+  WHERE last_active_at < now() - interval '3 years'
+    AND anonymized_at IS NULL;
+END;
+$$;
+```
 
-- Protected Health Information (PHI) must be encrypted at rest and in transit
-- Access controls with minimum necessary standard
-- Audit logging of all PHI access
-- Business Associate Agreements (BAA) with vendors
-- Incident response plan for breaches
+### Right to Portability
 
-### Implementation Checklist
+```sql
+-- Export all user data as JSON
+CREATE OR REPLACE FUNCTION export_user_data(target_user_id uuid)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  result jsonb;
+BEGIN
+  SELECT jsonb_build_object(
+    'profile', (SELECT to_jsonb(u) FROM users u WHERE id = target_user_id),
+    'posts', (SELECT jsonb_agg(to_jsonb(p)) FROM posts p WHERE author_id = target_user_id),
+    'comments', (SELECT jsonb_agg(to_jsonb(c)) FROM comments c WHERE author_id = target_user_id)
+  ) INTO result;
 
-- [ ] PHI encrypted at rest (AES-256)
-- [ ] PHI encrypted in transit (TLS 1.3)
-- [ ] Role-based access controls for PHI
-- [ ] Audit logging for all PHI access
-- [ ] BAA signed with all vendors handling PHI
-- [ ] Employee security training documented
-- [ ] Incident response plan tested
-- [ ] Regular risk assessments conducted
+  INSERT INTO audit.data_exports (user_id, exported_at)
+  VALUES (target_user_id, now());
 
-## SOC2 (Service Organization Control 2)
+  RETURN result;
+END;
+$$;
+```
 
-**Scope**: Service providers storing customer data
+## HIPAA: Database Requirements
 
-### Trust Service Criteria
+### PHI Access Controls
 
-| Criterion       | Focus                                  |
-| --------------- | -------------------------------------- |
-| Security        | Protection against unauthorized access |
-| Availability    | System availability commitments        |
-| Processing      | Complete and accurate data processing  |
-| Confidentiality | Protection of confidential information |
-| Privacy         | Personal information management        |
+```sql
+-- Separate schema for PHI
+CREATE SCHEMA phi;
 
-### Implementation Checklist
+-- Strict role-based access
+CREATE ROLE phi_reader;
+CREATE ROLE phi_writer;
 
-- [ ] Access controls and authentication (MFA)
-- [ ] Encryption at rest and in transit
-- [ ] Vulnerability management (regular scans)
-- [ ] Change management process documented
-- [ ] Incident response plan
-- [ ] Vendor management program
-- [ ] Security awareness training
-- [ ] Continuous monitoring and alerting
+GRANT USAGE ON SCHEMA phi TO phi_reader, phi_writer;
+GRANT SELECT ON ALL TABLES IN SCHEMA phi TO phi_reader;
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA phi TO phi_writer;
 
-## PCI-DSS (Payment Card Industry Data Security Standard)
+-- RLS on PHI tables
+ALTER TABLE phi.patient_records ENABLE ROW LEVEL SECURITY;
 
-**Scope**: Organizations handling payment card data
+CREATE POLICY provider_access ON phi.patient_records
+FOR SELECT TO phi_reader
+USING (
+  provider_id = (select auth.uid())
+  OR EXISTS (
+    SELECT 1 FROM phi.care_team
+    WHERE patient_id = phi.patient_records.patient_id
+    AND provider_id = (select auth.uid())
+  )
+);
+```
 
-### Key Requirements
+### PHI Audit Requirements
 
-| Requirement | Description                                     |
-| ----------- | ----------------------------------------------- |
-| 1-2         | Secure network (firewall, no default passwords) |
-| 3-4         | Protect cardholder data (encryption)            |
-| 5-6         | Vulnerability management (updates, secure code) |
-| 7-9         | Access control (need-to-know, unique IDs)       |
-| 10-11       | Monitoring and testing (logging, scans)         |
-| 12          | Security policy documentation                   |
+HIPAA requires logging all access to Protected Health Information:
 
-### Implementation Checklist
+```sql
+-- PHI-specific audit trigger
+CREATE OR REPLACE FUNCTION phi.audit_phi_access()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO audit.phi_access_log (
+    table_name, record_id, action, actor_id, actor_role, accessed_at
+  ) VALUES (
+    TG_TABLE_NAME,
+    COALESCE(NEW.id, OLD.id),
+    TG_OP,
+    (select auth.uid()),
+    current_setting('request.jwt.claims', true)::jsonb ->> 'role',
+    now()
+  );
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
 
-- [ ] Never store CVV, PIN, or magnetic stripe data
-- [ ] Encrypt stored card numbers (PAN)
-- [ ] Use payment tokenization (Stripe, Braintree)
-- [ ] Restrict access to cardholder data
-- [ ] Log all access to cardholder data
-- [ ] Regular vulnerability scans
-- [ ] Annual penetration testing
+CREATE TRIGGER audit_patient_records
+AFTER SELECT OR INSERT OR UPDATE OR DELETE ON phi.patient_records
+FOR EACH ROW EXECUTE FUNCTION phi.audit_phi_access();
+```
 
-### Best Practice: Use Payment Processors
+## SOC2: Database Controls
 
-Minimize PCI scope by using third-party payment processors:
+### Trust Service Criteria for Databases
 
-| Approach         | PCI Scope | Recommendation         |
-| ---------------- | --------- | ---------------------- |
-| Stripe Elements  | Minimal   | Preferred for web apps |
-| Stripe Checkout  | Minimal   | Hosted payment page    |
-| Custom card form | Full      | Avoid unless required  |
+| Criterion       | Database Control                                 |
+| --------------- | ------------------------------------------------ |
+| Security        | RLS enabled, least privilege roles, TLS enforced |
+| Availability    | Automated backups, point-in-time recovery        |
+| Processing      | Constraints, triggers for data integrity         |
+| Confidentiality | Column encryption, schema segmentation           |
+| Privacy         | Data retention automation, access logging        |
 
-## Cross-Framework Controls
+### Change Management Evidence
 
-Controls that satisfy multiple compliance frameworks:
+```sql
+-- Track schema changes with PGAudit
+ALTER SYSTEM SET pgaudit.log = 'ddl';
 
-| Control                 | GDPR | HIPAA | SOC2 | PCI-DSS |
-| ----------------------- | ---- | ----- | ---- | ------- |
-| Encryption at rest      | Yes  | Yes   | Yes  | Yes     |
-| Encryption in transit   | Yes  | Yes   | Yes  | Yes     |
-| Access controls         | Yes  | Yes   | Yes  | Yes     |
-| Audit logging           | Yes  | Yes   | Yes  | Yes     |
-| Incident response       | Yes  | Yes   | Yes  | Yes     |
-| Vendor management       | Yes  | Yes   | Yes  | Yes     |
-| Data retention policies | Yes  | Yes   | Yes  | Yes     |
-| Employee training       | Yes  | Yes   | Yes  | Yes     |
+-- Version database migrations (use a migration tool)
+-- Every schema change is a tracked migration with a timestamp
+```
+
+## PCI-DSS: Database Requirements
+
+### Cardholder Data Protection
+
+Never store raw cardholder data. Use tokenization via payment processors:
+
+| Data Element     | Storage Allowed | Recommended Approach |
+| ---------------- | --------------- | -------------------- |
+| Full card number | Encrypted only  | Store Stripe token   |
+| CVV/CVC          | Never           | Never store          |
+| PIN              | Never           | Never store          |
+| Cardholder name  | Yes             | Encrypt at rest      |
+| Last 4 digits    | Yes             | Store for display    |
+
+```sql
+-- Store only tokenized payment references
+CREATE TABLE payment_methods (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid REFERENCES users(id),
+  stripe_payment_method_id text NOT NULL,
+  last_four text NOT NULL,
+  card_brand text NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+
+-- Enable RLS and audit logging
+ALTER TABLE payment_methods ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY owner_only ON payment_methods
+FOR ALL TO authenticated
+USING ((select auth.uid()) = user_id);
+```
+
+## Cross-Framework Database Checklist
+
+| Control                  | GDPR | HIPAA | SOC2 | PCI-DSS |
+| ------------------------ | ---- | ----- | ---- | ------- |
+| RLS on all user tables   | Yes  | Yes   | Yes  | Yes     |
+| Audit logging (triggers) | Yes  | Yes   | Yes  | Yes     |
+| Encryption at rest       | Yes  | Yes   | Yes  | Yes     |
+| TLS for connections      | Yes  | Yes   | Yes  | Yes     |
+| Data retention policy    | Yes  | Yes   | Yes  | Yes     |
+| Backup and recovery      | Yes  | Yes   | Yes  | Yes     |
+| Access review process    | Yes  | Yes   | Yes  | Yes     |
+| Schema segmentation      | Rec  | Yes   | Rec  | Yes     |

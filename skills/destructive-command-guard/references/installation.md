@@ -20,8 +20,10 @@ curl -fsSL "https://raw.githubusercontent.com/Dicklesworthstone/destructive_comm
 
 ## From Source (Requires Rust Nightly)
 
+Requires Rust nightly toolchain (minimum Rust 1.85, edition 2024). The repository includes a `rust-toolchain.toml` that automatically selects the correct toolchain.
+
 ```bash
-cargo +nightly install --git https://github.com/Dicklesworthstone/destructive_command_guard
+cargo +nightly install --git https://github.com/Dicklesworthstone/destructive_command_guard destructive_command_guard
 ```
 
 ## Prebuilt Binaries

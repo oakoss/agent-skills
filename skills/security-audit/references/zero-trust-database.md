@@ -40,9 +40,10 @@ Pass the full end-user context (ID, role, organization) down to the database lev
 
 ```sql
 -- Access user identity in RLS policies
-SELECT auth.uid();      -- Current user ID
-SELECT auth.jwt();      -- Full JWT claims
-SELECT auth.role();     -- User role
+SELECT auth.uid();                        -- Current user ID (from JWT sub claim)
+SELECT auth.jwt();                        -- Full JWT claims as JSON
+SELECT auth.jwt() ->> 'role';             -- Extract role from JWT claims
+SELECT auth.jwt() -> 'app_metadata';      -- Access app metadata from JWT
 ```
 
 ### Convex

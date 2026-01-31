@@ -89,14 +89,15 @@ The pattern set prioritizes **never allowing dangerous commands** over avoiding 
 
 ## Performance Optimizations
 
-| Optimization          | Technique                                   |
-| --------------------- | ------------------------------------------- |
-| **Lazy Static**       | Regex patterns compiled once via `LazyLock` |
-| **SIMD Quick Reject** | `memchr` crate for CPU vector instructions  |
-| **Early Exit**        | Safe match returns immediately              |
-| **Zero-Copy JSON**    | `serde_json` operates on input buffer       |
-| **Zero-Allocation**   | `Cow<str>` for path normalization           |
-| **Release Profile**   | `opt-level="z"`, LTO, single codegen unit   |
+| Optimization          | Technique                                                   |
+| --------------------- | ----------------------------------------------------------- |
+| **Lazy Static**       | Regex patterns compiled once via `LazyLock`                 |
+| **SIMD Quick Reject** | `memchr` crate for CPU vector instructions (SSE2/AVX2/NEON) |
+| **Aho-Corasick**      | Multi-pattern matching in O(n) regardless of keyword count  |
+| **Early Exit**        | Safe match returns immediately                              |
+| **Zero-Copy JSON**    | `serde_json` operates on input buffer                       |
+| **Zero-Allocation**   | `Cow<str>` for path normalization                           |
+| **Release Profile**   | `opt-level="z"`, LTO, single codegen unit, stripped symbols |
 
 **Result:** Sub-millisecond execution for typical commands.
 

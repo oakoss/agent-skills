@@ -1,167 +1,182 @@
 ---
-title: Application Security
-description: OWASP Top 10 review, input validation, SQL injection and XSS prevention, authentication patterns, secure configuration, and security headers
+title: Database Access Security
+description: Securing database access patterns, API-to-database authorization, service role management, schema exposure controls, and security definer functions
 tags:
   [
-    owasp,
-    xss,
-    sql-injection,
-    authentication,
-    authorization,
-    security-headers,
-    rate-limiting,
+    database-access,
+    api-security,
+    service-role,
+    schema-exposure,
+    security-definer,
   ]
 ---
 
-# Application Security
+# Database Access Security
 
-## OWASP Top 10
+Patterns for securing database access from applications. For general OWASP Top 10 coverage and application-level security (XSS, CSRF, headers), see the `security` skill.
 
-### A01: Broken Access Control
+## Supabase API Security
 
-Users access data or functions they should not.
+### Service Role Key Management
+
+The `service_role` key bypasses all RLS policies. It must never appear in client-side code.
 
 ```ts
-// BAD: No authorization check
-app.get('/api/users/:id', (req, res) => {
-  const user = db.users.findById(req.params.id);
-  res.json(user); // Anyone can see any user!
-});
+// BAD: service_role key in browser-accessible code
+const supabase = createClient(
+  url,
+  process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY!,
+);
 
-// GOOD: Check ownership
-app.get('/api/users/:id', authMiddleware, (req, res) => {
-  if (req.params.id !== req.user.id && !req.user.isAdmin) {
-    return res.status(403).json({ error: 'Forbidden' });
+// GOOD: anon key for client-side, service_role only in server-side code
+const supabase = createClient(url, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+
+// GOOD: service_role only in server functions (API routes, server actions)
+const adminClient = createClient(url, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+```
+
+### Anon Role Restrictions
+
+The `anon` role should have minimal permissions. Never grant SELECT on sensitive tables to anon.
+
+```sql
+-- Restrict anon access to sensitive tables
+REVOKE ALL ON sensitive_data FROM anon;
+
+-- Allow anon read access only to public content
+GRANT SELECT ON public_content TO anon;
+```
+
+### Schema Exposure Controls
+
+Only schemas listed in Supabase API settings are exposed via PostgREST. Security definer functions in exposed schemas can bypass RLS.
+
+```sql
+-- Create utility functions in a non-exposed schema
+CREATE SCHEMA private;
+
+CREATE OR REPLACE FUNCTION private.has_role(required_role text)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.user_roles
+    WHERE user_id = (select auth.uid()) AND role = required_role
+  );
+$$;
+
+-- Use in RLS policy (function bypasses RLS on user_roles table)
+CREATE POLICY admin_access ON admin_data
+FOR SELECT TO authenticated
+USING (private.has_role('admin'));
+```
+
+Security definer functions should:
+
+- Live in a non-exposed schema (not `public`)
+- Set `search_path = ''` to prevent schema hijacking
+- Be marked `STABLE` or `IMMUTABLE` when possible
+
+## Views and RLS
+
+Views bypass RLS by default because they run as the view creator (typically `postgres` with bypass RLS).
+
+```sql
+-- BAD: View bypasses RLS (default behavior)
+CREATE VIEW user_documents AS
+SELECT * FROM documents;
+
+-- GOOD: Postgres 15+ security_invoker forces RLS evaluation
+CREATE VIEW user_documents
+WITH (security_invoker = true) AS
+SELECT * FROM documents;
+```
+
+## Convex API Security
+
+### Public Function Exposure
+
+All Convex functions are callable from the internet. Internal functions provide server-to-server isolation.
+
+```ts
+import { internalQuery, internalMutation } from './_generated/server';
+
+// Internal function: only callable from other Convex functions
+export const getUser = internalQuery({
+  args: { userId: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query('users')
+      .withIndex('by_external_id', (q) => q.eq('externalId', args.userId))
+      .unique();
+  },
+});
+```
+
+### External Service Authentication
+
+For external services calling Convex (webhooks, cron jobs), verify a shared secret from environment variables.
+
+```ts
+import { httpAction } from './_generated/server';
+
+export const webhook = httpAction(async (ctx, request) => {
+  const secret = request.headers.get('x-webhook-secret');
+  if (secret !== process.env.WEBHOOK_SECRET) {
+    return new Response('Unauthorized', { status: 401 });
   }
-  const user = db.users.findById(req.params.id);
-  res.json(user);
+  // Process webhook
 });
 ```
 
-### A02: Cryptographic Failures
+## Database Connection Security
 
-```ts
-// BAD: Plaintext password
-const user = { email, password: req.body.password };
+| Control            | Implementation                                         |
+| ------------------ | ------------------------------------------------------ |
+| TLS enforcement    | Require TLS 1.2+ for all database connections          |
+| Connection pooling | Use connection poolers (PgBouncer) with per-user creds |
+| IP allowlisting    | Restrict direct database access by IP                  |
+| Password rotation  | Rotate database credentials on a regular schedule      |
+| Read replicas      | Route read-only queries to replicas where possible     |
 
-// GOOD: Hash with bcrypt
-import bcrypt from 'bcrypt';
-const hashedPassword = await bcrypt.hash(req.body.password, 12);
-const user = { email, password: hashedPassword };
+## Authorization Pattern: Row Ownership
+
+The most common database access pattern is row ownership, where users can only access rows they own.
+
+```sql
+-- Standard ownership pattern
+CREATE POLICY owner_select ON documents
+FOR SELECT TO authenticated
+USING ((select auth.uid()) = owner_id);
+
+CREATE POLICY owner_insert ON documents
+FOR INSERT TO authenticated
+WITH CHECK ((select auth.uid()) = owner_id);
+
+CREATE POLICY owner_update ON documents
+FOR UPDATE TO authenticated
+USING ((select auth.uid()) = owner_id)
+WITH CHECK ((select auth.uid()) = owner_id);
+
+CREATE POLICY owner_delete ON documents
+FOR DELETE TO authenticated
+USING ((select auth.uid()) = owner_id);
 ```
 
-### A03: Injection (SQL, XSS, Command)
+## Security Audit Queries
 
-```ts
-// BAD: SQL injection
-const query = `SELECT * FROM users WHERE email = '${userInput}'`;
+```sql
+-- Find functions in exposed schemas that are security definer
+SELECT n.nspname, p.proname, p.prosecdef
+FROM pg_proc p
+JOIN pg_namespace n ON p.pronamespace = n.oid
+WHERE n.nspname = 'public' AND p.prosecdef = true;
 
-// GOOD: Parameterized query
-const query = 'SELECT * FROM users WHERE email = ?';
-db.query(query, [userInput]);
-
-// GOOD: ORM handles it
-const user = await prisma.user.findUnique({
-  where: { email: userInput },
-});
-```
-
-```tsx
-// BAD: XSS vulnerability
-<div dangerouslySetInnerHTML={{ __html: userInput }} />
-
-// GOOD: React auto-escapes
-<div>{userInput}</div>
-
-// GOOD: Sanitize if HTML is needed
-import DOMPurify from 'isomorphic-dompurify'
-<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userInput) }} />
-```
-
-### A04-A10: Other Critical Issues
-
-| Category                       | Risk                              | Prevention                       |
-| ------------------------------ | --------------------------------- | -------------------------------- |
-| A04: Insecure Design           | No rate limiting, no threat model | Threat modeling, rate limiting   |
-| A05: Security Misconfiguration | Default passwords, stack traces   | Hardened configs, generic errors |
-| A06: Vulnerable Components     | Outdated dependencies             | `npm audit`, Dependabot          |
-| A07: Auth Failures             | Weak passwords, no MFA            | Strong policies, MFA             |
-| A08: Integrity Failures        | Supply chain attacks              | Verify packages, lock files      |
-| A09: Logging Failures          | No audit logs                     | Comprehensive logging            |
-| A10: SSRF                      | Unvalidated URLs                  | URL allowlisting                 |
-
-## Input Validation with Zod
-
-```ts
-import { z } from 'zod';
-
-const UserSchema = z.object({
-  email: z.string().email().max(255),
-  password: z.string().min(8).max(100),
-  age: z.number().int().min(13).max(120),
-  website: z.string().url().optional(),
-});
-
-const result = UserSchema.safeParse(req.body);
-if (!result.success) {
-  return res.status(400).json({ errors: result.error.issues });
-}
-const validData = result.data;
-```
-
-## Security Headers
-
-```ts
-// Essential security headers
-response.headers.set('X-Frame-Options', 'DENY');
-response.headers.set('X-Content-Type-Options', 'nosniff');
-response.headers.set('X-XSS-Protection', '1; mode=block');
-response.headers.set(
-  'Content-Security-Policy',
-  "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'",
-);
-response.headers.set(
-  'Strict-Transport-Security',
-  'max-age=31536000; includeSubDomains',
-);
-```
-
-## Rate Limiting
-
-```ts
-import rateLimit from 'express-rate-limit';
-
-// Global rate limit
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: 'Too many requests from this IP',
-});
-app.use(limiter);
-
-// Stricter limit for auth endpoints
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
-  skipSuccessfulRequests: true,
-});
-app.post('/api/auth/login', authLimiter, loginHandler);
-```
-
-## Secure Error Handling
-
-```ts
-// BAD: Exposes internals
-catch (error) {
-  res.status(500).json({ error: error.message })
-}
-
-// GOOD: Generic message with tracking ID
-catch (error) {
-  console.error('Error:', error)
-  res.status(500).json({
-    error: 'Internal server error',
-    requestId: generateRequestId()
-  })
-}
+-- Check for tables granting access to anon
+SELECT grantee, table_schema, table_name, privilege_type
+FROM information_schema.role_table_grants
+WHERE grantee = 'anon' AND table_schema = 'public';
 ```

@@ -17,10 +17,10 @@ Client plugins go in `createAuthClient({ plugins: [...] })`.
 
 ## OAuth 2.1 Provider Plugin (v1.4.9+)
 
-Build your own OAuth provider for MCP servers, third-party apps, or API access:
+Build your own OAuth provider for MCP servers, third-party apps, or API access. Requires separate package `@better-auth/oauth-provider`:
 
 ```ts
-import { oauthProvider } from 'better-auth/plugins';
+import { oauthProvider } from '@better-auth/oauth-provider';
 import { jwt } from 'better-auth/plugins';
 
 export const auth = betterAuth({

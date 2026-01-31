@@ -80,6 +80,8 @@ By splitting functions, different authorization rules apply to each specific act
 
 ## Role-Based Access
 
+Custom claims from JWTs are accessed directly on the `UserIdentity` object. The field name depends on your auth provider's JWT template. Nested fields use dot notation in bracket syntax.
+
 ```ts
 export const adminAction = mutation({
   args: { targetUserId: v.string() },
@@ -87,8 +89,11 @@ export const adminAction = mutation({
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error('Unauthenticated');
 
-    // Check admin role from custom claims
-    const role = identity.customClaims?.role;
+    // Access custom claims directly (field name depends on auth provider)
+    // Clerk example: configure "role" in JWT template Claims
+    const role = identity.role as string | undefined;
+    // Custom JWT example: nested fields use dot notation
+    // const role = identity["properties.role"] as string | undefined;
     if (role !== 'admin') {
       throw new Error('Admin access required');
     }

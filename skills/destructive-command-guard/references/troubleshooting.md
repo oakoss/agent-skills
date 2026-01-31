@@ -42,12 +42,17 @@ Recursive forced deletion is extremely dangerous. A typo or wrong variable can d
 
 DCG instructs the agent to ask for permission. Run the command manually in a separate terminal after making a conscious decision.
 
-## Integration with Other Tools
+## Integration with Claude Code
 
-| Tool            | Integration                                       |
-| --------------- | ------------------------------------------------- |
-| **Claude Code** | Native PreToolUse hook                            |
-| **Agent Mail**  | Agents can report blocked commands to coordinator |
-| **BV**          | Flag tasks that repeatedly trigger DCG            |
-| **CASS**        | Search DCG block patterns across sessions         |
-| **RU**          | DCG protects agent-sweep from destructive commits |
+DCG integrates natively as a `PreToolUse` hook in Claude Code. The hook receives JSON on stdin containing `tool_name` and `tool_input` fields, and returns structured JSON output or uses exit codes to control execution:
+
+- **Exit code 0**: Command is safe, proceed with execution
+- **Exit code 2**: Command is blocked, Claude Code prevents execution and receives the reason
+
+The hook configuration can be placed in any of the three Claude Code settings files:
+
+- `~/.claude/settings.json` (user-global)
+- `.claude/settings.json` (project-specific, committed)
+- `.claude/settings.local.json` (project-specific, not committed)
+
+DCG also provides a `dcg scan` subcommand that extracts executable command contexts from files and evaluates them using the same pattern engine, suitable for CI integration and repository auditing.

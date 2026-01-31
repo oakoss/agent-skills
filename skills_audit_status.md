@@ -11,7 +11,7 @@ Plan: `.claude/plans/splendid-sparking-dragonfly.md`
 | 1     | `agent-skills-d3i` | TanStack Ecosystem               | 6      | done    | All 6 skills enriched, validated     |
 | 2     | `agent-skills-2rd` | React & Frontend Core            | 8      | done    | All 8 skills enriched, validated     |
 | 3     | `agent-skills-31d` | Testing & Quality                | 5      | done    | All 5 skills enriched, validated     |
-| 4     | `agent-skills-cm4` | Security & Auth                  | 5      | pending | blocked by Phase 0                   |
+| 4     | `agent-skills-cm4` | Security & Auth                  | 5      | done    | All 5 skills enriched, validated     |
 | 5     | `agent-skills-6rv` | DevOps, Git & Infra              | 8      | pending | blocked by Phase 0                   |
 | 6     | `agent-skills-ays` | AI, Agents & Orchestration       | 8      | pending | blocked by Phase 0                   |
 | 7     | `agent-skills-5f4` | UX, Design & Visualization       | 9      | pending | blocked by Phase 0                   |
@@ -20,7 +20,7 @@ Plan: `.claude/plans/splendid-sparking-dragonfly.md`
 | 10    | `agent-skills-5z4` | New skills recommendations       | --     | pending | blocked by Batches 1-9               |
 | 11    | `agent-skills-7h2` | Final validation pass            | --     | pending | blocked by Phase 10                  |
 
-**Total skills: 69** | **Completed: 19/69** | **Phases done: 4/12**
+**Total skills: 69** | **Completed: 24/69** | **Phases done: 5/12**
 
 ## Dependency Chain
 
@@ -76,11 +76,11 @@ Phase 0 (fix warnings)
 
 | Skill                     | Sources Read | Docs Validated | Enriched | Validated |
 | ------------------------- | ------------ | -------------- | -------- | --------- |
-| better-auth               |              |                |          |           |
-| security                  |              |                |          |           |
-| security-audit            |              |                |          |           |
-| secure-ai                 |              |                |          |           |
-| destructive-command-guard |              |                |          |           |
+| better-auth               | done         | done           | done     | done      |
+| security                  | done         | done           | done     | done      |
+| security-audit            | done         | done           | done     | done      |
+| secure-ai                 | done         | done           | done     | done      |
+| destructive-command-guard | done         | done           | done     | done      |
 
 ### Batch 5: DevOps, Git & Infra (Phase 5)
 
@@ -161,3 +161,4 @@ Phase 0 (fix warnings)
 | 2026-01-30 | 1     | Batch 1 complete — 6 TanStack + zod skills enriched        |
 | 2026-01-30 | 2     | Batch 2 complete — 8 React & Frontend Core skills enriched |
 | 2026-01-30 | 3     | Batch 3 complete — 5 Testing & Quality skills enriched     |
+| 2026-01-30 | 4     | Batch 4 complete — 5 Security & Auth skills enriched       |

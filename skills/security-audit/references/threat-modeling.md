@@ -1,106 +1,92 @@
 ---
-title: Threat Modeling
-description: STRIDE framework for threat identification, threat modeling process, risk assessment matrix, and mitigation planning
-tags: [stride, threat-modeling, risk-assessment, mitigation, trust-boundaries]
+title: Data Layer Threat Modeling
+description: STRIDE applied to database access patterns, trust boundary analysis for data layers, RLS bypass threat identification, and mitigation planning
+tags: [stride, threat-modeling, data-layer, rls-bypass, trust-boundaries]
 ---
 
-# Threat Modeling (STRIDE)
+# Data Layer Threat Modeling
 
-## STRIDE Framework
+Apply STRIDE specifically at data layer trust boundaries to identify database-level threats. For general application-level STRIDE coverage, see the `security` skill.
 
-Apply STRIDE at every trust boundary to identify threats systematically.
+## STRIDE at the Data Layer
 
-### S - Spoofing (Authentication)
+### S - Spoofing (Identity at DB Level)
 
-- **Threat**: Attacker impersonates a user or system
-- **Examples**: Stolen credentials, session hijacking, weak authentication
-- **Mitigations**: MFA, strong password policies, JWT with short expiration, secure session management
+- **Threat**: Attacker forges or reuses JWT to impersonate another user at the database level
+- **Data layer examples**: Stolen JWT used with Supabase client, service_role key leaked to client
+- **Mitigations**: Short JWT expiry, asymmetric signing (RS256/EdDSA), audience validation, never expose service_role to clients
 
-### T - Tampering (Integrity)
+### T - Tampering (Data Integrity)
 
-- **Threat**: Attacker modifies data or code
-- **Examples**: SQL injection, man-in-the-middle attacks, parameter manipulation
-- **Mitigations**: Input validation, HTTPS/TLS everywhere, signed tokens, integrity checks (hashing)
+- **Threat**: Attacker modifies data through RLS bypass or unprotected mutation
+- **Data layer examples**: Missing WITH CHECK on INSERT/UPDATE policies, Convex mutation without ownership check
+- **Mitigations**: RLS WITH CHECK on all write operations, ownership validation in Convex handlers, database constraints
 
-### R - Repudiation (Accountability)
+### R - Repudiation (Audit Gaps)
 
-- **Threat**: User denies performing an action
-- **Examples**: No audit logs, unsigned transactions, anonymous actions
-- **Mitigations**: Comprehensive audit logging, digital signatures, immutable log storage
+- **Threat**: Data modifications occur without attribution
+- **Data layer examples**: Direct SQL access without audit triggers, missing actor_id in audit logs
+- **Mitigations**: Database-level audit triggers, PGAudit extension, immutable audit schema
 
-### I - Information Disclosure (Confidentiality)
+### I - Information Disclosure (Data Leakage)
 
-- **Threat**: Sensitive data exposed to unauthorized parties
-- **Examples**: Exposed API keys, database dumps, verbose error messages
-- **Mitigations**: Encryption at rest and in transit, least privilege, secure secret management, RBAC
+- **Threat**: Unauthorized data access through policy gaps
+- **Data layer examples**: Missing RLS on new tables, anon role with SELECT on sensitive tables, verbose Postgres error messages
+- **Mitigations**: RLS on every public table, restrict anon access, generic error responses
 
-### D - Denial of Service (Availability)
+### D - Denial of Service (Query Performance)
 
-- **Threat**: System becomes unavailable to legitimate users
-- **Examples**: DDoS attacks, resource exhaustion, unhandled exceptions
-- **Mitigations**: Rate limiting, input validation (reject massive payloads), auto-scaling, CDN/DDoS protection
+- **Threat**: Malicious queries exploit unoptimized RLS policies
+- **Data layer examples**: Sequential scans from missing indexes on RLS columns, complex cross-schema subqueries in policies
+- **Mitigations**: Index all RLS columns, wrap auth functions in subselects, EXPLAIN ANALYZE testing
 
-### E - Elevation of Privilege (Authorization)
+### E - Elevation of Privilege (Permission Escalation)
 
-- **Threat**: User gains unauthorized access to higher privileges
-- **Examples**: Broken access control, IDOR, missing authorization checks
-- **Mitigations**: Authorization on every request, least privilege, ABAC, regular permission audits
+- **Threat**: User gains access to data outside their authorization scope
+- **Data layer examples**: Standing admin privileges, permissive RLS policies combined with OR, Convex function missing role check
+- **Mitigations**: JIT access grants, restrictive policies, granular Convex functions with role validation
 
-## Threat Modeling Process
+## Data Layer Trust Boundaries
 
-### Step 1: Identify Assets
+| Boundary                  | Threats                                | Key Controls                           |
+| ------------------------- | -------------------------------------- | -------------------------------------- |
+| Client <-> Supabase API   | JWT forgery, service_role exposure     | RLS, auth.uid() validation             |
+| Client <-> Convex         | Missing auth guards, IDOR              | getUserIdentity checks, ownership      |
+| App server <-> Database   | SQL injection, privilege escalation    | Parameterized queries, least privilege |
+| Admin <-> Database        | Standing privileges, unaudited changes | JIT access, audit logging              |
+| Public schema <-> Private | Data leakage across schema boundaries  | Schema segmentation, GRANT/REVOKE      |
 
-- User data (PII, passwords, financial info)
-- Business data (IP, customer lists, transactions)
-- System credentials (API keys, certificates)
-- Infrastructure (servers, databases, APIs)
+## RLS Bypass Threat Identification
 
-### Step 2: Identify Trust Boundaries
+Common paths attackers use to bypass RLS:
 
-| Boundary                     | Data Crossing                    |
-| ---------------------------- | -------------------------------- |
-| User <-> Web App             | User input, session tokens       |
-| Web App <-> API              | API requests, auth tokens        |
-| API <-> Database             | Queries, credentials             |
-| Internal <-> External APIs   | API keys, user data              |
-| Admin <-> Production systems | Admin credentials, configuration |
+| Bypass Vector               | Detection Method                               |
+| --------------------------- | ---------------------------------------------- |
+| service_role key in client  | Search client code for service_role references |
+| Table without RLS enabled   | Query pg_tables for relrowsecurity = false     |
+| Permissive FOR ALL policies | Review policies for overly broad access        |
+| Views bypassing RLS         | Check view security_invoker setting            |
+| Security definer functions  | Audit functions in exposed schemas             |
 
-### Step 3: Apply STRIDE to Each Boundary
+```sql
+-- Find tables in public schema without RLS enabled
+SELECT schemaname, tablename, rowsecurity
+FROM pg_tables
+WHERE schemaname = 'public' AND rowsecurity = false;
 
-For each boundary, ask:
-
-- **S**: Can an attacker spoof identity?
-- **T**: Can data be tampered with?
-- **R**: Can actions be repudiated?
-- **I**: Can information be disclosed?
-- **D**: Can service be denied?
-- **E**: Can privileges be elevated?
-
-### Step 4: Assess Risk
-
-```text
-Risk = Likelihood x Impact
-
-Likelihood: High (likely), Medium (may occur), Low (unlikely)
-
-Impact:
-  Critical - Data breach, financial loss, legal liability
-  High     - Significant damage, downtime
-  Medium   - Limited damage, temporary disruption
-  Low      - Minimal impact
-
-Risk Level:
-  Critical - Immediate action required
-  High     - Address before launch
-  Medium   - Address post-launch
-  Low      - Monitor, may accept risk
+-- List all RLS policies and their expressions
+SELECT schemaname, tablename, policyname, permissive, cmd, qual
+FROM pg_policies
+WHERE schemaname = 'public';
 ```
 
-### Step 5: Define Mitigations
+## Risk Assessment for Data Layer
 
-For each threat, document:
-
-- Mitigation strategy
-- Implementation effort (low, medium, high)
-- Residual risk after mitigation
-- Owner and timeline
+| Risk                                 | Likelihood | Impact   | Priority      |
+| ------------------------------------ | ---------- | -------- | ------------- |
+| Missing RLS on public table          | High       | Critical | Immediate     |
+| service_role key in client code      | Medium     | Critical | Immediate     |
+| Missing indexes on RLS columns       | High       | High     | Before launch |
+| No audit logging on sensitive tables | Medium     | High     | Before launch |
+| Standing admin privileges            | Medium     | Medium   | Post-launch   |
+| Missing WITH CHECK on write policies | Medium     | High     | Before launch |

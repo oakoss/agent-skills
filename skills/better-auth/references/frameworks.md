@@ -1,6 +1,6 @@
 ---
 title: Framework Integration
-description: TanStack Start setup with reactStartCookies, Expo/React Native with SecureStore, client imports, type safety, and server-side API usage
+description: TanStack Start setup with tanstackStartCookies, Expo/React Native with SecureStore, client imports, type safety, and server-side API usage
 tags: [tanstack-start, expo, react-native, client, type-safety, server-api]
 ---
 
@@ -8,18 +8,18 @@ tags: [tanstack-start, expo, react-native, client, type-safety, server-api]
 
 ## TanStack Start
 
-**CRITICAL**: TanStack Start requires the `reactStartCookies` plugin for cookie handling.
+**CRITICAL**: TanStack Start requires the `tanstackStartCookies` plugin for cookie handling (renamed from `reactStartCookies` in v1.4.14).
 
 ```ts
 import { betterAuth } from 'better-auth';
-import { reactStartCookies } from 'better-auth/react-start';
+import { tanstackStartCookies } from 'better-auth/tanstack-start';
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: 'sqlite' }),
   plugins: [
     twoFactor(),
     organization(),
-    reactStartCookies(), // MUST be LAST plugin
+    tanstackStartCookies(), // MUST be LAST plugin
   ],
 });
 ```

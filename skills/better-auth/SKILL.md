@@ -8,7 +8,7 @@ description: |
 
 # better-auth
 
-**Package**: better-auth@1.4.16 (ESM-only since v1.4.0)
+**Package**: better-auth@1.4.15 (ESM-only since v1.4.0)
 **Docs**: <https://better-auth.com/docs> | **GitHub**: <https://github.com/better-auth/better-auth>
 
 ## Environment Setup
@@ -28,7 +28,7 @@ Only define `baseURL`/`secret` in config if env vars are NOT set. CLI looks for 
 | `baseURL`          | Only if `BETTER_AUTH_URL` not set             |
 | `basePath`         | Default `/api/auth`. Set `/` for root.        |
 | `secret`           | Only if `BETTER_AUTH_SECRET` not set          |
-| `database`         | Required. See adapters docs.                  |
+| `database`         | Required unless using stateless mode (v1.4+)  |
 | `secondaryStorage` | Redis/KV for sessions and rate limits         |
 | `emailAndPassword` | `{ enabled: true }` to activate               |
 | `socialProviders`  | `{ google: { clientId, clientSecret }, ... }` |
@@ -37,24 +37,28 @@ Only define `baseURL`/`secret` in config if env vars are NOT set. CLI looks for 
 
 ## Plugin Reference
 
-| Plugin        | Description                                   |
-| ------------- | --------------------------------------------- |
-| twoFactor     | TOTP, email OTP, backup codes                 |
-| organization  | Multi-tenant orgs, teams, invitations, RBAC   |
-| admin         | User management, impersonation, banning       |
-| passkey       | WebAuthn passwordless login                   |
-| magicLink     | Email-based passwordless login                |
-| jwt           | JWT tokens with key rotation, JWKS            |
-| oauthProvider | Build your own OAuth 2.1 provider             |
-| sso           | Enterprise SSO with OIDC, OAuth2, SAML 2.0    |
-| stripe        | Payment and subscription management           |
-| bearer        | API token auth for mobile/CLI                 |
-| apiKey        | Token-based auth with rate limits             |
-| oneTap        | Google One Tap frictionless sign-in           |
-| anonymous     | Guest user access without PII                 |
-| genericOAuth  | Custom OAuth providers with PKCE              |
-| multiSession  | Multiple accounts in same browser             |
-| openAPI       | Interactive API docs at `/api/auth/reference` |
+| Plugin        | Description                                                                        |
+| ------------- | ---------------------------------------------------------------------------------- |
+| twoFactor     | TOTP, email OTP, backup codes                                                      |
+| organization  | Multi-tenant orgs, teams, invitations, RBAC                                        |
+| admin         | User management, impersonation, banning                                            |
+| passkey       | WebAuthn passwordless login                                                        |
+| magicLink     | Email-based passwordless login                                                     |
+| jwt           | JWT tokens with key rotation, JWKS                                                 |
+| oauthProvider | Build your own OAuth 2.1 provider (separate `@better-auth/oauth-provider` package) |
+| sso           | Enterprise SSO with OIDC, OAuth2, SAML 2.0 (separate `@better-auth/sso` package)   |
+| scim          | Enterprise user provisioning (separate `@better-auth/scim` package)                |
+| stripe        | Payment and subscription management                                                |
+| bearer        | API token auth for mobile/CLI                                                      |
+| apiKey        | Token-based auth with rate limits                                                  |
+| oneTap        | Google One Tap frictionless sign-in                                                |
+| anonymous     | Guest user access without PII                                                      |
+| genericOAuth  | Custom OAuth providers with PKCE                                                   |
+| emailOTP      | Email-based one-time password auth                                                 |
+| phoneNumber   | Phone/SMS-based OTP sign-in                                                        |
+| username      | Username-based sign-in (alternative to email)                                      |
+| multiSession  | Multiple accounts in same browser                                                  |
+| openAPI       | Interactive API docs at `/api/auth/reference`                                      |
 
 ## Session Strategies
 
@@ -66,16 +70,16 @@ Only define `baseURL`/`secret` in config if env vars are NOT set. CLI looks for 
 
 ## Anti-Patterns
 
-| Anti-Pattern                          | Correct Approach                                        |
-| ------------------------------------- | ------------------------------------------------------- |
-| Using `d1Adapter`                     | Use Drizzle or Kysely adapter with `provider: "sqlite"` |
-| Using table name in config            | Use ORM model name, not DB table name                   |
-| Forgetting CLI after plugin changes   | Re-run `npx @better-auth/cli@latest generate`           |
-| `reactStartCookies()` not last plugin | Must be the last plugin in array (TanStack Start)       |
-| Checking `session` for login state    | Check `session?.user` — session object is always truthy |
-| Missing `nodejs_compat` flag          | Required in `wrangler.toml` for Cloudflare Workers      |
-| Kysely CamelCasePlugin with auth      | Use separate Kysely instance without the plugin         |
-| `returned: false` blocks writes       | Write via `auth.api.*` instead                          |
+| Anti-Pattern                             | Correct Approach                                                               |
+| ---------------------------------------- | ------------------------------------------------------------------------------ |
+| Using `d1Adapter`                        | Use Drizzle or Kysely adapter with `provider: "sqlite"`                        |
+| Using table name in config               | Use ORM model name, not DB table name                                          |
+| Forgetting CLI after plugin changes      | Re-run `npx @better-auth/cli@latest generate`                                  |
+| `tanstackStartCookies()` not last plugin | Must be the last plugin in array (TanStack Start)                              |
+| Checking `session` for login state       | Check `session?.user` — session object is always truthy                        |
+| Missing `nodejs_compat` flag             | Required in `wrangler.toml` for Cloudflare Workers                             |
+| Kysely CamelCasePlugin with auth         | Use separate Kysely instance without the plugin                                |
+| Using old `reactStartCookies` import     | Renamed to `tanstackStartCookies` from `better-auth/tanstack-start` in v1.4.14 |
 
 ## Common Mistakes
 
@@ -89,11 +93,12 @@ Only define `baseURL`/`secret` in config if env vars are NOT set. CLI looks for 
 
 ## Breaking Changes
 
-| Version | Change                                                     |
-| ------- | ---------------------------------------------------------- |
-| v1.4.6  | `allowImpersonatingAdmins` defaults to `false`             |
-| v1.4.0  | ESM-only (no CommonJS)                                     |
-| v1.3.0  | Multi-team table structure: new `teamMembers` table needed |
+| Version | Change                                                                                           |
+| ------- | ------------------------------------------------------------------------------------------------ |
+| v1.4.14 | `reactStartCookies` renamed to `tanstackStartCookies` (import from `better-auth/tanstack-start`) |
+| v1.4.6  | `allowImpersonatingAdmins` defaults to `false`                                                   |
+| v1.4.0  | ESM-only (no CommonJS); SSO, SCIM, OAuth Provider moved to separate packages                     |
+| v1.3.0  | Multi-team table structure: new `teamMembers` table needed                                       |
 
 ## Delegation
 

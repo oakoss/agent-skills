@@ -86,7 +86,7 @@ app.delete('/api/user/account', authMiddleware, async (req, res) => {
 
 - **"Token expired"** — Access token TTL too short or clock skew. Use 15min access + 7d refresh. Allow 30s clock skew.
 - **"Invalid signature"** — Secret mismatch between services. Ensure all services share the same secret/key pair.
-- **"Algorithm mismatch"** — Mixing HS256/RS256. Standardize on RS256 for production.
+- **"Algorithm mismatch"** — Mixing symmetric/asymmetric algorithms. Standardize on ES256 or EdDSA for production. Always whitelist allowed algorithms in verification.
 
 ### CORS Errors
 
@@ -101,15 +101,17 @@ app.delete('/api/user/account', authMiddleware, async (req, res) => {
 
 ### CSP Violations
 
-- **Inline scripts blocked** — Use nonces (`'nonce-xxx'`) instead of `'unsafe-inline'` in production.
-- **Third-party scripts blocked** — Add specific domains to `script-src` directive.
-- Start with `Content-Security-Policy-Report-Only` to test before enforcing.
+- **Inline scripts blocked** — Use nonces (`'nonce-xxx'`) instead of `'unsafe-inline'`. Generate a unique nonce per response.
+- **Third-party scripts blocked** — Add specific domains to `script-src` directive. Avoid wildcards.
+- **Clickjacking** — Use `frame-ancestors 'none'` in CSP instead of the legacy `X-Frame-Options` header.
+- Start with `Content-Security-Policy-Report-Only` to test before enforcing. Set up a reporting endpoint to collect violations.
 
 ### Password Hashing Performance
 
-- bcrypt with 12 rounds takes ~250ms. Intentional for security but can bottleneck high-traffic login endpoints.
-- Use async `bcrypt.hash()` to avoid blocking the event loop.
-- Consider argon2id for better resistance to GPU attacks.
+- argon2id with OWASP minimum parameters (19 MiB, t=2) targets ~250-500ms. Preferred for new projects due to GPU/ASIC resistance.
+- bcrypt with 12 rounds also targets ~250ms. Acceptable for existing systems.
+- Always use async hash functions to avoid blocking the event loop.
+- Benchmark on production hardware and adjust parameters so hashing takes 250ms-1s.
 
 ### Encryption Key Rotation
 

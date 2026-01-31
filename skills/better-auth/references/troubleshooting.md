@@ -76,9 +76,9 @@ await refetch();
 
 When querying via Drizzle directly, `string[]` fields return `'["a","b"]'` (string) instead of arrays. Use `auth.api` (has transformer) or manually parse.
 
-## Expo `fromJSONSchema` Crash (v1.4.16)
+## Expo `fromJSONSchema` Crash (Fixed)
 
-Importing `expoClient` crashes with `TypeError: Cannot read property 'fromJSONSchema' of undefined`. Tracked in [issue #7491](https://github.com/better-auth/better-auth/issues/7491).
+Importing `expoClient` crashed with `TypeError: Cannot read property 'fromJSONSchema' of undefined`. This was fixed; upgrade to `@better-auth/expo@1.4.10` or later. See [issue #7491](https://github.com/better-auth/better-auth/issues/7491).
 
 ## `freshAge` Based on Creation Time, Not Activity
 
