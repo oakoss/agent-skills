@@ -15,31 +15,27 @@ Foundational meta-skill that defines behavioral and cognitive standards for seni
 
 ## Quick Reference
 
-| Pattern             | Approach                                  | Key Points                                 |
-| ------------------- | ----------------------------------------- | ------------------------------------------ |
-| Perception          | Analyze terminal output, codebase, traces | High-fidelity input ingestion              |
-| Hypothesis          | Generate multiple solution paths          | Evaluate before committing                 |
-| Simulation          | Reason through change consequences        | Predict side effects                       |
-| Action              | Precise tool execution                    | Atomic, testable commits                   |
-| Criticism           | Self-audit output                         | Check for bugs and style violations        |
-| Context discovery   | Map framework versions and patterns       | Always discover before implementing        |
-| Verifiable planning | Define Definition of Done                 | Test pass, build success, or user approval |
-| Selective reading   | Use offset and limit parameters           | Avoid reading entire large files           |
-| Symbol search       | Use grep/rg to find definitions           | Do not read entire directories             |
-| Few-shot anchoring  | Provide canonical examples                | More effective than long rule lists        |
-| Memory tiering      | Short-term, mid-term, long-term           | Match persistence to information lifetime  |
-| Context packing     | Bundle related files                      | Structured markdown artifacts              |
-
-## Thinking Process
-
-Before every action, follow this sequence:
-
-1. **Context Discovery**: Map framework versions and active patterns in the codebase
-2. **Dependency Audit**: Verify if existing tools can solve the task before adding new ones
-3. **Verifiable Planning**: Define the Definition of Done (test pass, build success, user approval)
-4. **Interactive Alignment**: Ask the user for critical architectural decisions or ambiguous requirements
-5. **Atomic Implementation**: Apply changes in logical, testable units
-6. **Audit and Cleanup**: Run linter and remove debug artifacts
+| Pattern                | Approach                                      | Key Points                                     |
+| ---------------------- | --------------------------------------------- | ---------------------------------------------- |
+| Perception             | Analyze terminal output, codebase, traces     | High-fidelity input ingestion                  |
+| Hypothesis             | Generate multiple solution paths              | Evaluate before committing                     |
+| Simulation             | Reason through change consequences            | Predict side effects                           |
+| Action                 | Precise tool execution                        | Atomic, testable commits                       |
+| Criticism              | Self-audit output                             | Check for bugs and style violations            |
+| Context discovery      | Map framework versions and patterns           | Always discover before implementing            |
+| Dependency audit       | Check existing tools before adding new ones   | Avoid unnecessary dependencies                 |
+| Verifiable planning    | Define Definition of Done                     | Test pass, build success, or user approval     |
+| Interactive alignment  | Ask the user for ambiguous requirements       | Confirm critical architectural decisions       |
+| Atomic implementation  | Apply changes in logical, testable units      | Each commit should be independently verifiable |
+| Audit and cleanup      | Run linter, remove debug artifacts            | No temporary code in final output              |
+| Selective reading      | Use offset and limit parameters               | Avoid reading entire large files               |
+| Symbol search          | Use grep/rg to find definitions               | Do not read entire directories                 |
+| Few-shot anchoring     | Provide canonical examples                    | More effective than long rule lists            |
+| Memory tiering         | Short-term, mid-term, long-term               | Match persistence to information lifetime      |
+| Context packing        | Bundle related files                          | Structured markdown artifacts                  |
+| Noise reduction        | Exclude node_modules, dist, binary artifacts  | Maximize signal-to-noise ratio in context      |
+| Semantic summarization | Condense long logs into actionable facts      | Single-sentence failure descriptions           |
+| Cognitive load pruning | Remove irrelevant history from active context | Free tokens for current task reasoning         |
 
 ## Common Mistakes
 
@@ -53,6 +49,8 @@ Before every action, follow this sequence:
 | Reading entire directories to find a single symbol     | Use grep or rg to locate definitions, then read only relevant sections            |
 | Skipping verification after implementation             | Every task must have a verification signal before marking complete                |
 | Storing sensitive data in memory or context files      | Run a secret scrub before persisting any memory vector                            |
+| Loading full file contents into context unnecessarily  | Use partial reads with offset and limit for large files                           |
+| Including duplicate information from multiple sources  | Deduplicate context to preserve token budget                                      |
 
 ## Delegation
 

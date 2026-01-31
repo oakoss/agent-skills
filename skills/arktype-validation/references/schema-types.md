@@ -52,6 +52,7 @@ const bool2 = type.boolean;
 Built-in string format validators:
 
 ```ts
+// Validators (return string)
 type('string.email');
 type('string.url');
 type('string.uuid');
@@ -63,15 +64,28 @@ type('string.ip.v6');
 type('string.date');
 type('string.date.iso');
 type('string.numeric');
+type('string.integer');
 type('string.alpha');
 type('string.alphanumeric');
-type('string.lowercase');
-type('string.uppercase');
+type('string.digits');
+type('string.hex');
 type('string.creditCard');
 type('string.base64');
+type('string.base64.url');
 type('string.json');
+
+// Morphs (transform the value)
+type('string.trim'); // Trims whitespace
+type('string.lower'); // Transforms to lowercase
+type('string.upper'); // Transforms to uppercase
+type('string.capitalize'); // Capitalizes first letter
+type('string.normalize.NFC'); // Unicode normalization
 type('string.json.parse'); // Parses JSON string at runtime
 type('string.numeric.parse'); // Parses numeric string to number
+type('string.integer.parse'); // Parses integer string to number
+type('string.date.parse'); // Parses date string to Date
+type('string.date.iso.parse'); // Parses ISO date string to Date
+type('string.url.parse'); // Parses URL string to URL instance
 ```
 
 ## String Constraints
@@ -95,6 +109,8 @@ type('number >= 0'); // Non-negative
 type('number < 100'); // Less than 100
 type('number % 2'); // Divisible by 2 (even)
 type('number.integer'); // Integer only
+type('number.safe'); // Safe integer range
+type('number.epoch'); // Unix timestamp (safe integer)
 type('number > 0 & number < 100'); // Range
 
 // Fluent API constraints

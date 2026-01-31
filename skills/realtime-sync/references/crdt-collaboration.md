@@ -77,7 +77,7 @@ doc = Automerge.change(doc, (d) => {
   d.items.push('New item');
 });
 
-const changes = Automerge.getChanges(Automerge.init(), doc);
+const changes = Automerge.getAllChanges(doc);
 ```
 
 ## Presence: Collaborative Cursors
@@ -87,7 +87,9 @@ Show where other users are working in the document.
 ### Cursor Position Tracking
 
 ```ts
-const awareness = new Y.Awareness(ydoc);
+import { Awareness } from 'y-protocols/awareness';
+
+const awareness = new Awareness(ydoc);
 
 awareness.setLocalStateField('cursor', {
   anchor: { index: 42 },
@@ -146,9 +148,15 @@ CRDT undo is more complex than single-user undo because other users' changes may
 **Fix:** Use Yjs `UndoManager` which tracks only the local user's operations:
 
 ```ts
+const LOCAL_ORIGIN = 'local-user-input';
+
 const undoManager = new Y.UndoManager(ytext, {
-  trackedOrigins: new Set([ydoc.clientID]),
+  trackedOrigins: new Set([LOCAL_ORIGIN]),
 });
+
+ydoc.transact(() => {
+  ytext.insert(0, 'Hello');
+}, LOCAL_ORIGIN);
 
 undoManager.undo();
 undoManager.redo();

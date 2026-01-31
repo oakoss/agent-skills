@@ -1,6 +1,6 @@
 ---
 title: Pub/Sub Messaging and Guaranteed Delivery
-description: Sequence tracking, transactional outbox pattern, rewind recovery, presence management, and edge splicing
+description: Sequence tracking, transactional outbox pattern, rewind recovery, presence management, and channel multiplexing
 tags: [pubsub, sequence-ids, outbox, cdc, presence, ably, guaranteed-delivery]
 ---
 
@@ -133,28 +133,21 @@ Presence relies on heartbeats. When a client crashes without sending a "leave" m
 | Mobile         | 30-60 seconds      |
 | Background tab | 60-120 seconds     |
 
-## Edge Splicing
+## Channel Multiplexing
 
-Combine multiple real-time channels into a single connection at the edge, reducing the number of connections mobile devices maintain:
+Ably SDKs multiplex all channel traffic over a single transport connection. Subscribe to multiple channels without extra connections:
 
 ```ts
-const spliced = ably.channels.get('[?splice]combined-feed', {
-  params: {
-    sources: 'orders,notifications,presence',
-  },
-});
+const orders = ably.channels.get('orders');
+const notifications = ably.channels.get('notifications');
+const presence = ably.channels.get('presence');
 
-spliced.subscribe((msg) => {
-  switch (msg.name) {
-    case 'orders':
-      handleOrder(msg.data);
-      break;
-    case 'notifications':
-      handleNotification(msg.data);
-      break;
-  }
-});
+orders.subscribe('update', (msg) => handleOrder(msg.data));
+notifications.subscribe('alert', (msg) => handleNotification(msg.data));
+presence.subscribe('enter', (msg) => handlePresenceEvent(msg.data));
 ```
+
+All subscriptions share one WebSocket connection, reducing overhead on mobile devices.
 
 ## Quality Checklist
 

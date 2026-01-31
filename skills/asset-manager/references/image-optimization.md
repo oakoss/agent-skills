@@ -1,7 +1,7 @@
 ---
 title: Image Optimization
-description: Image optimization with sharp and imagemin, multi-format generation (WebP, AVIF), SVG optimization with SVGO, and responsive image generation for breakpoints
-tags: [images, optimization, sharp, imagemin, webp, avif, svg, svgo, responsive]
+description: Image optimization with Sharp for multi-format generation (WebP, AVIF), SVG optimization with SVGO v4, and responsive image generation for breakpoints
+tags: [images, optimization, sharp, webp, avif, svg, svgo, responsive]
 ---
 
 # Image Optimization
@@ -9,15 +9,13 @@ tags: [images, optimization, sharp, imagemin, webp, avif, svg, svgo, responsive]
 ## Dependencies
 
 ```bash
-npm install sharp imagemin imagemin-mozjpeg imagemin-pngquant imagemin-svgo
+npm install sharp svgo
 ```
 
 ## Multi-Format Optimization
 
 ```ts
 import sharp from 'sharp';
-import imagemin from 'imagemin';
-import imageminSvgo from 'imagemin-svgo';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -85,20 +83,27 @@ async function optimizeImages(
 
 ## SVG Optimization
 
+SVGO v4 disables `removeViewBox` and `removeTitle` by default for better accessibility.
+
 ```ts
+import { optimize } from 'svgo';
+
 async function optimizeSVG(inputPath: string, outputDir: string) {
-  await imagemin([inputPath], {
-    destination: outputDir,
+  const fileName = path.basename(inputPath);
+  const outputPath = path.join(outputDir, fileName);
+  const svgString = await fs.readFile(inputPath, 'utf-8');
+
+  const result = optimize(svgString, {
+    multipass: true,
     plugins: [
-      imageminSvgo({
-        plugins: [
-          { name: 'removeViewBox', active: false },
-          { name: 'removeDimensions', active: true },
-          { name: 'removeUselessStrokeAndFill', active: true },
-        ],
-      }),
+      {
+        name: 'preset-default',
+      },
+      'removeDimensions',
     ],
   });
+
+  await fs.writeFile(outputPath, result.data);
 }
 ```
 

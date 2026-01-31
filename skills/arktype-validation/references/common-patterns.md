@@ -97,13 +97,11 @@ const RegisterSchema = type({
 ## API Response Pattern
 
 ```ts
-const ApiResponse = type.generic('T')((T) =>
-  type({
-    data: T,
-    error: 'string | null',
-    status: "'success' | 'error'",
-  }),
-);
+const ApiResponse = type('<t>', {
+  data: 't',
+  error: 'string | null',
+  status: "'success' | 'error'",
+});
 
 const UserResponse = ApiResponse({
   id: 'string.uuid',
@@ -121,12 +119,9 @@ const EnvSchema = type({
   DATABASE_URL: 'string.url',
   PORT: 'string.numeric.parse',
   NODE_ENV: "'development' | 'production' | 'test'",
-  'SESSION_SECRET >= 32': 'string',
+  SESSION_SECRET: 'string >= 32',
   'API_KEY?': 'string',
-}).pipe((env) => ({
-  ...env,
-  PORT: typeof env.PORT === 'number' ? env.PORT : 3000,
-}));
+});
 ```
 
 ## Discriminated Unions

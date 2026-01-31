@@ -1,87 +1,31 @@
 ---
 name: knowledge-graph-builder
-description: Design and build knowledge graphs. Use when modeling complex relationships, building semantic search, or creating knowledge bases. Covers schema design, entity relationships, and graph database selection.
-version: 1.0.0
+description: >
+  Designs and builds knowledge graphs for AI-enhanced relational knowledge. Covers ontology design, graph database selection (Neo4j, Neptune, ArangoDB, TigerGraph), entity extraction, hybrid graph-vector architecture, query patterns, and AI integration.
+
+  Use when modeling complex entity relationships, building semantic search with graph traversal, creating knowledge bases for AI grounding, or selecting a graph database. Use for knowledge graph, ontology design, entity resolution, graph RAG, hallucination detection.
 ---
 
 # Knowledge Graph Builder
 
-Build structured knowledge graphs for enhanced AI system performance through relational knowledge.
+## Overview
 
-**Core principle**: Knowledge graphs make implicit relationships explicit, enabling AI systems to reason about connections, verify facts, and avoid hallucinations.
+Knowledge graphs make implicit relationships explicit, enabling AI systems to reason about connections, verify facts, and reduce hallucinations. They combine structured entity-relationship modeling with semantic search for powerful knowledge retrieval.
 
-## When to Use
+**When to use:** Complex entity relationships central to the domain, verifying AI-generated facts against structured knowledge, semantic search combined with relationship traversal, recommendation systems, fraud detection, or pattern recognition.
 
-| Use Knowledge Graphs                                         | Don't Use                                     |
-| ------------------------------------------------------------ | --------------------------------------------- |
-| Complex entity relationships central to domain               | Simple tabular data (use relational DB)       |
-| Verify AI-generated facts against structured knowledge       | Purely document-based search (use vector DB)  |
-| Semantic search + relationship traversal                     | No significant relationships between entities |
-| Rich interconnections (people, organizations, products)      | Read-heavy workload with no traversal         |
-| "How are X and Y related?" queries                           | Team lacks graph modeling expertise           |
-| Recommendation systems, fraud detection, pattern recognition |                                               |
+**When NOT to use:** Simple tabular data (use a relational database), purely document-based search with no relationships (use a vector database), read-heavy workloads with no traversal needs, or when the team lacks graph modeling expertise.
 
-## 6-Phase Implementation
+## Quick Reference
 
-| Phase | Focus                | Key Deliverable                              |
-| ----- | -------------------- | -------------------------------------------- |
-| 1     | Ontology Design      | Entity types, relationship types, properties |
-| 2     | Database Selection   | Neo4j / Neptune / Arango / TigerGraph        |
-| 3     | Entity Extraction    | NER pipeline, relationship building          |
-| 4     | Hybrid Architecture  | Graph + vector search integration            |
-| 5     | Query Patterns & API | Cypher queries, API endpoints                |
-| 6     | AI Integration       | KG-RAG, hallucination detection              |
-
-## Graph Database Selection
-
-| Database   | Best For                               | Query Language   |
-| ---------- | -------------------------------------- | ---------------- |
-| Neo4j      | Complex queries, graph algorithms      | Cypher           |
-| Neptune    | AWS infra, managed service, compliance | Gremlin / SPARQL |
-| ArangoDB   | Multi-model (graph + document + KV)    | AQL (JavaScript) |
-| TigerGraph | Massive graphs (billions), real-time   | GSQL             |
-
-## Technology Recommendations
-
-| Scale                | Graph DB               | Vector DB    | ETL     |
-| -------------------- | ---------------------- | ------------ | ------- |
-| MVP (< 10K entities) | Neo4j Community (free) | OpenAI embed | FastAPI |
-| Production (10K–1M)  | Neo4j Enterprise       | Pinecone     | Airflow |
-| Enterprise (1M+)     | TigerGraph             | Weaviate     | Kafka   |
-
-## Key Principles
-
-| Principle                       | Detail                                                              |
-| ------------------------------- | ------------------------------------------------------------------- |
-| Start with ontology             | Define schema before ingesting; changing later is expensive         |
-| Entity resolution is critical   | Deduplicate aggressively ("Apple Inc" = "Apple" = "Apple Computer") |
-| Confidence scores on everything | Every relationship: 0.0–1.0 score + source                          |
-| Build incrementally             | Core entities first, expand over time                               |
-| Hybrid architecture wins        | Graph traversal (structured) + vector search (semantic)             |
-
-## Common Use Cases
-
-| Use Case            | Approach                                                 |
-| ------------------- | -------------------------------------------------------- |
-| Question answering  | Extract entities → traverse graph → return path          |
-| Recommendation      | Shared relationships → rank by strength → top-K          |
-| Fraud detection     | Model transactions → find suspicious patterns (cycles)   |
-| Knowledge discovery | Identify implicit relationships → suggest missing links  |
-| Semantic search     | Hybrid vector + graph → expand context via relationships |
-
-## Validation Checklist
-
-| Area              | Criterion                                       |
-| ----------------- | ----------------------------------------------- |
-| Ontology          | Designed and validated with domain experts      |
-| Database          | Selected and set up with constraints/indexes    |
-| Entity extraction | Pipeline tested (> 85% accuracy)                |
-| Relationships     | Extracted and validated against ontology        |
-| Hybrid search     | Graph + vector implemented                      |
-| API               | Query endpoints created and documented          |
-| AI integration    | RAG or hallucination detection tested           |
-| Performance       | Common queries < 100ms                          |
-| Operations        | Data quality monitoring, backup/recovery tested |
+| Pattern             | Approach                                                                                   | Key Points                                                          |
+| ------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| Ontology first      | Define entity types, relationships, properties before ingesting data                       | Changing schema later is expensive; validate with domain experts    |
+| Entity resolution   | Deduplicate aggressively during extraction                                                 | "Apple Inc" = "Apple" = "Apple Computer" must resolve to one entity |
+| Confidence scoring  | Attach 0.0-1.0 score + source to every relationship                                        | Enables filtering by reliability, critical for AI grounding         |
+| Hybrid architecture | Graph traversal (structured) + vector search (semantic)                                    | Vector finds candidates, graph expands context via relationships    |
+| Incremental build   | Core entities first, validate against target queries, then expand                          | Avoid building the full graph before testing with real queries      |
+| Database selection  | Neo4j (general), Neptune (AWS managed), ArangoDB (multi-model), TigerGraph (massive scale) | Match database to scale, infrastructure, and query complexity       |
 
 ## Common Mistakes
 
@@ -92,17 +36,15 @@ Build structured knowledge graphs for enhanced AI system performance through rel
 | Omitting confidence scores on relationships                 | Attach a 0.0-1.0 confidence score and source to every relationship                           |
 | Using only graph traversal without vector search            | Implement hybrid architecture combining graph traversal with semantic vector search          |
 | Building the full graph before validating with real queries | Start with core entities, test against target queries, then expand incrementally             |
+| Choosing a database before understanding scale requirements | Evaluate query patterns, data volume, and infrastructure constraints before selecting        |
 
 ## Delegation
 
 - **Extract entities and relationships from unstructured text**: Use `Task` agent to run NER pipelines and build relationship triples
 - **Evaluate graph database options for project requirements**: Use `Explore` agent to compare Neo4j, Neptune, ArangoDB, and TigerGraph against scale and query needs
 - **Design ontology and hybrid architecture for a new domain**: Use `Plan` agent to define entity types, relationship schemas, and graph-vector integration strategy
-
-## Related Skills
-
-- `rag-implementer` — For hybrid KG+RAG systems
-- `agent-patterns` — For knowledge-graph-powered agents
+- For hybrid KG+RAG systems, delegate to the `rag-implementer` skill
+- For knowledge-graph-powered agent workflows, delegate to the `agent-patterns` skill
 
 ## References
 

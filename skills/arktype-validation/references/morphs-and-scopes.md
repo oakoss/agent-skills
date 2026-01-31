@@ -163,24 +163,31 @@ const types = scope({
 
 ## Generics
 
-Define reusable generic type constructors:
+Define reusable generic type constructors using string-based angle bracket syntax:
 
 ```ts
-const Nullable = type.generic('T')((T) => T.or('null'));
+const boxOf = type('<t>', { box: 't' });
 
-const NullableString = Nullable('string');
-// string | null
+const stringBox = boxOf('string');
+// { box: string }
 
-const Response = type.generic('T')((T) =>
-  type({
-    data: T,
-    error: 'string | null',
-    status: "'success' | 'error'",
-  }),
-);
+// Constrained generics
+const nonEmpty = type('<arr extends unknown[]>', 'arr > 0');
 
-const UserResponse = Response({
-  id: 'string',
-  name: 'string',
-});
+// Multi-parameter generics
+const either = type('<a, b>', 'a | b');
+const stringOrNumber = either('string', 'number');
+```
+
+### Scoped Generics
+
+```ts
+const types = scope({
+  'box<t, u>': {
+    box: 't | u',
+  },
+  bitBox: 'box<0, 1>',
+}).export();
+
+const out = types.bitBox({ box: 0 });
 ```

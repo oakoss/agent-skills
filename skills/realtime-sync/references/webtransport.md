@@ -68,7 +68,7 @@ const transport = new WebTransport(url);
 await transport.ready;
 
 const stream = await transport.createUnidirectionalStream();
-const writer = stream.writable.getWriter();
+const writer = stream.getWriter();
 
 self.onmessage = ({ data }) => {
   writer.write(new TextEncoder().encode(JSON.stringify(data)));
@@ -84,13 +84,13 @@ const worker = new Worker(new URL('./transport.worker.ts', import.meta.url), {
 worker.postMessage({ type: 'cursor', x: 100, y: 200 });
 ```
 
-## Congestion Control
+## Connection Statistics
 
-WebTransport uses BBR v3 for congestion control. Monitor connection health:
+Monitor connection health using `getStats()`:
 
 ```ts
 const stats = await transport.getStats();
-console.log('RTT:', stats.rtt);
+console.log('Smoothed RTT:', stats.smoothedRtt);
 console.log('Bytes sent:', stats.bytesSent);
 console.log('Packets lost:', stats.packetsLost);
 ```
@@ -122,12 +122,12 @@ async function createTransport(url: string) {
 
 ## Common Pitfalls
 
-| Issue                | Cause                                                     | Fix                                        |
-| -------------------- | --------------------------------------------------------- | ------------------------------------------ |
-| Certificate errors   | WebTransport requires hash-based auth without standard CA | Use standard CA certificates in production |
-| Stream leaks         | Streams not closed on component unmount                   | Close all streams in cleanup/teardown      |
-| Firewall blocking    | Enterprise networks block UDP                             | Implement WebSocket fallback               |
-| Black hole detection | Server unreachable but no error                           | Monitor `transport.closed` promise         |
+| Issue                | Cause                                                   | Fix                                      |
+| -------------------- | ------------------------------------------------------- | ---------------------------------------- |
+| Certificate errors   | Self-signed certs need `serverCertificateHashes` option | Use CA-signed certificates in production |
+| Stream leaks         | Streams not closed on component unmount                 | Close all streams in cleanup/teardown    |
+| Firewall blocking    | Enterprise networks block UDP                           | Implement WebSocket fallback             |
+| Black hole detection | Server unreachable but no error                         | Monitor `transport.closed` promise       |
 
 ## Stream Lifecycle
 

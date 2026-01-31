@@ -29,7 +29,7 @@ rg -w "user"
 rg --type-add 'web:*.{html,css,js}' --type web "pattern"
 
 # Output matches as JSON (pipe to jq for structured analysis)
-rg "TODO" --json | jq '.data.lines.text'
+rg "TODO" --json | jq 'select(.type == "match") | .data.lines.text'
 
 # Search with PCRE2 for advanced regex features
 rg -P "(?<=function\s)\w+" --only-matching
