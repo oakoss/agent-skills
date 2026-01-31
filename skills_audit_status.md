@@ -162,15 +162,14 @@ Based on gaps discovered during the enrichment of all 69 skills, cross-referenci
 
 These have existing installed skill sources and fill critical catalog gaps.
 
-| #   | Skill Name                  | Description                                           | Source                            | Rationale                                                                                                                       |
-| --- | --------------------------- | ----------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | `tanstack-form`             | TanStack Form + React Aria Components                 | `.claude/skills/tanstack-form`    | Completes TanStack ecosystem (query, router, start, table all exist). Referenced by frontend-builder, shadcn-ui, zod-validation |
-| 2   | `typescript-patterns`       | Advanced generics, type guards, utility types         | `.claude/skills/typescript`       | Foundation skill — referenced across nearly every skill. Covers strict mode, discriminated unions, inference                    |
-| 3   | `react-error-handling`      | Error boundaries, fallback UIs, recovery patterns     | `.claude/skills/error-boundaries` | Referenced by react, frontend-builder, tanstack-router. Covers ErrorBoundary, errorComponent, reset                             |
-| 4   | `storybook-stories`         | Stories, interaction tests, play functions, Chromatic | `.claude/skills/storybook`        | Referenced by design-system. Component documentation, visual testing, a11y addon                                                |
-| 5   | `drizzle-orm`               | Drizzle ORM schemas, queries, migrations              | `.claude/skills/database`         | Fills gap between db-enforcer (integrity rules) and postgres-tuning (performance). Schema design, relations, migrations         |
-| 6   | `tanstack-server-functions` | createServerFn, validators, middleware chains         | `.claude/skills/server-functions` | Complements tanstack-start. RPC-style server functions with type safety                                                         |
-| 7   | `vitest-testing`            | Vitest + Testing Library patterns                     | `.claude/skills/testing`          | Fills unit/component testing gap (playwright and e2e-testing cover integration/E2E only)                                        |
+| #   | Skill Name             | Description                                           | Source                            | Rationale                                                                                                                       |
+| --- | ---------------------- | ----------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `tanstack-form`        | TanStack Form + React Aria Components                 | `.claude/skills/tanstack-form`    | Completes TanStack ecosystem (query, router, start, table all exist). Referenced by frontend-builder, shadcn-ui, zod-validation |
+| 2   | `typescript-patterns`  | Advanced generics, type guards, utility types         | `.claude/skills/typescript`       | Foundation skill — referenced across nearly every skill. Covers strict mode, discriminated unions, inference                    |
+| 3   | `react-error-handling` | Error boundaries, fallback UIs, recovery patterns     | `.claude/skills/error-boundaries` | Referenced by react, frontend-builder, tanstack-router. Covers ErrorBoundary, errorComponent, reset                             |
+| 4   | `storybook-stories`    | Stories, interaction tests, play functions, Chromatic | `.claude/skills/storybook`        | Referenced by design-system. Component documentation, visual testing, a11y addon                                                |
+| 5   | `drizzle-orm`          | Drizzle ORM schemas, queries, migrations              | `.claude/skills/database`         | Fills gap between db-enforcer (integrity rules) and postgres-tuning (performance). Schema design, relations, migrations         |
+| 6   | `vitest-testing`       | Vitest + Testing Library patterns                     | `.claude/skills/testing`          | Fills unit/component testing gap (playwright and e2e-testing cover integration/E2E only)                                        |
 
 ### Tier 2: Medium Priority (Source material exists in `.agents/skills/`)
 
@@ -178,9 +177,9 @@ Additional sources available but need more curation.
 
 | #   | Skill Name               | Description                                             | Source                              | Rationale                                                                               |
 | --- | ------------------------ | ------------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------- |
-| 8   | `css-animation-patterns` | CSS animations, keyframes, AutoAnimate, reduced motion  | `.agents/skills/animation-designer` | Broader than motion skill (which is Framer Motion specific). General animation patterns |
-| 9   | `github-actions`         | Workflow design, matrix testing, reusable workflows     | `.agents/skills/github-actions-pro` | ci-cd covers general CI/CD but GitHub Actions has enough depth for a dedicated skill    |
-| 10  | `vercel-deployment`      | Vercel deployment, edge functions, preview environments | `.agents/skills/deployment-advisor` | No dedicated deployment skill exists. Referenced in ci-cd and turborepo contexts        |
+| 7   | `css-animation-patterns` | CSS animations, keyframes, AutoAnimate, reduced motion  | `.agents/skills/animation-designer` | Broader than motion skill (which is Framer Motion specific). General animation patterns |
+| 8   | `github-actions`         | Workflow design, matrix testing, reusable workflows     | `.agents/skills/github-actions-pro` | ci-cd covers general CI/CD but GitHub Actions has enough depth for a dedicated skill    |
+| 9   | `vercel-deployment`      | Vercel deployment, edge functions, preview environments | `.agents/skills/deployment-advisor` | No dedicated deployment skill exists. Referenced in ci-cd and turborepo contexts        |
 
 ### Tier 3: Lower Priority (No source material, gap-driven)
 
@@ -188,19 +187,18 @@ Identified purely from cross-reference analysis.
 
 | #   | Skill Name           | Description                                              | Rationale                                                                                                    |
 | --- | -------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| 11  | `nextjs-app-router`  | Next.js App Router, middleware, Server Actions, metadata | Referenced in frontend-builder, motion, ci-cd. Major framework with no dedicated skill                       |
-| 12  | `pnpm-workspace`     | pnpm workspace patterns, shared configs, dependency mgmt | Turborepo skill is build-tool-specific. General workspace architecture patterns                              |
-| 13  | `react-email`        | React Email + Resend, transactional email templates      | Referenced in better-auth (email OTP). Resend has official skills; we can cover the React Email side         |
-| 14  | `stripe-integration` | Stripe Checkout, subscriptions, webhook handling         | Referenced in better-auth (Stripe plugin). Stripe has official skills; ours would cover integration patterns |
+| 10  | `pnpm-workspace`     | pnpm workspace patterns, shared configs, dependency mgmt | Turborepo skill is build-tool-specific. General workspace architecture patterns                              |
+| 11  | `react-email`        | React Email + Resend, transactional email templates      | Referenced in better-auth (email OTP). Resend has official skills; we can cover the React Email side         |
+| 12  | `stripe-integration` | Stripe Checkout, subscriptions, webhook handling         | Referenced in better-auth (Stripe plugin). Stripe has official skills; ours would cover integration patterns |
 
 ### Summary
 
 | Tier      | Count  | Source Material                    | Action                                                          |
 | --------- | ------ | ---------------------------------- | --------------------------------------------------------------- |
-| 1         | 7      | `.claude/skills/` (ready)          | Create skills using existing sources + official docs validation |
+| 1         | 6      | `.claude/skills/` (ready)          | Create skills using existing sources + official docs validation |
 | 2         | 3      | `.agents/skills/` (needs curation) | Create skills with heavier doc validation                       |
-| 3         | 4      | None (gap-driven)                  | Create from scratch using official docs                         |
-| **Total** | **14** |                                    |                                                                 |
+| 3         | 3      | None (gap-driven)                  | Create from scratch using official docs                         |
+| **Total** | **12** |                                    |                                                                 |
 
 ### Architecture Decision: Self-Contained Skills
 
@@ -218,6 +216,8 @@ Integration reference files should be minimal — cover the key patterns and got
 
 - **zod** — Already covered by `zod-validation`. No new skill needed.
 - **tanstack-integration** — To be deprecated. Content should be migrated into individual TanStack skills as integration reference files (see architecture decision above).
+- **tanstack-server-functions** — Removed. Server functions content belongs in `tanstack-start` as reference files.
+- **nextjs-app-router** — Removed. Not a priority for this repo's TanStack-focused ecosystem.
 - **meta-\*** skills (meta-skill-creator, meta-agent-creator, etc.) — These are tooling/internal skills, not candidates for public distribution.
 - Tier 1 skills have the highest ROI: source material already exists and they fill gaps referenced by multiple existing skills.
 - **Naming review**: Names follow ecosystem conventions observed on [skills.sh](https://skills.sh) — tool-specific (`drizzle-orm`, `vitest-testing`) or pattern-specific (`typescript-patterns`, `react-error-handling`) rather than generic categories.
