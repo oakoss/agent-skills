@@ -1,6 +1,6 @@
 ---
 title: Configuration
-description: playwright.config.ts setup, dynamic web server configuration, Docker deployment, dependencies, and package versions
+description: playwright.config.ts setup, projects, web server configuration, Docker deployment, dependencies, and browser launch options
 tags:
   [
     config,
@@ -11,7 +11,9 @@ tags:
     Docker,
     Dockerfile,
     dependencies,
-    v1.57,
+    workers,
+    retries,
+    reporter,
   ]
 ---
 
@@ -37,10 +39,8 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
     viewport: { width: 1920, height: 1080 },
     locale: 'en-US',
-    timezoneId: 'America/New_York',
   },
 
   projects: [
@@ -49,16 +49,16 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
     {
-      name: 'stealth',
-      use: {
-        ...devices['Desktop Chrome'],
-        launchOptions: {
-          args: [
-            '--disable-blink-features=AutomationControlled',
-            '--no-sandbox',
-          ],
-        },
-      },
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] },
+    },
+    {
+      name: 'mobile',
+      use: { ...devices['iPhone 15'] },
     },
   ],
 });
@@ -66,13 +66,76 @@ export default defineConfig({
 
 **Key settings:**
 
-- `trace: 'on-first-retry'` — captures full trace for debugging failed tests
-- `screenshot: 'only-on-failure'` — saves disk space
-- `viewport: { width: 1920, height: 1080 }` — common desktop resolution
+- `trace: 'on-first-retry'` -- captures full trace for debugging failed tests
+- `screenshot: 'only-on-failure'` -- saves disk space
+- `fullyParallel: true` -- runs tests in parallel across files and within files
 
-## Dynamic Web Server Configuration (v1.57+)
+## Multi-Project Setup with Auth
 
-Wait for web server output before starting tests using regex:
+```typescript
+export default defineConfig({
+  projects: [
+    { name: 'setup', testMatch: /.*\.setup\.ts/ },
+    {
+      name: 'chromium',
+      dependencies: ['setup'],
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: '.auth/user.json',
+      },
+    },
+  ],
+});
+```
+
+## Per-Project Workers (v1.52+)
+
+```typescript
+export default defineConfig({
+  workers: 4,
+  projects: [
+    {
+      name: 'fast-tests',
+      workers: 4,
+    },
+    {
+      name: 'slow-tests',
+      workers: 1,
+    },
+  ],
+});
+```
+
+The global `workers` limit still applies as a ceiling.
+
+## Flaky Test Detection
+
+```typescript
+export default defineConfig({
+  retries: 2,
+  failOnFlakyTests: true,
+});
+```
+
+CLI equivalent: `npx playwright test --fail-on-flaky-tests`
+
+## Web Server Configuration
+
+### Basic
+
+```typescript
+export default defineConfig({
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI,
+  },
+});
+```
+
+### Dynamic Port Detection (v1.57+)
+
+Wait for web server output using regex:
 
 ```typescript
 export default defineConfig({
@@ -88,14 +151,38 @@ export default defineConfig({
 });
 ```
 
-- Named capture groups become environment variables
-- Handles dynamic ports from Vite, Next.js dev mode
-- No need for HTTP readiness checks
+Named capture groups become environment variables. Handles dynamic ports from Vite, Next.js, and other dev servers.
+
+### Graceful Shutdown (v1.50+)
+
+```typescript
+export default defineConfig({
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:3000',
+    gracefulShutdown: { signal: 'SIGTERM', timeout: 5000 },
+  },
+});
+```
+
+## Reporter Configuration
+
+```typescript
+export default defineConfig({
+  reporter: [
+    ['html', { open: 'never' }],
+    ['junit', { outputFile: 'results.xml' }],
+    ['list'],
+  ],
+});
+```
+
+View HTML report: `npx playwright show-report`
 
 ## Docker Deployment
 
 ```dockerfile
-FROM mcr.microsoft.com/playwright:v1.57.0-noble
+FROM mcr.microsoft.com/playwright:v1.58.0-noble
 
 RUN groupadd -r pwuser && useradd -r -g pwuser pwuser
 USER pwuser
@@ -121,10 +208,10 @@ docker run -it --init --ipc=host my-playwright-tests
 
 **Available tags:**
 
-- `:v1.57.0-noble` — Ubuntu 24.04 LTS (recommended)
-- `:v1.57.0-jammy` — Ubuntu 22.04 LTS
+- `:v1.58.0-noble` -- Ubuntu 24.04 LTS (recommended)
+- `:v1.58.0-jammy` -- Ubuntu 22.04 LTS
 
-**Python image:** `mcr.microsoft.com/playwright/python:v1.57.0-noble`
+**Python image:** `mcr.microsoft.com/playwright/python:v1.58.0-noble`
 
 **Security:**
 
@@ -142,51 +229,43 @@ docker run -it --init --ipc=host my-playwright-tests
 | `executablePath` | `/path/to/chrome`  | Use custom browser       |
 | `downloadsPath`  | `./downloads`      | Download location        |
 
-## Common Launch Args for Stealth
+## Common CI Environment Variables
 
-```typescript
-args: [
-  '--disable-blink-features=AutomationControlled',
-  '--no-sandbox',
-  '--disable-setuid-sandbox',
-  '--disable-dev-shm-usage',
-  '--disable-accelerated-2d-canvas',
-  '--no-first-run',
-  '--no-zygote',
-  '--single-process',
-  '--disable-gpu',
-];
-```
+| Variable               | Purpose                                       |
+| ---------------------- | --------------------------------------------- |
+| `CI=true`              | Detected by Playwright for CI-specific config |
+| `PLAYWRIGHT_FORCE_TTY` | Control TTY behavior for reporters            |
 
 ## Dependencies
 
 **Required:**
 
-- `playwright@1.57.0` — Core browser automation library
+- `@playwright/test` -- Test runner and assertions
 - Node.js 20+ (Node.js 18 deprecated) or Python 3.9+
 
-**Optional (Node.js stealth):**
+**Optional (stealth):**
 
-- `playwright-extra@4.3.6` — Plugin system
-- `puppeteer-extra-plugin-stealth@2.11.2` — Anti-detection
-
-**Optional (Python stealth):**
-
-- `playwright-stealth@0.0.1`
+- `playwright-extra` -- Plugin system
+- `puppeteer-extra-plugin-stealth` -- Anti-detection
 
 ```json
 {
   "devDependencies": {
-    "playwright": "^1.57.0",
-    "@playwright/test": "^1.57.0",
-    "playwright-extra": "^4.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2"
+    "@playwright/test": "^1.58.0"
   }
 }
 ```
 
-## v1.57 Breaking Change
+## Breaking Changes Reference
 
-Playwright now uses [Chrome for Testing](https://developer.chrome.com/blog/chrome-for-testing/) builds instead of Chromium. This provides more authentic browser behavior but changes the browser icon and title bar.
+| Version | Change                                                             |
+| ------- | ------------------------------------------------------------------ |
+| v1.58   | Removed `_react` and `_vue` selectors; removed `:light` suffix     |
+| v1.57   | Chrome for Testing replaces Chromium; `page.accessibility` removed |
+| v1.55   | Glob patterns in `page.route()` no longer support `?` and `[]`     |
+| v1.55   | `route.continue()` cannot override `Cookie` header                 |
+| v1.54   | Node.js 16 removed, Node.js 18 deprecated                          |
 
-Browser versions: Chromium 143.0.7499.4 | Firefox 144.0.2 | WebKit 26.0
+## Browser Versions (v1.58)
+
+Chromium 145.0.7632.6 | Firefox 146.0.1 | WebKit 26.0

@@ -13,9 +13,27 @@ tags:
 
 # Audit Report Template
 
-Use this template structure when producing quality audit reports.
+Use this template structure when producing quality audit reports. Every section requires evidence -- no scores without justification.
 
-## Report Structure
+## Phase 0: Resource Completeness Check
+
+This check is mandatory before scoring. The audit must fail if resources are incomplete.
+
+**Verification steps:**
+
+1. Count resources in directories vs registry entries (must match)
+2. Verify all resources in filesystem are discoverable through the registry
+3. Check cross-references point to existing entries
+4. Verify CLI reads from registry (not hardcoded data)
+
+**Critical failure conditions (cap overall score at 6/10):**
+
+- Registry missing >10% of resources from directories
+- README documents resources not in registry
+- CLI uses mock/hardcoded data instead of registry
+- Cross-references point to non-existent resources
+
+## Report Template
 
 ```markdown
 # Quality Audit Report: [Tool/System Name]
@@ -41,7 +59,7 @@ Use this template structure when producing quality audit reports.
 
 **Key Strengths:**
 
-1. [Strength 1 with evidence]
+1. [Strength 1 with evidence -- file path, metric, or example]
 2. [Strength 2 with evidence]
 3. [Strength 3 with evidence]
 
@@ -57,20 +75,20 @@ Use this template structure when producing quality audit reports.
 
 ## Detailed Scores
 
-| Dimension            | Score | Rating   | Priority          |
-| -------------------- | ----- | -------- | ----------------- |
-| Code Quality         | X/10  | [Rating] | [High/Medium/Low] |
-| Architecture         | X/10  | [Rating] | [High/Medium/Low] |
-| Documentation        | X/10  | [Rating] | [High/Medium/Low] |
-| Usability            | X/10  | [Rating] | [High/Medium/Low] |
-| Performance          | X/10  | [Rating] | [High/Medium/Low] |
-| Security             | X/10  | [Rating] | [High/Medium/Low] |
-| Testing              | X/10  | [Rating] | [High/Medium/Low] |
-| Maintainability      | X/10  | [Rating] | [High/Medium/Low] |
-| Developer Experience | X/10  | [Rating] | [High/Medium/Low] |
-| Accessibility        | X/10  | [Rating] | [High/Medium/Low] |
-| CI/CD                | X/10  | [Rating] | [High/Medium/Low] |
-| Innovation           | X/10  | [Rating] | [High/Medium/Low] |
+| Dimension            | Weight | Score | Rating   | Priority          |
+| -------------------- | ------ | ----- | -------- | ----------------- |
+| Code Quality         | 10%    | X/10  | [Rating] | [High/Medium/Low] |
+| Architecture         | 10%    | X/10  | [Rating] | [High/Medium/Low] |
+| Documentation        | 10%    | X/10  | [Rating] | [High/Medium/Low] |
+| Usability            | 10%    | X/10  | [Rating] | [High/Medium/Low] |
+| Performance          | 8%     | X/10  | [Rating] | [High/Medium/Low] |
+| Security             | 10%    | X/10  | [Rating] | [High/Medium/Low] |
+| Testing              | 8%     | X/10  | [Rating] | [High/Medium/Low] |
+| Maintainability      | 8%     | X/10  | [Rating] | [High/Medium/Low] |
+| Developer Experience | 10%    | X/10  | [Rating] | [High/Medium/Low] |
+| Accessibility        | 8%     | X/10  | [Rating] | [High/Medium/Low] |
+| CI/CD                | 5%     | X/10  | [Rating] | [High/Medium/Low] |
+| Innovation           | 3%     | X/10  | [Rating] | [High/Medium/Low] |
 
 **Overall Score:** [Weighted Average]/10
 
@@ -92,7 +110,7 @@ Use this template structure when producing quality audit reports.
 
 **Evidence:**
 
-- [Code examples, metrics]
+- [Code examples, metrics, tool output]
 
 **Improvements:**
 
@@ -155,45 +173,53 @@ Use this template structure when producing quality audit reports.
 
 ---
 
+## Quality Metrics
+
+| Metric           | Result | Target   | Status      |
+| ---------------- | ------ | -------- | ----------- |
+| Code Coverage    | [X]%   | 80%+     | [Pass/Fail] |
+| Complexity Avg   | [X]    | <15      | [Pass/Fail] |
+| Dependency Vulns | [X]    | 0 high   | [Pass/Fail] |
+| Bundle Size      | [X] KB | [Budget] | [Pass/Fail] |
+
+---
+
 ## Conclusion
 
 [Summary of findings, overall assessment, final recommendation]
+
+**Final Verdict:** [Detailed recommendation with next steps]
 ```
 
-## Phase 0: Resource Completeness Check
+## Weighted Score Calculation
 
-This check is mandatory before scoring. The audit must fail if resources are incomplete.
+Calculate the overall score using dimension weights:
 
-**Verification steps:**
+```text
+Overall = (CodeQuality * 0.10) + (Architecture * 0.10) + (Documentation * 0.10)
+        + (Usability * 0.10) + (Performance * 0.08) + (Security * 0.10)
+        + (Testing * 0.08) + (Maintainability * 0.08) + (DX * 0.10)
+        + (Accessibility * 0.08) + (CICD * 0.05) + (Innovation * 0.03)
+```
 
-1. Count resources in directories vs registry entries (must match)
-2. Verify all resources in filesystem are discoverable through the registry
-3. Check cross-references point to existing entries
-4. Verify CLI reads from registry (not hardcoded data)
+Round to one decimal place. Apply any caps (Phase 0 failure caps at 6.0).
 
-**Critical failure conditions (cap overall score at 6/10):**
+## Evidence Standards
 
-- Registry missing >10% of resources from directories
-- README documents resources not in registry
-- CLI uses mock/hardcoded data instead of registry
-- Cross-references point to non-existent resources
+Every score must include at least one of:
 
-## The Verification Gap Protocol
+- **File reference** -- specific path and line number
+- **Metric** -- quantitative measurement from a tool
+- **Code example** -- concrete snippet demonstrating the issue
+- **Tool output** -- scan results, coverage reports, benchmark data
 
-AI-generated code requires extra scrutiny:
-
-- **Critic agents** -- use high-reasoning models to audit faster outputs
-- **Verifiable goals** -- every PR must produce a signal of success (test pass, lint pass, build pass)
-- **Human oversight** -- mandatory human sign-off for critical business logic
-- **Excellence over mimicry** -- do not repeat bad local patterns; use idiomatic standards
-- **No black boxes** -- every complex function must explain its reasoning
-- **Metadata** -- tag generated files for future auditing
+Scores without evidence are invalid. If a dimension cannot be evaluated (e.g., no UI means accessibility is not applicable), note it as "N/A" and redistribute the weight proportionally.
 
 ## The Rejection Protocol
 
-If the audit fails:
+If the audit fails any critical check:
 
-1. **Stop** -- do not proceed with the commit or report
-2. **Analyze** -- identify the specific deviation
+1. **Stop** -- do not proceed with the commit or final report
+2. **Analyze** -- identify the specific deviation from standards
 3. **Remediate** -- apply the fix immediately
-4. **Re-audit** -- restart the checklist from step 1
+4. **Re-audit** -- restart the checklist from Phase 0

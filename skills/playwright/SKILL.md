@@ -1,69 +1,57 @@
 ---
 name: playwright
 description: |
-  Playwright browser automation and web scraping. Covers stealth mode, anti-bot bypass, authenticated sessions, infinite scroll, screenshots/PDFs, virtualization, Docker deployment, and MCP server integration. Prevents 10 documented errors including CI timeout hangs, extension testing failures, and Ubuntu compatibility issues.
+  Playwright browser automation, E2E testing, and web scraping. Covers test fixtures, locator assertions, API testing, stealth mode, anti-bot bypass, authenticated sessions, screenshots/PDFs, Docker deployment, and MCP integration with AI agents. Prevents documented errors including CI timeout hangs, extension testing failures, and navigation issues.
 
-  Use when automating browsers, scraping protected sites, testing with real IPs, bypassing bot detection, generating screenshots/PDFs, or troubleshooting Playwright errors.
+  Use when writing E2E tests, automating browsers, scraping protected sites, bypassing bot detection, generating screenshots/PDFs, configuring Playwright Test, or troubleshooting Playwright errors.
 ---
 
 # Playwright
 
 ## Overview
 
-Playwright is a browser automation library for Node.js and Python. It supports Chromium, Firefox, and WebKit with a single API.
+Playwright is a browser automation framework for Node.js and Python supporting Chromium, Firefox, and WebKit with a single API. It provides auto-waiting, web-first assertions, and full test isolation for reliable end-to-end testing.
 
-**When to use:** Browser automation, web scraping, E2E testing, screenshot/PDF generation, anti-bot bypass with stealth plugins, authenticated session scraping.
+**When to use:** E2E testing, browser automation, web scraping, screenshot/PDF generation, API testing, visual regression testing, accessibility validation.
 
-**When NOT to use:** Simple HTTP requests (use `fetch`), serverless scraping at scale (consider Cloudflare Browser Rendering), spreadsheet-like data (use APIs directly).
+**When NOT to use:** Simple HTTP requests (use `fetch`), unit testing (use Vitest/Jest), serverless scraping at scale (consider Cloudflare Browser Rendering).
 
 ## Quick Reference
 
-| Pattern                | API / Config                                              | Key Points                                         |
-| ---------------------- | --------------------------------------------------------- | -------------------------------------------------- |
-| Basic scrape           | `chromium.launch()` + `page.goto()`                       | Always close browser, use `waitUntil`              |
-| Stealth mode           | `playwright-extra` + stealth plugin                       | Patches 20+ detection vectors                      |
-| Authenticated session  | `context.cookies()` + `addCookies()`                      | Save/restore cookies for session persistence       |
-| Infinite scroll        | `page.evaluate(() => window.scrollTo(...))` + dedup loop  | Track `scrollHeight` changes, break after 3 stalls |
-| Screenshot             | `page.screenshot({ fullPage: true })`                     | Use `waitUntil: 'networkidle'` first               |
-| PDF generation         | `page.pdf({ format: 'A4' })`                              | Chromium only, set `printBackground: true`         |
-| Server-side pagination | `manualPagination: true` + query key with state           | All table state in query key                       |
-| Docker                 | `mcr.microsoft.com/playwright:v1.57.0-noble`              | Use `--init --ipc=host` flags                      |
-| Debug methods          | `page.consoleMessages()` / `page.requests()` (v1.56+)     | No event listeners needed                          |
-| Mouse steps            | `click({ steps: 10 })` / `dragTo({ steps: 20 })` (v1.57+) | Anti-detection via realistic movement              |
-| MCP Server             | `npx playwright init-agents`                              | Uses accessibility tree, not screenshots           |
-| Speedboard             | HTML reporter (v1.57+)                                    | Identifies slow tests and bottlenecks              |
-
-## Selector Strategies
-
-| Strategy    | Example                                   | Best For             |
-| ----------- | ----------------------------------------- | -------------------- |
-| data-testid | `[data-testid="submit"]`                  | Test automation      |
-| CSS         | `button.submit`                           | Standard elements    |
-| Text        | `text=Submit`                             | When text is unique  |
-| Role        | `getByRole('button', { name: 'Submit' })` | Accessible selectors |
-| XPath       | `xpath=//button[text()="Submit"]`         | Complex DOM queries  |
-
-## Wait Strategies
-
-| Method                          | Use Case                   |
-| ------------------------------- | -------------------------- |
-| `waitUntil: 'networkidle'`      | SPAs (React, Vue, Angular) |
-| `waitUntil: 'domcontentloaded'` | Faster, for slow sites     |
-| `page.waitForSelector()`        | Wait for specific element  |
-| `page.waitForLoadState()`       | After navigation           |
+| Pattern               | API / Config                                          | Key Points                                         |
+| --------------------- | ----------------------------------------------------- | -------------------------------------------------- |
+| Basic test            | `test('name', async ({ page }) => {})`                | Auto-wait, web-first assertions, test isolation    |
+| Locator               | `page.getByRole()` / `page.locator()`                 | Prefer role/label/text selectors over CSS          |
+| Assertion             | `expect(locator).toBeVisible()`                       | Auto-retrying, configurable timeout                |
+| API testing           | `request` fixture / `apiRequestContext`               | Send HTTP requests, validate responses             |
+| Aria snapshot         | `expect(locator).toMatchAriaSnapshot()`               | Validate accessibility tree structure via YAML     |
+| Class assertion       | `expect(locator).toContainClass('active')`            | Match individual CSS class names (v1.52+)          |
+| Visible filter        | `locator.filter({ visible: true })`                   | Match only visible elements (v1.51+)               |
+| Test step             | `test.step('name', async (step) => {})`               | Timeout, skip, and attachments (v1.50+)            |
+| Stealth mode          | `playwright-extra` + stealth plugin                   | Patches 20+ detection vectors                      |
+| Authenticated session | `context.cookies()` + `addCookies()`                  | Save/restore cookies and IndexedDB for persistence |
+| Screenshot            | `page.screenshot({ fullPage: true })`                 | Use `waitUntil: 'networkidle'` first               |
+| PDF generation        | `page.pdf({ format: 'A4' })`                          | Chromium only, set `printBackground: true`         |
+| Docker                | `mcr.microsoft.com/playwright:v1.58.0-noble`          | Use `--init --ipc=host` flags                      |
+| Debug methods         | `page.consoleMessages()` / `page.requests()` (v1.56+) | No event listeners needed                          |
+| Speedboard            | HTML reporter (v1.57+)                                | Identifies slow tests and bottlenecks              |
+| Playwright Agents     | `npx playwright init-agents`                          | Planner, generator, healer for LLM-driven testing  |
+| Flaky test detection  | `--fail-on-flaky-tests` (v1.50+)                      | Exit code 1 on flaky tests in CI                   |
 
 ## Common Mistakes
 
 | Mistake                                 | Correct Pattern                                              |
 | --------------------------------------- | ------------------------------------------------------------ |
+| Using CSS selectors over role selectors | Prefer `getByRole`, `getByLabel`, `getByText` for resilience |
 | Not closing browser                     | Always `await browser.close()` in `finally` block            |
-| Using `setTimeout` for waits            | Use `waitForSelector`, `waitForLoadState`                    |
-| Same user agent for all requests        | Rotate user agents for high-volume scraping                  |
+| Using `setTimeout` for waits            | Use `waitForSelector`, `waitForLoadState`, auto-wait         |
 | `page.pause()` left in CI code          | Guard with `if (!process.env.CI)` — hangs CI indefinitely    |
-| Clicking without waiting                | Use `locator().click()` with auto-wait or `waitForSelector`  |
-| Fixed delays for dynamic content        | Wait for `scrollHeight` stabilization or selector appearance |
-| No error handling for navigation        | Wrap in try/catch with retry logic                           |
-| Running headless without testing headed | Debug with `headless: false` first                           |
+| Clicking without waiting                | Use `locator().click()` with built-in auto-wait              |
+| Shared state between tests              | Each test gets fresh context via fixtures                    |
+| Testing implementation details          | Assert user-visible behavior, not DOM structure              |
+| Hardcoded waits for dynamic content     | Wait for selector appearance or content stabilization        |
+| Missing `await` on assertions           | All `expect()` assertions return promises — must be awaited  |
+| Same user agent for all scraping        | Rotate user agents for high-volume scraping                  |
 
 ## Delegation
 
@@ -74,12 +62,13 @@ Playwright is a browser automation library for Node.js and Python. It supports C
 ## References
 
 - [Quick start and installation](references/quick-start.md)
-- [Stealth mode and anti-bot bypass](references/stealth-mode.md)
-- [Known issues and solutions (10 documented)](references/known-issues.md)
-- [Configuration and Docker deployment](references/configuration.md)
-- [Common automation patterns](references/common-patterns.md)
-- [Debug methods and performance analysis](references/debug-and-performance.md)
+- [E2E testing patterns and assertions](references/testing-patterns.md)
 - [Selector strategies and best practices](references/selector-strategies.md)
-- [Advanced topics: MCP, parallel contexts, fingerprinting](references/advanced-topics.md)
+- [Configuration and Docker deployment](references/configuration.md)
+- [Debug methods and performance analysis](references/debug-and-performance.md)
+- [Common automation patterns](references/common-patterns.md)
+- [Stealth mode and anti-bot bypass](references/stealth-mode.md)
+- [Known issues and solutions](references/known-issues.md)
 - [Site-specific blocking and bypasses](references/blocking-and-bypasses.md)
 - [Troubleshooting common problems](references/troubleshooting.md)
+- [Advanced topics: MCP, AI agents, parallel contexts](references/advanced-topics.md)

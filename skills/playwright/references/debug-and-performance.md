@@ -1,6 +1,6 @@
 ---
 title: Debug Methods and Performance
-description: v1.56+ debug methods (console messages, page errors, network requests), v1.57+ mouse control with steps, and Speedboard performance analysis
+description: Debug methods for console messages, page errors, network requests, Trace Viewer, mouse control with steps, Speedboard performance analysis, and worker console events
 tags:
   [
     debug,
@@ -16,6 +16,8 @@ tags:
     Speedboard,
     performance,
     profiling,
+    trace,
+    worker,
   ]
 ---
 
@@ -74,6 +76,42 @@ test('inspect API calls', async ({ page }) => {
 
 Use for: debugging test failures, verifying no console errors, auditing network activity.
 
+## Worker Console Events (v1.57+)
+
+Monitor console output from Web Workers and Service Workers:
+
+```typescript
+test('capture worker console messages', async ({ page }) => {
+  page.on('worker', (worker) => {
+    worker.on('console', (msg) => {
+      console.log(`Worker [${worker.url()}]: ${msg.text()}`);
+    });
+  });
+
+  await page.goto('/app-with-workers');
+});
+```
+
+## Trace Viewer
+
+Record traces for post-mortem debugging:
+
+```typescript
+export default defineConfig({
+  use: {
+    trace: 'on-first-retry',
+  },
+});
+```
+
+View traces:
+
+```bash
+npx playwright show-trace trace.zip
+```
+
+Trace Viewer shows: action timeline, DOM snapshots, network requests, console logs, and source code context. UI Mode includes search (Cmd/Ctrl+F) in code editors and auto-formatted JSON responses.
+
 ## Advanced Mouse Control (v1.57+)
 
 The `steps` option provides fine-grained control over mouse movement:
@@ -105,7 +143,7 @@ Anti-detection benefit: many bot detection systems look for instantaneous mouse 
 
 ## Speedboard Performance Analysis (v1.57+)
 
-The HTML reporter includes Speedboard — a dedicated tab for identifying slow tests.
+The HTML reporter includes Speedboard -- a dedicated tab for identifying slow tests. In v1.58+, merged reports also show a Timeline visualization.
 
 **Enable:**
 
@@ -135,3 +173,17 @@ npx playwright show-report
 - Find tests with excessive `waitForTimeout()` calls
 - Identify slow API responses affecting tests
 - Prioritize refactoring for slowest tests
+
+## Debugging Tips
+
+| Method                          | When to Use                       |
+| ------------------------------- | --------------------------------- |
+| `PWDEBUG=1 npx playwright test` | Step through test in inspector    |
+| `page.pause()`                  | Pause at specific point (headed)  |
+| `--headed`                      | See browser during test           |
+| `--debug`                       | Open inspector at start           |
+| `trace: 'on'`                   | Capture full trace every run      |
+| `screenshot: 'on'`              | Screenshot after every test       |
+| `video: 'on'`                   | Record video of every test        |
+| `page.consoleMessages()`        | Check console output (v1.56+)     |
+| `locator.describe('reason')`    | Label locators in traces (v1.53+) |

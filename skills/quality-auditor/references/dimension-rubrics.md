@@ -1,18 +1,28 @@
 ---
 title: Dimension Rubrics
-description: Detailed scoring criteria, evidence requirements, and rubric tables for all 12 quality audit dimensions
+description: Detailed scoring criteria, evidence requirements, and rubric tables for all 12 quality audit dimensions with industry benchmarks
 tags:
   [
     scoring-rubrics,
     evaluation-criteria,
     quality-dimensions,
     evidence-based-audit,
+    industry-benchmarks,
   ]
 ---
 
 # Dimension Rubrics
 
-Each of the 12 dimensions requires specific evaluation criteria, evidence, and a scoring rubric.
+Each of the 12 dimensions requires specific evaluation criteria, evidence, and a scoring rubric. Weights total 100% and can be adjusted based on the project type and priorities.
+
+## Scoring Principles
+
+- **Compare against industry leaders**, not average tools
+- **Reference established standards** (OWASP, WCAG, IEEE, ISO)
+- **Consider real-world usage** and edge cases
+- **Provide specific examples** for each score -- cite file paths, line numbers, metrics
+- **10/10 is rare** -- reserved for truly exceptional, industry-leading work
+- **Most quality tools score 6-7** -- this is the realistic baseline
 
 ## 1. Code Quality (10%)
 
@@ -26,11 +36,29 @@ Each of the 12 dimensions requires specific evaluation criteria, evidence, and a
 | 4     | Poor structure, significant technical debt              |
 | 2     | Chaotic, unmaintainable code                            |
 
-**Evidence required:** Specific file examples, complexity metrics, pattern identification.
+**Evidence required:**
+
+- Specific file examples with line references
+- Complexity metrics (cyclomatic, cognitive)
+- Pattern identification (design patterns used or missing)
+- Duplication analysis results
+
+**Key checks:**
+
+```bash
+# Find functions over 50 lines (approximate complexity signal)
+rg -c "^}" -g "*.ts" | sort -t: -k2 -rn | head -20
+
+# Find potential magic numbers
+rg "\b(?:100|200|404|500|1000|3600|86400)\b" -g "*.ts" --stats
+
+# Find duplicated string literals
+rg -o '"[^"]{10,}"' -g "*.ts" --no-filename | sort | uniq -c | sort -rn | head -10
+```
 
 ## 2. Architecture (10%)
 
-**Evaluate:** System design, modularity, separation of concerns, scalability, dependency management, API design, data flow, coupling/cohesion.
+**Evaluate:** System design, modularity, separation of concerns, scalability, dependency management, API design, data flow, coupling/cohesion, architectural patterns.
 
 | Score | Criteria                                       |
 | ----- | ---------------------------------------------- |
@@ -40,7 +68,22 @@ Each of the 12 dimensions requires specific evaluation criteria, evidence, and a
 | 4     | High coupling, not scalable                    |
 | 2     | Fundamentally flawed architecture              |
 
-**Evidence required:** Component analysis, dependency analysis, architecture diagrams (if available).
+**Evidence required:**
+
+- Component analysis and dependency graph
+- Coupling/cohesion assessment
+- Architectural fitness for stated requirements
+- API design consistency
+
+**Key checks:**
+
+```bash
+# Find files importing from many different modules (high fan-out)
+rg -c "^import" -g "*.ts" | sort -t: -k2 -rn | head -20
+
+# Find deeply nested code (architectural complexity signal)
+rg "^\s{16,}" -g "*.ts" -c | sort -t: -k2 -rn
+```
 
 ## 3. Documentation (10%)
 
@@ -54,7 +97,12 @@ Each of the 12 dimensions requires specific evaluation criteria, evidence, and a
 | 4     | Poor coverage, confusing, lacks examples         |
 | 2     | Minimal or misleading documentation              |
 
-**Evidence required:** Documentation inventory, missing sections, quality assessment of examples.
+**Evidence required:**
+
+- Documentation inventory (what exists vs what should exist)
+- Missing sections identified
+- Quality assessment of examples (do they work?)
+- Accuracy check (does documentation match implementation?)
 
 ## 4. Usability (10%)
 
@@ -68,7 +116,12 @@ Each of the 12 dimensions requires specific evaluation criteria, evidence, and a
 | 4     | Steep learning curve, difficult |
 | 2     | Nearly unusable                 |
 
-**Evidence required:** Time-to-first-success, pain points, user journey analysis.
+**Evidence required:**
+
+- Time-to-first-success measurement
+- Pain points identified during testing
+- Error message quality assessment
+- Default configuration adequacy
 
 ## 5. Performance (8%)
 
@@ -82,7 +135,13 @@ Each of the 12 dimensions requires specific evaluation criteria, evidence, and a
 | 4     | Slow, resource-heavy                                |
 | 2     | Unusably slow, resource exhaustion                  |
 
-**Evidence required:** Benchmarks, resource measurements, bottleneck identification.
+**Evidence required:**
+
+- Benchmarks (startup time, operation latency)
+- Resource measurements (memory, CPU)
+- Bottleneck identification
+- N+1 query detection (if applicable)
+- Bundle size analysis (if applicable)
 
 ## 6. Security (10%)
 
@@ -96,7 +155,25 @@ Each of the 12 dimensions requires specific evaluation criteria, evidence, and a
 | 4     | Significant vulnerabilities               |
 | 2     | Critical security flaws                   |
 
-**Evidence required:** Vulnerability scan results, security checklist, specific issues found.
+**Evidence required:**
+
+- Vulnerability scan results (npm audit, Snyk, Semgrep)
+- OWASP Top 10 checklist completion
+- Input validation coverage
+- Secret management audit
+
+**Key checks:**
+
+```bash
+# Find potential hardcoded secrets
+rg -i "(api.?key|secret|password|token)\s*[:=]" -g "*.ts" -g "!*.test.*"
+
+# Find potential SQL injection
+rg "query\(.*\$\{" -g "*.ts"
+
+# Check dependency vulnerabilities
+npm audit --json | jq '.vulnerabilities | length'
+```
 
 ## 7. Testing (8%)
 
@@ -110,7 +187,12 @@ Each of the 12 dimensions requires specific evaluation criteria, evidence, and a
 | 4     | Poor, <40% coverage                     |
 | 2     | Minimal or no tests                     |
 
-**Evidence required:** Coverage reports, test inventory, quality assessment.
+**Evidence required:**
+
+- Coverage reports with branch/line/function breakdown
+- Test inventory (unit vs integration vs e2e ratio)
+- Test quality assessment (do tests verify behavior or implementation?)
+- CI integration status
 
 ## 8. Maintainability (8%)
 
@@ -124,7 +206,12 @@ Each of the 12 dimensions requires specific evaluation criteria, evidence, and a
 | 4     | High debt, difficult to maintain                     |
 | 2     | Unmaintainable                                       |
 
-**Evidence required:** Debt analysis, maintainability metrics, contribution difficulty assessment.
+**Evidence required:**
+
+- Technical debt analysis (TODO/FIXME count, deprecated API usage)
+- Contribution difficulty assessment
+- Versioning strategy evaluation (semver compliance)
+- Dependency freshness (outdated packages)
 
 ## 9. Developer Experience (10%)
 
@@ -138,7 +225,12 @@ Each of the 12 dimensions requires specific evaluation criteria, evidence, and a
 | 4     | Frustrating             |
 | 2     | Actively hostile        |
 
-**Evidence required:** Setup time measurement, developer pain points, tooling assessment.
+**Evidence required:**
+
+- Setup time measurement (clone to running)
+- Developer pain points during evaluation
+- Tooling assessment (TypeScript, linting, formatting)
+- Feedback loop speed (save to result)
 
 ## 10. Accessibility (8%)
 
@@ -152,7 +244,12 @@ Each of the 12 dimensions requires specific evaluation criteria, evidence, and a
 | 4     | Poor accessibility            |
 | 2     | Inaccessible to many users    |
 
-**Evidence required:** WCAG audit results, usability assessment for diverse users.
+**Evidence required:**
+
+- WCAG 2.1 AA/AAA audit results
+- Keyboard navigation testing
+- Screen reader compatibility
+- Color contrast ratios
 
 ## 11. CI/CD (5%)
 
@@ -166,7 +263,12 @@ Each of the 12 dimensions requires specific evaluation criteria, evidence, and a
 | 4     | Mostly manual                           |
 | 2     | No automation                           |
 
-**Evidence required:** Pipeline configuration, deployment frequency, failure rate.
+**Evidence required:**
+
+- Pipeline configuration review
+- Deployment frequency and lead time
+- Failure rate and recovery time
+- Rollback capability verification
 
 ## 12. Innovation (3%)
 
@@ -180,15 +282,25 @@ Each of the 12 dimensions requires specific evaluation criteria, evidence, and a
 | 4     | Mostly conventional                |
 | 2     | No innovation                      |
 
-**Evidence required:** Novel features, comparison with alternatives, industry impact.
+**Evidence required:**
+
+- Novel features or approaches identified
+- Comparison with alternatives in the ecosystem
+- Industry impact or influence assessment
 
 ## Special Evaluation Criteria
 
-**For developer tools:** Setup time (<5 min = 10/10), error message quality, debugging experience, community support.
+### Developer Tools
 
-**For frameworks/libraries:** Bundle size, tree-shaking support, TypeScript support, browser compatibility, migration path.
+Additional factors: setup time (<5 min = 10/10), error message quality, debugging experience, community support, IDE integration depth.
 
-**For ADHD-friendly tools:** One-command simplicity, automatic everything, clear visual feedback, minimal decisions, forgiving design (easy undo/backups), low cognitive load.
+### Frameworks and Libraries
+
+Additional factors: bundle size, tree-shaking support, TypeScript support (strict mode), browser compatibility, migration path from previous versions.
+
+### CLI Tools
+
+Additional factors: one-command simplicity, automatic defaults, clear visual feedback (progress indicators, colors), minimal required decisions, forgiving design (easy undo, backups).
 
 ## Industry Benchmarks
 
@@ -197,12 +309,14 @@ Each of the 12 dimensions requires specific evaluation criteria, evidence, and a
 | Code Quality         | Linux kernel, SQLite |
 | Documentation        | Stripe, Tailwind CSS |
 | Usability            | Vercel, Netlify      |
-| Developer Experience | Next.js, Vite        |
-| Testing              | Jest, Playwright     |
+| Developer Experience | Vite, Next.js        |
+| Testing              | Playwright, Vitest   |
+| Security             | 1Password, Signal    |
+| Architecture         | PostgreSQL, Redis    |
 
 ## Standards Referenced
 
-- **Code:** Clean Code (Martin), Code Complete (McConnell), SonarQube quality gates
+- **Code Quality:** Clean Code (Martin), Code Complete (McConnell), SonarQube quality gates
 - **Architecture:** Clean Architecture (Martin), Domain-Driven Design (Evans)
 - **Security:** OWASP Top 10, SANS Top 25, CWE/SANS
 - **Accessibility:** WCAG 2.1 (AA/AAA), inclusive design guidelines
