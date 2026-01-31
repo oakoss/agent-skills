@@ -3,11 +3,11 @@ name: better-auth
 description: |
   Self-hosted TypeScript auth framework with social auth, 2FA, passkeys, organizations, RBAC, and 15+ plugins. Supports Drizzle/Prisma/Kysely adapters. Self-hosted alternative to Clerk/Auth.js.
 
-  Use when: configuring auth, adding plugins, social OAuth, multi-tenant SaaS, session management, rate limiting, Expo/mobile, D1 adapter errors, TanStack Start integration, additionalFields bugs, admin plugin, or troubleshooting auth issues.
+  Use when: configuring auth, adding plugins, social OAuth, multi-tenant SaaS, session management, rate limiting, Expo/mobile, D1 adapter errors, TanStack Start integration, additionalFields bugs, admin plugin, migrating from NextAuth, migrating from Clerk, migrating from Supabase Auth, or troubleshooting auth issues.
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # better-auth
@@ -128,4 +128,5 @@ When working on auth, delegate to:
 - [Plugins and Social Auth](references/plugins.md) — Plugin setup, OAuth 2.1 provider, admin RBAC, social provider scopes
 - [Configuration](references/configuration.md) — User/account config, email flows, rate limiting, database hooks, endpoint hooks, security options
 - [Framework Integration](references/frameworks.md) — TanStack Start setup, Expo/React Native, client imports, type safety
+- [Migration Guides](references/migration-guides.md) — Migrate from NextAuth/Auth.js, Clerk, or Supabase Auth with schema mappings and session strategies
 - [Troubleshooting](references/troubleshooting.md) — D1 consistency, CORS, OAuth redirect, admin 403, nanostore refresh, known bugs
