@@ -1,20 +1,8 @@
 ---
 title: Search and Ranking
-description: Search modes (lexical, semantic, hybrid), ranking modes with scoring formulas, score components, and aggregation analytics
+description: Search modes (lexical, semantic, hybrid), ranking modes with scoring, and match types
 tags:
-  [
-    search,
-    ranking,
-    BM25,
-    semantic,
-    hybrid,
-    RRF,
-    recency,
-    relevance,
-    scoring,
-    aggregation,
-    analytics,
-  ]
+  [search, ranking, BM25, semantic, hybrid, RRF, recency, relevance, scoring]
 ---
 
 # Search and Ranking
@@ -23,11 +11,11 @@ tags:
 
 Three search modes, selectable with `--mode` flag:
 
-| Mode                  | Algorithm              | Best For                           |
-| --------------------- | ---------------------- | ---------------------------------- |
-| **lexical** (default) | BM25 full-text         | Exact term matching, code searches |
-| **semantic**          | Vector similarity      | Conceptual queries, "find similar" |
-| **hybrid**            | Reciprocal Rank Fusion | Balanced precision and recall      |
+| Mode                  | Algorithm                                | Best For                           |
+| --------------------- | ---------------------------------------- | ---------------------------------- |
+| **lexical** (default) | BM25 full-text via Tantivy               | Exact term matching, code searches |
+| **semantic**          | Vector similarity (MiniLM via FastEmbed) | Conceptual queries, "find similar" |
+| **hybrid**            | Reciprocal Rank Fusion                   | Balanced precision and recall      |
 
 ```bash
 cass search "authentication" --mode lexical --robot
@@ -38,61 +26,38 @@ cass search "auth error handling" --mode hybrid --robot
 **Hybrid** combines lexical and semantic using RRF:
 
 ```text
-RRF_score = Σ 1 / (60 + rank_i)
+RRF_score = Sigma 1 / (60 + rank_i)
 ```
+
+Semantic mode requires MiniLM model files (~23MB). When MiniLM is not available, CASS falls back to a hash-based embedder (FNV-1a deterministic hashing) for approximate similarity.
 
 ## Ranking Modes
 
 Cycle with `F12` in TUI or use `--ranking` flag:
 
-| Mode              | Formula                       | Best For                   |
-| ----------------- | ----------------------------- | -------------------------- |
-| **Recent Heavy**  | `relevance*0.3 + recency*0.7` | "What was I working on?"   |
-| **Balanced**      | `relevance*0.5 + recency*0.5` | General search             |
-| **Relevance**     | `relevance*0.8 + recency*0.2` | "Best explanation of X"    |
-| **Match Quality** | Penalizes fuzzy matches       | Precise technical searches |
-| **Date Newest**   | Pure chronological            | Recent activity            |
-| **Date Oldest**   | Reverse chronological         | "When did I first..."      |
+| Mode              | Effect                                |
+| ----------------- | ------------------------------------- |
+| **Recent Heavy**  | Recency dominates                     |
+| **Balanced**      | Equal weight to relevance and recency |
+| **Relevance**     | BM25 score dominates                  |
+| **Match Quality** | Penalizes fuzzy matches               |
+| **Date Newest**   | Pure chronological                    |
+| **Date Oldest**   | Reverse chronological                 |
 
 ### Score Components
 
 - **Text Relevance (BM25)**: Term frequency, inverse document frequency, length normalization
-- **Recency**: Exponential decay (today ~1.0, last week ~0.7, last month ~0.3)
-- **Match Exactness**: Exact phrase=1.0, Prefix=0.9, Suffix=0.8, Substring=0.6, Fuzzy=0.4
+- **Recency**: Exponential decay based on age
+- **Match Exactness**: Exact > Prefix > Suffix > Substring > Fuzzy
 
-### Blended Scoring Formula
+## Match Types
 
-```text
-Final_Score = BM25_Score × Match_Quality + α × Recency_Factor
-```
+Results include a `match_type` field indicating how the query matched:
 
-| Mode            | α Value | Effect                 |
-| --------------- | ------- | ---------------------- |
-| Recent Heavy    | 1.0     | Recency dominates      |
-| Balanced        | 0.4     | Moderate recency boost |
-| Relevance Heavy | 0.1     | BM25 dominates         |
-| Match Quality   | 0.0     | Pure text matching     |
-
-## Aggregation and Analytics
-
-Aggregate search results server-side to get counts and distributions without transferring full result data:
-
-```bash
-# Count results by agent
-cass search "error" --robot --aggregate agent
-
-# Multi-field aggregation
-cass search "bug" --robot --aggregate agent,workspace,date
-
-# Combine with filters
-cass search "TODO" --agent claude --robot --aggregate workspace
-```
-
-| Aggregation Field | Description                                            |
-| ----------------- | ------------------------------------------------------ |
-| `agent`           | Group by agent type (claude_code, codex, cursor, etc.) |
-| `workspace`       | Group by workspace/project path                        |
-| `date`            | Group by date (YYYY-MM-DD)                             |
-| `match_type`      | Group by match quality (exact, prefix, fuzzy)          |
-
-Top 10 buckets returned per field, with `other_count` for remaining items.
+| Type        | Meaning                               |
+| ----------- | ------------------------------------- |
+| `exact`     | Verbatim match                        |
+| `prefix`    | Via prefix expansion (edge n-grams)   |
+| `suffix`    | Via suffix pattern                    |
+| `substring` | Via substring pattern                 |
+| `fuzzy`     | Auto-fallback when results are sparse |

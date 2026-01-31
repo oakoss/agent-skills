@@ -1,21 +1,7 @@
 ---
 title: Robot Mode
-description: Robot mode for AI agent consumption including self-documenting API, forgiving syntax, output formats, token budget management, and pipeline mode
-tags:
-  [
-    robot,
-    JSON,
-    agent,
-    API,
-    capabilities,
-    introspect,
-    robot-docs,
-    forgiving-syntax,
-    aliases,
-    token-budget,
-    pipeline,
-    JSONL,
-  ]
+description: Robot mode for AI agent consumption including self-documenting API, forgiving syntax, output formats, and token budget management
+tags: [robot, JSON, agent, API, robot-docs, forgiving-syntax, token-budget]
 ---
 
 # Robot Mode
@@ -25,14 +11,6 @@ tags:
 CASS teaches agents how to use itself:
 
 ```bash
-# Quick capability check
-cass capabilities --json
-# Returns: features, connectors, limits
-
-# Full API schema
-cass introspect --json
-# Returns: all commands, arguments, response shapes
-
 # Topic-based docs (LLM-optimized)
 cass robot-docs commands   # all commands and flags
 cass robot-docs schemas    # response JSON schemas
@@ -45,74 +23,60 @@ cass robot-docs sources    # remote sources guide
 
 ## Forgiving Syntax (Agent-Friendly)
 
-CASS auto-corrects common mistakes:
+CASS aggressively normalizes input to maximize acceptance when intent is clear. When corrections are applied, CASS emits a teaching note to stderr so agents learn the canonical syntax.
 
 | What you type            | What CASS understands                        |
 | ------------------------ | -------------------------------------------- |
 | `cass searxh "error"`    | `cass search "error"` (typo corrected)       |
 | `cass -robot -limit=5`   | `cass --robot --limit=5` (single-dash fixed) |
 | `cass --Robot --LIMIT 5` | `cass --robot --limit 5` (case normalized)   |
-| `cass find "auth"`       | `cass search "auth"` (alias resolved)        |
 | `cass --limt 5`          | `cass --limit 5` (Levenshtein <=2)           |
 
-### Command Aliases
-
-- `find`, `query`, `q`, `lookup`, `grep` → `search`
-- `ls`, `list`, `info`, `summary` → `stats`
-- `st`, `state` → `status`
-- `reindex`, `idx`, `rebuild` → `index`
-- `show`, `get`, `read` → `view`
-- `docs`, `help-robot`, `robotdocs` → `robot-docs`
-
-## Output Formats
-
-```bash
-# Pretty-printed JSON (default)
-cass search "error" --robot
-
-# Streaming JSONL (header + one hit per line)
-cass search "error" --robot-format jsonl
-
-# Compact single-line JSON
-cass search "error" --robot-format compact
-
-# With performance metadata
-cass search "error" --robot --robot-meta
-```
+## Output Conventions
 
 **Design principle:** stdout = JSON only; diagnostics go to stderr.
+
+```bash
+# JSON output for agent consumption
+cass search "error" --robot
+
+# Health check with JSON
+cass health --json
+
+# View/expand with JSON
+cass view /path -n 42 --json
+cass expand /path -n 42 -C 5 --json
+```
+
+Exit code 0 means success (parse stdout). Non-zero means an error occurred.
 
 ## Token Budget Management
 
 LLMs have context limits. Control output size:
 
-| Flag                           | Effect                                     |
-| ------------------------------ | ------------------------------------------ |
-| `--fields minimal`             | Only `source_path`, `line_number`, `agent` |
-| `--fields summary`             | Adds `title`, `score`                      |
-| `--fields score,title,snippet` | Custom field selection                     |
-| `--max-content-length 500`     | Truncate long fields (UTF-8 safe)          |
-| `--max-tokens 2000`            | Soft budget (~4 chars/token)               |
-| `--limit 5`                    | Cap number of results                      |
+| Flag               | Effect                                    |
+| ------------------ | ----------------------------------------- |
+| `--fields minimal` | Only essential fields (path, line, agent) |
+| `--limit 5`        | Cap number of results                     |
 
-Truncated fields include `*_truncated: true` indicator.
+Start with `--fields minimal --limit 5` and widen as needed.
 
-## Pipeline Mode (Chained Search)
+## Agent Workflow
 
-Chain searches by piping session paths:
+Recommended sequence for AI agents:
 
 ```bash
-# Find sessions mentioning "auth", then search within those for "token"
-cass search "authentication" --robot-format sessions | \
-  cass search "refresh token" --sessions-from - --robot
+# 1. Check if CASS is available and healthy
+cass health --json || cass index --full
 
-# Build a filtered corpus from today's work
-cass search --today --robot-format sessions > today_sessions.txt
-cass search "bug fix" --sessions-from today_sessions.txt --robot
+# 2. Search for relevant past experience
+cass search "authentication error" --robot --fields minimal --limit 5
+
+# 3. Get more context on a promising result
+cass expand /path/to/session.jsonl -n 42 -C 5 --json
+
+# 4. View full source if needed
+cass view /path/to/session.jsonl -n 42 --json
 ```
 
-Use cases:
-
-- **Drill-down**: Broad search → narrow within results
-- **Cross-reference**: Find sessions with term A, then find term B within them
-- **Corpus building**: Save session lists for repeated searches
+Always check health first. If CASS is not installed, skip gracefully.

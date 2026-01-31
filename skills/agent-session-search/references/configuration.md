@@ -1,6 +1,6 @@
 ---
 title: Configuration
-description: Environment variables, shell completions, API contract and versioning, installation, and integration with CASS Memory and Flywheel ecosystem
+description: Environment variables, shell completions, installation methods, and integration with CASS Memory and Flywheel ecosystem
 tags:
   [
     environment,
@@ -9,12 +9,12 @@ tags:
     bash,
     zsh,
     fish,
-    API,
-    versioning,
     install,
     integration,
     CM,
     Flywheel,
+    Homebrew,
+    Scoop,
   ]
 ---
 
@@ -22,15 +22,12 @@ tags:
 
 ## Environment Variables
 
-| Variable                               | Purpose                               |
-| -------------------------------------- | ------------------------------------- |
-| `CASS_DATA_DIR`                        | Override data directory               |
-| `CHATGPT_ENCRYPTION_KEY`               | Base64 key for encrypted ChatGPT      |
-| `PI_CODING_AGENT_DIR`                  | Override Pi-Agent sessions path       |
-| `CASS_CACHE_SHARD_CAP`                 | Per-shard cache entries (default 256) |
-| `CASS_CACHE_TOTAL_CAP`                 | Total cached hits (default 2048)      |
-| `CASS_DEBUG_CACHE_METRICS`             | Enable cache debug logging            |
-| `CODING_AGENT_SEARCH_NO_UPDATE_PROMPT` | Skip update checks                    |
+| Variable                               | Purpose                                   |
+| -------------------------------------- | ----------------------------------------- |
+| `CASS_DATA_DIR`                        | Override data directory                   |
+| `CHATGPT_ENCRYPTION_KEY`               | Base64 key for encrypted ChatGPT sessions |
+| `PI_CODING_AGENT_DIR`                  | Override Pi-Agent sessions path           |
+| `CODING_AGENT_SEARCH_NO_UPDATE_PROMPT` | Skip update checks                        |
 
 ## Shell Completions
 
@@ -41,23 +38,6 @@ cass completions fish > ~/.config/fish/completions/cass.fish
 cass completions powershell >> $PROFILE
 ```
 
-## API Contract and Versioning
-
-```bash
-cass api-version --json
-# → { "version": "0.4.0", "contract_version": "1", "breaking_changes": [] }
-
-cass introspect --json
-# → Full schema: all commands, arguments, response types
-```
-
-**Guaranteed Stable:**
-
-- Exit codes and their meanings
-- JSON response structure for `--robot` output
-- Flag names and behaviors
-- `_meta` block format
-
 ## Installation
 
 ```bash
@@ -65,9 +45,20 @@ cass introspect --json
 curl -fsSL https://raw.githubusercontent.com/Dicklesworthstone/coding_agent_session_search/main/install.sh \
   | bash -s -- --easy-mode --verify
 
-# Windows
-irm https://raw.githubusercontent.com/Dicklesworthstone/coding_agent_session_search/main/install.ps1 | iex
+# Windows (Scoop)
+scoop bucket add dicklesworthstone https://github.com/Dicklesworthstone/scoop-bucket
+scoop install dicklesworthstone/cass
+
+# macOS/Linux (Homebrew)
+brew install dicklesworthstone/tap/cass
 ```
+
+Remote install fallback chain (for multi-machine setup):
+
+1. cargo-binstall (~30s)
+2. Pre-built binary (~10s)
+3. cargo install (~5min)
+4. Full bootstrap with rustup (~10min)
 
 ## Integration with CASS Memory (cm)
 
@@ -86,9 +77,8 @@ cm reflect
 
 ## Integration with Flywheel
 
-| Tool           | Integration                                                  |
-| -------------- | ------------------------------------------------------------ |
-| **CM**         | CASS provides episodic memory, CM extracts procedural memory |
-| **NTM**        | Robot mode flags for searching past sessions                 |
-| **Agent Mail** | Search threads across agent history                          |
-| **BV**         | Cross-reference beads with past solutions                    |
+| Tool    | Integration                                                  |
+| ------- | ------------------------------------------------------------ |
+| **CM**  | CASS provides episodic memory, CM extracts procedural memory |
+| **NTM** | Robot mode flags for searching past sessions                 |
+| **BV**  | Cross-reference beads with past solutions                    |

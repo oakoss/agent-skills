@@ -21,10 +21,14 @@ tags:
 
 ### Advanced Techniques
 
-- **Re-ranking**: Use cross-encoder after initial retrieval (e.g., `cross-encoder/ms-marco-MiniLM-L-12-v2`)
-- **Query routing**: Route different query types to specialized strategies
-- **Ensemble methods**: Combine multiple retrieval approaches
+- **Re-ranking**: Use cross-encoder after initial retrieval (e.g., `cross-encoder/ms-marco-MiniLM-L-12-v2`) to improve precision
+- **Query routing**: Route different query types to specialized retrieval strategies
+- **Ensemble methods**: Combine multiple retrieval approaches with reciprocal rank fusion
 - **Adaptive retrieval**: Adjust top-k based on query complexity
+- **Query expansion / HyDE**: Generate hypothetical answers to expand sparse queries into richer representations
+- **GraphRAG**: Build knowledge graphs from documents; traverse entity relationships for multi-hop reasoning queries
+- **Contextual retrieval**: Prepend LLM-generated context summaries to chunks before embedding to resolve ambiguous references
+- **ColBERT-style late interaction**: Token-level similarity scoring between queries and documents for fine-grained matching
 
 ### Validation
 

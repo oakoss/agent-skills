@@ -1,11 +1,8 @@
 ---
 title: Internals
-description: Response JSON shapes, deduplication strategy, performance characteristics, watch mode, and optional semantic search with MiniLM
+description: Deduplication strategy, performance characteristics, watch mode, and semantic search architecture
 tags:
   [
-    response,
-    JSON,
-    schema,
     deduplication,
     performance,
     latency,
@@ -14,67 +11,26 @@ tags:
     semantic-search,
     MiniLM,
     vector,
-    embedder,
+    FastEmbed,
+    Tantivy,
   ]
 ---
 
 # Internals
 
-## Response Shapes
+## Architecture
 
-### Search Response
+CASS uses a dual storage strategy:
 
-```json
-{
-  "query": "error",
-  "limit": 10,
-  "count": 5,
-  "total_matches": 42,
-  "hits": [
-    {
-      "source_path": "/path/to/session.jsonl",
-      "line_number": 123,
-      "agent": "claude_code",
-      "workspace": "/projects/myapp",
-      "title": "Authentication debugging",
-      "snippet": "The error occurs when...",
-      "score": 0.85,
-      "match_type": "exact",
-      "created_at": "2024-01-15T10:30:00Z"
-    }
-  ],
-  "_meta": {
-    "elapsed_ms": 12,
-    "cache_hit": true,
-    "wildcard_fallback": false,
-    "next_cursor": "eyJ...",
-    "index_freshness": { "stale": false, "age_seconds": 120 }
-  }
-}
-```
-
-### Aggregation Response
-
-```json
-{
-  "aggregations": {
-    "agent": {
-      "buckets": [
-        { "key": "claude_code", "count": 120 },
-        { "key": "codex", "count": 85 }
-      ],
-      "other_count": 15
-    }
-  }
-}
-```
+- **SQLite** (WAL mode): Source of truth with ACID compliance and FTS5 for fallback search
+- **Tantivy**: Speed layer with schema v4, edge n-grams for fast prefix matching
 
 ## Deduplication Strategy
 
 CASS uses multi-layer deduplication:
 
-1. **Message Hash**: SHA-256 of `(role + content + timestamp)` - identical messages stored once
-2. **Conversation Fingerprint**: Hash of first N message hashes - detects duplicate files
+1. **Message Hash**: SHA-256 of `(role + content + timestamp)` -- identical messages stored once
+2. **Conversation Fingerprint**: Hash of first N message hashes -- detects duplicate files
 3. **Search-Time Dedup**: Results deduplicated by content similarity
 
 **Noise Filtering:**
@@ -109,22 +65,17 @@ cass index --watch
 - **Max wait:** 5 seconds (force flush during continuous activity)
 - **Incremental:** Only re-scans modified files
 
-TUI automatically starts watch mode in background.
+The TUI automatically starts watch mode in background.
 
-## Optional Semantic Search
+## Semantic Search
 
-Local-only semantic search using MiniLM (no cloud):
+Local-only semantic search using MiniLM via FastEmbed (384-dimensional vectors, no cloud dependency):
 
-**Required files** (place in data directory):
+- Primary model: MiniLM (~23MB, auto-downloaded on first use via FastEmbed)
+- Fallback: Hash-based embedder (FNV-1a deterministic hashing) for approximate similarity when MiniLM unavailable
 
-- `model.onnx`
-- `tokenizer.json`
-- `config.json`
-- `special_tokens_map.json`
-- `tokenizer_config.json`
+Vector index stored in CVVI format (Custom Vector Versioned Index) with:
 
-Vector index stored as `vector_index/index-minilm-384.cvvi`.
-
-CASS does NOT auto-download models; you must manually install them.
-
-**Hash Embedder Fallback:** When MiniLM not installed, CASS uses a hash-based embedder for approximate semantic similarity.
+- F32/F16 precision support
+- Content deduplication via SHA-256
+- Memory-mapped loading for efficiency

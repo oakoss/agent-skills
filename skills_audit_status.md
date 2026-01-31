@@ -13,14 +13,14 @@ Plan: `.claude/plans/splendid-sparking-dragonfly.md`
 | 3     | `agent-skills-31d` | Testing & Quality                | 5      | done    | All 5 skills enriched, validated     |
 | 4     | `agent-skills-cm4` | Security & Auth                  | 5      | done    | All 5 skills enriched, validated     |
 | 5     | `agent-skills-6rv` | DevOps, Git & Infra              | 8      | done    | All 8 skills enriched, validated     |
-| 6     | `agent-skills-ays` | AI, Agents & Orchestration       | 8      | pending | blocked by Phase 0                   |
+| 6     | `agent-skills-ays` | AI, Agents & Orchestration       | 8      | done    | All 8 skills enriched, validated     |
 | 7     | `agent-skills-5f4` | UX, Design & Visualization       | 9      | pending | blocked by Phase 0                   |
 | 8     | `agent-skills-r6d` | Content, Tools & Specialized     | 10     | pending | blocked by Phase 0                   |
 | 9     | `agent-skills-jxc` | Remaining                        | 10     | pending | blocked by Phase 0                   |
 | 10    | `agent-skills-5z4` | New skills recommendations       | --     | pending | blocked by Batches 1-9               |
 | 11    | `agent-skills-7h2` | Final validation pass            | --     | pending | blocked by Phase 10                  |
 
-**Total skills: 69** | **Completed: 32/69** | **Phases done: 6/12**
+**Total skills: 69** | **Completed: 40/69** | **Phases done: 7/12**
 
 ## Dependency Chain
 
@@ -99,14 +99,14 @@ Phase 0 (fix warnings)
 
 | Skill                | Sources Read | Docs Validated | Enriched | Validated |
 | -------------------- | ------------ | -------------- | -------- | --------- |
-| agent-patterns       |              |                |          |           |
-| agent-session-search |              |                |          |           |
-| orchestration        |              |                |          |           |
-| planning             |              |                |          |           |
-| mcp-expert           |              |                |          |           |
-| rag-implementer      |              |                |          |           |
-| prompt               |              |                |          |           |
-| skill-management     |              |                |          |           |
+| agent-patterns       | done         | done           | done     | done      |
+| agent-session-search | done         | done           | done     | done      |
+| orchestration        | done         | done           | done     | done      |
+| planning             | done         | done           | done     | done      |
+| mcp-expert           | done         | done           | done     | done      |
+| rag-implementer      | done         | done           | done     | done      |
+| prompt               | done         | done           | done     | done      |
+| skill-management     | done         | done           | done     | done      |
 
 ### Batch 7: UX, Design & Visualization (Phase 7)
 
@@ -163,3 +163,4 @@ Phase 0 (fix warnings)
 | 2026-01-30 | 3     | Batch 3 complete — 5 Testing & Quality skills enriched     |
 | 2026-01-30 | 4     | Batch 4 complete — 5 Security & Auth skills enriched       |
 | 2026-01-30 | 5     | Batch 5 complete — 8 DevOps, Git & Infra skills enriched   |
+| 2026-01-30 | 6     | Batch 6 complete — 8 AI, Agents & Orchestration enriched   |

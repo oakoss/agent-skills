@@ -5,7 +5,13 @@ description: 'Coordinates skills, frameworks, and workflows throughout the proje
 
 # Orchestration
 
+## Overview
+
 Coordinates skills, frameworks, and workflows across the project lifecycle. Combines pattern-based project classification with goal decomposition, hierarchical task planning, and multi-agent coordination.
+
+Use this skill for project-level workflow decisions: which frameworks to activate, in what order, and how to validate progress between phases. For Claude Code-specific agent implementation details (agent configuration, batch sizing, prompt engineering), use the `agent-patterns` skill instead.
+
+This skill does NOT replace project management tools. It provides the decision framework for sequencing capabilities and validating readiness at each transition point.
 
 ## Quick Reference
 
@@ -64,6 +70,17 @@ Modifiers: recently used (within 3 steps) gets -30% penalty; novel capability ge
 | Handoff      | One agent passes context to the next          |
 
 Key rules: max delegation depth of 3, use context distillation (not full codebase), log all agent interactions.
+
+## MCP Integration
+
+MCP (Model Context Protocol) standardizes how agents connect to external tools, data sources, and prompt templates. The orchestrator discovers available MCP servers at startup and routes tool calls from subagents to the correct server.
+
+| MCP Primitive | Role in Orchestration                                        |
+| ------------- | ------------------------------------------------------------ |
+| Resources     | Discover available data (schemas, configs, docs) before work |
+| Tools         | Execute validated actions with typed arguments               |
+| Prompts       | Reuse domain-specific instruction templates across agents    |
+| Sampling      | Allow servers to request AI reasoning mid-execution          |
 
 ## Common Mistakes
 

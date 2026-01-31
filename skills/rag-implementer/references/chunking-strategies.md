@@ -45,6 +45,27 @@ tags: [chunking, embeddings, metadata, knowledge-base, vector-store]
 - Falls back to smaller units when chunks are too large
 - Best for mixed-format documents
 
+### Contextual Chunking
+
+- Chunk first, then use an LLM to generate a brief context summary for each chunk
+- Prepend the summary to the chunk before embedding (e.g., "This chunk discusses authentication in a Node.js API guide")
+- Resolves ambiguous references (pronouns, acronyms) that lose meaning when isolated
+- Higher computational cost at indexing time but improves retrieval accuracy
+
+### Late Chunking
+
+- Embed the full document first so every token captures complete document context
+- Pool token embeddings within chunk boundaries after full-document encoding
+- Improves retrieval accuracy by 10-12% on documents with anaphoric references
+- More efficient than contextual chunking but may sacrifice some relevance
+
+### Proposition Chunking
+
+- Break content into atomic, self-contained factual statements
+- Each proposition stands alone without needing surrounding context
+- Best for fact-dense documents (knowledge bases, encyclopedias, technical specs)
+- Significantly improves precision for factual queries
+
 ## Phase 2: Embedding Strategy
 
 **Goal**: Choose optimal embedding approach for semantic understanding
@@ -58,12 +79,15 @@ tags: [chunking, embeddings, metadata, knowledge-base, vector-store]
 
 ### Model Selection
 
-| Use Case       | Model                    | Dimensions |
-| -------------- | ------------------------ | ---------- |
-| General text   | `text-embedding-3-large` | 1536       |
-| Cost-optimized | `text-embedding-3-small` | 512        |
-| Code search    | StarEncoder              | varies     |
-| Multilingual   | `multilingual-e5-large`  | 1024       |
+| Use Case       | Model                    | Dimensions               |
+| -------------- | ------------------------ | ------------------------ |
+| General text   | `text-embedding-3-large` | 3072 (reducible via API) |
+| Cost-optimized | `text-embedding-3-small` | 1536                     |
+| Code search    | Voyage Code 3            | 1024-2048                |
+| Multilingual   | `multilingual-e5-large`  | 1024                     |
+| Multimodal     | Cohere embed-v4          | 1024                     |
+
+Both OpenAI embedding models support Matryoshka dimensionality reduction via the `dimensions` API parameter. For `text-embedding-3-large`, 1024 dimensions offers near-full accuracy at one-third the storage cost.
 
 ## Phase 3: Vector Store Architecture
 
@@ -78,13 +102,14 @@ tags: [chunking, embeddings, metadata, knowledge-base, vector-store]
 
 ### Vector DB Decision Matrix
 
-| Requirement                       | Recommended |
-| --------------------------------- | ----------- |
-| Managed cloud                     | Pinecone    |
-| Self-hosted, feature-rich         | Weaviate    |
-| Lightweight, local dev            | Chroma      |
-| Cost-conscious, existing Postgres | pgvector    |
-| High-performance, production      | Qdrant      |
+| Requirement                       | Recommended     |
+| --------------------------------- | --------------- |
+| Managed cloud                     | Pinecone        |
+| Self-hosted, feature-rich         | Weaviate        |
+| Lightweight, local dev            | Chroma          |
+| Cost-conscious, existing Postgres | pgvector        |
+| High-performance, production      | Qdrant          |
+| Billion-scale vectors             | Milvus / Zilliz |
 
 ### Index Configuration
 

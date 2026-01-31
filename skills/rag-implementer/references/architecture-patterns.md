@@ -86,16 +86,24 @@ Do users need to search your content?
 
 ## Modular RAG Architecture
 
-- **Search Module**: Query understanding and reformulation
-- **Memory Module**: Long-term conversation persistence
-- **Routing Module**: Query routing to specialized knowledge bases
+- **Search Module**: Query understanding, reformulation, and hybrid retrieval
+- **Memory Module**: Long-term conversation persistence and context accumulation
+- **Routing Module**: Query routing to specialized knowledge bases or retrieval strategies
 - **Predict Module**: Anticipatory pre-loading based on context
+- **Graph Module**: Knowledge graph traversal for multi-hop reasoning (GraphRAG)
 
 ## Hybrid RAG + Fine-tuning
 
 - RAG for dynamic, frequently changing knowledge
 - Fine-tuning for domain-specific reasoning patterns
 - Combine strengths for maximum effectiveness
+
+## GraphRAG
+
+- Build knowledge graphs by extracting entities and relationships from documents
+- Enable multi-hop reasoning: "What projects did employees in department X work on?"
+- Combine graph traversal with vector similarity for structured + unstructured queries
+- Best suited for datasets with rich entity relationships (org charts, product catalogs, research papers)
 
 ## Key RAG Principles
 

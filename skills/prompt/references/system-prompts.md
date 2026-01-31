@@ -107,6 +107,44 @@ Expertise level: {difficulty}
 """
 ```
 
+## XML Structuring for Claude 4.x
+
+Claude 4.x models are trained on structured prompts and parse XML tags reliably. Use tags to delimit sections with distinct purposes:
+
+```text
+<role>You are a senior security engineer conducting a code audit.</role>
+
+<rules>
+- Never approve code with known CVE patterns
+- Flag all uses of eval() and dynamic SQL
+- Require parameterized queries for all database access
+</rules>
+
+<context>
+This is a Node.js Express application using PostgreSQL via the pg library.
+The codebase follows the repository pattern for data access.
+</context>
+
+<output_format>
+For each finding, provide:
+1. File path and line number
+2. Severity (critical, high, medium, low)
+3. Description of the vulnerability
+4. Recommended fix with code example
+</output_format>
+```
+
+Benefits of XML structuring:
+
+- Clear separation between immutable rules and dynamic context
+- Models can reference specific sections during reasoning
+- Easier to update individual sections without rewriting the entire prompt
+- Tags like `<rules>`, `<context>`, `<examples>`, and `<output_format>` provide semantic meaning
+
+### Positive Framing
+
+Tell Claude what to do instead of what not to do. Instead of "Do not use markdown," try "Write your response as flowing prose paragraphs." Claude 4.x models follow instructions literally, so positive framing produces more predictable behavior.
+
 ## Constraint Specification
 
 Separate hard constraints from soft preferences:

@@ -85,13 +85,31 @@ Multiple agents independently explore the solution space. A selector picks the b
 
 **When to use**: Creative brainstorming, exploring multiple approaches.
 
+## Built-in Subagents
+
+Claude Code includes built-in subagents that Claude automatically uses when appropriate:
+
+| Subagent          | Model    | Tools     | Purpose                                                     |
+| ----------------- | -------- | --------- | ----------------------------------------------------------- |
+| Explore           | Haiku    | Read-only | File discovery, code search, codebase exploration           |
+| Plan              | Inherits | Read-only | Codebase research during plan mode                          |
+| General-purpose   | Inherits | All tools | Complex research, multi-step operations, code modifications |
+| Bash              | Inherits | Terminal  | Running terminal commands in separate context               |
+| Claude Code Guide | Haiku    | Read-only | Answering questions about Claude Code features              |
+
+Explore supports thoroughness levels: **quick** (targeted lookups), **medium** (balanced), **very thorough** (comprehensive).
+
+## Nesting Constraint
+
+Subagents cannot spawn other subagents. If a workflow requires multi-step delegation, chain subagents from the main conversation. Each subagent completes its task and returns results to Claude, which then passes relevant context to the next subagent.
+
 ## Choosing the Right Pattern
 
-| Scenario                                  | Recommended Pattern     |
-| ----------------------------------------- | ----------------------- |
-| Large codebase, many tasks                | Fungible swarm          |
-| Multi-step data processing                | Sequential pipeline     |
-| Independent subtasks needing parallelism  | Hierarchical            |
-| Code review, quality-critical output      | Peer collaboration      |
-| Creative exploration, multiple approaches | Agent swarm             |
-| Multi-phase release workflow              | Orchestrator delegation |
+| Scenario                                  | Recommended Pattern                           |
+| ----------------------------------------- | --------------------------------------------- |
+| Large codebase, many tasks                | Fungible swarm                                |
+| Multi-step data processing                | Sequential pipeline                           |
+| Independent subtasks needing parallelism  | Hierarchical (chained from main conversation) |
+| Code review, quality-critical output      | Peer collaboration                            |
+| Creative exploration, multiple approaches | Agent swarm                                   |
+| Multi-phase release workflow              | Orchestrator delegation (chained subagents)   |

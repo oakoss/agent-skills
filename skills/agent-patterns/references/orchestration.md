@@ -1,7 +1,15 @@
 ---
 title: Communication and Orchestration Patterns
-description: Agent communication methods including shared memory, message passing, event-driven, and task board patterns
-tags: [communication, orchestration, shared-memory, message-passing, task-board]
+description: Agent communication methods including chaining subagents, foreground vs background execution, shared memory, message passing, and task board patterns
+tags:
+  [
+    communication,
+    orchestration,
+    shared-memory,
+    message-passing,
+    task-board,
+    background,
+  ]
 ---
 
 # Communication and Orchestration Patterns
@@ -24,40 +32,64 @@ Agents subscribe to events and publish when done. Loose coupling, scalable, but 
 
 Agents read from a shared task board (beads, issues, or similar). Each agent claims work independently. No central assignment needed.
 
-## Orchestrator Delegation Pattern
+## Orchestration via Chaining
 
-An orchestrator agent spawns specialized sub-agents using the `Task` tool, then synthesizes their results.
+Subagents cannot spawn other subagents. Orchestration works by chaining subagents from the main conversation:
+
+```text
+Main conversation -> Subagent A (completes, returns results)
+Main conversation -> Subagent B (uses A's results)
+Main conversation -> Subagent C (uses B's results)
+Main conversation synthesizes all results
+```
+
+For parallel work, ask Claude to spawn multiple subagents simultaneously:
+
+```text
+Use separate subagents to research authentication, database, and API modules in parallel
+```
+
+Each subagent explores its area independently, then Claude synthesizes the findings. This works best when the research paths do not depend on each other.
+
+## Custom Agent as Orchestrator Template
+
+A custom agent can coordinate multi-step workflows by describing the steps in its system prompt. Claude chains subagent calls from the main conversation when instructed:
 
 ```yaml
 ---
 name: release-orchestrator
 description: Coordinates release preparation by delegating to specialized agents.
-tools: Read, Grep, Glob, Bash, Task
+tools: Read, Grep, Glob, Bash
 ---
 
 You are a release orchestrator. When invoked:
 
-1. Spawn code-reviewer agent -> Review uncommitted changes
-2. Spawn test-runner agent -> Run full test suite
-3. Spawn doc-validator agent -> Check documentation currency
-4. Collect reports and synthesize: Blockers / Warnings / Ready YES|NO
-
-Spawn agents in parallel when tasks are independent.
+1. Review uncommitted changes using git diff
+2. Run the full test suite
+3. Check documentation currency
+4. Synthesize: Blockers / Warnings / Ready YES|NO
 ```
 
-## Enabling Orchestration
+## Foreground vs Background Execution
 
-Add `Task` to an agent's tools list to allow it to spawn sub-agents:
+| Mode       | Behavior                                | Permission Handling                          |
+| ---------- | --------------------------------------- | -------------------------------------------- |
+| Foreground | Blocks main conversation until complete | Prompts passed through to user               |
+| Background | Runs concurrently while user continues  | Pre-approved upfront; auto-denies unapproved |
 
-```yaml
-tools: Read, Grep, Glob, Task
+Background subagents cannot use MCP tools. If a background subagent fails due to missing permissions, resume it in the foreground to retry with interactive prompts.
+
+To background a running task: press **Ctrl+B**. To request background execution: ask Claude to "run this in the background".
+
+## Resuming Subagents
+
+Each subagent invocation creates a new instance with fresh context. To continue an existing subagent's work:
+
+```text
+Continue that code review and now analyze the authorization logic
 ```
 
-## Depth Guidelines
-
-- **2 levels max** recommended (orchestrator -> specialist)
-- **3 levels** works but context gets thin
-- **4+ levels** not recommended
+Resumed subagents retain their full conversation history, including all previous tool calls, results, and reasoning. Subagent transcripts persist independently of the main conversation and survive main conversation compaction.
 
 ## Communication Pattern Selection
 
@@ -70,9 +102,10 @@ tools: Read, Grep, Glob, Task
 
 ## Recovery Patterns
 
-| Scenario     | Recovery                                                     |
-| ------------ | ------------------------------------------------------------ |
-| Agent dies   | Bead remains in-progress; any agent picks it up              |
-| Wrong change | `git checkout -- [file]`; re-run with better instructions    |
-| Conflict     | Check which change is correct; manually resolve              |
-| Stale task   | Agent marks complete, board not updated; use atomic claiming |
+| Scenario               | Recovery                                                     |
+| ---------------------- | ------------------------------------------------------------ |
+| Agent dies             | Bead remains in-progress; any agent picks it up              |
+| Wrong change           | `git checkout -- [file]`; re-run with better instructions    |
+| Conflict               | Check which change is correct; manually resolve              |
+| Stale task             | Agent marks complete, board not updated; use atomic claiming |
+| Background agent fails | Resume in foreground to retry with interactive permissions   |

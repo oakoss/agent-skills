@@ -92,6 +92,17 @@ Ask the model to act as a "Judge" for its own thoughts:
 - **Complex debugging**: Finding race conditions or issues spanning multiple systems
 - **Design decisions**: Comparing approaches with multiple valid solutions
 
+### When NOT to Use ToT
+
+- **Simple classification or summarization**: Overkill; use standard prompting
+- **Tasks solvable by CoT**: ToT adds significant cost without proportional benefit
+- **Latency-sensitive applications**: Each branch multiplies API calls and response time
+- **Long-range planning**: ToT struggles with tasks requiring deep long-term exploration
+
+### Cost Considerations
+
+ToT is resource-intensive. Each branch requires separate model calls for generation and evaluation, multiplying token usage and latency. For a 3-branch, 3-depth tree, expect roughly 9-12x the cost of a single completion. Use ToT selectively for genuinely difficult problems where simpler methods fail.
+
 ## Merging Branches
 
 Final synthesis is the most important step. The model must not simply pick one branch, but integrate the learnings from all explored paths:
