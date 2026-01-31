@@ -7,7 +7,7 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Playwright
@@ -69,6 +69,7 @@ Playwright is a browser automation framework for Node.js and Python supporting C
 - [E2E testing patterns and assertions](references/testing-patterns.md)
 - [Selector strategies and best practices](references/selector-strategies.md)
 - [Configuration and Docker deployment](references/configuration.md)
+- [Docker and CI](references/docker-and-ci.md)
 - [Debug methods and performance analysis](references/debug-and-performance.md)
 - [Common automation patterns](references/common-patterns.md)
 - [Stealth mode and anti-bot bypass](references/stealth-mode.md)
