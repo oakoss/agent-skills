@@ -16,11 +16,11 @@ Plan: `.claude/plans/splendid-sparking-dragonfly.md`
 | 6     | `agent-skills-ays` | AI, Agents & Orchestration       | 8      | done    | All 8 skills enriched, validated     |
 | 7     | `agent-skills-5f4` | UX, Design & Visualization       | 9      | done    | All 9 skills enriched, validated     |
 | 8     | `agent-skills-r6d` | Content, Tools & Specialized     | 10     | done    | All 10 skills enriched, validated    |
-| 9     | `agent-skills-jxc` | Remaining                        | 10     | pending | blocked by Phase 0                   |
+| 9     | `agent-skills-jxc` | Remaining                        | 10     | done    | All 10 skills enriched, validated    |
 | 10    | `agent-skills-5z4` | New skills recommendations       | --     | pending | blocked by Batches 1-9               |
 | 11    | `agent-skills-7h2` | Final validation pass            | --     | pending | blocked by Phase 10                  |
 
-**Total skills: 69** | **Completed: 59/69** | **Phases done: 9/12**
+**Total skills: 69** | **Completed: 69/69** | **Phases done: 10/12**
 
 ## Dependency Chain
 
@@ -141,16 +141,16 @@ Phase 0 (fix warnings)
 
 | Skill                   | Sources Read | Docs Validated | Enriched | Validated |
 | ----------------------- | ------------ | -------------- | -------- | --------- |
-| realtime-sync           |              |                |          |           |
-| ghostty                 |              |                |          |           |
-| arktype-validation      |              |                |          |           |
-| asset-manager           |              |                |          |           |
-| knowledge-base-manager  |              |                |          |           |
-| knowledge-graph-builder |              |                |          |           |
-| beads-viewer            |              |                |          |           |
-| beads-workflow          |              |                |          |           |
-| utility-pro             |              |                |          |           |
-| expert-instruction      |              |                |          |           |
+| realtime-sync           | done         | done           | done     | done      |
+| ghostty                 | done         | done           | done     | done      |
+| arktype-validation      | done         | done           | done     | done      |
+| asset-manager           | done         | done           | done     | done      |
+| knowledge-base-manager  | done         | done           | done     | done      |
+| knowledge-graph-builder | done         | done           | done     | done      |
+| beads-viewer            | done         | done           | done     | done      |
+| beads-workflow          | done         | done           | done     | done      |
+| utility-pro             | done         | done           | done     | done      |
+| expert-instruction      | done         | done           | done     | done      |
 
 ## Changelog
 
@@ -166,3 +166,4 @@ Phase 0 (fix warnings)
 | 2026-01-30 | 6     | Batch 6 complete — 8 AI, Agents & Orchestration enriched    |
 | 2026-01-30 | 7     | Batch 7 complete — 9 UX, Design & Visualization enriched    |
 | 2026-01-31 | 8     | Batch 8 complete — 10 Content, Tools & Specialized enriched |
+| 2026-01-31 | 9     | Batch 9 complete — 10 Remaining skills enriched             |
