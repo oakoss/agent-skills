@@ -1,6 +1,6 @@
 ---
 name: typescript-patterns
-description: 'Advanced TypeScript patterns for strict mode development. Covers type utilities (Pick, Omit, Partial, Record, Awaited), generics with constraints and inference, type guards and narrowing, discriminated unions, conditional and mapped types, template literal types, const assertions, satisfies operator, and module patterns. Use when building type-safe APIs, preventing runtime errors through types, working with strict TypeScript configuration, or debugging complex type errors. Use for generics, type guards, utility types, strict mode, type inference, narrowing, type safety, const assertions, satisfies, module augmentation.'
+description: 'Advanced TypeScript patterns for strict mode development. Covers type utilities (Pick, Omit, Partial, Record, Awaited), generics with constraints and inference, type guards and narrowing, discriminated unions, conditional and mapped types, template literal types, const assertions, satisfies operator, module patterns, and modern JavaScript idioms (eslint-plugin-unicorn). Use when building type-safe APIs, preventing runtime errors through types, working with strict TypeScript configuration, debugging complex type errors, or enforcing modern JS idioms. Use for generics, type guards, utility types, strict mode, type inference, narrowing, type safety, const assertions, satisfies, module augmentation, unicorn, for-of, modern-js.'
 license: MIT
 metadata:
   author: oakoss
@@ -72,3 +72,4 @@ Advanced TypeScript patterns that leverage the type system to prevent runtime er
 - [Mapped types (key remapping, template literals, modifiers)](references/mapped-types.md)
 - [Strict mode patterns (noUncheckedIndexedAccess, exactOptionalPropertyTypes, const assertions, satisfies)](references/strict-mode.md)
 - [Module patterns (inline type imports, declaration files, module augmentation, ambient types)](references/module-patterns.md)
+- [Modern idioms (eslint-plugin-unicorn patterns, modern array/string/DOM APIs, ES modules)](references/modern-idioms.md)
