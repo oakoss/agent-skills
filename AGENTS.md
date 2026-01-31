@@ -114,7 +114,7 @@ description: 'What it does. Use when X, Y, Z. Use for keyword1, keyword2, keywor
 | `hooks`                    | Claude Code   | Hooks scoped to skill lifecycle                           |
 | `argument-hint`            | Claude Code   | Hint for autocomplete (e.g., `[issue-number]`)            |
 
-**Project conventions** — all skills in this repo SHOULD include:
+**Project-required frontmatter** — all skills in this repo MUST include:
 
 ```yaml
 ---
@@ -175,7 +175,7 @@ Template skill: `tanstack-query/` (lean SKILL.md + 13 reference files).
 ### Creating a New Skill
 
 1. **Create directory** at `skills/[skill-name]/` with a `SKILL.md`
-2. **Write frontmatter** with descriptive `name` (matching directory) and trigger-rich `description`
+2. **Write frontmatter** with `name` (matching directory), trigger-rich `description`, `license: MIT`, and `metadata` (author, version)
 3. **Write required sections**: Overview, Quick Reference table, Common Mistakes table, Delegation, References list
 4. **Extract code examples** into `references/` files if SKILL.md exceeds 150 lines
 5. **Validate** with `pnpm validate:skills skills/[skill-name]`

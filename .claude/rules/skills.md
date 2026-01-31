@@ -33,7 +33,7 @@ skill-name/
 
 **Optional fields (Claude Code):** `disable-model-invocation`, `user-invocable`, `model`, `context`, `agent`, `hooks`, `argument-hint`.
 
-**Project conventions** — all skills in this repo SHOULD include:
+**Project-required fields** — all skills in this repo MUST include:
 
 ```yaml
 license: MIT
