@@ -1,6 +1,10 @@
 ---
 name: arktype-validation
 description: 'ArkType runtime validation with TypeScript-native syntax. Type-safe schemas using string expressions, morphs, scopes, and generics. Use when defining schemas, validating data, transforming input, or building type-safe APIs with ArkType.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # ArkType Validation

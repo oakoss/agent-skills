@@ -1,6 +1,10 @@
 ---
 name: e2e-testing
 description: 'Builds end-to-end test suites with Playwright. Use when writing E2E tests, setting up visual regression, configuring CI sharding, or implementing authentication flows. Use for Page Object Model architecture, accessibility auditing with axe-core, network mocking, trace-based debugging, role-based locators, HAR replay, test fixtures, and storageState authentication.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # E2E Testing

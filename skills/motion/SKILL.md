@@ -5,6 +5,10 @@ description: |
 
   Use when: drag-and-drop, scroll animations, modals, carousels, parallax, page transitions, hover effects, staggered lists, loading spinners, number counters.
   Troubleshoot: AnimatePresence exit, list performance, Tailwind conflicts, Next.js "use client", layout in scaled containers.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Motion

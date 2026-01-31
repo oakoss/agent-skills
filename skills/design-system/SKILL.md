@@ -1,6 +1,10 @@
 ---
 name: design-system
 description: 'Builds scalable design systems with tokens, theming, and component architecture. Use when creating design token hierarchies, theming systems, component variant patterns, or accessibility foundations. Use for design tokens, CVA variants, dark mode, multi-brand theming, Radix headless UI, Storybook documentation, and governance.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Design System

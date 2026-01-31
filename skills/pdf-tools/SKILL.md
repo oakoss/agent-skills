@@ -1,6 +1,10 @@
 ---
 name: pdf-tools
 description: 'PDF engineering for extraction, generation, modification, and form filling. Use when extracting text or tables from PDFs, generating PDFs with Puppeteer, modifying PDFs with pdf-lib, filling PDF forms, or implementing PDF security. Use for AI-assisted OCR, HTML-to-PDF conversion, and document processing pipelines.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # PDF Tools

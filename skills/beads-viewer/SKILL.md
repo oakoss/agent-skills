@@ -1,6 +1,10 @@
 ---
 name: beads-viewer
 description: 'Beads Viewer - Graph-aware triage engine for Beads projects. Computes PageRank, betweenness, critical path, and cycles. Use when triaging beads tasks, analyzing dependency graphs, finding bottlenecks, detecting circular dependencies, planning parallel execution tracks, or generating sprint burndown data.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Beads Viewer

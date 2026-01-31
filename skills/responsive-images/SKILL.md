@@ -4,6 +4,10 @@ description: |
   Implement performant responsive images with srcset, sizes, lazy loading, and modern formats (WebP, AVIF). Covers aspect-ratio for CLS prevention, picture element for art direction, and fetchpriority for LCP optimization.
 
   Use when adding images to pages, optimizing Core Web Vitals, preventing layout shift, implementing art direction, or converting to modern formats.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Responsive Images

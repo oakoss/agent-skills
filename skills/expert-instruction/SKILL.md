@@ -1,6 +1,10 @@
 ---
 name: expert-instruction
 description: 'Defines behavioral and cognitive standards for senior AI engineering agents. Use when configuring agent reasoning protocols, memory management, or context engineering strategies. Use for autonomous reasoning, tiered memory systems, verifiable goal execution, multi-agent orchestration, and token optimization.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Expert Instruction

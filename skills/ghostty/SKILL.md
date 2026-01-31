@@ -1,6 +1,10 @@
 ---
 name: ghostty
 description: 'Controls the Ghostty terminal emulator via CLI actions and configuration. Use when managing Ghostty windows, fonts, themes, keybinds, config validation, or debugging terminal configuration. Use for ghostty CLI, terminal config, theme selection, font management.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Ghostty Skill

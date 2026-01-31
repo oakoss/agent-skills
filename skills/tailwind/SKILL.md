@@ -1,6 +1,10 @@
 ---
 name: tailwind
 description: 'Tailwind CSS v4 patterns and design systems. Use when configuring Tailwind themes, building components, implementing dark mode, using container queries, migrating from v3, integrating shadcn/ui, or fixing build errors. Use for tailwind, css, styling, theme, design-tokens.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Tailwind CSS (v4+)

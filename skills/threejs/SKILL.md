@@ -1,6 +1,10 @@
 ---
 name: threejs
 description: 'Builds 3D web experiences with Three.js, WebGPU rendering, TSL shaders, and React Three Fiber. Covers scene setup, asset optimization, performance tuning, and React 19 integration. Use when creating 3D scenes, setting up WebGPU rendering, writing TSL shaders, optimizing draw calls, or integrating Three.js with React and Next.js.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Three.js

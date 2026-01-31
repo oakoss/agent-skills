@@ -1,6 +1,10 @@
 ---
 name: usability-tester
 description: 'Conduct usability tests and identify UX issues through systematic observation. Use when testing user flows, validating designs, identifying friction points, running heuristic evaluations, or ensuring users can complete core tasks. Use for test planning, think-aloud protocol, task scenarios, severity rating, accessibility evaluation.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Usability Tester

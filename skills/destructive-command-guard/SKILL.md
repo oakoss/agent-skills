@@ -1,6 +1,10 @@
 ---
 name: destructive-command-guard
 description: 'Blocks dangerous commands before execution via a Rust-based Claude Code hook. Use when configuring agent safety guards, setting up destructive command blocking, or auditing CLI protection rules. Use for git reset protection, rm -rf interception, force-push blocking, pack-based command filtering, and PreToolUse hook safety.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Destructive Command Guard

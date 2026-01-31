@@ -4,6 +4,10 @@ description: |
   Turborepo monorepo build system and orchestration. Covers task pipelines, dependsOn syntax, caching configuration, remote cache, filtering, CI optimization, environment variables, workspace management, watch mode, package boundaries, and code generation.
 
   Use when configuring tasks, creating packages, setting up monorepo, sharing code between apps, running changed packages, debugging cache, optimizing CI, resolving workspace dependencies, enforcing package boundaries, or generating code.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Turborepo

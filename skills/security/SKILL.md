@@ -1,7 +1,10 @@
 ---
 name: security
 description: 'Comprehensive application security covering threat modeling (STRIDE), OWASP Top 10 (2025), secure coding review, authentication/authorization patterns, input validation, encryption, security headers, supply chain security, compliance (GDPR/HIPAA/SOC2/PCI-DSS), and security monitoring. Use when reviewing code for vulnerabilities, implementing auth patterns, configuring security headers, hardening supply chain, or preparing for compliance audits.'
-version: 1.0.0
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Security

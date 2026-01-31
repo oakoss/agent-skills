@@ -1,6 +1,10 @@
 ---
 name: repo-updater
 description: 'Repo Updater - Multi-repo synchronization with AI-assisted review orchestration. Parallel sync, agent-sweep for dirty repos, ntm integration, git plumbing. 17K LOC Bash CLI. Use when syncing multiple GitHub repositories, running agent-sweep on uncommitted changes, or orchestrating AI-assisted code review across repos.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Repo Updater

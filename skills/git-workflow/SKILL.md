@@ -1,6 +1,10 @@
 ---
 name: git-workflow
 description: 'Designs git workflows covering branching strategies, trunk-based development, stacked changes, conventional commits, CI/CD pipelines, and repository hygiene. Use when setting up branching models, writing commit messages, configuring GitHub Actions, managing stacked PRs, cleaning stale branches, creating issue templates, or recovering lost commits.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Git Workflow

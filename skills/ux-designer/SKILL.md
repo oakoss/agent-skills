@@ -1,6 +1,10 @@
 ---
 name: ux-designer
 description: 'Designs user experiences and interfaces grounded in research. Use when creating user journeys, wireframes, prototypes, or improving usability. Use for information architecture, interaction design, accessibility audits, design system creation, and developer handoff.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # UX Designer

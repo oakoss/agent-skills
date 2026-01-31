@@ -4,6 +4,10 @@ description: |
   Self-hosted TypeScript auth framework with social auth, 2FA, passkeys, organizations, RBAC, and 15+ plugins. Supports Drizzle/Prisma/Kysely adapters. Self-hosted alternative to Clerk/Auth.js.
 
   Use when: configuring auth, adding plugins, social OAuth, multi-tenant SaaS, session management, rate limiting, Expo/mobile, D1 adapter errors, TanStack Start integration, additionalFields bugs, admin plugin, or troubleshooting auth issues.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # better-auth

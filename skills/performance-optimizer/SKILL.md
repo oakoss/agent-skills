@@ -1,6 +1,10 @@
 ---
 name: performance-optimizer
 description: Optimize application performance and scalability. Use when investigating slow applications, scaling bottlenecks, or improving response times. Use for profiling, caching, database optimization, frontend performance, and backend tuning.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Performance Optimizer

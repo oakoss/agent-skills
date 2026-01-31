@@ -1,6 +1,10 @@
 ---
 name: tanstack-start
 description: 'Full-stack React framework built on TanStack Router. Type-safe routing, server functions, SSR/streaming, middleware, and multi-platform deployment. Use when building full-stack React apps with SSR, server functions, middleware, or authentication. Use for createServerFn, createMiddleware, beforeLoad, API routes, Cloudflare Workers, Vercel, Netlify deployment.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # TanStack Start

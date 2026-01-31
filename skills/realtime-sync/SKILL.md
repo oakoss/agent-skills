@@ -1,6 +1,10 @@
 ---
 name: realtime-sync
 description: 'Low-latency synchronization with WebTransport, pub/sub messaging, CRDTs, and AI stream orchestration. Covers bidirectional streaming, transactional outbox patterns, sequence tracking, and collaborative editing. Use when building real-time collaborative UIs, implementing pub/sub messaging, handling WebTransport or WebSocket connections, orchestrating live AI token streams, or resolving conflicts with CRDTs.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Realtime Sync

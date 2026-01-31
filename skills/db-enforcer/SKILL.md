@@ -1,6 +1,10 @@
 ---
 name: db-enforcer
 description: 'Enforces database integrity for PostgreSQL and Prisma systems. Use when designing schemas, writing migrations, or configuring Row-Level Security. Use for type-safe SQL, naming alignment, constraint validation, zero-trust RLS policies, UUIDv7 primary keys, and zero-downtime deployments.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # DB Enforcer

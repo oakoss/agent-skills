@@ -1,6 +1,10 @@
 ---
 name: ci-cd
 description: CI/CD pipelines, deployment strategy, and infrastructure. Use when setting up GitHub Actions workflows, choosing deployment platforms, configuring production environments, securing pipelines with OIDC, or optimizing build performance.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # CI/CD & Deployment

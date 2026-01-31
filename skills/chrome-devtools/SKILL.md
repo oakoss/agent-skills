@@ -1,6 +1,10 @@
 ---
 name: chrome-devtools
 description: 'Browser automation via Chrome extension and DevTools MCP. Use when controlling a logged-in Chrome browser, automating workflows, filling forms, extracting data, debugging web apps, reading console logs, or running scheduled browser tasks. Use for browser testing, form automation, data extraction, web scraping, authenticated browsing.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Chrome DevTools Skill

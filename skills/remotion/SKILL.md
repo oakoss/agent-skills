@@ -1,6 +1,10 @@
 ---
 name: remotion
 description: 'Best practices for Remotion - Video creation in React. Use when creating programmatic videos with Remotion, adding animations or transitions, working with audio/captions, rendering compositions, embedding 3D content, building charts, or using Mapbox maps in video.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 ## Overview

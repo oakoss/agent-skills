@@ -4,6 +4,10 @@ description: |
   Playwright browser automation, E2E testing, and web scraping. Covers test fixtures, locator assertions, API testing, stealth mode, anti-bot bypass, authenticated sessions, screenshots/PDFs, Docker deployment, and MCP integration with AI agents. Prevents documented errors including CI timeout hangs, extension testing failures, and navigation issues.
 
   Use when writing E2E tests, automating browsers, scraping protected sites, bypassing bot detection, generating screenshots/PDFs, configuring Playwright Test, or troubleshooting Playwright errors.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Playwright

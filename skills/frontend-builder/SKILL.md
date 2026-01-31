@@ -1,6 +1,10 @@
 ---
 name: frontend-builder
 description: 'Builds modern React and Next.js frontends. Use when creating web applications, choosing frontend stack, structuring components, implementing UI/UX designs, or setting up project architecture. Use for React, Next.js, Tailwind CSS, shadcn/ui, server components, and component patterns.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Frontend Builder

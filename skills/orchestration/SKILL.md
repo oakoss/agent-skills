@@ -1,6 +1,10 @@
 ---
 name: orchestration
 description: 'Coordinates skills, frameworks, and workflows throughout the project lifecycle using pattern-based sequencing, goal decomposition, phase-gate validation, and multi-agent orchestration. Use when starting multi-phase projects, sequencing frameworks, decomposing goals into capability plans, validating phase-gate readiness, coordinating subagents, or designing MCP-based tool orchestration.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Orchestration

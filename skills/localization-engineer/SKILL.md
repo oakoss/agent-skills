@@ -4,6 +4,10 @@ description: |
   Implements internationalization (i18n) and localization (l10n) for multilingual Next.js applications using next-intl. Covers locale routing with defineRouting, translation management with useTranslations and getTranslations, date/number/currency formatting with useFormatter, RTL layout support, ICU message syntax, and multilingual SEO with hreflang tags.
 
   Use when adding multi-language support, formatting dates and currencies by locale, handling RTL layouts, setting up translation workflows, configuring locale routing middleware, or implementing hreflang SEO tags.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Localization Engineer

@@ -1,6 +1,10 @@
 ---
 name: beads-workflow
 description: 'Converts markdown plans into beads (tasks with dependencies) and polishes them until implementation-ready. The bridge between planning and agent swarm execution. Use when converting a plan to beads, polishing bead descriptions, adding test coverage beads, reviewing bead dependencies, or preparing tasks for agent swarm execution.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Beads Workflow

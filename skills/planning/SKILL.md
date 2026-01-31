@@ -7,6 +7,10 @@ description: |
 
   Use when starting new projects, adding major features, breaking large work
   into phases, resuming after context clears, or managing multi-phase implementations.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Planning

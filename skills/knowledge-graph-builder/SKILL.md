@@ -4,6 +4,10 @@ description: >
   Designs and builds knowledge graphs for AI-enhanced relational knowledge. Covers ontology design, graph database selection (Neo4j, Neptune, ArangoDB, TigerGraph), entity extraction, hybrid graph-vector architecture, query patterns, and AI integration.
 
   Use when modeling complex entity relationships, building semantic search with graph traversal, creating knowledge bases for AI grounding, or selecting a graph database. Use for knowledge graph, ontology design, entity resolution, graph RAG, hallucination detection.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Knowledge Graph Builder

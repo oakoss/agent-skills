@@ -1,6 +1,10 @@
 ---
 name: quality-auditor
 description: 'Code quality gatekeeper and auditor. Enforces strict quality gates, resolves the AI verification gap, and evaluates codebases across 12 critical dimensions with evidence-based scoring. Use when auditing code quality, reviewing AI-generated code, scoring codebases against industry standards, or enforcing pre-commit quality gates. Use for quality audit, code review, codebase evaluation, security assessment, technical debt analysis.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Quality Auditor

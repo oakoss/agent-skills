@@ -1,6 +1,10 @@
 ---
 name: data-visualizer
 description: 'Charts, dashboards, and data visualizations using Recharts, Chart.js, and D3.js. Use when building charts, dashboards, or interactive data displays. Use for chart type selection, responsive design, accessibility, and performance optimization.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Data Visualizer

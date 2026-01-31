@@ -1,6 +1,10 @@
 ---
 name: security-audit
 description: 'Database security auditor specialized in Row Level Security (RLS) enforcement, Zero-Trust database architecture, and forensic audit trails. Covers Supabase RLS policies, Postgres security, Convex auth guards, PGAudit configuration, JIT access controls, and database-specific compliance validation. Use when auditing database access policies, implementing RLS in Supabase or Postgres, configuring Convex auth guards, setting up audit logging, reviewing database security, or validating database-level compliance requirements.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Security Audit

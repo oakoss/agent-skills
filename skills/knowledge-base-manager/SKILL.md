@@ -1,6 +1,10 @@
 ---
 name: knowledge-base-manager
 description: 'Designs, builds, and maintains knowledge bases bridging document-based (RAG) and entity-based (graph) knowledge systems. Use when selecting KB architecture, curating content for RAG, implementing versioning and governance, or evaluating quality metrics for knowledge systems.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Knowledge Base Manager

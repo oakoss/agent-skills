@@ -4,6 +4,10 @@ description: |
   Strategic adoption of TanStack libraries (Query, Router, Start, Table, Form, Virtual). Patterns for Router+Query integration, SSR hydration, caching coordination, loader data flow, server functions, and error handling.
 
   Use when integrating multiple TanStack libraries, setting up Router+Query SSR, fixing dual caching issues, coordinating form submissions with cache invalidation, or choosing which TanStack library to adopt.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # TanStack Integration

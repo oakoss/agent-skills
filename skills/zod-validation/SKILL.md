@@ -1,6 +1,10 @@
 ---
 name: zod-validation
 description: 'Zod v4 schema validation for TypeScript. Covers primitives, string formats, objects, arrays, unions, coercion, transforms, refinements, parsing, type inference, error customization, JSON Schema, file validation, and metadata. Use when writing schemas, validating input, parsing data, inferring types, or converting schemas with Zod.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Zod Validation (v4)

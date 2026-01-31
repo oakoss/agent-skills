@@ -4,6 +4,10 @@ description: |
   Creates, audits, and validates agent skills following the Agent Skills open standard. Covers YAML frontmatter, description writing, progressive disclosure, directory structure, 9-phase audits, severity classification, and manifest-implementation drift detection.
 
   Use when creating new skills, writing skill descriptions, auditing existing skills, detecting version drift, validating implementations match manifests, or debugging skill discovery issues.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Skill Management

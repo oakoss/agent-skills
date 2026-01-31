@@ -8,6 +8,10 @@ description: >
   server-to-client data bridges, or applying Next.js use cache for data drift
   prevention. Use for hydration mismatch, SSR, hydrateRoot, suppressHydrationWarning,
   onRecoverableError, two-pass rendering.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Hydration Guardian

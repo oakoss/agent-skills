@@ -1,6 +1,10 @@
 ---
 name: tiptap
 description: 'Builds rich text editors with Tiptap, a headless ProseMirror-based editor framework for React with Tailwind v4 support. Covers SSR-safe setup, image uploads, prose styling, collaborative editing, and markdown support. Use when adding a rich text editor, configuring Tiptap extensions, handling image uploads in editors, or setting up collaborative editing with Y.js. Use for tiptap, rich text, editor, prosemirror, react, tailwind.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Tiptap Rich Text Editor

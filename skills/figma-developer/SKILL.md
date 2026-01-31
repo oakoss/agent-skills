@@ -1,6 +1,10 @@
 ---
 name: figma-developer
 description: 'Extracts design data from Figma via the REST API and converts designs to React code. Use when syncing Figma tokens to CSS variables, exporting icons as SVG components, generating code from Figma designs, or automating design-to-code workflows. Use for design token extraction, icon export, component generation, and CI-based Figma sync.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Figma Developer

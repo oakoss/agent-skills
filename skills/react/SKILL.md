@@ -4,6 +4,10 @@ description: |
   React 19+ patterns, performance optimization, and component architecture. Covers hooks, state management decision trees, data fetching with use() API, Server Components, React Compiler, bundle optimization, and re-render elimination.
 
   Use when building components, optimizing re-renders, fetching data, managing state, handling forms, structuring frontends, or reviewing React code.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # React

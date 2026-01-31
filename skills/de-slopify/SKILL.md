@@ -4,6 +4,10 @@ description: >
   Removes AI writing artifacts from documentation and code.
   Use when editing LLM-generated prose, reviewing READMEs, polishing docs before publishing, or cleaning up AI-generated code.
   Use for emdash cleanup, formulaic phrase removal, tone calibration, over-commented code, verbose naming, and AI code smell detection.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # De-Slopify

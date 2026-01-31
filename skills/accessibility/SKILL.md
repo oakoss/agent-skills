@@ -4,6 +4,10 @@ description: |
   Build WCAG 2.2 AA compliant interfaces with semantic HTML, ARIA, keyboard navigation, focus management, color contrast, and screen reader support. Covers forms, dialogs, tabs, live regions, skip links, alt text, and data tables.
 
   Use when implementing accessible UIs, auditing WCAG compliance, fixing screen reader issues, keyboard navigation, focus traps, or troubleshooting "focus outline missing", "aria-label required", "insufficient contrast", "missing alt text", "heading hierarchy".
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Web Accessibility (WCAG 2.2 AA)

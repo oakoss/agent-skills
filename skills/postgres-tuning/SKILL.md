@@ -1,6 +1,10 @@
 ---
 name: postgres-tuning
 description: 'PostgreSQL 17/18+ performance tuning and optimization. Covers async I/O configuration, query plan forensics, index strategies, autovacuum tuning, and vector search optimization. Use when diagnosing slow queries, configuring async I/O, tuning autovacuum, optimizing vector indexes, or analyzing execution plans with EXPLAIN BUFFERS.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # PostgreSQL Tuning

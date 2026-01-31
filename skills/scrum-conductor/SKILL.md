@@ -1,6 +1,10 @@
 ---
 name: scrum-conductor
 description: 'Orchestrates AI-enhanced Scrum ceremonies and sprint coordination. Use when running sprint ceremonies, generating automated daily standups, engineering structured tickets, forecasting sprint capacity, or grooming backlogs. Use for fact-based standups, machine-readable tickets, predictive velocity, and backlog deduplication across GitHub Issues, Jira, and Linear.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # Scrum Conductor

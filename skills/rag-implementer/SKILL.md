@@ -1,6 +1,10 @@
 ---
 name: rag-implementer
 description: Implement retrieval-augmented generation systems. Use when building knowledge-intensive applications, document search, Q&A systems, or need to ground LLM responses in external data. Use for embedding strategy, vector stores, retrieval pipelines, chunking, hybrid search, re-ranking, and evaluation.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # RAG Implementer

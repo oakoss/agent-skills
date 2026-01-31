@@ -4,6 +4,10 @@ description: |
   SSH remote access patterns and secure shell utilities. Covers connections, config management, key generation (Ed25519, FIDO2), tunneling, port forwarding, file transfers, and multiplexing.
 
   Use when connecting to servers, managing SSH keys, setting up tunnels, transferring files over SSH, configuring jump hosts, or hardening SSH access.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # SSH Remote Access

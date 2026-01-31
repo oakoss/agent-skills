@@ -1,6 +1,10 @@
 ---
 name: ui-ux-polish
 description: 'Iterative UI/UX polishing workflow for web applications. Use when improving visual polish, refining desktop and mobile UX separately, running iterative enhancement cycles, applying design patterns like glassmorphism or bento grids, or auditing accessibility and WCAG compliance. Use for Stripe-level visual quality, responsive optimization, and design system alignment.'
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # UI/UX Polish

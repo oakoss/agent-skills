@@ -4,6 +4,10 @@ description: |
   TanStack Table v8 headless data tables for React. Covers column definitions, sorting, filtering (fuzzy/faceted), server-side pagination with TanStack Query, infinite scroll, virtualization (TanStack Virtual), column/row pinning, row expanding/grouping, column resizing, and reusable Shadcn-styled components. Prevents 15 documented errors including infinite re-renders, React Compiler incompatibility, and server-side state mismatches.
 
   Use when building data tables, fixing table performance, implementing server-side pagination, adding filtering/sorting, or debugging table state issues.
+license: MIT
+metadata:
+  author: oakoss
+  version: '1.0'
 ---
 
 # TanStack Table
