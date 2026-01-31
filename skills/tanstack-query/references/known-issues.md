@@ -16,6 +16,17 @@ tags:
 
 v5 removed all function overloads, only object syntax works. Always use `useQuery({ queryKey, queryFn, ...options })`.
 
+**Automated migration:** Use the `remove-overloads` codemod to migrate automatically:
+
+```bash
+npx jscodeshift@latest ./path/to/src/ \
+  --extensions=ts,tsx \
+  --parser=tsx \
+  --transform=./node_modules/@tanstack/react-query/build/codemods/src/v5/remove-overloads/remove-overloads.cjs
+```
+
+Review generated code and run prettier/eslint after applying. The codemod cannot infer all cases and will log messages for manual migration.
+
 ## Issue #2: Query Callbacks Removed
 
 **Error**: Callbacks don't run, TypeScript errors

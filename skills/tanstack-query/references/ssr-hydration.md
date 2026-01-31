@@ -166,6 +166,62 @@ function Dashboard() {
 
 **Key principle:** Decouple data fetching from rendering. Initiate fetches in loaders, or use `useSuspenseQueries` for parallel fetching in components.
 
+## Partial Prerendering (PPR) with Next.js
+
+PPR combines static and dynamic content in the same route. The server sends a static shell immediately, with dynamic holes streamed in asynchronously.
+
+**Enable PPR in next.config.ts:**
+
+```ts
+export default {
+  experimental: {
+    ppr: 'incremental',
+  },
+};
+```
+
+Then opt-in per route:
+
+```tsx
+export const experimental_ppr = true;
+```
+
+**Pattern for TanStack Query with PPR:**
+
+Pass an unwrapped promise from server components to client components without awaiting on the server:
+
+```tsx
+async function ServerPage() {
+  const queryClient = new QueryClient();
+
+  const dataPromise = queryClient.prefetchQuery({
+    queryKey: ['data'],
+    queryFn: getData,
+  });
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Suspense fallback={<Loading />}>
+        <ClientComponent dataPromise={dataPromise} />
+      </Suspense>
+    </HydrationBoundary>
+  );
+}
+
+function ClientComponent({ dataPromise }: { dataPromise: Promise<void> }) {
+  use(dataPromise);
+
+  const { data } = useSuspenseQuery({
+    queryKey: ['data'],
+    queryFn: getData,
+  });
+
+  return <div>{data}</div>;
+}
+```
+
+The static shell (layout, navigation) is served immediately from the edge. The dynamic `Suspense` boundary streams in after the query resolves, reducing overall load time while maintaining static prerendering benefits.
+
 ## Error Boundaries with Suspense
 
 Combine `QueryErrorResetBoundary` with `react-error-boundary` for retry-able error states:

@@ -30,6 +30,9 @@ Full-stack React framework built on TanStack Router. Type-safe server functions 
 | `createIsomorphicFn()`                      | Different implementations per environment                 |
 | `createServerOnlyFn()`                      | Server-only utility — crashes if called from client       |
 | `createClientOnlyFn()`                      | Client-only utility — crashes if called from server       |
+| `useSession()`                              | Cookie-based session with encryption and secure settings  |
+| `session.update()`                          | Update session data                                       |
+| `session.clear()`                           | Clear session (logout)                                    |
 | `beforeLoad`                                | Auth check before route loads                             |
 | `_authenticated.tsx`                        | Pathless layout route for grouped protection              |
 | `throw redirect({ to: '/login' })`          | Redirect with return URL                                  |

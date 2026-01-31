@@ -56,6 +56,7 @@ Tailwind CSS v4 skill covering CSS-first configuration, design tokens, component
 - [Configuration](references/configuration.md) -- CSS-first config, @theme, @theme inline, @utility, @plugin, @source, @reference, @variant directives
 - [Design Tokens](references/design-tokens.md) -- OKLCH token system, brand scales, semantic tokens, shadows, z-index, fluid typography
 - [Component Patterns](references/component-patterns.md) -- Layouts, grids, container queries, 3D transforms, subgrid, CVA variants
+- [UI Patterns](references/ui-patterns.md) -- Buttons, forms, navigation, cards, typography with variants, states, accessibility
 - [Dark Mode](references/dark-mode.md) -- Class-based dark mode, multi-theme systems, ThemeProvider, @custom-variant
 - [shadcn/ui Integration](references/shadcn-integration.md) -- Four-step architecture, components.json, tw-animate-css, Vite setup
 - [Migration](references/migration.md) -- v3 to v4 migration steps, breaking changes, upgrade tool, common gotchas

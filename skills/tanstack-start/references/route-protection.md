@@ -110,6 +110,92 @@ export function getSession() {
 
 Generate a secure session secret: `openssl rand -base64 32`
 
+## Session Validation and Expiry
+
+```ts
+interface SessionData {
+  userId: string;
+  email: string;
+  role: 'user' | 'admin';
+  createdAt: number;
+}
+
+export async function getValidatedSession(): Promise<SessionData | null> {
+  const session = await getSession();
+  const data = session.data as SessionData | undefined;
+
+  if (!data?.userId) {
+    return null;
+  }
+
+  const maxAge = 7 * 24 * 60 * 60 * 1000;
+  if (Date.now() - data.createdAt > maxAge) {
+    await session.clear();
+    return null;
+  }
+
+  return data;
+}
+```
+
+## Session Refresh
+
+```ts
+export const refreshSession = createServerFn({ method: 'POST' }).handler(
+  async () => {
+    const session = await getSession();
+    const currentData = session.data as SessionData;
+
+    if (!currentData?.userId) {
+      throw redirect({ to: '/login' });
+    }
+
+    const user = await db.users.findUnique({
+      where: { id: currentData.userId },
+      select: { id: true, email: true, role: true },
+    });
+
+    if (!user) {
+      await session.clear();
+      throw redirect({ to: '/login' });
+    }
+
+    await session.update({
+      ...currentData,
+      createdAt: Date.now(),
+    });
+
+    return { success: true };
+  },
+);
+```
+
+## Session Cleanup
+
+```ts
+export const logout = createServerFn({ method: 'POST' }).handler(async () => {
+  const session = await getSession();
+  await session.clear();
+  throw redirect({ to: '/login' });
+});
+
+export const logoutAllDevices = createServerFn({ method: 'POST' }).handler(
+  async () => {
+    const session = await getSession();
+    const data = session.data as SessionData;
+
+    if (data?.userId) {
+      await db.sessions.deleteMany({
+        where: { userId: data.userId },
+      });
+    }
+
+    await session.clear();
+    throw redirect({ to: '/login' });
+  },
+);
+```
+
 ## Login and Logout Server Functions
 
 ```ts

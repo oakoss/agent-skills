@@ -28,12 +28,81 @@ Prefer `<Link>` over `useNavigate()` for proper `<a>` tags, right-click, accessi
   activeProps={{ className: 'nav-link-active', 'aria-current': 'page' }}
   activeOptions={{ exact: true }}
   preload="intent"
+  preloadDelay={100}
+  disabled={!post.published}
+  replace={false}
 >
   View Post
 </Link>
 ```
 
 Reserve `useNavigate()` for side effects: form submissions, auth redirects, programmatic navigation.
+
+### Link Component Props
+
+| Prop            | Type                                          | Description                           |
+| --------------- | --------------------------------------------- | ------------------------------------- |
+| `to`            | `string`                                      | Target route path                     |
+| `params`        | `object`                                      | Route params (type-safe)              |
+| `search`        | `object \| (prev) => object`                  | Search params (type-safe)             |
+| `hash`          | `string`                                      | URL hash fragment                     |
+| `state`         | `object`                                      | History state (survives navigation)   |
+| `replace`       | `boolean`                                     | Replace history entry instead of push |
+| `resetScroll`   | `boolean`                                     | Reset scroll position on navigation   |
+| `disabled`      | `boolean`                                     | Disable link (prevents navigation)    |
+| `preload`       | `false \| 'intent' \| 'render' \| 'viewport'` | When to preload route data            |
+| `preloadDelay`  | `number`                                      | Delay (ms) before intent preloading   |
+| `activeProps`   | `object`                                      | Props applied when link is active     |
+| `inactiveProps` | `object`                                      | Props applied when link is inactive   |
+| `activeOptions` | `ActiveLinkOptions`                           | Control active matching behavior      |
+| `mask`          | `NavigateFn`                                  | Display different URL (route masking) |
+
+## Disabled Links
+
+Disable navigation conditionally:
+
+```tsx
+<Link
+  to="/edit-post"
+  params={{ postId: post.id }}
+  disabled={!hasPermission}
+  className="data-[status=disabled]:opacity-50 data-[status=disabled]:cursor-not-allowed"
+>
+  Edit Post
+</Link>
+```
+
+Disabled links render with `aria-disabled="true"` and prevent navigation, but still render as `<a>` tags for consistency.
+
+## Replace vs Push
+
+Control history behavior with `replace`:
+
+```tsx
+// Default: Push new entry to history
+<Link to="/dashboard">Dashboard</Link>
+
+// Replace current entry (no new history entry)
+<Link to="/login" replace>
+  Login
+</Link>
+
+// Useful after form submission
+function CreatePost() {
+  const { mutate } = useMutation({
+    mutationFn: createPost,
+    onSuccess: (post) => {
+      navigate({
+        to: '/posts/$postId',
+        params: { postId: post.id },
+        replace: true, // Replace /create with /posts/123
+      });
+    },
+  });
+}
+```
+
+Use `replace` for redirects, auth flows, and post-submission navigations where users shouldn't go back to the form.
 
 ## Active Link Styling
 
@@ -67,6 +136,47 @@ const isOnPosts = matchRoute({ to: '/posts', fuzzy: true });
 | `includeSearch`     | `false` | Include search params in active check     |
 | `includeHash`       | `false` | Include hash in active check              |
 | `explicitUndefined` | `false` | Treat undefined search params as explicit |
+
+## Preloading Strategies
+
+Control when route data loads with the `preload` prop:
+
+```tsx
+// Preload on hover or focus (recommended default)
+<Link to="/posts/$postId" params={{ postId: post.id }} preload="intent">
+  {post.title}
+</Link>
+
+// Preload immediately when Link mounts
+<Link to="/dashboard" preload="render">
+  Dashboard
+</Link>
+
+// Preload when Link enters viewport
+<Link to="/settings" preload="viewport">
+  Settings
+</Link>
+
+// Disable preloading (for heavy routes)
+<Link to="/admin/reports" preload={false}>
+  Reports
+</Link>
+```
+
+Add delay to avoid excessive preloading on fast mouse movements:
+
+```tsx
+<Link
+  to="/posts/$postId"
+  params={{ postId: post.id }}
+  preload="intent"
+  preloadDelay={100} // Wait 100ms after hover
+>
+  {post.title}
+</Link>
+```
+
+Preload strategies inherit from route config and router defaults if not explicitly set.
 
 ## Relative Navigation
 

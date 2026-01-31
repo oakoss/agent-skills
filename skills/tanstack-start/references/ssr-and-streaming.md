@@ -105,6 +105,72 @@ function PostPage() {
 }
 ```
 
+## Fallback Content Strategies
+
+Design fallbacks that match the final content structure to minimize layout shift:
+
+```tsx
+function CommentsSkeleton() {
+  return (
+    <div className="space-y-4">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} className="border rounded-lg p-4">
+          <div className="h-4 bg-gray-200 rounded w-1/4 mb-2" />
+          <div className="h-3 bg-gray-200 rounded w-full mb-1" />
+          <div className="h-3 bg-gray-200 rounded w-5/6" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function StatsCard({ stat }: { stat?: { label: string; value: number } }) {
+  if (!stat) {
+    return (
+      <div className="border rounded-lg p-6">
+        <div className="h-6 bg-gray-200 rounded w-1/2 mb-4" />
+        <div className="h-10 bg-gray-200 rounded w-3/4" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="border rounded-lg p-6">
+      <h3 className="text-lg font-medium mb-2">{stat.label}</h3>
+      <p className="text-3xl font-bold">{stat.value.toLocaleString()}</p>
+    </div>
+  );
+}
+```
+
+## Nested Suspense for Granular Streaming
+
+```tsx
+function DashboardPage() {
+  const { data: user } = useSuspenseQuery(userQueries.profile());
+
+  return (
+    <div>
+      <Header user={user} />
+      <div className="grid grid-cols-3 gap-4">
+        <Suspense fallback={<StatsCard />}>
+          <StatsCard1 />
+        </Suspense>
+        <Suspense fallback={<StatsCard />}>
+          <StatsCard2 />
+        </Suspense>
+        <Suspense fallback={<StatsCard />}>
+          <StatsCard3 />
+        </Suspense>
+      </div>
+      <Suspense fallback={<ActivitySkeleton />}>
+        <RecentActivity />
+      </Suspense>
+    </div>
+  );
+}
+```
+
 ## Static Prerendering
 
 ```ts

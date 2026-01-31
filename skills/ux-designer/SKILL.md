@@ -64,5 +64,6 @@ Designs intuitive, accessible user experiences grounded in research rather than 
 ## References
 
 - [Design Process](references/design-process.md) -- 5-phase UX process, information architecture, user flows, wireframing, prototyping, and handoff
+- [Visual Design Fundamentals](references/visual-design.md) -- color theory, typography scales, spacing systems, visual hierarchy, dark mode, and responsive patterns
 - [Accessibility Guide](references/accessibility-guide.md) -- WCAG 2.2 AA compliance, keyboard navigation, screen readers, color contrast, and audit checklists
 - [Tools and Resources](references/tools-and-resources.md) -- design tools, prototyping platforms, testing services, and accessibility checkers

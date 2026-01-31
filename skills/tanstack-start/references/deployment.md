@@ -52,7 +52,29 @@ name = "my-app"
 compatibility_date = "2026-01-21"
 compatibility_flags = ["nodejs_compat"]
 main = "@tanstack/react-start/server-entry"
+
+# Optional: D1 database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "production-db"
+database_id = "your-database-id"
+
+# Optional: KV namespace binding
+[[kv_namespaces]]
+binding = "CACHE"
+id = "your-kv-id"
+
+# Optional: R2 bucket binding
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "my-bucket"
+
+# Optional: Environment variables
+[vars]
+ENVIRONMENT = "production"
 ```
+
+Deploy with: `wrangler deploy`
 
 Access bindings (D1, KV, R2) in server functions via `request.context.cloudflare.env`:
 
@@ -179,6 +201,50 @@ CMD ["node", ".output/server/index.mjs"]
 Use the Nitro plugin with `preset: 'bun'`. Requires React 19 — if using React 18, use the `node-server` preset instead.
 
 Run with: `bun .output/server/index.mjs`
+
+## AWS Lambda
+
+Use the Nitro plugin with `preset: 'aws-lambda'`:
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import { tanstackStart } from '@tanstack/react-start/plugin/vite';
+import { nitro } from 'nitro/vite';
+import viteReact from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [
+    tanstackStart(),
+    nitro({
+      preset: 'aws-lambda',
+      awsLambda: {
+        streaming: true,
+      },
+    }),
+    viteReact(),
+  ],
+});
+```
+
+Deploy with SST, Serverless Framework, or AWS CDK:
+
+```yaml
+# serverless.yml
+service: my-tanstack-app
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+
+functions:
+  app:
+    handler: .output/server/index.handler
+    events:
+      - http: ANY /
+      - http: ANY /{proxy+}
+```
 
 ## Static Export
 

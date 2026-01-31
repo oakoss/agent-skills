@@ -83,6 +83,7 @@ TanStack Query is an **async state manager**, not a data fetching library. You p
 - [Mutations, optimistic updates, and MutationCache](references/mutations.md)
 - [Cache operations, staleTime vs gcTime, seeding](references/caching.md)
 - [Data transformations and select patterns](references/data-transformations.md)
+- [Performance optimization with render tracking and structural sharing](references/performance.md)
 - [Error handling strategies](references/error-handling.md)
 - [Infinite queries and pagination](references/infinite-queries.md)
 - [Offline mode and persistence](references/offline-mode.md)
