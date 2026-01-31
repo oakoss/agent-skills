@@ -1,6 +1,6 @@
 # agent-skills
 
-A curated collection of 69 [agent skills](https://agentskills.io) for Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code, GitHub Copilot, Windsurf, Goose, and [27+ other agents](https://agentskills.io). Each skill is hand-written and enriched against official documentation — not auto-generated from docs.
+A curated collection of 80 [agent skills](https://agentskills.io) for Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code, GitHub Copilot, Windsurf, Goose, and [27+ other agents](https://agentskills.io). Each skill is hand-written and enriched against official documentation — not auto-generated from docs.
 
 ## Install
 
@@ -34,23 +34,35 @@ pnpm dlx skills add oakoss/agent-skills --list
 | [tanstack-router](skills/tanstack-router)           | Type-safe, file-based React routing with route loaders and search params |
 | [tanstack-start](skills/tanstack-start)             | Full-stack React framework built on TanStack Router                      |
 | [tanstack-table](skills/tanstack-table)             | TanStack Table v8 headless data tables for React                         |
+| [tanstack-form](skills/tanstack-form)               | TanStack Form for type-safe React forms with validation                  |
+| [tanstack-virtual](skills/tanstack-virtual)         | TanStack Virtual for virtualizing large lists, grids, and tables         |
+| [tanstack-store](skills/tanstack-store)             | TanStack Store framework-agnostic reactive state management              |
+| [tanstack-db](skills/tanstack-db)                   | TanStack DB reactive client-side database with live queries              |
+| [tanstack-pacer](skills/tanstack-pacer)             | TanStack Pacer for rate limiting, throttling, debouncing, and queuing    |
 | [tanstack-integration](skills/tanstack-integration) | Strategic adoption guide for TanStack libraries                          |
 
 ### React & Frontend
 
-| Skill                                           | Description                                                          |
-| ----------------------------------------------- | -------------------------------------------------------------------- |
-| [react](skills/react)                           | React 19+ patterns, performance optimization, component architecture |
-| [shadcn-ui](skills/shadcn-ui)                   | Accessible component libraries with shadcn/ui, Radix UI, Tailwind    |
-| [tailwind](skills/tailwind)                     | Tailwind CSS v4 patterns and design systems                          |
-| [zustand](skills/zustand)                       | Zustand v5 state management for React                                |
-| [motion](skills/motion)                         | Web animations with Motion (Framer Motion) for React                 |
-| [design-system](skills/design-system)           | Design tokens, theming, and component architecture                   |
-| [frontend-builder](skills/frontend-builder)     | React and Next.js frontend development                               |
-| [hydration-guardian](skills/hydration-guardian) | React/Next.js hydration mismatch debugging                           |
-| [tiptap](skills/tiptap)                         | Rich text editors with Tiptap and ProseMirror                        |
-| [threejs](skills/threejs)                       | 3D web experiences with Three.js, WebGPU, React Three Fiber          |
-| [remotion](skills/remotion)                     | Programmatic video creation in React with Remotion                   |
+| Skill                                               | Description                                                          |
+| --------------------------------------------------- | -------------------------------------------------------------------- |
+| [react](skills/react)                               | React 19+ patterns, performance optimization, component architecture |
+| [shadcn-ui](skills/shadcn-ui)                       | Accessible component libraries with shadcn/ui, Radix UI, Tailwind    |
+| [tailwind](skills/tailwind)                         | Tailwind CSS v4 patterns and design systems                          |
+| [zustand](skills/zustand)                           | Zustand v5 state management for React                                |
+| [motion](skills/motion)                             | Web animations with Motion (Framer Motion) for React                 |
+| [design-system](skills/design-system)               | Design tokens, theming, and component architecture                   |
+| [frontend-builder](skills/frontend-builder)         | React and Next.js frontend development                               |
+| [hydration-guardian](skills/hydration-guardian)     | React/Next.js hydration mismatch debugging                           |
+| [tiptap](skills/tiptap)                             | Rich text editors with Tiptap and ProseMirror                        |
+| [threejs](skills/threejs)                           | 3D web experiences with Three.js, WebGPU, React Three Fiber          |
+| [react-error-handling](skills/react-error-handling) | React error boundaries, fallback UIs, and error recovery patterns    |
+| [remotion](skills/remotion)                         | Programmatic video creation in React with Remotion                   |
+
+### TypeScript & Patterns
+
+| Skill                                             | Description                                                |
+| ------------------------------------------------- | ---------------------------------------------------------- |
+| [typescript-patterns](skills/typescript-patterns) | Advanced TypeScript type utilities, generics, and patterns |
 
 ### Validation & Schemas
 
@@ -61,13 +73,15 @@ pnpm dlx skills add oakoss/agent-skills --list
 
 ### Testing & Quality
 
-| Skill                                       | Description                                              |
-| ------------------------------------------- | -------------------------------------------------------- |
-| [playwright](skills/playwright)             | Playwright browser automation, E2E testing, web scraping |
-| [e2e-testing](skills/e2e-testing)           | End-to-end test suites with Playwright                   |
-| [quality-auditor](skills/quality-auditor)   | Code quality gatekeeper and auditor                      |
-| [usability-tester](skills/usability-tester) | Usability testing and UX issue identification            |
-| [de-slopify](skills/de-slopify)             | Remove AI writing artifacts from documentation and code  |
+| Skill                                         | Description                                              |
+| --------------------------------------------- | -------------------------------------------------------- |
+| [playwright](skills/playwright)               | Playwright browser automation, E2E testing, web scraping |
+| [e2e-testing](skills/e2e-testing)             | End-to-end test suites with Playwright                   |
+| [quality-auditor](skills/quality-auditor)     | Code quality gatekeeper and auditor                      |
+| [usability-tester](skills/usability-tester)   | Usability testing and UX issue identification            |
+| [vitest-testing](skills/vitest-testing)       | Vitest test runner, mocking, component and hook testing  |
+| [storybook-stories](skills/storybook-stories) | Storybook stories, interaction tests, and visual testing |
+| [de-slopify](skills/de-slopify)               | Remove AI writing artifacts from documentation and code  |
 
 ### Security & Auth
 
@@ -91,6 +105,18 @@ pnpm dlx skills add oakoss/agent-skills --list
 | [postgres-tuning](skills/postgres-tuning) | PostgreSQL 17/18+ performance tuning and optimization          |
 | [db-enforcer](skills/db-enforcer)         | PostgreSQL and Prisma database integrity enforcement           |
 | [repo-updater](skills/repo-updater)       | Multi-repo synchronization with AI-assisted review             |
+
+### Database & ORM
+
+| Skill                             | Description                                                      |
+| --------------------------------- | ---------------------------------------------------------------- |
+| [drizzle-orm](skills/drizzle-orm) | Drizzle ORM for type-safe SQL with PostgreSQL, MySQL, and SQLite |
+
+### Backend & API
+
+| Skill               | Description                                               |
+| ------------------- | --------------------------------------------------------- |
+| [hono](skills/hono) | Hono ultrafast web framework for edge and server runtimes |
 
 ### AI, Agents & Orchestration
 
