@@ -158,13 +158,28 @@ const Config = type({
 ### Undeclared Key Handling
 
 ```ts
+// Inline syntax with "+"
 const Strict = type({
+  '+': 'reject',
+  name: 'string',
+});
+
+// Fluent API
+const StrictFluent = type({
   name: 'string',
 }).onUndeclaredKey('reject'); // Reject extra keys
 
 const Strip = type({
   name: 'string',
 }).onUndeclaredKey('delete'); // Strip extra keys
+
+// Deep undeclared key handling (nested objects)
+const DeepStrip = type({
+  name: 'string',
+  nested: {
+    preserved: 'string',
+  },
+}).onDeepUndeclaredKey('delete');
 ```
 
 ### Object Modifiers

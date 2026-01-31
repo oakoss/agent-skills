@@ -4,7 +4,7 @@ description: 'Advanced TypeScript patterns for strict mode development. Covers t
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: 'https://www.typescriptlang.org/docs/'
 ---
 
@@ -31,12 +31,15 @@ Advanced TypeScript patterns that leverage the type system to prevent runtime er
 | Type inference        | `type Inferred = typeof value`       | Let TypeScript infer from values     |
 | Type guards           | `typeof`, `instanceof`, `in`         | Narrow types at runtime              |
 | Custom type guards    | `(x): x is Type`                     | User-defined narrowing functions     |
+| Inferred predicates   | `(x) => x !== null`                  | Auto-inferred type predicate filters |
 | Discriminated unions  | Union with literal `type` property   | Exhaustive pattern matching          |
 | Conditional types     | `T extends U ? X : Y`                | Type-level conditionals              |
 | Mapped types          | `{ [K in keyof T]: T[K] }`           | Transform all properties             |
 | Template literals     | `` `${A}-${B}` ``                    | String literal type manipulation     |
 | Const assertions      | `as const`                           | Narrowest possible literal types     |
 | Satisfies operator    | `value satisfies Type`               | Type check without widening          |
+| NoInfer utility       | `NoInfer<T>`                         | Prevent inference from a position    |
+| Const type params     | `<const T extends Type>`             | Narrow inference without `as const`  |
 | Inline type imports   | `import { type User }`               | Import types explicitly              |
 | Module augmentation   | `declare module 'lib' { ... }`       | Extend third-party types             |
 | Assertion functions   | `function assert(x): asserts x is T` | Throw if type guard fails            |

@@ -4,7 +4,7 @@ description: 'Zod v4 schema validation for TypeScript. Covers primitives, string
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Zod Validation (v4)
@@ -15,36 +15,39 @@ Type-safe schema validation for TypeScript. Zod v4 introduces top-level format f
 
 ## Quick Reference
 
-| Pattern                                    | Usage                                   |
-| ------------------------------------------ | --------------------------------------- |
-| `z.object({ ... })`                        | Define object schemas                   |
-| `z.string()`, `z.number()`                 | Primitive types                         |
-| `z.email()`, `z.url()`, `z.uuid()`         | Top-level string formats (v4)           |
-| `z.iso.date()`, `z.iso.datetime()`         | ISO date/time formats (v4)              |
-| `z.int()`, `z.float32()`, `z.int32()`      | Fixed-width number formats (v4)         |
-| `z.templateLiteral([...])`                 | Template literal type validation (v4)   |
-| `z.enum([...])`, `z.literal()`             | Enums and literals                      |
-| `z.union([...])`, `z.discriminatedUnion()` | Union types                             |
-| `z.array()`, `z.tuple()`                   | Array and tuple types                   |
-| `z.record()`, `z.map()`                    | Key-value collections                   |
-| `.optional()`, `.nullable()`               | Optional and nullable modifiers         |
-| `.default()`, `.catch()`                   | Default values and fallbacks            |
-| `z.coerce.number()`                        | Type coercion before validation         |
-| `z.stringbool()`                           | String-to-boolean parsing (v4)          |
-| `.transform()`, `.overwrite()`             | Output transforms                       |
-| `z.pipe()`                                 | Chain schemas (output feeds next input) |
-| `.refine()`, `.superRefine()`              | Custom validation logic                 |
-| `.parse()`, `.safeParse()`                 | Validate and extract data               |
-| `z.infer<typeof Schema>`                   | Extract TypeScript type from schema     |
-| `z.input<>`, `z.output<>`                  | Input vs output types with transforms   |
-| `z.file()`                                 | File instance validation (v4)           |
-| `z.toJSONSchema()`                         | Convert schema to JSON Schema (v4)      |
-| `.meta()`, `.describe()`                   | Attach metadata to schemas (v4)         |
-| `z.prettifyError()`                        | Human-readable error formatting (v4)    |
-| `{ error: (issue) => ... }`                | Unified error customization (v4)        |
-| Getter-based recursion                     | Recursive types without `z.lazy()` (v4) |
-| `z.globalRegistry`                         | Global schema metadata registry (v4)    |
-| `z.config(z.locales.en())`                 | Internationalized error messages (v4)   |
+| Pattern                                    | Usage                                          |
+| ------------------------------------------ | ---------------------------------------------- |
+| `z.object({ ... })`                        | Define object schemas                          |
+| `z.string()`, `z.number()`                 | Primitive types                                |
+| `z.email()`, `z.url()`, `z.uuid()`         | Top-level string formats (v4)                  |
+| `z.iso.date()`, `z.iso.datetime()`         | ISO date/time formats (v4)                     |
+| `z.int()`, `z.float32()`, `z.int32()`      | Fixed-width number formats (v4)                |
+| `z.templateLiteral([...])`                 | Template literal type validation (v4)          |
+| `z.enum([...])`, `z.literal()`             | Enums and literals                             |
+| `z.union([...])`, `z.discriminatedUnion()` | Union types                                    |
+| `z.array()`, `z.tuple()`                   | Array and tuple types                          |
+| `z.record()`, `z.map()`                    | Key-value collections                          |
+| `.optional()`, `.nullable()`               | Optional and nullable modifiers                |
+| `.default()`, `.catch()`                   | Default values and fallbacks                   |
+| `.prefault()`                              | Pre-parse default (parsed through schema, v4)  |
+| `z.coerce.number()`                        | Type coercion before validation                |
+| `z.stringbool()`                           | String-to-boolean parsing (v4)                 |
+| `.transform()`, `.overwrite()`             | Output transforms                              |
+| `z.pipe()`                                 | Chain schemas (output feeds next input)        |
+| `.refine()`, `.superRefine()`              | Custom validation logic                        |
+| `.parse()`, `.safeParse()`                 | Validate and extract data                      |
+| `z.infer<typeof Schema>`                   | Extract TypeScript type from schema            |
+| `z.input<>`, `z.output<>`                  | Input vs output types with transforms          |
+| `z.file()`                                 | File instance validation (v4)                  |
+| `z.toJSONSchema()`                         | Convert schema to JSON Schema (v4)             |
+| `.meta()`, `.describe()`                   | Attach metadata to schemas (v4)                |
+| `z.prettifyError()`                        | Human-readable error formatting (v4)           |
+| `z.treeifyError()`                         | Structured error tree (replaces .format(), v4) |
+| `z.registry()`                             | Typed schema registry (v4)                     |
+| `{ error: (issue) => ... }`                | Unified error customization (v4)               |
+| Getter-based recursion                     | Recursive types without `z.lazy()` (v4)        |
+| `z.globalRegistry`                         | Global schema metadata registry (v4)           |
+| `z.config(z.locales.en())`                 | Internationalized error messages (v4)          |
 
 ## Common Mistakes
 
@@ -63,6 +66,9 @@ Type-safe schema validation for TypeScript. Zod v4 introduces top-level format f
 | `required_error` / `invalid_type_error` | Use unified `error` function in v4                            |
 | `.refine(fn, (val) => ({ message }))`   | Function-as-second-arg overload removed; use `.superRefine()` |
 | `errorMap` on schemas                   | Replaced by `error` function in v4                            |
+| `z.record(z.string())` single arg       | v4 requires two args: `z.record(z.string(), z.string())`      |
+| `.format()` / `.flatten()` on ZodError  | Deprecated; use `z.treeifyError(err)` in v4                   |
+| `.default()` with input type value      | v4 `.default()` uses output type; use `.prefault()` for input |
 
 ## Delegation
 

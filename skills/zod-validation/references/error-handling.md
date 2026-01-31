@@ -96,6 +96,20 @@ if (!result.success) {
 }
 ```
 
+## Tree Error Formatting (v4)
+
+`z.treeifyError()` replaces the deprecated `.format()` and `.flatten()` methods on ZodError:
+
+```ts
+const result = UserSchema.safeParse(invalidData);
+if (!result.success) {
+  const tree = z.treeifyError(result.error);
+  // Structured error tree with nested field paths
+}
+```
+
+`.format()` and `.flatten()` still work but are deprecated in v4. Prefer `z.treeifyError()` for new code.
+
 ## Field-Level Error Formatting
 
 ```ts

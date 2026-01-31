@@ -239,6 +239,28 @@ function createDb(...args: ConstructorParameters<typeof Database>) {
 
 These are less commonly used but useful for factory patterns and dependency injection.
 
+## NoInfer
+
+Prevent TypeScript from inferring a type parameter from a specific position:
+
+```ts
+function createStreetLight<C extends string>(
+  colors: C[],
+  defaultColor?: NoInfer<C>,
+) {
+  // ...
+}
+
+createStreetLight(['red', 'yellow', 'green'], 'red'); // OK
+createStreetLight(['red', 'yellow', 'green'], 'blue'); // Error
+
+function createConfig<T extends string>(options: T[], initial: NoInfer<T>) {
+  return { options, initial };
+}
+```
+
+`NoInfer<T>` forces the type to be inferred from other positions (e.g., the first argument), preventing widening from the marked position.
+
 ## ThisParameterType and OmitThisParameter
 
 Work with function `this` types:

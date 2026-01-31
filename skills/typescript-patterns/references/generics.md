@@ -290,6 +290,30 @@ function memoize<Args extends unknown[], Return>(
 
 Generics enable type-safe higher-order functions.
 
+## Const Type Parameters
+
+Use `const` modifier on type parameters for narrowest inference without `as const`:
+
+```ts
+function getNames<const T extends readonly string[]>(names: T): T {
+  return names;
+}
+
+// Inferred: readonly ["Alice", "Bob"]
+const names = getNames(['Alice', 'Bob']);
+
+type HasNames = { names: readonly string[] };
+
+function getNamesExactly<const T extends HasNames>(arg: T): T['names'] {
+  return arg.names;
+}
+
+// Inferred: readonly ["Alice", "Bob", "Eve"]
+const result = getNamesExactly({ names: ['Alice', 'Bob', 'Eve'] });
+```
+
+The `const` modifier only applies to literal values passed directly. Variables already have widened types and are unaffected. The constraint must use `readonly` for arrays to benefit.
+
 ## Avoiding Manual Type Arguments
 
 Prefer inference over explicit type parameters:

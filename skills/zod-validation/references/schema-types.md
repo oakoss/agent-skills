@@ -184,9 +184,8 @@ z.literal(true);
 ## Records and Maps
 
 ```ts
-// Record (string keys by default)
-z.record(z.number()); // { [key: string]: number }
-z.record(z.string(), z.number());
+// Record (v4 requires both key and value schemas)
+z.record(z.string(), z.number()); // { [key: string]: number }
 
 // Enum keys (v4: all keys required)
 z.record(z.enum(['a', 'b']), z.number()); // { a: number, b: number }

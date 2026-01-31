@@ -191,3 +191,35 @@ const types = scope({
 
 const out = types.bitBox({ box: 0 });
 ```
+
+## Global Configuration
+
+Import from `arktype/config` **before** importing from `arktype`:
+
+```ts
+import { configure } from 'arktype/config';
+
+configure({ onUndeclaredKey: 'delete' });
+
+// Now import arktype
+import { type } from 'arktype';
+```
+
+Configuration applied after `arktype` is imported will not affect built-in keywords that were already parsed.
+
+## Pattern Matching (2.1)
+
+The `match` function provides type-safe pattern matching:
+
+```ts
+import { type, match } from 'arktype';
+
+const describe = match({
+  string: (s) => `a string: ${s}`,
+  number: (n) => `a number: ${n}`,
+  default: 'something else',
+});
+
+describe('hello'); // "a string: hello"
+describe(42); // "a number: 42"
+```

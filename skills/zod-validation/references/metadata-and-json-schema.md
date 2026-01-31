@@ -32,6 +32,22 @@ const UserSchema = z.object({
 
 `.describe()` sets a human-readable description. `.meta()` accepts an arbitrary key-value object for richer annotations.
 
+## Typed Registries (v4)
+
+Create strongly-typed registries for associating schemas with metadata:
+
+```ts
+const myRegistry = z.registry<{ title: string; description: string }>();
+
+const UserSchema = z.object({ name: z.string() });
+myRegistry.add(UserSchema, {
+  title: 'User',
+  description: 'A user object',
+});
+```
+
+Typed registries provide type-safe metadata association. Use them for framework integrations that need to look up schema metadata at runtime.
+
 ## Global Registry
 
 Track schemas globally and associate metadata:

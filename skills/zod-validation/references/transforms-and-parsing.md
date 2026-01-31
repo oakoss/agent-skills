@@ -65,6 +65,28 @@ z.string().overwrite((val) => val.trim());
 
 Use `.overwrite()` when the output type matches the input -- it preserves schema introspection. Use `.transform()` when the output type differs.
 
+## Default vs Prefault (v4)
+
+In v4, `.default()` uses the **output type** and short-circuits parsing. Use `.prefault()` when you need the default to go through the parse pipeline:
+
+```ts
+// .default() — output type, skips parsing
+const schema1 = z
+  .string()
+  .transform((val) => val.length)
+  .default(0);
+schema1.parse(undefined); // 0
+
+// .prefault() — input type, parsed through schema
+const schema2 = z
+  .string()
+  .transform((val) => val.length)
+  .prefault('tuna');
+schema2.parse(undefined); // 4
+```
+
+Use `.default()` for most cases. Use `.prefault()` when transforms or refinements should apply to the default value.
+
 ## Pipe
 
 Chain schemas so the output of one becomes the input of the next:

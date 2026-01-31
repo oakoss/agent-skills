@@ -354,6 +354,29 @@ console.log(value.name);
 
 Use type predicates for conditional handling. Use assertion functions when invalid input is a programming error.
 
+## Inferred Type Predicates
+
+TypeScript automatically infers type predicates for simple guard functions:
+
+```ts
+const isNumber = (x: unknown) => typeof x === 'number';
+// Inferred: (x: unknown) => x is number
+
+const isNonNullish = <T>(x: T) => x != null;
+// Inferred: <T>(x: T) => x is NonNullable<T>
+
+// Array.filter benefits from inferred predicates
+const nums = [1, 2, null, 3].filter((x) => x !== null);
+// nums: number[] (not (number | null)[])
+
+const birds = countries
+  .map((country) => nationalBirds.get(country))
+  .filter((bird) => bird !== undefined);
+// birds: Bird[] (not (Bird | undefined)[])
+```
+
+The function must return a boolean, take a single parameter, and not use explicit return type annotation. Add an explicit `x is Type` annotation if the inference is not what you want.
+
 ## Narrowing with Destructuring
 
 Narrowing can be lost with destructuring:

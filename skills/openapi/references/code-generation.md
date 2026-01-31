@@ -156,11 +156,14 @@ client.use({
     request.headers.set('Authorization', `Bearer ${token}`);
     return request;
   },
-  async onResponse({ response }) {
+  async onResponse({ request, response }) {
     if (response.status === 401) {
       await refreshToken();
     }
     return response;
+  },
+  async onError({ error }) {
+    return new Error('Fetch failed', { cause: error });
   },
 });
 ```
@@ -352,3 +355,35 @@ const yamlOutput = stringify(document);
 ```
 
 Output the YAML to a file for use with other OpenAPI tools (documentation generators, API gateways, client generators).
+
+## openapi-react-query
+
+Type-safe React Query hooks generated from openapi-fetch:
+
+```bash
+npm i openapi-react-query openapi-fetch
+npm i -D openapi-typescript typescript
+```
+
+```ts
+import createFetchClient from 'openapi-fetch';
+import createClient from 'openapi-react-query';
+import type { paths } from './api/v1';
+
+const fetchClient = createFetchClient<paths>({
+  baseUrl: 'https://api.example.com/v1/',
+});
+const $api = createClient(fetchClient);
+
+function UserProfile({ userId }: { userId: string }) {
+  const { data, error, isPending } = $api.useQuery('get', '/users/{userId}', {
+    params: { path: { userId } },
+  });
+
+  if (isPending) return 'Loading...';
+  if (error) return `Error: ${error.message}`;
+  return data.name;
+}
+```
+
+Requires `@tanstack/react-query` as a peer dependency.

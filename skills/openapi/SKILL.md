@@ -4,7 +4,7 @@ description: 'OpenAPI 3.1 specification, schema design, and code generation. Use
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: 'https://spec.openapis.org/oas/v3.1.0'
 ---
 
@@ -36,6 +36,7 @@ OpenAPI Specification (OAS) 3.1 is the industry standard for describing HTTP API
 | Tags            | `tags` on operations                                    | Group operations for documentation                 |
 | Type generation | `openapi-typescript`                                    | Zero-runtime TypeScript types from spec            |
 | Typed fetch     | `openapi-fetch`                                         | Type-safe HTTP client using generated types        |
+| React Query     | `openapi-react-query`                                   | Type-safe React Query hooks from spec              |
 | Schema-first    | `zod-openapi`                                           | Generate OpenAPI documents from Zod schemas        |
 
 ## Common Mistakes
@@ -65,5 +66,5 @@ OpenAPI Specification (OAS) 3.1 is the industry standard for describing HTTP API
 
 - [Schema design: paths, operations, parameters, components, and $ref](references/schema-design.md)
 - [Data types: formats, composition, discriminators, and nullable](references/data-types.md)
-- [Code generation: openapi-typescript, openapi-fetch, and Zod OpenAPI](references/code-generation.md)
+- [Code generation: openapi-typescript, openapi-fetch, openapi-react-query, and Zod OpenAPI](references/code-generation.md)
 - [Documentation: Swagger UI, Redoc, and API docs best practices](references/documentation.md)
