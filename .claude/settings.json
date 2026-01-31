@@ -8,5 +8,6 @@
   "includeCoAuthoredBy": false,
   "permissions": {
     "defaultMode": "plan"
-  }
+  },
+  "plansDirectory": "./.claude/plans"
 }
