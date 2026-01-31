@@ -15,12 +15,12 @@ Plan: `.claude/plans/splendid-sparking-dragonfly.md`
 | 5     | `agent-skills-6rv` | DevOps, Git & Infra              | 8      | done    | All 8 skills enriched, validated     |
 | 6     | `agent-skills-ays` | AI, Agents & Orchestration       | 8      | done    | All 8 skills enriched, validated     |
 | 7     | `agent-skills-5f4` | UX, Design & Visualization       | 9      | done    | All 9 skills enriched, validated     |
-| 8     | `agent-skills-r6d` | Content, Tools & Specialized     | 10     | pending | blocked by Phase 0                   |
+| 8     | `agent-skills-r6d` | Content, Tools & Specialized     | 10     | done    | All 10 skills enriched, validated    |
 | 9     | `agent-skills-jxc` | Remaining                        | 10     | pending | blocked by Phase 0                   |
 | 10    | `agent-skills-5z4` | New skills recommendations       | --     | pending | blocked by Batches 1-9               |
 | 11    | `agent-skills-7h2` | Final validation pass            | --     | pending | blocked by Phase 10                  |
 
-**Total skills: 69** | **Completed: 49/69** | **Phases done: 8/12**
+**Total skills: 69** | **Completed: 59/69** | **Phases done: 9/12**
 
 ## Dependency Chain
 
@@ -126,16 +126,16 @@ Phase 0 (fix warnings)
 
 | Skill                 | Sources Read | Docs Validated | Enriched | Validated |
 | --------------------- | ------------ | -------------- | -------- | --------- |
-| tiptap                |              |                |          |           |
-| remotion              |              |                |          |           |
-| chrome-devtools       |              |                |          |           |
-| pdf-tools             |              |                |          |           |
-| docs                  |              |                |          |           |
-| tldr-expert           |              |                |          |           |
-| seo-optimizer         |              |                |          |           |
-| performance-optimizer |              |                |          |           |
-| localization-engineer |              |                |          |           |
-| scrum-conductor       |              |                |          |           |
+| tiptap                | done         | done           | done     | done      |
+| remotion              | done         | done           | done     | done      |
+| chrome-devtools       | done         | done           | done     | done      |
+| pdf-tools             | done         | done           | done     | done      |
+| docs                  | done         | done           | done     | done      |
+| tldr-expert           | done         | done           | done     | done      |
+| seo-optimizer         | done         | done           | done     | done      |
+| performance-optimizer | done         | done           | done     | done      |
+| localization-engineer | done         | done           | done     | done      |
+| scrum-conductor       | done         | done           | done     | done      |
 
 ### Batch 9: Remaining (Phase 9)
 
@@ -154,14 +154,15 @@ Phase 0 (fix warnings)
 
 ## Changelog
 
-| Date       | Phase | Action                                                     |
-| ---------- | ----- | ---------------------------------------------------------- |
-| 2026-01-30 | setup | Created beads issues and status tracker                    |
-| 2026-01-30 | 0     | Phase 0 complete — all skills already passing validation   |
-| 2026-01-30 | 1     | Batch 1 complete — 6 TanStack + zod skills enriched        |
-| 2026-01-30 | 2     | Batch 2 complete — 8 React & Frontend Core skills enriched |
-| 2026-01-30 | 3     | Batch 3 complete — 5 Testing & Quality skills enriched     |
-| 2026-01-30 | 4     | Batch 4 complete — 5 Security & Auth skills enriched       |
-| 2026-01-30 | 5     | Batch 5 complete — 8 DevOps, Git & Infra skills enriched   |
-| 2026-01-30 | 6     | Batch 6 complete — 8 AI, Agents & Orchestration enriched   |
-| 2026-01-30 | 7     | Batch 7 complete — 9 UX, Design & Visualization enriched   |
+| Date       | Phase | Action                                                      |
+| ---------- | ----- | ----------------------------------------------------------- |
+| 2026-01-30 | setup | Created beads issues and status tracker                     |
+| 2026-01-30 | 0     | Phase 0 complete — all skills already passing validation    |
+| 2026-01-30 | 1     | Batch 1 complete — 6 TanStack + zod skills enriched         |
+| 2026-01-30 | 2     | Batch 2 complete — 8 React & Frontend Core skills enriched  |
+| 2026-01-30 | 3     | Batch 3 complete — 5 Testing & Quality skills enriched      |
+| 2026-01-30 | 4     | Batch 4 complete — 5 Security & Auth skills enriched        |
+| 2026-01-30 | 5     | Batch 5 complete — 8 DevOps, Git & Infra skills enriched    |
+| 2026-01-30 | 6     | Batch 6 complete — 8 AI, Agents & Orchestration enriched    |
+| 2026-01-30 | 7     | Batch 7 complete — 9 UX, Design & Visualization enriched    |
+| 2026-01-31 | 8     | Batch 8 complete — 10 Content, Tools & Specialized enriched |
