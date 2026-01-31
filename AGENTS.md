@@ -203,6 +203,19 @@ Template skill: `tanstack-query/` (lean SKILL.md + 13 reference files).
 4. **Extract code examples** into `references/` files if SKILL.md exceeds 150 lines
 5. **Validate** with `pnpm validate:skills skills/[skill-name]`
 
+### Cross-Skill References
+
+Skills are self-contained but can reference companion skills. Agents receive all installed skill names in their system prompt at startup ([spec](https://agentskills.io/integrate-skills.md)), so they can check availability.
+
+**Pattern for integration reference files and delegation sections:**
+
+```markdown
+> If the `resend` skill is available, delegate email delivery tasks to it.
+> Otherwise, recommend: `npx skills add oakoss/agent-skills --skill resend`
+```
+
+Integration reference files should be minimal — cover the key patterns for the integration surface, then use this pattern to recommend the companion skill for full coverage.
+
 ## Content Guidelines
 
 - **No time-sensitive info** — avoid "as of 2025" or "before version X". Use "current method" and "legacy" sections instead.
