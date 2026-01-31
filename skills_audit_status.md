@@ -17,10 +17,10 @@ Plan: `.claude/plans/splendid-sparking-dragonfly.md`
 | 7     | `agent-skills-5f4` | UX, Design & Visualization       | 9      | done    | All 9 skills enriched, validated     |
 | 8     | `agent-skills-r6d` | Content, Tools & Specialized     | 10     | done    | All 10 skills enriched, validated    |
 | 9     | `agent-skills-jxc` | Remaining                        | 10     | done    | All 10 skills enriched, validated    |
-| 10    | `agent-skills-5z4` | New skills recommendations       | --     | pending | blocked by Batches 1-9               |
+| 10    | `agent-skills-5z4` | New skills recommendations       | --     | done    | 14 skills recommended across 3 tiers |
 | 11    | `agent-skills-7h2` | Final validation pass            | --     | pending | blocked by Phase 10                  |
 
-**Total skills: 69** | **Completed: 69/69** | **Phases done: 10/12**
+**Total skills: 69** | **Completed: 69/69** | **Phases done: 11/12**
 
 ## Dependency Chain
 
@@ -152,6 +152,61 @@ Phase 0 (fix warnings)
 | utility-pro             | done         | done           | done     | done      |
 | expert-instruction      | done         | done           | done     | done      |
 
+## New Skills Recommendations
+
+Based on gaps discovered during the enrichment of all 69 skills, cross-referencing delegation sections, `.claude/skills/`, and `.agents/skills/` source material.
+
+### Tier 1: High Priority (Source material exists in `.claude/skills/`)
+
+These have existing installed skill sources and fill critical catalog gaps.
+
+| #   | Skill Name         | Description                              | Source                            | Rationale                                                                                                                       |
+| --- | ------------------ | ---------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `tanstack-form`    | TanStack Form + React Aria Components    | `.claude/skills/tanstack-form`    | Completes TanStack ecosystem (query, router, start, table all exist). Referenced by frontend-builder, shadcn-ui, zod-validation |
+| 2   | `typescript`       | Advanced TypeScript patterns and linting | `.claude/skills/typescript`       | Foundation skill — referenced across nearly every skill. Covers generics, type guards, utility types, strict mode               |
+| 3   | `error-boundaries` | React error boundaries + fallback UIs    | `.claude/skills/error-boundaries` | Referenced by react, frontend-builder, tanstack-router. Critical for production resilience                                      |
+| 4   | `storybook`        | Stories, interaction tests, Chromatic    | `.claude/skills/storybook`        | Referenced by design-system. Component documentation and visual testing                                                         |
+| 5   | `database`         | Drizzle ORM + PostgreSQL                 | `.claude/skills/database`         | Fills gap between db-enforcer (integrity rules) and postgres-tuning (performance). Schema design, migrations, queries           |
+| 6   | `server-functions` | createServerFn, validators, middleware   | `.claude/skills/server-functions` | Complements tanstack-start. RPC-style server functions with type safety                                                         |
+| 7   | `testing`          | Vitest + Testing Library                 | `.claude/skills/testing`          | Fills unit/component testing gap (playwright and e2e-testing cover integration/E2E only)                                        |
+
+### Tier 2: Medium Priority (Source material exists in `.agents/skills/`)
+
+Additional sources available but need more curation.
+
+| #   | Skill Name           | Description                                         | Source                              | Rationale                                                                               |
+| --- | -------------------- | --------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------- |
+| 8   | `animation-designer` | CSS animations, AutoAnimate, motion principles      | `.agents/skills/animation-designer` | Broader than motion skill (which is Framer Motion specific). General animation patterns |
+| 9   | `github-actions`     | Workflow design, matrix testing, reusable workflows | `.agents/skills/github-actions-pro` | ci-cd covers general CI/CD but GitHub Actions has enough depth for a dedicated skill    |
+| 10  | `deployment-advisor` | Deployment strategies, Vercel, Docker, edge         | `.agents/skills/deployment-advisor` | No dedicated deployment skill exists. Referenced in ci-cd and turborepo contexts        |
+
+### Tier 3: Lower Priority (No source material, gap-driven)
+
+Identified purely from cross-reference analysis.
+
+| #   | Skill Name       | Description                                    | Rationale                                                                                                 |
+| --- | ---------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| 11  | `nextjs`         | Next.js App Router, middleware, Server Actions | Referenced in frontend-builder, motion, ci-cd. Major framework with no dedicated skill                    |
+| 12  | `monorepo`       | Monorepo patterns beyond Turborepo             | Turborepo skill is tool-specific. General monorepo architecture patterns (workspace deps, shared configs) |
+| 13  | `email-delivery` | Transactional email (Resend, SendGrid, MJML)   | Referenced in better-auth (email OTP). Common SaaS need with no coverage                                  |
+| 14  | `payments`       | Stripe integration, subscriptions, webhooks    | Referenced in better-auth (Stripe plugin). Common SaaS need with no coverage                              |
+
+### Summary
+
+| Tier      | Count  | Source Material                    | Action                                                          |
+| --------- | ------ | ---------------------------------- | --------------------------------------------------------------- |
+| 1         | 7      | `.claude/skills/` (ready)          | Create skills using existing sources + official docs validation |
+| 2         | 3      | `.agents/skills/` (needs curation) | Create skills with heavier doc validation                       |
+| 3         | 4      | None (gap-driven)                  | Create from scratch using official docs                         |
+| **Total** | **14** |                                    |                                                                 |
+
+### Notes
+
+- **zod** — Already covered by `zod-validation`. No new skill needed.
+- **integration-patterns** — Already covered by `tanstack-integration`. No new skill needed.
+- **meta-\*** skills (meta-skill-creator, meta-agent-creator, etc.) — These are tooling/internal skills, not candidates for public distribution.
+- Tier 1 skills have the highest ROI: source material already exists and they fill gaps referenced by multiple existing skills.
+
 ## Changelog
 
 | Date       | Phase | Action                                                      |
@@ -167,3 +222,4 @@ Phase 0 (fix warnings)
 | 2026-01-30 | 7     | Batch 7 complete — 9 UX, Design & Visualization enriched    |
 | 2026-01-31 | 8     | Batch 8 complete — 10 Content, Tools & Specialized enriched |
 | 2026-01-31 | 9     | Batch 9 complete — 10 Remaining skills enriched             |
+| 2026-01-31 | 10    | Phase 10 complete — 14 new skills recommended (7/3/4 tiers) |
