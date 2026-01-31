@@ -10,7 +10,7 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Planning
@@ -44,10 +44,11 @@ Plan-first development methodology where 80%+ of time goes to planning before im
 
 | Session Lifecycle | Action                                                        |
 | ----------------- | ------------------------------------------------------------- |
-| Start             | Read session tracking doc, check "Next Action", continue      |
+| Start             | Read SESSION.md, check "Next Action", continue                |
 | Work              | Implement, verify, debug (repeat)                             |
-| Wrap              | Update session doc, git checkpoint, set "Next Action"         |
-| Resume            | Read session doc + planning docs, continue from "Next Action" |
+| Checkpoint        | Git commit with structured format, update SESSION.md hash     |
+| Wrap              | Update SESSION.md, git checkpoint, set concrete "Next Action" |
+| Resume            | Read SESSION.md + planning docs, continue from "Next Action"  |
 
 | Document              | When to Generate                               |
 | --------------------- | ---------------------------------------------- |
@@ -94,3 +95,4 @@ Plan-first development methodology where 80%+ of time goes to planning before im
 - [Phase-based implementation planning](references/phase-planning.md)
 - [Review workflows and multi-model blending](references/review-workflows.md)
 - [Decision tracking and conditional documents](references/decision-tracking.md)
+- [Planning document templates](references/document-templates.md)
