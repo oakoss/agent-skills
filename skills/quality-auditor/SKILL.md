@@ -4,7 +4,7 @@ description: 'Code quality gatekeeper and auditor. Enforces strict quality gates
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Quality Auditor
@@ -75,6 +75,7 @@ Evaluates tools, frameworks, systems, and codebases against the highest industry
 
 ## References
 
+- [Audit Rubric](references/audit-rubric.md) -- pass/warn/fail thresholds, weighted scoring methodology, automated vs manual checklists, score caps, report format
 - [Dimension Rubrics](references/dimension-rubrics.md) -- detailed scoring criteria, evidence requirements, and rubric tables for all 12 dimensions
 - [Audit Report Template](references/audit-report-template.md) -- structured report format, executive summary, recommendations, risk assessment
 - [Anti-Patterns Guide](references/anti-patterns-guide.md) -- code, architecture, security, testing, and process anti-patterns to identify during audits
