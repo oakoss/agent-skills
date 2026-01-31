@@ -217,6 +217,35 @@ function parseFrontmatter(content: string): ParseResult {
       continue;
     }
 
+    // Handle multi-line flow arrays: key:\n  [\n    val1,\n    val2,\n  ]
+    if (value === '') {
+      let nextNonEmpty = i + 1;
+      while (nextNonEmpty < endIdx && !lines[nextNonEmpty].trim()) {
+        nextNonEmpty++;
+      }
+      if (nextNonEmpty < endIdx && lines[nextNonEmpty].trim().startsWith('[')) {
+        let arrayContent = '';
+        let j = nextNonEmpty;
+        while (j < endIdx) {
+          arrayContent += ' ' + lines[j].trim();
+          if (lines[j].trim().endsWith(']')) {
+            break;
+          }
+          j++;
+        }
+        arrayContent = arrayContent.trim();
+        if (arrayContent.startsWith('[') && arrayContent.endsWith(']')) {
+          data[key] = arrayContent
+            .slice(1, -1)
+            .split(',')
+            .map((t) => t.trim())
+            .filter(Boolean);
+          i = j;
+          continue;
+        }
+      }
+    }
+
     value = value.replace(/^["']|["']$/g, '');
 
     if (value.startsWith('[') && value.endsWith(']')) {
