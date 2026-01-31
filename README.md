@@ -1,6 +1,6 @@
 # agent-skills
 
-A curated collection of 80 [agent skills](https://agentskills.io) for Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code, GitHub Copilot, Windsurf, Goose, and [27+ other agents](https://agentskills.io). Each skill is hand-written and enriched against official documentation — not auto-generated from docs.
+A curated collection of 91 [agent skills](https://agentskills.io) for Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code, GitHub Copilot, Windsurf, Goose, and [27+ other agents](https://agentskills.io). Each skill is hand-written and enriched against official documentation — not auto-generated from docs.
 
 ## Install
 
@@ -39,24 +39,27 @@ pnpm dlx skills add oakoss/agent-skills --list
 | [tanstack-store](skills/tanstack-store)             | TanStack Store framework-agnostic reactive state management              |
 | [tanstack-db](skills/tanstack-db)                   | TanStack DB reactive client-side database with live queries              |
 | [tanstack-pacer](skills/tanstack-pacer)             | TanStack Pacer for rate limiting, throttling, debouncing, and queuing    |
+| [tanstack-cli](skills/tanstack-cli)                 | TanStack Config shared build tooling and publishing                      |
+| [tanstack-devtools](skills/tanstack-devtools)       | TanStack DevTools for debugging Query, Router, and Form state            |
 | [tanstack-integration](skills/tanstack-integration) | Strategic adoption guide for TanStack libraries                          |
 
 ### React & Frontend
 
-| Skill                                               | Description                                                          |
-| --------------------------------------------------- | -------------------------------------------------------------------- |
-| [react](skills/react)                               | React 19+ patterns, performance optimization, component architecture |
-| [shadcn-ui](skills/shadcn-ui)                       | Accessible component libraries with shadcn/ui, Radix UI, Tailwind    |
-| [tailwind](skills/tailwind)                         | Tailwind CSS v4 patterns and design systems                          |
-| [zustand](skills/zustand)                           | Zustand v5 state management for React                                |
-| [motion](skills/motion)                             | Web animations with Motion (Framer Motion) for React                 |
-| [design-system](skills/design-system)               | Design tokens, theming, and component architecture                   |
-| [frontend-builder](skills/frontend-builder)         | React and Next.js frontend development                               |
-| [hydration-guardian](skills/hydration-guardian)     | React/Next.js hydration mismatch debugging                           |
-| [tiptap](skills/tiptap)                             | Rich text editors with Tiptap and ProseMirror                        |
-| [threejs](skills/threejs)                           | 3D web experiences with Three.js, WebGPU, React Three Fiber          |
-| [react-error-handling](skills/react-error-handling) | React error boundaries, fallback UIs, and error recovery patterns    |
-| [remotion](skills/remotion)                         | Programmatic video creation in React with Remotion                   |
+| Skill                                                   | Description                                                          |
+| ------------------------------------------------------- | -------------------------------------------------------------------- |
+| [react](skills/react)                                   | React 19+ patterns, performance optimization, component architecture |
+| [shadcn-ui](skills/shadcn-ui)                           | Accessible component libraries with shadcn/ui, Radix UI, Tailwind    |
+| [tailwind](skills/tailwind)                             | Tailwind CSS v4 patterns and design systems                          |
+| [zustand](skills/zustand)                               | Zustand v5 state management for React                                |
+| [motion](skills/motion)                                 | Web animations with Motion (Framer Motion) for React                 |
+| [design-system](skills/design-system)                   | Design tokens, theming, and component architecture                   |
+| [frontend-builder](skills/frontend-builder)             | React and Next.js frontend development                               |
+| [hydration-guardian](skills/hydration-guardian)         | React/Next.js hydration mismatch debugging                           |
+| [tiptap](skills/tiptap)                                 | Rich text editors with Tiptap and ProseMirror                        |
+| [threejs](skills/threejs)                               | 3D web experiences with Three.js, WebGPU, React Three Fiber          |
+| [react-error-handling](skills/react-error-handling)     | React error boundaries, fallback UIs, and error recovery patterns    |
+| [css-animation-patterns](skills/css-animation-patterns) | CSS animations, transitions, scroll-driven effects, view transitions |
+| [remotion](skills/remotion)                             | Programmatic video creation in React with Remotion                   |
 
 ### TypeScript & Patterns
 
@@ -66,10 +69,11 @@ pnpm dlx skills add oakoss/agent-skills --list
 
 ### Validation & Schemas
 
-| Skill                                           | Description                                              |
-| ----------------------------------------------- | -------------------------------------------------------- |
-| [zod-validation](skills/zod-validation)         | Zod v4 schema validation for TypeScript                  |
-| [arktype-validation](skills/arktype-validation) | ArkType runtime validation with TypeScript-native syntax |
+| Skill                                           | Description                                               |
+| ----------------------------------------------- | --------------------------------------------------------- |
+| [zod-validation](skills/zod-validation)         | Zod v4 schema validation for TypeScript                   |
+| [arktype-validation](skills/arktype-validation) | ArkType runtime validation with TypeScript-native syntax  |
+| [openapi](skills/openapi)                       | OpenAPI 3.1 specification, schema design, code generation |
 
 ### Testing & Quality
 
@@ -81,6 +85,7 @@ pnpm dlx skills add oakoss/agent-skills --list
 | [usability-tester](skills/usability-tester)   | Usability testing and UX issue identification            |
 | [vitest-testing](skills/vitest-testing)       | Vitest test runner, mocking, component and hook testing  |
 | [storybook-stories](skills/storybook-stories) | Storybook stories, interaction tests, and visual testing |
+| [api-testing](skills/api-testing)             | API testing with supertest, MSW, and Vitest              |
 | [de-slopify](skills/de-slopify)               | Remove AI writing artifacts from documentation and code  |
 
 ### Security & Auth
@@ -95,16 +100,18 @@ pnpm dlx skills add oakoss/agent-skills --list
 
 ### DevOps, Git & Infrastructure
 
-| Skill                                     | Description                                                    |
-| ----------------------------------------- | -------------------------------------------------------------- |
-| [git-workflow](skills/git-workflow)       | Branching strategies, trunk-based development, stacked changes |
-| [github](skills/github)                   | GitHub CLI for repos, issues, PRs, actions, releases           |
-| [ci-cd](skills/ci-cd)                     | CI/CD pipelines, GitHub Actions, deployment strategies         |
-| [turborepo](skills/turborepo)             | Monorepo build system, task pipelines, caching                 |
-| [ssh-remote](skills/ssh-remote)           | SSH remote access, key management, tunnels, transfers          |
-| [postgres-tuning](skills/postgres-tuning) | PostgreSQL 17/18+ performance tuning and optimization          |
-| [db-enforcer](skills/db-enforcer)         | PostgreSQL and Prisma database integrity enforcement           |
-| [repo-updater](skills/repo-updater)       | Multi-repo synchronization with AI-assisted review             |
+| Skill                                         | Description                                                    |
+| --------------------------------------------- | -------------------------------------------------------------- |
+| [git-workflow](skills/git-workflow)           | Branching strategies, trunk-based development, stacked changes |
+| [github](skills/github)                       | GitHub CLI for repos, issues, PRs, actions, releases           |
+| [ci-cd](skills/ci-cd)                         | CI/CD pipelines, GitHub Actions, deployment strategies         |
+| [turborepo](skills/turborepo)                 | Monorepo build system, task pipelines, caching                 |
+| [ssh-remote](skills/ssh-remote)               | SSH remote access, key management, tunnels, transfers          |
+| [postgres-tuning](skills/postgres-tuning)     | PostgreSQL 17/18+ performance tuning and optimization          |
+| [db-enforcer](skills/db-enforcer)             | PostgreSQL and Prisma database integrity enforcement           |
+| [repo-updater](skills/repo-updater)           | Multi-repo synchronization with AI-assisted review             |
+| [github-actions](skills/github-actions)       | GitHub Actions workflow authoring for CI/CD pipelines          |
+| [vercel-deployment](skills/vercel-deployment) | Vercel deployment, preview environments, edge functions        |
 
 ### Database & ORM
 
@@ -117,6 +124,20 @@ pnpm dlx skills add oakoss/agent-skills --list
 | Skill               | Description                                               |
 | ------------------- | --------------------------------------------------------- |
 | [hono](skills/hono) | Hono ultrafast web framework for edge and server runtimes |
+
+### Build Tools & Publishing
+
+| Skill                                           | Description                                                     |
+| ----------------------------------------------- | --------------------------------------------------------------- |
+| [tsdown](skills/tsdown)                         | tsdown TypeScript bundler built on Rolldown for libraries       |
+| [changesets](skills/changesets)                 | Changesets for versioning and changelog management in monorepos |
+| [package-publishing](skills/package-publishing) | npm package publishing patterns for modern TypeScript libraries |
+
+### Diagrams & Visualization
+
+| Skill                                       | Description                                                 |
+| ------------------------------------------- | ----------------------------------------------------------- |
+| [mermaid-diagrams](skills/mermaid-diagrams) | Mermaid diagram syntax for flowcharts, sequences, ERDs, etc |
 
 ### AI, Agents & Orchestration
 
