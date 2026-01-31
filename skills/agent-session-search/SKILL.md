@@ -5,6 +5,7 @@ license: MIT
 metadata:
   author: oakoss
   version: '1.0'
+  source: https://github.com/pchaganti/gx-cass
 ---
 
 # Agent Session Search

@@ -7,7 +7,8 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
+  source: https://agentskills.io
 ---
 
 # Skill Management
@@ -25,7 +26,7 @@ Guides creation, auditing, and validation of agent skills conforming to the Agen
 | Task                      | Approach                                     | Key Points                                                                     |
 | ------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------ |
 | Skill directory           | `skill-name/SKILL.md` + optional directories | Only `SKILL.md` is required; `scripts/`, `references/`, `assets/` are optional |
-| Frontmatter `name`        | Lowercase, hyphens, 1-64 chars               | Must match directory name, no leading/trailing `-`, no `--`                    |
+| Frontmatter `name`        | Lowercase, hyphens, 4-64 chars               | Must match directory name, no leading/trailing `-`, no `--`                    |
 | Frontmatter `description` | 1-1024 chars with trigger phrases            | Third-person voice, include "Use when" scenarios                               |
 | Progressive disclosure    | Metadata -> SKILL.md -> references/scripts   | Keep SKILL.md under 500 lines; move details to references                      |
 | Description structure     | Para 1: what + features, Para 2: triggers    | Active voice, name technologies, include error keywords                        |

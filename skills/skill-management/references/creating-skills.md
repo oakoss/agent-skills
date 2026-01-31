@@ -51,7 +51,7 @@ description: |
 
 | Field         | Required | Constraints                                                              |
 | ------------- | -------- | ------------------------------------------------------------------------ |
-| `name`        | Yes      | 1-64 chars, lowercase letters/numbers/hyphens, must match directory name |
+| `name`        | Yes      | 4-64 chars, lowercase letters/numbers/hyphens, must match directory name |
 | `description` | Yes      | 1-1024 chars, must include "Use when" or "Use for" trigger phrases       |
 
 ### Name Rules

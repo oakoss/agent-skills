@@ -5,6 +5,7 @@ license: MIT
 metadata:
   author: oakoss
   version: '1.0'
+  source: https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering
 ---
 
 # Prompt Engineering
