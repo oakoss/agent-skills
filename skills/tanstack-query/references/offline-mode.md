@@ -1,15 +1,23 @@
 ---
 title: Offline Mode
-description: Network mode configuration, mutation persistence across reloads, and offline-first data strategies
+description: Network mode configuration, fetchStatus vs status, mutation persistence across reloads, cache persistence with localStorage and IndexedDB
 tags:
-  [offline, networkMode, persistence, offlineFirst, mutation-defaults, resume]
+  [
+    offline,
+    networkMode,
+    persistence,
+    offlineFirst,
+    mutation-defaults,
+    resume,
+    PersistQueryClientProvider,
+  ]
 ---
 
 # Offline Mode and Persistence
 
 ## Network Mode
 
-Three `networkMode` settings:
+Three `networkMode` settings control fetch behavior when offline:
 
 | Mode               | Behavior                                               |
 | ------------------ | ------------------------------------------------------ |
@@ -25,6 +33,8 @@ const queryClient = new QueryClient({
   },
 });
 ```
+
+`offlineFirst` is ideal for apps with service workers or local-first architectures where the first request may succeed from a local cache.
 
 ## fetchStatus vs status
 
@@ -58,36 +68,38 @@ if (isPaused) return <OfflineBanner />;
 if (isPending) return <Spinner />;
 ```
 
-`isPaused` is `true` when `fetchStatus === 'paused'`. This happens when a query wants to fetch but can't because the device is offline (in `online` or `offlineFirst` network mode).
+`isPaused` is `true` when `fetchStatus === 'paused'`. This happens when a query wants to fetch but cannot because the device is offline (in `online` or `offlineFirst` network mode).
 
 ## Mutation Persistence
 
-Persist mutations across page reloads/app restarts:
+Persist mutations across page reloads so they resume when the app restarts:
 
 ```tsx
 queryClient.setMutationDefaults(['addTodo'], {
   mutationFn: addTodo,
-  onMutate: async (variables, context) => {
-    await context.client.cancelQueries({ queryKey: ['todos'] });
-    const previous = context.client.getQueryData(['todos']);
-    context.client.setQueryData(['todos'], (old) => [...old, variables]);
+  onMutate: async (variables) => {
+    const queryClient = useQueryClient();
+    await queryClient.cancelQueries({ queryKey: ['todos'] });
+    const previous = queryClient.getQueryData(['todos']);
+    queryClient.setQueryData(['todos'], (old: Todo[]) => [...old, variables]);
     return { previous };
   },
-  onError: (_error, _variables, result, context) => {
-    context.client.setQueryData(['todos'], result?.previous);
+  onError: (_error, _variables, context) => {
+    if (context?.previous) {
+      queryClient.setQueryData(['todos'], context.previous);
+    }
   },
   retry: 3,
 });
 
-// Dehydrate state (e.g., on app background)
 const state = dehydrate(queryClient);
 localStorage.setItem('queryState', JSON.stringify(state));
 
-// Hydrate on app start
-const savedState = JSON.parse(localStorage.getItem('queryState'));
-hydrate(queryClient, savedState);
+const savedState = JSON.parse(localStorage.getItem('queryState') ?? 'null');
+if (savedState) {
+  hydrate(queryClient, savedState);
+}
 
-// Resume paused mutations
 queryClient.resumePausedMutations();
 ```
 
@@ -103,8 +115,8 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours - keep cache longer for persistence
-      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 60 * 24,
+      staleTime: 1000 * 60 * 5,
     },
   },
 });
@@ -120,7 +132,7 @@ function App() {
       client={queryClient}
       persistOptions={{
         persister,
-        maxAge: 1000 * 60 * 60 * 24, // 24 hours max
+        maxAge: 1000 * 60 * 60 * 24,
       }}
     >
       <MyApp />
@@ -176,3 +188,13 @@ persistQueryClient({
 | `buster`                                | String to invalidate cache (use app version) |
 | `dehydrateOptions.shouldDehydrateQuery` | Filter which queries to persist              |
 | `hydrateOptions.shouldHydrate`          | Filter which queries to restore              |
+
+Use `buster` with your app version to automatically invalidate persisted caches after deployments:
+
+```tsx
+persistOptions={{
+  persister,
+  maxAge: 1000 * 60 * 60 * 24,
+  buster: BUILD_VERSION,
+}}
+```

@@ -91,6 +91,16 @@ The Vercel `skills` CLI excludes these files during installation — do not use 
 - `metadata.json`
 - Files starting with `_`
 
+## Enrichment Workflow
+
+When enriching or updating skill content:
+
+1. **Official docs are the source of truth** — Always validate content against the library's latest official documentation using Context7 MCP (`resolve-library-id` then `query-docs`) and web search. Internal sources (`.claude/skills/`, `.agents/skills/`) may contain outdated APIs or deprecated patterns.
+2. **Internal sources identify coverage gaps** — Use `.claude/skills/` and `.agents/skills/` to discover patterns and topics worth covering, not as content to copy verbatim.
+3. **Verify before writing** — Every API, pattern, and code example must be confirmed against current docs. If Context7 has no results for a library, fall back to web search for the official documentation site.
+4. **Consolidate, don't union** — When multiple sources cover the same topic, extract the best patterns. Do not merge all content from all sources.
+5. **Flag uncertainty** — If official docs cannot confirm a pattern, omit it or mark it with a note rather than including potentially outdated information.
+
 ## Validation
 
 ```bash

@@ -23,6 +23,7 @@ tags:
     int,
     float32,
     cidr,
+    file,
   ]
 ---
 
@@ -36,6 +37,7 @@ z.number();
 z.boolean();
 z.bigint();
 z.date();
+z.symbol();
 z.undefined();
 z.null();
 z.void();
@@ -215,6 +217,24 @@ const emailPattern = z.templateLiteral([
 ```
 
 Supports strings, string formats, numbers, booleans, bigints, enums, literals, and nested template literals. Constraints like `.min()` and `.max()` are enforced in the generated regex.
+
+## File Validation (v4)
+
+Validate JavaScript `File` instances:
+
+```ts
+const fileSchema = z.file();
+
+fileSchema.min(10_000); // minimum .size (bytes)
+fileSchema.max(1_000_000); // maximum .size (bytes)
+fileSchema.mime(['image/png', 'image/jpeg']); // MIME type
+
+// Practical upload schema
+const UploadSchema = z.object({
+  avatar: z.file().max(5_000_000).mime(['image/png', 'image/jpeg']),
+  document: z.file().max(10_000_000).mime(['application/pdf']),
+});
+```
 
 ## Optional, Nullable, and Defaults
 

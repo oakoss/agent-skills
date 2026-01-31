@@ -1,6 +1,6 @@
 ---
 title: Data Loading
-description: Route loaders, TanStack Query integration with ensureQueryData, parallel loading, streaming with prefetchQuery and defer, abort signals, and loader dependencies
+description: Route loaders, TanStack Query integration with ensureQueryData, parallel loading with timeline visualization, streaming with prefetchQuery and defer, abort signals, and loader dependencies with loaderDeps
 tags:
   [
     loader,
@@ -10,6 +10,7 @@ tags:
     defer,
     streaming,
     parallel-loading,
+    loaderDeps,
   ]
 ---
 
@@ -59,6 +60,10 @@ Nested routes load in parallel by default. Within a single loader, use `Promise.
 
 ```ts
 export const Route = createFileRoute('/dashboard')({
+  beforeLoad: async () => {
+    const [user, config] = await Promise.all([fetchUser(), fetchAppConfig()]);
+    return { user, config };
+  },
   loader: async ({ context: { queryClient } }) => {
     await Promise.all([
       queryClient.ensureQueryData(statsQueries.overview()),
@@ -67,6 +72,47 @@ export const Route = createFileRoute('/dashboard')({
   },
 });
 ```
+
+Parent and child loaders run simultaneously:
+
+```ts
+// routes/posts.tsx — runs in parallel with child
+export const Route = createFileRoute('/posts')({
+  loader: async ({ context: { queryClient } }) => {
+    await queryClient.ensureQueryData(categoryQueries.all());
+  },
+});
+
+// routes/posts/$postId.tsx — runs in parallel with parent
+export const Route = createFileRoute('/posts/$postId')({
+  loader: async ({ params, context: { queryClient } }) => {
+    await Promise.all([
+      queryClient.ensureQueryData(postQueries.detail(params.postId)),
+      queryClient.ensureQueryData(commentQueries.forPost(params.postId)),
+    ]);
+  },
+});
+```
+
+Loading timeline comparison:
+
+```sh
+Without parallelization:
+|- beforeLoad (parent)  ========
+|- loader (parent)              ========
+|- beforeLoad (child)                   ====
+|- loader (child)                           ========
+|- Render                                           =
+
+With parallelization:
+|- beforeLoad (parent)  ========
+|- beforeLoad (child)   ====
+|- loader (parent)      ========
+|- loader (child)       ============
+|- Render                           =
+```
+
+Key rules: `beforeLoad` runs before `loader` (for auth, context setup). Parent context is available in child loaders only after `beforeLoad` completes.
 
 ## Streaming Non-Critical Data
 
@@ -78,17 +124,37 @@ export const Route = createFileRoute('/posts/$postId')({
     const post = await queryClient.ensureQueryData(
       postQueries.detail(params.postId),
     );
+
     queryClient.prefetchQuery(commentQueries.forPost(params.postId));
+    queryClient.prefetchQuery(relatedQueries.forPost(params.postId));
+
     return { post };
   },
+  component: PostPage,
 });
+
+function PostPage() {
+  const { post } = Route.useLoaderData();
+  const { postId } = Route.useParams();
+
+  const { data: comments, isLoading } = useQuery(
+    commentQueries.forPost(postId),
+  );
+
+  return (
+    <article>
+      <PostContent post={post} />
+      {isLoading ? <CommentsSkeleton /> : <Comments data={comments} />}
+    </article>
+  );
+}
 ```
 
 ## Deferred Data with `defer()`
 
-Stream non-critical data after initial render:
+Stream non-critical data after initial render using `defer()` and `<Await>`:
 
-```ts
+```tsx
 import { defer } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/dashboard')({

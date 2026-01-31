@@ -211,8 +211,10 @@ const table = useReactTable({
 
 | Method                 | Description            |
 | ---------------------- | ---------------------- |
-| `nextPage()`           | Next page              |
+| `firstPage()`          | Go to first page       |
 | `previousPage()`       | Previous page          |
+| `nextPage()`           | Next page              |
+| `lastPage()`           | Go to last page        |
 | `setPageIndex(n)`      | Go to page (0-indexed) |
 | `setPageSize(n)`       | Set rows per page      |
 | `getPageCount()`       | Total pages            |
@@ -294,6 +296,49 @@ const columns = [
   },
 ];
 ```
+
+## Column Groups (Nested Headers)
+
+```tsx
+const columnHelper = createColumnHelper<Person>();
+
+const columns = [
+  columnHelper.group({
+    header: 'Name',
+    columns: [
+      columnHelper.accessor('firstName', { header: 'First Name' }),
+      columnHelper.accessor('lastName', { header: 'Last Name' }),
+    ],
+  }),
+  columnHelper.group({
+    header: 'Info',
+    columns: [
+      columnHelper.accessor('age', { header: 'Age' }),
+      columnHelper.accessor('status', { header: 'Status' }),
+    ],
+  }),
+];
+```
+
+Do not pin group columns — pin individual columns within the group instead (see known issues).
+
+## Row ID Configuration
+
+Set `getRowId` for stable row identity across page changes and data updates:
+
+```tsx
+const table = useReactTable({
+  data,
+  columns,
+  getRowId: (row) => row.id, // Use your data's unique identifier
+  enableRowSelection: true,
+  state: { rowSelection },
+  onRowSelectionChange: setRowSelection,
+  getCoreRowModel: getCoreRowModel(),
+});
+```
+
+Without `getRowId`, TanStack Table uses the row index as the key. This causes selection to break across page changes because indices shift when data changes.
 
 ## Rendering with flexRender
 

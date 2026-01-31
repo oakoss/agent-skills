@@ -1,6 +1,6 @@
 ---
 title: Error Handling
-description: Structured error handling patterns including discriminated unions, custom error classes, centralized error handlers, and status code conventions
+description: Structured error handling patterns including discriminated unions, custom error classes, setResponseStatus, notFound, centralized error handlers, and status code conventions
 tags:
   [
     error,
@@ -13,6 +13,8 @@ tags:
     validation,
     result-type,
     try-catch,
+    notFound,
+    setResponseStatus,
   ]
 ---
 
@@ -48,6 +50,33 @@ export class AppError extends Error {
     super(message);
   }
 }
+
+export class NotFoundError extends AppError {
+  constructor(resource: string) {
+    super(`${resource} not found`, 'NOT_FOUND', 404);
+  }
+}
+
+export class UnauthorizedError extends AppError {
+  constructor(message = 'Unauthorized') {
+    super(message, 'UNAUTHORIZED', 401);
+  }
+}
+```
+
+## Server Function with Error Handling
+
+```ts
+import { createServerFn, notFound } from '@tanstack/react-start';
+import { setResponseStatus } from '@tanstack/react-start/server';
+
+export const getPost = createServerFn()
+  .inputValidator(z.object({ id: z.string() }))
+  .handler(async ({ data }) => {
+    const post = await db.posts.findUnique({ where: { id: data.id } });
+    if (!post) throw notFound();
+    return post;
+  });
 
 export const createPost = createServerFn({ method: 'POST' })
   .inputValidator(createPostSchema)
@@ -89,6 +118,57 @@ function handleServerError(error: unknown): { error: string; code: string } {
 }
 ```
 
+## Client-Side Error Handling
+
+```tsx
+function CreatePostForm() {
+  const [error, setError] = useState<string | null>(null);
+
+  const createMutation = useMutation({
+    mutationFn: createPost,
+    onError: (error) => {
+      if (error instanceof AppError) {
+        setError(error.message);
+      } else {
+        setError('An unexpected error occurred');
+      }
+    },
+    onSuccess: (post) => {
+      navigate({ to: '/posts/$postId', params: { postId: post.id } });
+    },
+  });
+
+  return (
+    <form onSubmit={handleSubmit}>
+      {error ? <Alert variant="error">{error}</Alert> : null}
+      {/* form fields */}
+    </form>
+  );
+}
+```
+
+## Auth Errors with Redirects
+
+```ts
+export const updateProfile = createServerFn({ method: 'POST' })
+  .inputValidator(updateProfileSchema)
+  .handler(async ({ data }) => {
+    const session = await getSessionData();
+
+    if (!session) {
+      throw redirect({
+        to: '/login',
+        search: { redirect: '/settings' },
+      });
+    }
+
+    return await db.users.update({
+      where: { id: session.userId },
+      data,
+    });
+  });
+```
+
 ## Status Code Conventions
 
 | Scenario             | Status | Code               | Response                     |
@@ -102,11 +182,9 @@ function handleServerError(error: unknown): { error: string; code: string } {
 
 ## Try-Catch vs Result Types
 
-Two approaches to error handling in server functions, each with trade-offs:
+Two approaches to error handling in server functions:
 
 ### Try-Catch: Exceptions as Control Flow
-
-Server functions throw errors, callers wrap in try-catch:
 
 ```ts
 export const deletePost = createServerFn({ method: 'POST' })
@@ -122,21 +200,7 @@ export const deletePost = createServerFn({ method: 'POST' })
   });
 ```
 
-```tsx
-// Caller must remember to catch
-try {
-  await deletePost({ data: { id: postId } });
-  toast.success('Deleted');
-} catch (error) {
-  if (error instanceof AppError) {
-    toast.error(error.message);
-  }
-}
-```
-
 ### Result Types: Errors as Values
-
-Server functions return discriminated unions, callers check the result:
 
 ```ts
 type Result<T> =
@@ -155,16 +219,6 @@ export const deletePost = createServerFn({ method: 'POST' })
   });
 ```
 
-```tsx
-// Compiler forces error check via type narrowing
-const result = await deletePost({ data: { id: postId } });
-if (result.ok) {
-  toast.success('Deleted');
-} else {
-  toast.error(result.error);
-}
-```
-
 ### Comparison
 
 | Aspect            | Try-Catch               | Result Types               |
@@ -175,11 +229,11 @@ if (result.ok) {
 | Verbosity         | Less boilerplate        | More explicit              |
 | Composition       | try-catch nesting       | Flat conditional chains    |
 
-**Recommendation**: Use result types for business logic errors (validation, not found, forbidden). Use exceptions for truly exceptional cases (redirect, notFound, infrastructure failures).
+Use result types for business logic errors (validation, not found, forbidden). Use exceptions for truly exceptional cases (redirect, notFound, infrastructure failures).
 
 ## Anti-Patterns
 
-- **Throwing instead of returning errors** — Return `{ error, code }` format for predictable client handling
-- **Missing error codes** — Always include both `error` and `code` in error responses
-- **Exposing raw DB errors** — Catch and return user-friendly messages. Log the real error with `console.error()`
-- **Returning sensitive data in errors** — Only return what the client needs to display
+- **Throwing instead of returning errors** -- Return `{ error, code }` format for predictable client handling
+- **Missing error codes** -- Always include both `error` and `code` in error responses
+- **Exposing raw DB errors** -- Catch and return user-friendly messages, log the real error with `console.error()`
+- **Returning sensitive data in errors** -- Only return what the client needs to display

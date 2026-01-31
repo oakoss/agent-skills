@@ -1,6 +1,6 @@
 ---
 title: Server Functions
-description: createServerFn patterns including validation, authentication, request context, response headers, cookies, file uploads, streaming responses, and calling from components and TanStack Query
+description: createServerFn patterns including validation, authentication, request context, response headers, cookies, file uploads, streaming responses, useServerFn, and TanStack Query integration
 tags:
   [
     createServerFn,
@@ -143,10 +143,39 @@ function CreatePostForm() {
 }
 ```
 
-## With TanStack Query
+## useServerFn Hook
+
+Wraps a server function for use in components with pending state tracking:
 
 ```tsx
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
+import { useServerFn } from '@tanstack/react-start';
+
+function DeleteButton({ postId }: { postId: string }) {
+  const deletePostFn = useServerFn(deletePost);
+
+  const handleDelete = async () => {
+    const result = await deletePostFn({ data: { id: postId } });
+    if ('error' in result) {
+      toast.error(result.error);
+    }
+  };
+
+  return <button onClick={handleDelete}>Delete</button>;
+}
+```
+
+## With TanStack Query
+
+Use `useServerFn` with TanStack Query mutations for optimistic updates and cache invalidation:
+
+```tsx
+import { useServerFn } from '@tanstack/react-start';
+import {
+  queryOptions,
+  useSuspenseQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 const postsQuery = queryOptions({
   queryKey: ['posts'],
@@ -155,6 +184,36 @@ const postsQuery = queryOptions({
 
 function PostList() {
   const { data: posts } = useSuspenseQuery(postsQuery);
+  return (
+    <ul>
+      {posts.map((p) => (
+        <li key={p.id}>{p.title}</li>
+      ))}
+    </ul>
+  );
+}
+
+function CreatePostButton() {
+  const queryClient = useQueryClient();
+  const createPostFn = useServerFn(createPost);
+
+  const mutation = useMutation({
+    mutationFn: createPostFn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+    },
+  });
+
+  return (
+    <button
+      disabled={mutation.isPending}
+      onClick={() =>
+        mutation.mutate({ data: { title: 'New Post', content: '...' } })
+      }
+    >
+      {mutation.isPending ? 'Creating...' : 'Create Post'}
+    </button>
+  );
 }
 ```
 
@@ -208,57 +267,6 @@ const streamData = createServerFn().handler(async () => {
 });
 ```
 
-## useServerFn Hook
-
-Wraps a server function for use in components with pending state tracking:
-
-```tsx
-import { useServerFn } from '@tanstack/react-start';
-
-function DeleteButton({ postId }: { postId: string }) {
-  const deletePostFn = useServerFn(deletePost);
-
-  const handleDelete = async () => {
-    const result = await deletePostFn({ data: { id: postId } });
-    if ('error' in result) {
-      toast.error(result.error);
-    }
-  };
-
-  return <button onClick={handleDelete}>Delete</button>;
-}
-```
-
-Use with TanStack Query mutations for optimistic updates and cache invalidation:
-
-```tsx
-import { useServerFn } from '@tanstack/react-start';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-
-function CreatePostButton() {
-  const queryClient = useQueryClient();
-  const createPostFn = useServerFn(createPost);
-
-  const mutation = useMutation({
-    mutationFn: createPostFn,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
-    },
-  });
-
-  return (
-    <button
-      disabled={mutation.isPending}
-      onClick={() =>
-        mutation.mutate({ data: { title: 'New Post', content: '...' } })
-      }
-    >
-      {mutation.isPending ? 'Creating...' : 'Create Post'}
-    </button>
-  );
-}
-```
-
 ## Validation Schema Composition
 
 ```ts
@@ -274,7 +282,7 @@ const createUserSchema = baseUserSchema.extend({
 const updateUserSchema = baseUserSchema.partial();
 ```
 
-Async validation in handlers:
+Async validation in handlers (for checks requiring DB access):
 
 ```ts
 const registerUser = createServerFn({ method: 'POST' })
@@ -290,3 +298,42 @@ const registerUser = createServerFn({ method: 'POST' })
     return { data: user };
   });
 ```
+
+## Composing Server Functions
+
+```ts
+export const getPostWithComments = createServerFn()
+  .inputValidator(z.object({ postId: z.string() }))
+  .handler(async ({ data }) => {
+    const [post, comments] = await Promise.all([
+      getPost({ data: { id: data.postId } }),
+      getComments({ data: { postId: data.postId } }),
+    ]);
+
+    return { post, comments };
+  });
+```
+
+## Environment Functions
+
+```ts
+import {
+  createIsomorphicFn,
+  createServerOnlyFn,
+  createClientOnlyFn,
+} from '@tanstack/react-start';
+
+const getStorageValue = createIsomorphicFn()
+  .server(() => process.env.FEATURE_FLAG)
+  .client(() => localStorage.getItem('featureFlag'));
+
+const readSecretConfig = createServerOnlyFn(() => {
+  return process.env.SECRET_API_KEY;
+});
+
+const getGeolocation = createClientOnlyFn(() => {
+  return navigator.geolocation.getCurrentPosition();
+});
+```
+
+Code inside `.client()` blocks is removed from server bundles and vice versa (tree shaking).

@@ -155,7 +155,7 @@ export function DataTablePagination<TData>({ table }: { table: Table<TData> }) {
           <Button
             variant="outline"
             size="sm"
-            onPress={() => table.setPageIndex(0)}
+            onPress={() => table.firstPage()}
             isDisabled={!table.getCanPreviousPage()}
           >
             First
@@ -179,7 +179,7 @@ export function DataTablePagination<TData>({ table }: { table: Table<TData> }) {
           <Button
             variant="outline"
             size="sm"
-            onPress={() => table.setPageIndex(table.getPageCount() - 1)}
+            onPress={() => table.lastPage()}
             isDisabled={!table.getCanNextPage()}
           >
             Last

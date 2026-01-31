@@ -1,14 +1,15 @@
 ---
 title: Code Splitting
-description: Lazy routes with createLazyFileRoute, what goes in main vs lazy files, virtual routes, auto code splitting, and preloading strategies
+description: Lazy routes with createLazyFileRoute, critical vs lazy file separation, auto code splitting, preloading strategies with intent/render/viewport, and programmatic preloading
 tags:
   [
     code-splitting,
     lazy,
     createLazyFileRoute,
-    virtual-routes,
+    autoCodeSplitting,
     preload,
     bundle-optimization,
+    getRouteApi,
   ]
 ---
 
@@ -16,16 +17,22 @@ tags:
 
 ## Lazy Routes
 
-Split components from critical config:
+Split components from critical config into two files:
 
 ```ts
 // routes/dashboard.tsx — critical config only
 export const Route = createFileRoute('/dashboard')({
+  validateSearch: z.object({ tab: z.string().optional() }),
+  beforeLoad: ({ context }) => {
+    if (!context.auth.isAuthenticated) throw redirect({ to: '/login' });
+  },
   loader: async ({ context }) =>
     context.queryClient.ensureQueryData(dashboardQueries.stats()),
 });
 
 // routes/dashboard.lazy.tsx — lazy-loaded component
+import { createLazyFileRoute } from '@tanstack/react-router';
+
 export const Route = createLazyFileRoute('/dashboard')({
   component: DashboardPage,
   pendingComponent: DashboardSkeleton,
@@ -35,42 +42,48 @@ export const Route = createLazyFileRoute('/dashboard')({
 
 ### What Goes Where
 
-- **Main file:** `validateSearch`, `beforeLoad`, `loader`, `loaderDeps`, context
-- **Lazy file:** `component`, `pendingComponent`, `errorComponent`, `notFoundComponent`
+| Main file (`.tsx`) | Lazy file (`.lazy.tsx`) |
+| ------------------ | ----------------------- |
+| `validateSearch`   | `component`             |
+| `beforeLoad`       | `pendingComponent`      |
+| `loader`           | `errorComponent`        |
+| `loaderDeps`       | `notFoundComponent`     |
+| context setup      |                         |
 
 If a route only has a `.lazy.tsx` file (no loader/beforeLoad/validateSearch), skip the main file entirely. The router auto-generates a virtual route.
 
+### Type Safety in Lazy Files
+
+Use `getRouteApi` for type-safe hooks in lazy files since the `Route` export from the main file is not available:
+
+```ts
+// routes/dashboard.lazy.tsx
+import { createLazyFileRoute, getRouteApi } from '@tanstack/react-router';
+
+const dashboardRoute = getRouteApi('/dashboard');
+
+export const Route = createLazyFileRoute('/dashboard')({
+  component: DashboardPage,
+});
+
+function DashboardPage() {
+  const data = dashboardRoute.useLoaderData();
+  const { tab } = dashboardRoute.useSearch();
+  return <Dashboard data={data} activeTab={tab} />;
+}
+```
+
 ## Auto Code Splitting
 
-Alternative to manual `.lazy.tsx` files:
+Alternative to manual `.lazy.tsx` files — the plugin splits routes automatically:
 
 ```ts
 TanStackRouterVite({ autoCodeSplitting: true });
 ```
 
-## Virtual File Routes (v1.140+)
+Auto splitting moves `component`, `pendingComponent`, `errorComponent`, and `notFoundComponent` to separate chunks. Critical config (`loader`, `beforeLoad`, `validateSearch`) stays in the main bundle.
 
-Programmatic route configuration when file-based conventions don't fit:
-
-```ts
-import {
-  rootRoute,
-  route,
-  index,
-  layout,
-  physical,
-} from '@tanstack/virtual-file-routes';
-
-export const routes = rootRoute('root.tsx', [
-  index('home.tsx'),
-  route('/posts', 'posts/posts.tsx', [
-    index('posts/posts-home.tsx'),
-    route('$postId', 'posts/posts-detail.tsx'),
-  ]),
-  layout('first', 'layout/first-layout.tsx', [route('/nested', 'nested.tsx')]),
-  physical('/classic', 'file-based-subtree'),
-]);
-```
+When using virtual file routes, always use `autoCodeSplitting` instead of manual lazy files. Manual `createLazyFileRoute` is silently replaced in virtual route mode (see Known Issues #18).
 
 ## Preloading Strategies
 
@@ -81,14 +94,36 @@ export const routes = rootRoute('root.tsx', [
 | `'viewport'` | Preload when Link in view | Below-fold content          |
 | `false`      | No preloading             | Heavy, rarely-visited pages |
 
+Configure globally and override per-link:
+
+```ts
+const router = createRouter({
+  routeTree,
+  defaultPreload: 'intent',
+  defaultPreloadDelay: 50,
+  defaultPreloadStaleTime: 30_000,
+});
+
+// Override for specific links
+<Link to="/heavy-page" preload={false}>Heavy Page</Link>
+<Link to="/critical-page" preload="render">Critical Page</Link>
+```
+
 Set `defaultPreloadStaleTime: 0` when using TanStack Query to let Query manage cache freshness.
 
-Programmatic preloading:
+## Programmatic Preloading
+
+Preload routes in response to events:
 
 ```ts
 const router = useRouter();
-await router.preloadRoute({
-  to: '/posts/$postId',
-  params: { postId: '123' },
-});
+
+async function handleMouseEnter(postId: string) {
+  await router.preloadRoute({
+    to: '/posts/$postId',
+    params: { postId },
+  });
+}
 ```
+
+Preloading loads both the route code (lazy chunks) and executes loaders. The `preloadDelay` setting prevents excessive requests on quick mouse movements.

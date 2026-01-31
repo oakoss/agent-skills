@@ -1,6 +1,6 @@
 ---
 title: SSR and Streaming
-description: Streaming SSR with Suspense boundaries, ensureQueryData vs prefetchQuery, static prerendering, ISR with cache-control, hybrid rendering strategies, and hydration safety
+description: Streaming SSR with Suspense boundaries, ensureQueryData vs prefetchQuery, static prerendering, ISR with cache-control, hybrid rendering strategies, error boundaries, and hydration safety
 tags:
   [
     SSR,
@@ -12,7 +12,8 @@ tags:
     ISR,
     cache-control,
     hydration,
-    setHeaders,
+    headers,
+    ErrorBoundary,
   ]
 ---
 
@@ -46,8 +47,63 @@ function DashboardPage() {
 }
 ```
 
-- `ensureQueryData()` — blocks SSR until data is ready (above-the-fold content)
-- `prefetchQuery()` — starts fetch but streams when ready (below-the-fold content)
+- `ensureQueryData()` -- blocks SSR until data is ready (above-the-fold content)
+- `prefetchQuery()` -- starts fetch but streams when ready (below-the-fold content)
+
+## Error Boundaries with Streaming
+
+Each streamed section can handle its own errors independently:
+
+```tsx
+function DashboardPage() {
+  return (
+    <div>
+      <Header />
+      <ErrorBoundary fallback={<StatsError />}>
+        <Suspense fallback={<StatsSkeleton />}>
+          <DashboardStats />
+        </Suspense>
+      </ErrorBoundary>
+      <ErrorBoundary fallback={<ActivityError />}>
+        <Suspense fallback={<ActivitySkeleton />}>
+          <RecentActivity />
+        </Suspense>
+      </ErrorBoundary>
+    </div>
+  );
+}
+```
+
+## Progressive Enhancement
+
+```ts
+export const Route = createFileRoute('/posts/$postId')({
+  loader: async ({ params, context: { queryClient } }) => {
+    await queryClient.ensureQueryData(postQueries.detail(params.postId));
+    queryClient.prefetchQuery(commentQueries.forPost(params.postId));
+    queryClient.prefetchQuery(postQueries.related(params.postId));
+  },
+  component: PostPage,
+});
+
+function PostPage() {
+  const { postId } = Route.useParams();
+  const { data: post } = useSuspenseQuery(postQueries.detail(postId));
+
+  return (
+    <article>
+      <PostHeader post={post} />
+      <PostContent content={post.content} />
+      <Suspense fallback={<CommentsSkeleton />}>
+        <CommentsSection postId={postId} />
+      </Suspense>
+      <Suspense fallback={<RelatedSkeleton />}>
+        <RelatedPosts postId={postId} />
+      </Suspense>
+    </article>
+  );
+}
+```
 
 ## Static Prerendering
 
@@ -158,6 +214,22 @@ function Dashboard() {
 }
 ```
 
+For client-only features, use lazy loading or `useEffect`:
+
+```tsx
+import { lazy, Suspense } from 'react';
+
+const ClientOnlyMap = lazy(() => import('./Map'));
+
+function LocationPage() {
+  return (
+    <Suspense fallback={<MapPlaceholder />}>
+      <ClientOnlyMap />
+    </Suspense>
+  );
+}
+```
+
 | Mismatch Cause              | Solution                              |
 | --------------------------- | ------------------------------------- |
 | `Date.now()` / `new Date()` | Pass timestamp from loader            |
@@ -165,3 +237,4 @@ function Dashboard() {
 | `window` / `document`       | Use `useEffect` or lazy loading       |
 | User timezone               | Use UTC or client-only formatting     |
 | Browser-specific APIs       | Check `typeof window !== 'undefined'` |
+| Extension-injected content  | Use `suppressHydrationWarning`        |

@@ -1,6 +1,6 @@
 ---
 title: Form+Query Integration
-description: TanStack Form setup with Zod validation, field-level and async validation, field arrays, custom components, and Query cache integration
+description: TanStack Form setup with Zod validation, field-level and async validation, field arrays, custom components, server function integration, and Query cache coordination
 tags:
   [
     form,
@@ -12,6 +12,8 @@ tags:
     zod,
     validation,
     field-arrays,
+    createServerFn,
+    server-functions,
   ]
 ---
 
@@ -301,6 +303,78 @@ Display mutation state in the submit button:
   );
 }
 ```
+
+## Server Function Integration (TanStack Start)
+
+Pair forms with `createServerFn` for full-stack form flows with auth and validation:
+
+```tsx
+import { createServerFn } from '@tanstack/react-start';
+import { useForm } from '@tanstack/react-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
+
+const createPostSchema = z.object({
+  title: z.string().min(1),
+  body: z.string().min(10),
+});
+
+const createPost = createServerFn({ method: 'POST' })
+  .inputValidator(createPostSchema)
+  .handler(async ({ data, request }) => {
+    const session = await auth.api.getSession({ headers: request.headers });
+    if (!session) return { error: 'Unauthorized', code: 'AUTH_REQUIRED' };
+
+    const post = await db.insert(posts).values({
+      ...data,
+      authorId: session.user.id,
+    });
+    return { success: true, post };
+  });
+```
+
+Wire the server function into a form with mutation and cache invalidation:
+
+```tsx
+function CreatePostForm() {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const mutation = useMutation({
+    mutationFn: (values: z.infer<typeof createPostSchema>) =>
+      createPost({ data: values }),
+    onSuccess: (result) => {
+      if ('error' in result) {
+        form.setErrorMap({ onServer: result.error });
+        return;
+      }
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      navigate({ to: '/posts' });
+    },
+  });
+
+  const form = useForm({
+    defaultValues: { title: '', body: '' },
+    onSubmit: async ({ value }) => {
+      await mutation.mutateAsync(value);
+    },
+  });
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+    >
+      {/* fields */}
+    </form>
+  );
+}
+```
+
+Server functions return structured results instead of throwing. Check for errors in `onSuccess`, not `onError`.
 
 ## Anti-Patterns
 

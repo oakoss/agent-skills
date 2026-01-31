@@ -1,7 +1,7 @@
 ---
 name: tanstack-table
 description: |
-  TanStack Table v8 headless data tables for React. Covers column definitions, sorting, filtering (fuzzy/faceted), server-side pagination with TanStack Query, infinite scroll, virtualization (TanStack Virtual), column/row pinning, row expanding/grouping, and reusable Shadcn-styled components. Prevents 15 documented errors including infinite re-renders, React Compiler incompatibility, and server-side state mismatches.
+  TanStack Table v8 headless data tables for React. Covers column definitions, sorting, filtering (fuzzy/faceted), server-side pagination with TanStack Query, infinite scroll, virtualization (TanStack Virtual), column/row pinning, row expanding/grouping, column resizing, and reusable Shadcn-styled components. Prevents 15 documented errors including infinite re-renders, React Compiler incompatibility, and server-side state mismatches.
 
   Use when building data tables, fixing table performance, implementing server-side pagination, adding filtering/sorting, or debugging table state issues.
 ---
@@ -22,10 +22,11 @@ TanStack Table is a **headless** table library — it provides state management 
 | ----------------- | ---------------------------------------------------- | -------------------------------------------- |
 | Basic table       | `useReactTable({ data, columns, getCoreRowModel })`  | Memoize data/columns to prevent re-renders   |
 | Column helper     | `createColumnHelper<T>()`                            | Type-safe column definitions                 |
+| Column groups     | `columnHelper.group({ header, columns })`            | Nested headers; don't pin group columns      |
 | Sorting           | `getSortedRowModel()` + `onSortingChange`            | `manualSorting: true` for server-side        |
 | Filtering         | `getFilteredRowModel()` + `onColumnFiltersChange`    | `manualFiltering: true` for server-side      |
 | Pagination        | `getPaginationRowModel()` + `onPaginationChange`     | `manualPagination: true` + `pageCount`       |
-| Row selection     | `enableRowSelection` + `onRowSelectionChange`        | Persists across pages by default             |
+| Row selection     | `enableRowSelection` + `onRowSelectionChange`        | Set `getRowId` for stable selection keys     |
 | Column visibility | `onColumnVisibilityChange`                           | Toggle with `column.toggleVisibility()`      |
 | Column pinning    | `enableColumnPinning` + `initialState.columnPinning` | Don't pin group columns (known bug)          |
 | Row expanding     | `getExpandedRowModel()` + `getSubRows`               | For nested/tree data                         |
@@ -42,7 +43,11 @@ TanStack Table is a **headless** table library — it provides state management 
 | ----------------- | ------------------------------ |
 | Sort column       | `column.toggleSorting()`       |
 | Filter column     | `column.setFilterValue(value)` |
+| First page        | `table.firstPage()`            |
 | Next page         | `table.nextPage()`             |
+| Previous page     | `table.previousPage()`         |
+| Last page         | `table.lastPage()`             |
+| Go to page        | `table.setPageIndex(n)`        |
 | Select row        | `row.toggleSelected()`         |
 | Hide column       | `column.toggleVisibility()`    |
 | Get original data | `row.original`                 |
@@ -52,14 +57,17 @@ TanStack Table is a **headless** table library — it provides state management 
 
 ## Row Models
 
-| Import                  | Purpose    |
-| ----------------------- | ---------- |
-| `getCoreRowModel`       | Required   |
-| `getSortedRowModel`     | Sorting    |
-| `getFilteredRowModel`   | Filtering  |
-| `getPaginationRowModel` | Pagination |
-| `getExpandedRowModel`   | Expanding  |
-| `getGroupedRowModel`    | Grouping   |
+| Import                   | Purpose                 |
+| ------------------------ | ----------------------- |
+| `getCoreRowModel`        | Required                |
+| `getSortedRowModel`      | Sorting                 |
+| `getFilteredRowModel`    | Filtering               |
+| `getPaginationRowModel`  | Pagination              |
+| `getExpandedRowModel`    | Expanding               |
+| `getGroupedRowModel`     | Grouping                |
+| `getFacetedRowModel`     | Faceted filter counts   |
+| `getFacetedUniqueValues` | Unique values per facet |
+| `getFacetedMinMaxValues` | Min/max per facet       |
 
 ## Common Mistakes
 
@@ -74,6 +82,8 @@ TanStack Table is a **headless** table library — it provides state management 
 | Grouping on 10k+ rows                       | Use server-side grouping or disable for large datasets     |
 | Column filter not clearing on page change   | Reset `pageIndex` to 0 when filters change                 |
 | Missing `'use no memo'` with React Compiler | Add directive to components using `useReactTable`          |
+| Missing `getRowId` with row selection       | Set `getRowId: (row) => row.id` for stable selection keys  |
+| Filter value type mismatch                  | Match value types; clear with `undefined`, not `null`      |
 
 ## Delegation
 

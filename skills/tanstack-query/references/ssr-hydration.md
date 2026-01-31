@@ -1,6 +1,6 @@
 ---
 title: SSR and Hydration
-description: Server-side rendering with prefetchQuery, HydrationBoundary, dehydrate, useSuspenseQuery, and router integration
+description: Server-side rendering with prefetchQuery, HydrationBoundary, dehydrate, useSuspenseQuery, router integration, and React 19 Suspense patterns
 tags:
   [
     SSR,
@@ -10,23 +10,65 @@ tags:
     HydrationBoundary,
     useSuspenseQuery,
     server-rendering,
+    React-19,
+    Suspense,
   ]
 ---
 
 # SSR and Hydration
 
-Create `QueryClient` per request. Prefetch on server, wrap with `HydrationBoundary`:
+## Core Pattern
+
+Create `QueryClient` per request on the server. Prefetch data, then wrap with `HydrationBoundary` to transfer cache to the client:
 
 ```tsx
-const queryClient = new QueryClient();
-await queryClient.prefetchQuery(todosQueryOptions);
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query';
 
-<HydrationBoundary state={dehydrate(queryClient)}>
-  <Todos />
-</HydrationBoundary>;
+async function ServerPage() {
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery(todosQueryOptions);
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Todos />
+    </HydrationBoundary>
+  );
+}
 ```
 
-Use `useSuspenseQuery` (not `useQuery`) for SSR to avoid hydration mismatches from conditional `isLoading` rendering.
+Use `useSuspenseQuery` (not `useQuery`) on the client for SSR to avoid hydration mismatches from conditional `isLoading` rendering.
+
+## QueryClient per Request
+
+Never share a QueryClient across requests -- data leaks between users:
+
+```tsx
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 1000 * 60,
+      },
+    },
+  });
+}
+
+let browserQueryClient: QueryClient | undefined;
+
+function getQueryClient() {
+  if (typeof window === 'undefined') {
+    return makeQueryClient();
+  }
+  if (!browserQueryClient) {
+    browserQueryClient = makeQueryClient();
+  }
+  return browserQueryClient;
+}
+```
 
 ## Router Integration: Cache-First Resolution
 
@@ -46,35 +88,52 @@ export const Route = createFileRoute('/posts/$id')({
 });
 ```
 
-## Await as a Control Lever
+## ensureQueryData vs prefetchQuery
 
-Control navigation behavior:
+| Method            | Behavior                            | Returns |
+| ----------------- | ----------------------------------- | ------- |
+| `prefetchQuery`   | Fetches, never throws, returns void | `void`  |
+| `ensureQueryData` | Returns cached data OR fetches      | `TData` |
+| `fetchQuery`      | Always fetches, throws on error     | `TData` |
 
 ```tsx
 export const Route = createFileRoute('/posts')({
   loader: async ({ context }) => {
-    // WITH await: Block navigation until data loads
+    await context.queryClient.ensureQueryData(postsOptions());
+  },
+});
+```
+
+## Await as a Control Lever
+
+Control navigation behavior with selective awaiting:
+
+```tsx
+export const Route = createFileRoute('/posts')({
+  loader: async ({ context }) => {
     await context.queryClient.ensureQueryData(postsOptions());
 
-    // WITHOUT await: Navigate immediately, show loading state
     context.queryClient.prefetchQuery(recommendationsOptions());
   },
 });
 ```
+
+Awaited queries block navigation until data loads. Non-awaited queries start fetching but allow immediate navigation with loading states via Suspense.
 
 ## React 19 Suspense Considerations
 
 React 19 no longer pre-renders siblings when one suspends -- causes sequential waterfalls:
 
 ```tsx
-// These fetch sequentially in React 19 (waterfall)
 <Suspense fallback={<Loading />}>
-  <Posts /> {/* Suspends first */}
-  <Comments /> {/* Waits for Posts to complete */}
+  <Posts />
+  <Comments />
 </Suspense>
 ```
 
-**Solution:** Prefetch in loaders to avoid waterfalls:
+`Posts` suspends first, then `Comments` waits for `Posts` to complete before starting its fetch.
+
+**Solution 1:** Prefetch in loaders to avoid waterfalls:
 
 ```tsx
 export const Route = createFileRoute('/dashboard')({
@@ -92,7 +151,7 @@ function Dashboard() {
 }
 ```
 
-**Alternative:** Use `useSuspenseQueries` for parallel fetching within components:
+**Solution 2:** Use `useSuspenseQueries` for parallel fetching within components:
 
 ```tsx
 function Dashboard() {
@@ -102,8 +161,77 @@ function Dashboard() {
       { queryKey: ['comments'], queryFn: fetchComments },
     ],
   });
-  // Both fetch in parallel, no waterfall
 }
 ```
 
 **Key principle:** Decouple data fetching from rendering. Initiate fetches in loaders, or use `useSuspenseQueries` for parallel fetching in components.
+
+## Error Boundaries with Suspense
+
+Combine `QueryErrorResetBoundary` with `react-error-boundary` for retry-able error states:
+
+```tsx
+import { QueryErrorResetBoundary } from '@tanstack/react-query';
+import { ErrorBoundary } from 'react-error-boundary';
+
+function App() {
+  return (
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary
+          onReset={reset}
+          fallbackRender={({ resetErrorBoundary }) => (
+            <div>
+              Something went wrong.
+              <button onClick={resetErrorBoundary}>Retry</button>
+            </div>
+          )}
+        >
+          <Suspense fallback={<Loading />}>
+            <Todos />
+          </Suspense>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
+  );
+}
+
+function Todos() {
+  const { data } = useSuspenseQuery({
+    queryKey: ['todos'],
+    queryFn: fetchTodos,
+  });
+  return <TodoList todos={data} />;
+}
+```
+
+`throwOnError` defaults to throwing errors when there is no cached data to show. Queries with stale cached data render that data instead of throwing, even when a background refetch fails.
+
+## Hydration Mismatch Prevention
+
+Common causes and fixes:
+
+| Cause                                   | Fix                                               |
+| --------------------------------------- | ------------------------------------------------- |
+| `useQuery` with conditional `isLoading` | Use `useSuspenseQuery` instead                    |
+| Void prefetch with `fetchStatus` render | Await prefetch or avoid rendering on `isFetching` |
+| Missing `staleTime` on server           | Set `staleTime > 0` to prevent immediate refetch  |
+| Shared QueryClient across requests      | Create new QueryClient per server request         |
+
+## Server-Side staleTime
+
+Set `staleTime` on the server to prevent the client from immediately refetching data that was just fetched:
+
+```tsx
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 1000 * 60,
+      },
+    },
+  });
+}
+```
+
+Without `staleTime`, data is immediately stale on the client, triggering a refetch right after hydration -- wasting the prefetch.

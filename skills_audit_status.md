@@ -5,22 +5,22 @@ Plan: `.claude/plans/splendid-sparking-dragonfly.md`
 
 ## Progress
 
-| Phase | Task ID            | Description                      | Skills | Status  | Notes                                        |
-| ----- | ------------------ | -------------------------------- | ------ | ------- | -------------------------------------------- |
-| 0     | `agent-skills-191` | Fix existing validation warnings | --     | pending | ~143 warnings for missing `tags` frontmatter |
-| 1     | `agent-skills-d3i` | TanStack Ecosystem               | 6      | pending | blocked by Phase 0                           |
-| 2     | `agent-skills-2rd` | React & Frontend Core            | 8      | pending | blocked by Phase 0                           |
-| 3     | `agent-skills-31d` | Testing & Quality                | 5      | pending | blocked by Phase 0                           |
-| 4     | `agent-skills-cm4` | Security & Auth                  | 5      | pending | blocked by Phase 0                           |
-| 5     | `agent-skills-6rv` | DevOps, Git & Infra              | 8      | pending | blocked by Phase 0                           |
-| 6     | `agent-skills-ays` | AI, Agents & Orchestration       | 8      | pending | blocked by Phase 0                           |
-| 7     | `agent-skills-5f4` | UX, Design & Visualization       | 9      | pending | blocked by Phase 0                           |
-| 8     | `agent-skills-r6d` | Content, Tools & Specialized     | 10     | pending | blocked by Phase 0                           |
-| 9     | `agent-skills-jxc` | Remaining                        | 10     | pending | blocked by Phase 0                           |
-| 10    | `agent-skills-5z4` | New skills recommendations       | --     | pending | blocked by Batches 1-9                       |
-| 11    | `agent-skills-7h2` | Final validation pass            | --     | pending | blocked by Phase 10                          |
+| Phase | Task ID            | Description                      | Skills | Status  | Notes                                |
+| ----- | ------------------ | -------------------------------- | ------ | ------- | ------------------------------------ |
+| 0     | `agent-skills-191` | Fix existing validation warnings | --     | done    | Already clean — 0 errors, 0 warnings |
+| 1     | `agent-skills-d3i` | TanStack Ecosystem               | 6      | done    | All 6 skills enriched, validated     |
+| 2     | `agent-skills-2rd` | React & Frontend Core            | 8      | pending | blocked by Phase 0                   |
+| 3     | `agent-skills-31d` | Testing & Quality                | 5      | pending | blocked by Phase 0                   |
+| 4     | `agent-skills-cm4` | Security & Auth                  | 5      | pending | blocked by Phase 0                   |
+| 5     | `agent-skills-6rv` | DevOps, Git & Infra              | 8      | pending | blocked by Phase 0                   |
+| 6     | `agent-skills-ays` | AI, Agents & Orchestration       | 8      | pending | blocked by Phase 0                   |
+| 7     | `agent-skills-5f4` | UX, Design & Visualization       | 9      | pending | blocked by Phase 0                   |
+| 8     | `agent-skills-r6d` | Content, Tools & Specialized     | 10     | pending | blocked by Phase 0                   |
+| 9     | `agent-skills-jxc` | Remaining                        | 10     | pending | blocked by Phase 0                   |
+| 10    | `agent-skills-5z4` | New skills recommendations       | --     | pending | blocked by Batches 1-9               |
+| 11    | `agent-skills-7h2` | Final validation pass            | --     | pending | blocked by Phase 10                  |
 
-**Total skills: 69** | **Completed: 0/69** | **Phases done: 0/12**
+**Total skills: 69** | **Completed: 6/69** | **Phases done: 2/12**
 
 ## Dependency Chain
 
@@ -42,12 +42,12 @@ Phase 0 (fix warnings)
 
 | Skill                | Sources Read | Docs Validated | Enriched | Validated |
 | -------------------- | ------------ | -------------- | -------- | --------- |
-| tanstack-query       |              |                |          |           |
-| tanstack-router      |              |                |          |           |
-| tanstack-start       |              |                |          |           |
-| tanstack-table       |              |                |          |           |
-| tanstack-integration |              |                |          |           |
-| zod-validation       |              |                |          |           |
+| tanstack-query       | done         | done           | done     | done      |
+| tanstack-router      | done         | done           | done     | done      |
+| tanstack-start       | done         | done           | done     | done      |
+| tanstack-table       | done         | done           | done     | done      |
+| tanstack-integration | done         | done           | done     | done      |
+| zod-validation       | done         | done           | done     | done      |
 
 ### Batch 2: React & Frontend Core (Phase 2)
 
@@ -154,6 +154,8 @@ Phase 0 (fix warnings)
 
 ## Changelog
 
-| Date       | Phase | Action                                  |
-| ---------- | ----- | --------------------------------------- |
-| 2026-01-30 | setup | Created beads issues and status tracker |
+| Date       | Phase | Action                                                   |
+| ---------- | ----- | -------------------------------------------------------- |
+| 2026-01-30 | setup | Created beads issues and status tracker                  |
+| 2026-01-30 | 0     | Phase 0 complete — all skills already passing validation |
+| 2026-01-30 | 1     | Batch 1 complete — 6 TanStack + zod skills enriched      |

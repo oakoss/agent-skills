@@ -18,20 +18,23 @@ TanStack Query is an **async state manager**, not a data fetching library. You p
 
 ## Quick Reference
 
-| Pattern           | API                                               | Key Points                        |
-| ----------------- | ------------------------------------------------- | --------------------------------- |
-| Basic query       | `useQuery({ queryKey, queryFn })`                 | Include params in queryKey        |
-| Suspense query    | `useSuspenseQuery(options)`                       | No `enabled` option allowed       |
-| Parallel queries  | `useQueries({ queries, combine })`                | Dynamic parallel fetching         |
-| Dependent query   | `useQuery({ enabled: !!dep })`                    | Wait for prerequisite data        |
-| Query options     | `queryOptions({ queryKey, queryFn })`             | Reusable, type-safe config        |
-| Basic mutation    | `useMutation({ mutationFn, onSuccess })`          | Invalidate on success             |
-| Optimistic update | `onMutate` → cancel → snapshot → set              | Rollback in `onError`             |
-| Infinite query    | `useInfiniteQuery({ initialPageParam })`          | `initialPageParam` required in v5 |
-| Prefetch          | `queryClient.prefetchQuery(options)`              | Preload on hover/intent           |
-| Invalidation      | `queryClient.invalidateQueries({ queryKey })`     | Fuzzy-matches by default          |
-| Cancellation      | `queryFn: ({ signal }) => fetch(url, { signal })` | Auto-cancel on key change         |
-| Select transform  | `select: (data) => data.filter(...)`              | Structural sharing preserved      |
+| Pattern           | API                                               | Key Points                             |
+| ----------------- | ------------------------------------------------- | -------------------------------------- |
+| Basic query       | `useQuery({ queryKey, queryFn })`                 | Include params in queryKey             |
+| Suspense query    | `useSuspenseQuery(options)`                       | No `enabled` option allowed            |
+| Parallel queries  | `useQueries({ queries, combine })`                | Dynamic parallel fetching              |
+| Dependent query   | `useQuery({ enabled: !!dep })`                    | Wait for prerequisite data             |
+| Query options     | `queryOptions({ queryKey, queryFn })`             | Reusable, type-safe config             |
+| Basic mutation    | `useMutation({ mutationFn, onSuccess })`          | Invalidate on success                  |
+| Mutation state    | `useMutationState({ filters, select })`           | Cross-component mutation tracking      |
+| Optimistic update | `onMutate` -> cancel -> snapshot -> set           | Rollback in `onError`                  |
+| Infinite query    | `useInfiniteQuery({ initialPageParam })`          | `initialPageParam` required in v5      |
+| Prefetch          | `queryClient.prefetchQuery(options)`              | Preload on hover/intent                |
+| Invalidation      | `queryClient.invalidateQueries({ queryKey })`     | Fuzzy-matches by default, active only  |
+| Cancellation      | `queryFn: ({ signal }) => fetch(url, { signal })` | Auto-cancel on key change              |
+| Select transform  | `select: (data) => data.filter(...)`              | Structural sharing preserved           |
+| Skip token        | `queryFn: id ? () => fetch(id) : skipToken`       | Type-safe conditional disabling        |
+| Serial mutations  | `useMutation({ scope: { id } })`                  | Same scope ID runs mutations in serial |
 
 ## v5 Migration Quick Reference
 
@@ -44,32 +47,13 @@ TanStack Query is an **async state manager**, not a data fetching library. You p
 | `onSuccess/onError` on queries | `useEffect` or mutation callbacks          |
 | `useErrorBoundary`             | `throwOnError`                             |
 | No `initialPageParam`          | `initialPageParam` required                |
-
-## State Comparison
-
-| State        | Meaning                                  |
-| ------------ | ---------------------------------------- |
-| `isPending`  | No data yet (first load or disabled)     |
-| `isLoading`  | `isPending && isFetching` (first fetch)  |
-| `isFetching` | Any fetch (including background refetch) |
-| `isSuccess`  | Query succeeded, data available          |
-| `isError`    | Query failed                             |
-
-## Common Options
-
-| Option                 | Default | Description                         |
-| ---------------------- | ------- | ----------------------------------- |
-| `staleTime`            | `0`     | Time until data is considered stale |
-| `gcTime`               | 5 min   | Time to keep unused data in cache   |
-| `retry`                | `3`     | Number of retry attempts            |
-| `refetchOnWindowFocus` | `true`  | Refetch when window regains focus   |
-| `enabled`              | `true`  | Whether query should execute        |
+| Error type `unknown`           | Error type defaults to `Error`             |
 
 ## Common Mistakes
 
 | Mistake                                    | Correct Pattern                                           |
 | ------------------------------------------ | --------------------------------------------------------- |
-| Checking `isPending` before `data`         | Data-first: check `data` → `error` → `isPending`          |
+| Checking `isPending` before `data`         | Data-first: check `data` -> `error` -> `isPending`        |
 | Copying server state to local useState     | Use data directly or derived state pattern                |
 | Creating QueryClient in component          | Create once outside component or in useState              |
 | Using `refetch()` for parameter changes    | Include params in queryKey, let it refetch automatically  |
@@ -78,6 +62,9 @@ TanStack Query is an **async state manager**, not a data fetching library. You p
 | Using `catch` without re-throwing          | Throw errors in queryFn (fetch doesn't reject on 4xx/5xx) |
 | Manual generics on useQuery                | Type the queryFn return, let inference work               |
 | Destructuring query for type narrowing     | Keep query object intact for proper narrowing             |
+| Using `enabled` with `useSuspenseQuery`    | Use conditional rendering to mount/unmount component      |
+| Not awaiting prefetch for SSR              | Await `prefetchQuery` to avoid hydration mismatches       |
+| `invalidateQueries` not refetching all     | Use `refetchType: 'all'` for inactive queries             |
 
 ## Delegation
 
@@ -95,7 +82,7 @@ TanStack Query is an **async state manager**, not a data fetching library. You p
 - [Error handling strategies](references/error-handling.md)
 - [Infinite queries and pagination](references/infinite-queries.md)
 - [Offline mode and persistence](references/offline-mode.md)
-- [WebSocket integration](references/websocket-integration.md)
+- [WebSocket and real-time integration](references/websocket-integration.md)
 - [SSR and hydration patterns](references/ssr-hydration.md)
 - [TypeScript patterns](references/typescript-patterns.md)
 - [Testing with MSW and React Testing Library](references/testing.md)

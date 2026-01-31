@@ -1,8 +1,17 @@
 ---
 title: Loader Data Flow Patterns
-description: ensureQueryData in loaders, parallel loading, critical vs non-critical data, and useSuspenseQuery
+description: ensureQueryData in loaders, parallel loading, critical vs non-critical data, search-param-dependent loaders, and useSuspenseQuery
 tags:
-  [loaders, ensureQueryData, useSuspenseQuery, parallel, prefetch, queryOptions]
+  [
+    loaders,
+    ensureQueryData,
+    useSuspenseQuery,
+    parallel,
+    prefetch,
+    queryOptions,
+    loaderDeps,
+    validateSearch,
+  ]
 ---
 
 # Loader Data Flow Patterns
@@ -101,6 +110,41 @@ function PostPage() {
   );
 }
 ```
+
+## Search-Param-Dependent Loaders
+
+Use `loaderDeps` to re-run loaders when search params change:
+
+```tsx
+import { createFileRoute } from '@tanstack/react-router';
+import { zodValidator } from '@tanstack/zod-adapter';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { z } from 'zod';
+
+const searchSchema = z.object({
+  page: z.number().default(1),
+  size: z.number().default(10),
+  sort: z.enum(['name', 'email', 'createdAt']).default('createdAt'),
+  filter: z.string().optional(),
+});
+
+export const Route = createFileRoute('/admin/users')({
+  validateSearch: zodValidator(searchSchema),
+  loaderDeps: ({ search }) => search,
+  loader: async ({ context: { queryClient }, deps }) => {
+    await queryClient.ensureQueryData(userQueries.list(deps));
+  },
+  component: UsersPage,
+});
+
+function UsersPage() {
+  const search = Route.useSearch();
+  const { data } = useSuspenseQuery(userQueries.list(search));
+  return <UserTable data={data} />;
+}
+```
+
+`loaderDeps` declares which values the loader depends on. When those values change (search params update), the loader re-runs. Without `loaderDeps`, the loader only runs on initial navigation.
 
 ## Data Flow Summary
 

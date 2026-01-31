@@ -1,6 +1,6 @@
 ---
 title: Middleware
-description: Middleware composition patterns including logging, auth, admin chains, function-level middleware with validation, and global request middleware
+description: Middleware composition patterns including logging, auth, admin chains, function-level middleware with validation, route-level middleware, global request middleware, and rate limiting
 tags:
   [
     middleware,
@@ -10,9 +10,11 @@ tags:
     logging,
     admin,
     function-level,
+    route-level,
     global,
     requestMiddleware,
     context,
+    rate-limiting,
   ]
 ---
 
@@ -26,9 +28,18 @@ import { createMiddleware } from '@tanstack/react-start';
 export const logMiddleware = createMiddleware().server(
   async ({ next, request }) => {
     const start = Date.now();
-    const result = await next();
-    console.log(`${request.method} ${request.url} - ${Date.now() - start}ms`);
-    return result;
+    const requestId = crypto.randomUUID();
+
+    console.log(`[${requestId}] ${request.method} ${request.url}`);
+
+    try {
+      const result = await next({ context: { requestId } });
+      console.log(`[${requestId}] Completed in ${Date.now() - start}ms`);
+      return result;
+    } catch (error) {
+      console.error(`[${requestId}] Error:`, error);
+      throw error;
+    }
   },
 );
 
@@ -64,7 +75,19 @@ export const adminMiddleware = createMiddleware()
   });
 ```
 
+Use in server functions:
+
+```ts
+const adminAction = createServerFn({ method: 'POST' })
+  .middleware([adminMiddleware])
+  .handler(async ({ context }) => {
+    return await performAdminAction(context.user.id);
+  });
+```
+
 ## Function-Level Middleware with Validation
+
+Use `type: 'function'` for middleware that validates input specific to server functions:
 
 ```ts
 const workspaceMiddleware = createMiddleware({ type: 'function' })
@@ -123,3 +146,43 @@ export default createStart({
   requestMiddleware: [logMiddleware, authMiddleware],
 });
 ```
+
+## Rate Limiting Middleware
+
+```ts
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+export const rateLimitMiddleware = createMiddleware().server(
+  async ({ next, request }) => {
+    const ip = request.headers.get('x-forwarded-for') ?? 'unknown';
+    const now = Date.now();
+    const windowMs = 60 * 1000;
+    const maxRequests = 100;
+
+    let record = rateLimitStore.get(ip);
+
+    if (!record || record.resetAt < now) {
+      record = { count: 0, resetAt: now + windowMs };
+    }
+
+    record.count++;
+    rateLimitStore.set(ip, record);
+
+    if (record.count > maxRequests) {
+      throw new Response('Too Many Requests', { status: 429 });
+    }
+
+    return next();
+  },
+);
+```
+
+## Middleware Execution Order
+
+Middleware forms a chain where each wraps the next:
+
+```text
+Request -> Middleware 1 -> Middleware 2 -> Handler -> Middleware 2 -> Middleware 1 -> Response
+```
+
+The first middleware in the array wraps the entire chain. Each middleware calls `next()` to proceed to the next middleware or the handler. Code before `await next()` runs on the way in, code after runs on the way out.

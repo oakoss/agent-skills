@@ -1,6 +1,6 @@
 ---
 title: Mutations
-description: Mutation patterns with useMutation, optimistic updates, cache invalidation, mutate vs mutateAsync, and rollback strategies
+description: Mutation patterns with useMutation, optimistic updates, cache invalidation, useMutationState, serial scope, and rollback strategies
 tags:
   [
     useMutation,
@@ -9,7 +9,8 @@ tags:
     mutateAsync,
     onMutate,
     rollback,
-    onSettled,
+    useMutationState,
+    scope,
   ]
 ---
 
@@ -26,6 +27,7 @@ const mutation = useMutation({
       method: 'POST',
       body: JSON.stringify(newPost),
     });
+    if (!res.ok) throw new Error('Failed to create post');
     return res.json();
   },
   onSuccess: async () => {
@@ -34,7 +36,6 @@ const mutation = useMutation({
 });
 
 mutation.mutate(data);
-// Or: await mutation.mutateAsync(data);
 ```
 
 ## mutate vs mutateAsync
@@ -47,12 +48,10 @@ mutation.mutate(data);
 Prefer `mutate()` with callbacks for cleaner code:
 
 ```tsx
-// mutate - errors handled internally
 mutation.mutate(data, {
   onSuccess: (result) => navigate(`/posts/${result.id}`),
 });
 
-// mutateAsync - must handle errors yourself
 try {
   const result = await mutation.mutateAsync(data);
   navigate(`/posts/${result.id}`);
@@ -66,10 +65,6 @@ try {
 Mutations accept only ONE variable argument. Use objects for multiple values:
 
 ```tsx
-// BAD: Multiple arguments (won't work)
-mutation.mutate(id, title, body);
-
-// GOOD: Single object argument
 mutation.mutate({ id, title, body });
 ```
 
@@ -86,13 +81,11 @@ If component unmounts, `mutate()` callbacks may not fire. Place critical logic (
 ```tsx
 const updatePost = useMutation({
   mutationFn: updatePostFn,
-  // Query-related logic here (always runs)
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ['posts'] });
   },
 });
 
-// UI-specific logic in mutate() (may not run if unmounted)
 updatePost.mutate(data, {
   onSuccess: () => {
     toast.success('Post updated!');
@@ -109,12 +102,12 @@ Return `invalidateQueries` to maintain loading state during refetch:
 const mutation = useMutation({
   mutationFn: createPost,
   onSuccess: () => {
-    // Without return: mutation.isPending becomes false immediately
-    // With return: mutation.isPending stays true until refetch completes
     return queryClient.invalidateQueries({ queryKey: ['posts'] });
   },
 });
 ```
+
+Without `return`, `mutation.isPending` becomes false immediately after the mutation succeeds but before queries refetch.
 
 ## Optimistic Updates with Rollback
 
@@ -132,46 +125,55 @@ const updatePost = useMutation({
 
     return { previousPost };
   },
-  onError: (error, variables, context) => {
+  onError: (_error, variables, context) => {
     if (context?.previousPost) {
       queryClient.setQueryData(['posts', variables.id], context.previousPost);
     }
   },
-  onSettled: (data, error, variables) => {
+  onSettled: (_data, _error, variables) => {
     queryClient.invalidateQueries({ queryKey: ['posts', variables.id] });
   },
 });
 ```
 
-## Optimistic Add to List
+## Simplified Optimistic Updates via useMutationState
+
+No cache manipulation or rollback needed -- render pending mutations directly:
 
 ```tsx
-const addPost = useMutation({
-  mutationFn: createPostFn,
-  onMutate: async (newPost) => {
-    await queryClient.cancelQueries({ queryKey: ['posts'] });
-    const previousPosts = queryClient.getQueryData(['posts']);
+function OptimisticTodoList() {
+  const { data: todos } = useQuery({
+    queryKey: ['todos'],
+    queryFn: fetchTodos,
+  });
 
-    const optimisticPost = {
-      ...newPost,
-      id: `temp-${Date.now()}`,
-      createdAt: new Date(),
-    };
-    queryClient.setQueryData(['posts'], (old: Post[]) => [
-      optimisticPost,
-      ...old,
-    ]);
+  const addTodo = useMutation({
+    mutationKey: ['addTodo'],
+    mutationFn: (newTodo: CreateTodoInput) => api.addTodo(newTodo),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['todos'] });
+    },
+  });
 
-    return { previousPosts };
-  },
-  onError: (error, variables, context) => {
-    queryClient.setQueryData(['posts'], context?.previousPosts);
-  },
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['posts'] });
-  },
-});
+  const pendingTodos = useMutationState<CreateTodoInput>({
+    filters: { mutationKey: ['addTodo'], status: 'pending' },
+    select: (mutation) => mutation.state.variables,
+  });
+
+  return (
+    <ul>
+      {todos?.map((todo) => (
+        <TodoItem key={todo.id} todo={todo} />
+      ))}
+      {pendingTodos.map((todo, i) => (
+        <TodoItem key={`pending-${i}`} todo={todo} isPending />
+      ))}
+    </ul>
+  );
+}
 ```
+
+`useMutationState` returns a snapshot array that updates when matching mutations change. Requires `mutationKey` on the `useMutation` call to enable filtering.
 
 ## Concurrent Optimistic Updates
 
@@ -190,7 +192,6 @@ const updateTodo = useMutation({
     queryClient.setQueryData(['todos', variables.id], context?.previous);
   },
   onSettled: (_data, _error, variables) => {
-    // Only invalidate when this is the last pending mutation
     if (queryClient.isMutating({ mutationKey: ['todos'] }) === 1) {
       queryClient.invalidateQueries({ queryKey: ['todos', variables.id] });
     }
@@ -198,7 +199,20 @@ const updateTodo = useMutation({
 });
 ```
 
-Multiple rapid mutations can cause flickering UI as each invalidation triggers refetch. Using `isMutating()` ensures only the final mutation triggers invalidation.
+Using `isMutating()` ensures only the final mutation triggers invalidation, preventing flickering UI from intermediate refetches.
+
+## Serial Mutations with scope
+
+Run mutations with the same scope ID in serial (FIFO queue):
+
+```tsx
+const uploadFile = useMutation({
+  mutationFn: uploadFileFn,
+  scope: { id: 'file-upload' },
+});
+```
+
+All mutations sharing `scope: { id: 'file-upload' }` execute one at a time. Useful for ordered operations like sequential file uploads or dependent API calls.
 
 ## Automatic Invalidation via MutationCache
 
@@ -210,7 +224,7 @@ const queryClient = new QueryClient({
     onSuccess: () => {
       queryClient.invalidateQueries();
     },
-    onError: (error, variables, context, mutation) => {
+    onError: (error, _variables, _context, mutation) => {
       if (!mutation.options.onError) {
         toast.error(`Operation failed: ${error.message}`);
       }
@@ -231,7 +245,6 @@ const updateLabel = useMutation({
   },
 });
 
-// In MutationCache
 const queryClient = new QueryClient({
   mutationCache: new MutationCache({
     onSuccess: async (_data, _variables, _context, mutation) => {
@@ -246,58 +259,20 @@ const queryClient = new QueryClient({
 });
 ```
 
-## useMutationState for Cross-Component Tracking
-
-Track mutation state from any component without prop drilling:
+## Global Loading Indicator
 
 ```tsx
 import { useMutationState } from '@tanstack/react-query';
 
-function GlobalLoadingIndicator() {
+function GlobalSavingIndicator() {
   const pendingCount = useMutationState({
     filters: { status: 'pending' },
     select: (mutation) => mutation.state.status,
   }).length;
 
   if (pendingCount === 0) return null;
-  return <Spinner />;
+  return <div>Saving {pendingCount} items...</div>;
 }
-```
-
-Show optimistic items from a sibling component:
-
-```tsx
-function OptimisticTodoList() {
-  const { data: todos } = useQuery({
-    queryKey: ['todos'],
-    queryFn: fetchTodos,
-  });
-
-  const pendingTodos = useMutationState({
-    filters: { mutationKey: ['addTodo'], status: 'pending' },
-    select: (mutation) => mutation.state.variables as CreateTodoInput,
-  });
-
-  return (
-    <ul>
-      {todos?.map((todo) => (
-        <TodoItem key={todo.id} todo={todo} />
-      ))}
-      {pendingTodos.map((todo, i) => (
-        <TodoItem key={`pending-${i}`} todo={todo} isPending />
-      ))}
-    </ul>
-  );
-}
-```
-
-`useMutationState` returns a snapshot array that updates when matching mutations change. Combine with `mutationKey` on `useMutation` to enable filtering:
-
-```tsx
-const addTodo = useMutation({
-  mutationKey: ['addTodo'],
-  mutationFn: createTodoFn,
-});
 ```
 
 ## Query with Server Functions
@@ -316,7 +291,6 @@ function postsOptions() {
   });
 }
 
-// Prefetch in loader
 export const Route = createFileRoute('/posts')({
   loader: async ({ context }) => {
     await context.queryClient.ensureQueryData(postsOptions());

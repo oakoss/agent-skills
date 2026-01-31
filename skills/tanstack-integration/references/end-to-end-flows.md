@@ -1,15 +1,19 @@
 ---
 title: End-to-End Flows
-description: Complete patterns for form submission with cache update, infinite scroll with intersection observer, and auth-protected routes
+description: Complete patterns for form submission with cache update, infinite scroll, paginated tables with URL state, auth-protected routes, and error handling
 tags:
   [
     form-flow,
     infinite-scroll,
+    paginated-table,
     auth,
     protected-routes,
+    error-handling,
     intersection-observer,
     useMutation,
     useInfiniteQuery,
+    validateSearch,
+    loaderDeps,
   ]
 ---
 
@@ -65,61 +69,10 @@ function CreatePostPage() {
     },
   });
 
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        form.handleSubmit();
-      }}
-    >
-      <form.Field name="title">
-        {(field) => (
-          <div>
-            <label htmlFor={field.name}>Title</label>
-            <input
-              id={field.name}
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              onBlur={field.handleBlur}
-            />
-            {field.state.meta.isTouched &&
-              field.state.meta.errors.length > 0 && (
-                <span className="error">{field.state.meta.errors[0]}</span>
-              )}
-          </div>
-        )}
-      </form.Field>
-
-      <form.Field name="body">
-        {(field) => (
-          <div>
-            <label htmlFor={field.name}>Body</label>
-            <textarea
-              id={field.name}
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              onBlur={field.handleBlur}
-            />
-          </div>
-        )}
-      </form.Field>
-
-      {createMutation.isError && (
-        <div className="error">{createMutation.error.message}</div>
-      )}
-
-      <form.Subscribe
-        selector={(state) => [state.canSubmit, state.isSubmitting]}
-      >
-        {([canSubmit, isSubmitting]) => (
-          <button type="submit" disabled={!canSubmit || isSubmitting}>
-            {isSubmitting ? 'Creating...' : 'Create Post'}
-          </button>
-        )}
-      </form.Subscribe>
-    </form>
-  );
+  // Render form with form.Field for each input,
+  // form.Subscribe for canSubmit/isSubmitting state,
+  // and createMutation.isError for server error display.
+  // See form-query-integration reference for full field patterns.
 }
 ```
 
@@ -153,25 +106,21 @@ function InfinitePostList() {
 
   const observerTarget = useRef<HTMLDivElement>(null);
 
-  const handleIntersect = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-      if (entries[0]?.isIntersecting && hasNextPage && !isFetchingNextPage) {
-        fetchNextPage();
-      }
-    },
-    [fetchNextPage, hasNextPage, isFetchingNextPage],
-  );
-
   useEffect(() => {
     const element = observerTarget.current;
     if (!element) return;
 
-    const observer = new IntersectionObserver(handleIntersect, {
-      rootMargin: '200px',
-    });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { rootMargin: '200px' },
+    );
     observer.observe(element);
     return () => observer.disconnect();
-  }, [handleIntersect]);
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   if (status === 'pending') return <PostListSkeleton />;
   if (status === 'error') return <ErrorMessage />;
@@ -256,31 +205,7 @@ export const Route = createFileRoute('/_protected')({
 });
 ```
 
-### Protected Page Consuming Auth
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router';
-import { useSuspenseQuery } from '@tanstack/react-query';
-
-export const Route = createFileRoute('/_protected/dashboard')({
-  loader: async ({ context: { queryClient } }) => {
-    await queryClient.ensureQueryData(dashboardQueries.overview());
-  },
-  component: DashboardPage,
-});
-
-function DashboardPage() {
-  const { user } = Route.useRouteContext();
-  const { data: dashboard } = useSuspenseQuery(dashboardQueries.overview());
-
-  return (
-    <div>
-      <h1>Welcome, {user.name}</h1>
-      <DashboardContent data={dashboard} />
-    </div>
-  );
-}
-```
+Protected child routes access the user via `Route.useRouteContext()` and use the standard loader + `useSuspenseQuery` pattern for data.
 
 ### Login Page with Redirect
 
@@ -319,29 +244,146 @@ function LoginPage() {
     },
   });
 
+  // Form renders inputs, error display, and submit button
+  // using loginMutation.mutate(), .isError, .isPending
+}
+```
+
+## Paginated Table with URL State
+
+Server-side pagination with search params as the source of truth for table state.
+
+### Route with Validated Search Params
+
+```tsx
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { zodValidator } from '@tanstack/zod-adapter';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { z } from 'zod';
+
+const searchSchema = z.object({
+  page: z.number().default(1),
+  size: z.number().default(10),
+  sort: z.enum(['name', 'email', 'createdAt']).default('createdAt'),
+  search: z.string().optional(),
+});
+
+type SearchParams = z.infer<typeof searchSchema>;
+
+export const Route = createFileRoute('/_protected/admin/users')({
+  validateSearch: zodValidator(searchSchema),
+  loaderDeps: ({ search }) => search,
+  loader: async ({ context: { queryClient }, deps }) => {
+    await queryClient.ensureQueryData(userQueries.list(deps));
+  },
+  component: UsersPage,
+});
+```
+
+### Component with URL-Synced Table State
+
+```tsx
+function UsersPage() {
+  const search = Route.useSearch();
+  const navigate = useNavigate();
+  const { data } = useSuspenseQuery(userQueries.list(search));
+
+  const handlePaginationChange = (pagination: {
+    pageIndex: number;
+    pageSize: number;
+  }) => {
+    navigate({
+      search: (prev: SearchParams) => ({
+        ...prev,
+        page: pagination.pageIndex + 1,
+        size: pagination.pageSize,
+      }),
+    });
+  };
+
+  const handleSearchChange = (value: string) => {
+    navigate({
+      search: (prev: SearchParams) => ({
+        ...prev,
+        search: value || undefined,
+        page: 1,
+      }),
+    });
+  };
+
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        loginMutation.mutate({
-          email: formData.get('email') as string,
-          password: formData.get('password') as string,
-        });
-      }}
-    >
-      <input name="email" type="email" required />
-      <input name="password" type="password" required />
-      {loginMutation.isError && (
-        <div className="error">{loginMutation.error.message}</div>
-      )}
-      <button type="submit" disabled={loginMutation.isPending}>
-        {loginMutation.isPending ? 'Signing in...' : 'Sign In'}
-      </button>
-    </form>
+    <div>
+      <input
+        defaultValue={search.search}
+        onChange={(e) => handleSearchChange(e.target.value)}
+        placeholder="Search users..."
+      />
+      <UserTable
+        data={data.items}
+        pageCount={data.meta.totalPages}
+        pagination={{
+          pageIndex: search.page - 1,
+          pageSize: search.size,
+        }}
+        onPaginationChange={handlePaginationChange}
+      />
+    </div>
   );
 }
 ```
+
+Key pattern: reset `page` to 1 when filters change. The URL is the single source of truth for table state -- back/forward navigation restores exact table position.
+
+## Error Handling Flow
+
+Structured errors with route-level boundaries and server function error patterns.
+
+### Route Error Components
+
+```tsx
+import { createFileRoute } from '@tanstack/react-router';
+
+export const Route = createFileRoute('/_protected/posts/$postId')({
+  loader: async ({ params, context: { queryClient } }) => {
+    await queryClient.ensureQueryData(postQueries.detail(params.postId));
+  },
+  component: PostPage,
+  errorComponent: ({ error, reset }) => (
+    <div>
+      <p>{error.message}</p>
+      <button onClick={reset}>Try Again</button>
+    </div>
+  ),
+  notFoundComponent: () => <p>Post not found</p>,
+});
+```
+
+### Server Function Error Handling
+
+```tsx
+const mutation = useMutation({
+  mutationFn: (values: CreatePostInput) => createPost({ data: values }),
+  onSuccess: (result) => {
+    if ('error' in result) {
+      switch (result.code) {
+        case 'AUTH_REQUIRED':
+          navigate({ to: '/login' });
+          break;
+        case 'VALIDATION_ERROR':
+          form.setErrorMap({ onServer: result.error });
+          break;
+        default:
+          toast.error(result.error);
+      }
+      return;
+    }
+    queryClient.invalidateQueries({ queryKey: ['posts'] });
+    navigate({ to: '/posts' });
+  },
+});
+```
+
+Server functions return structured `{ error, code }` objects rather than throwing. Always check the result shape in `onSuccess` instead of relying on `onError`.
 
 ## Flow Summary
 
@@ -349,4 +391,6 @@ function LoginPage() {
 | --------------- | ----------------------------- | ------------------------------------------------------------- |
 | Form submission | Form + Query + Router         | `useForm` -> `useMutation` -> `invalidateQueries` -> navigate |
 | Infinite scroll | Query + Intersection Observer | `useInfiniteQuery` -> observer triggers `fetchNextPage`       |
+| Paginated table | Table + Query + Router        | `validateSearch` -> `loaderDeps` -> navigate on state change  |
 | Auth protection | Router + Query                | `beforeLoad` checks session -> `redirect` if unauthenticated  |
+| Error handling  | Router + Server Functions     | `errorComponent` on routes, structured errors from server     |

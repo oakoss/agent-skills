@@ -1,13 +1,13 @@
 ---
 name: tanstack-router
-description: 'Type-safe, file-based React routing with route loaders, search params validation, code splitting, preloading, navigation, route context, and TanStack Query integration. Use when setting up file-based routing, adding search params validation, implementing route loaders, code splitting routes, or fixing type registration errors.'
+description: 'Type-safe, file-based React routing with route loaders, search params validation, code splitting, preloading, navigation, route context, and TanStack Query integration. Use when setting up file-based routing, adding search params validation, implementing route loaders, code splitting routes, configuring virtual file routes, protecting routes with auth guards, or fixing type registration errors. Use for router setup, navigation patterns, URL state management, data loading.'
 ---
 
 # TanStack Router
 
 Type-safe, file-based routing for React with route-level data loading, search params validation, code splitting, and TanStack Query integration.
 
-**Package:** `@tanstack/react-router@1.146.2` | **Plugin:** `@tanstack/router-plugin`
+**Package:** `@tanstack/react-router` | **Plugin:** `@tanstack/router-plugin`
 
 ## Quick Reference
 
@@ -23,6 +23,9 @@ Type-safe, file-based routing for React with route-level data loading, search pa
 | `useNavigate()`                   | Programmatic navigation         |
 | `useBlocker()`                    | Block navigation (dirty forms)  |
 | `notFound()`                      | Throw 404 from loader           |
+| `getRouteApi('/path')`            | Type-safe hooks in split files  |
+| `stripSearchParams(defaults)`     | Clean default values from URLs  |
+| `retainSearchParams(['key'])`     | Preserve params across navs     |
 
 ## Data Loading
 
@@ -54,29 +57,36 @@ Type-safe, file-based routing for React with route-level data loading, search pa
 
 ## Common Mistakes
 
-| Mistake                           | Fix                                                 |
-| --------------------------------- | --------------------------------------------------- |
-| Missing router type registration  | Add `declare module` with `Register` interface      |
-| `useParams()` without `from`      | Always pass `from: '/route/path'` for exact types   |
-| `useNavigate()` for regular links | Use `<Link>` for `<a>` tags, a11y, preloading       |
-| `prefetchQuery` in loaders        | Use `ensureQueryData` (returns data, throws errors) |
-| Fetching in `useEffect`           | Use route loaders (prevents waterfalls)             |
-| Sequential fetches in loader      | Use `Promise.all` for parallel requests             |
-| Missing leading slash             | Always `'/about'` not `'about'`                     |
-| TanStackRouterVite after react()  | Plugin MUST come before `react()` in Vite config    |
+| Mistake                           | Fix                                                   |
+| --------------------------------- | ----------------------------------------------------- |
+| Missing router type registration  | Add `declare module` with `Register` interface        |
+| `useParams()` without `from`      | Always pass `from: '/route/path'` for exact types     |
+| `useNavigate()` for regular links | Use `<Link>` for `<a>` tags, a11y, preloading         |
+| `prefetchQuery` in loaders        | Use `ensureQueryData` (returns data, throws errors)   |
+| Fetching in `useEffect`           | Use route loaders (prevents waterfalls)               |
+| Sequential fetches in loader      | Use `Promise.all` for parallel requests               |
+| Missing leading slash             | Always `'/about'` not `'about'`                       |
+| TanStackRouterVite after react()  | Plugin MUST come before `react()` in Vite config      |
+| `strict: false` params unparsed   | Use strict mode or manually parse after navigation    |
+| Pathless route notFoundComponent  | Define `notFoundComponent` on child routes instead    |
+| Aborted loader undefined error    | Guard `errorComponent` with `if (!error) return null` |
+| No `loaderDeps` declared          | Declare deps so loader only re-runs when they change  |
 
 ## Delegation
 
-Use this skill for TanStack Router file-based routing, route loaders, search params, code splitting, navigation, auth guards, and route context.
+- **TanStack Query patterns** — data fetching, caching, mutations: use `tanstack-query` skill
+- **TanStack Start** — server functions, SSR, server-side auth: use `tanstack-start` skill
+- **TanStack Table** — table rendering with router search params: use `tanstack-table` skill
+- **Router + Query integration** — coordinated patterns: use `tanstack-integration` skill
 
 ## References
 
 - [Setup](references/setup.md) — installation, Vite config, file structure, app setup, router default options
-- [Type Safety](references/type-safety.md) — register router, `from` param, `strict: false`, type utilities
-- [Data Loading](references/data-loading.md) — route loaders, Query integration, parallel loading, streaming, deferred data, abort signal
+- [Type Safety](references/type-safety.md) — register router, `from` param, `strict: false`, type utilities, getRouteApi
+- [Data Loading](references/data-loading.md) — route loaders, Query integration, parallel loading, streaming, deferred data, abort signal, loaderDeps
 - [Search Params](references/search-params.md) — validation, strip/retain middleware, fine-grained subscriptions, debounce, custom serializers
 - [Navigation](references/navigation.md) — Link, active styling, relative navigation, hash, route masks, blocker, scroll restoration
-- [Auth and Context](references/auth-and-context.md) — beforeLoad, context inheritance, pathless layouts, dependency injection
-- [Code Splitting](references/code-splitting.md) — lazy routes, virtual routes, auto splitting, preloading
+- [Auth and Context](references/auth-and-context.md) — beforeLoad, context inheritance, pathless layouts, dependency injection, error handling
+- [Code Splitting](references/code-splitting.md) — lazy routes, auto splitting, preloading strategies, programmatic preloading
 - [Virtual File Routes](references/virtual-routes.md) — rootRoute, route, index, layout, physical builders, mixing file-based and code-based routing
 - [Known Issues](references/known-issues.md) — 20 documented issues with fixes, anti-patterns

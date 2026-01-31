@@ -364,6 +364,20 @@ const table = useReactTable({
 });
 ```
 
+Alternatively, use `autoResetPageIndex` for client-side tables to automatically reset to page 0 when sorting or filtering changes:
+
+```tsx
+const table = useReactTable({
+  data,
+  columns,
+  autoResetPageIndex: true, // Reset page on sort/filter change (default: true)
+  getCoreRowModel: getCoreRowModel(),
+  getPaginationRowModel: getPaginationRowModel(),
+});
+```
+
+Set `autoResetPageIndex: false` to preserve the current page when data changes.
+
 ## Prefetching Next Page
 
 ```tsx

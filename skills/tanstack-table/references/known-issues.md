@@ -91,7 +91,8 @@ import { createColumnHelper } from '@tanstack/react-table';
 ## Issue 6: Poor Performance (1000+ Rows)
 
 - **Symptom:** Table slow or laggy with large datasets
-- **Fix:** Use TanStack Virtual for client-side or server-side pagination
+- **Fix:** Use TanStack Virtual for client-side rendering or implement server-side pagination
+- **Tip:** Close React DevTools during benchmarks (see Issue 11)
 
 ## Issue 7: React Compiler Incompatibility (React 19+)
 

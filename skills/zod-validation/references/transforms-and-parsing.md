@@ -1,6 +1,6 @@
 ---
 title: Transforms and Parsing
-description: Zod v4 coercion, stringbool, transform, overwrite, refine, superRefine, parse, safeParse, async parsing, and type inference with z.infer, z.input, z.output
+description: Zod v4 coercion, stringbool, transform, overwrite, refine, superRefine, parse, safeParse, async parsing, pipe, and type inference with z.infer, z.input, z.output
 tags:
   [
     coerce,
@@ -63,7 +63,7 @@ z.number().overwrite((val) => val * 2);
 z.string().overwrite((val) => val.trim());
 ```
 
-Use `.overwrite()` when the output type matches the input — it preserves schema introspection. Use `.transform()` when the output type differs.
+Use `.overwrite()` when the output type matches the input -- it preserves schema introspection. Use `.transform()` when the output type differs.
 
 ## Pipe
 
@@ -104,6 +104,26 @@ z.string().superRefine((val, ctx) => {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Must contain @',
+    });
+  }
+});
+```
+
+The `.refine()` overload that accepted a function as the second argument has been removed in v4. Use `.superRefine()` for dynamic error messages:
+
+```ts
+// v3 (removed in v4)
+// z.string().refine(
+//   (val) => val.length > 10,
+//   (val) => ({ message: `${val} is not more than 10 characters` })
+// );
+
+// v4 replacement
+z.string().superRefine((val, ctx) => {
+  if (val.length <= 10) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: `${val} is not more than 10 characters`,
     });
   }
 });
@@ -157,4 +177,19 @@ type UserInput = z.input<typeof UserSchema>;
 type UserOutput = z.output<typeof UserSchema>;
 ```
 
-Use `z.input<>` and `z.output<>` when schemas include `.transform()` or `.default()` — the input and output types will differ.
+Use `z.input<>` and `z.output<>` when schemas include `.transform()` or `.default()` -- the input and output types will differ.
+
+### Transform Type Inference Example
+
+```ts
+const StringToNumberSchema = z.object({
+  count: z.string().transform((val) => parseInt(val, 10)),
+  name: z.string().default('anonymous'),
+});
+
+type Input = z.input<typeof StringToNumberSchema>;
+// { count: string; name?: string }
+
+type Output = z.output<typeof StringToNumberSchema>;
+// { count: number; name: string }
+```

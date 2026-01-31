@@ -1,6 +1,6 @@
 ---
 title: Route Protection
-description: Authentication and authorization patterns using beforeLoad, pathless layout routes, session security, login/logout server functions, and HTTP-only cookies
+description: Authentication and authorization patterns using beforeLoad, pathless layout routes, session security, login/logout server functions, role-based access, and HTTP-only cookies
 tags:
   [
     auth,
@@ -18,6 +18,7 @@ tags:
     getRequestHeaders,
     better-auth,
     header-forwarding,
+    role-based,
   ]
 ---
 
@@ -51,6 +52,33 @@ export const Route = createFileRoute('/_authenticated/dashboard')({
 });
 ```
 
+## Role-Based Access
+
+```ts
+export const Route = createFileRoute('/_authenticated/_admin')({
+  beforeLoad: async ({ context }) => {
+    if (context.user.role !== 'admin') {
+      throw redirect({ to: '/unauthorized' });
+    }
+  },
+  component: AdminLayout,
+});
+```
+
+File structure for nested protection:
+
+```sh
+routes/
+  _authenticated.tsx           # Requires login
+  _authenticated/
+    dashboard.tsx              # /dashboard - any authenticated user
+    settings.tsx               # /settings - any authenticated user
+    _admin.tsx                 # Admin layout
+    _admin/
+      users.tsx                # /users - admin only
+      analytics.tsx            # /analytics - admin only
+```
+
 ## Session Management
 
 ```ts
@@ -69,6 +97,18 @@ export function getSession() {
   });
 }
 ```
+
+## Session Security Checklist
+
+| Setting    | Value                 | Purpose                            |
+| ---------- | --------------------- | ---------------------------------- |
+| `httpOnly` | `true`                | Prevents XSS from accessing cookie |
+| `secure`   | `true` in prod        | Requires HTTPS                     |
+| `sameSite` | `'lax'` or `'strict'` | CSRF protection                    |
+| `maxAge`   | Application-specific  | Session duration                   |
+| `password` | 32+ random chars      | Encryption key                     |
+
+Generate a secure session secret: `openssl rand -base64 32`
 
 ## Login and Logout Server Functions
 
@@ -135,9 +175,32 @@ export const Route = createRootRouteWithContext()({
 });
 ```
 
-## Advanced Auth Patterns
+## Preserving Redirect URL
 
-### Forward Headers to External APIs
+```tsx
+import { z } from 'zod';
+
+export const Route = createFileRoute('/login')({
+  validateSearch: z.object({
+    redirect: z.string().optional(),
+  }),
+  component: LoginPage,
+});
+
+function LoginPage() {
+  const { redirect: redirectTo } = Route.useSearch();
+  const loginMutation = useMutation({
+    mutationFn: loginFn,
+    onSuccess: () => {
+      navigate({ to: redirectTo ?? '/dashboard' });
+    },
+  });
+
+  return <LoginForm onSubmit={loginMutation.mutate} />;
+}
+```
+
+## Forward Headers to External APIs
 
 Server functions originate from the Start server, not the browser. Cookies and auth headers must be forwarded manually:
 
@@ -159,9 +222,9 @@ export const getExternalUser = createServerFn().handler(async () => {
 });
 ```
 
-### createIsomorphicFn for Cookie Maintenance
+## createIsomorphicFn for Cookie Maintenance
 
-Use `createIsomorphicFn` to avoid header forwarding for read operations. On the client, the browser attaches cookies automatically. On the server, headers are forwarded explicitly:
+Use `createIsomorphicFn` to avoid header forwarding for read operations. On the client, the browser attaches cookies automatically:
 
 ```ts
 import { createIsomorphicFn } from '@tanstack/react-start';
@@ -181,7 +244,7 @@ const fetchUser = createIsomorphicFn()
   });
 ```
 
-### Better Auth Integration
+## Better Auth Integration
 
 Use the `reactStartCookies()` plugin to handle cookie synchronization:
 
@@ -198,8 +261,8 @@ Without this plugin, session cookies may not be set or refreshed properly in Tan
 
 ## Security Anti-Patterns
 
-- **Storing auth tokens in localStorage** — Use HTTP-only cookies
-- **Checking auth in component useEffect** — Use `beforeLoad` on routes to prevent data loading for unauthenticated users
-- **Exposing secrets via `process.env` in shared files** — Use `createServerOnlyFn` for secrets. Use `VITE_` prefix only for public config
-- **Allowing client to set `role` / `isAdmin`** — Strip privileged fields in validation schema
-- **Returning the full user object from session** — Select only needed fields to avoid leaking sensitive data
+- **Storing auth tokens in localStorage** -- Use HTTP-only cookies
+- **Checking auth in component useEffect** -- Use `beforeLoad` on routes to prevent data loading for unauthenticated users
+- **Exposing secrets via `process.env` in shared files** -- Use `createServerOnlyFn` for secrets, `VITE_` prefix only for public config
+- **Allowing client to set `role` / `isAdmin`** -- Strip privileged fields in validation schema
+- **Returning the full user object from session** -- Select only needed fields to avoid leaking sensitive data

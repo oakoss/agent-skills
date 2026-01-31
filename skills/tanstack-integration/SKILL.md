@@ -1,18 +1,18 @@
 ---
 name: tanstack-integration
 description: |
-  Strategic adoption of TanStack libraries (Query, Router, Start, Table, Form, Virtual). Patterns for Router+Query integration, SSR hydration, caching coordination, loader data flow.
+  Strategic adoption of TanStack libraries (Query, Router, Start, Table, Form, Virtual). Patterns for Router+Query integration, SSR hydration, caching coordination, loader data flow, server functions, and error handling.
 
-  Use when integrating multiple TanStack libraries, setting up Router+Query SSR, fixing dual caching issues, or choosing which TanStack library to adopt.
+  Use when integrating multiple TanStack libraries, setting up Router+Query SSR, fixing dual caching issues, coordinating form submissions with cache invalidation, or choosing which TanStack library to adopt.
 ---
 
 # TanStack Integration
 
 ## Overview
 
-Strategic patterns for combining TanStack libraries in production applications. Covers Router+Query integration with single-source caching, SSR hydration via `setupRouterSsrQueryIntegration`, loader-to-component data flow, and Form+Query coordination. Start vanilla, then strategically adopt TanStack where it provides clear benefits.
+Strategic patterns for combining TanStack libraries in production applications. Covers Router+Query integration with single-source caching, SSR hydration via `setupRouterSsrQueryIntegration`, loader-to-component data flow, Form+Query+Server Function coordination, structured error handling, and paginated table patterns with URL state. Start vanilla, then strategically adopt TanStack where it provides clear benefits.
 
-**When to use:** Integrating multiple TanStack libraries, setting up SSR with Router+Query, resolving dual caching, or planning TanStack adoption.
+**When to use:** Integrating multiple TanStack libraries, setting up SSR with Router+Query, resolving dual caching, coordinating forms with mutations and cache, or planning TanStack adoption.
 
 **When NOT to use:** Simple client-only apps with one TanStack library, or projects not using TanStack Router.
 
@@ -26,12 +26,12 @@ Build the feature with vanilla React first. Only reach for a TanStack library wh
 | ----------- | ----------------------------------------------------------- | ------------------------------------ |
 | **Query**   | Caching, background refetch, optimistic updates, pagination | Simple one-time fetches, static data |
 | **Router**  | Type-safe routing, search params, code splitting            | Few routes, simple navigation        |
-| **Start**   | Full-stack SSR with Router+Query                            | Client-only apps                     |
+| **Start**   | Full-stack SSR with Router+Query, server functions          | Client-only apps                     |
 | **Table**   | Sorting, filtering, pagination, column management           | Static tables, < 20 rows             |
 | **Form**    | Multi-step forms, dynamic fields, async validation          | Simple 3-4 field forms               |
 | **Virtual** | 1000+ item lists, infinite scroll, large grids              | < 100 items, performance is fine     |
 
-## Hook Placement Decision Tree
+## Configuration Scope
 
 | Scope                     | Where                           | Example                                        |
 | ------------------------- | ------------------------------- | ---------------------------------------------- |
@@ -39,7 +39,7 @@ Build the feature with vanilla React first. Only reach for a TanStack library wh
 | One package/module        | Module-level `queryOptions()`   | Feature-specific stale times, retry logic      |
 | Single route or component | Inline options on hook          | One-off `refetchInterval`, `select` transforms |
 
-Place configuration at the narrowest scope that covers all consumers. Package-level defaults handle common cases; override per-module or per-query only when behavior diverges.
+Place configuration at the narrowest scope that covers all consumers.
 
 ## Setup Checklist
 
@@ -48,6 +48,7 @@ Place configuration at the narrowest scope that covers all consumers. Package-le
 | Pass QueryClient through router context | `createRootRouteWithContext<{ queryClient: QueryClient }>` | CRITICAL |
 | Use `setupRouterSsrQueryIntegration`    | Automatic SSR dehydrate/hydrate                            | CRITICAL |
 | Set `defaultPreloadStaleTime: 0`        | Let Query manage all caching                               | CRITICAL |
+| Set `defaultErrorComponent`             | Catch errors at route level                                | HIGH     |
 | Define queries with `queryOptions`      | Reusable, type-safe query definitions                      | HIGH     |
 | Use `ensureQueryData` in loaders        | Prefetch during navigation                                 | HIGH     |
 | Use `useSuspenseQuery` in components    | Data guaranteed by loader                                  | HIGH     |
@@ -62,6 +63,7 @@ Place configuration at the narrowest scope that covers all consumers. Package-le
 | Loading flash on cached routes     | Using `useQuery` not `useSuspenseQuery` | Use `useSuspenseQuery` with loader prefetch         |
 | Type errors in loader context      | Missing router context type             | Use `createRootRouteWithContext<RouterContext>()`   |
 | SSR memory leak                    | Shared QueryClient across requests      | Create QueryClient inside `getRouter()` per request |
+| Table state lost on navigation     | State in component, not URL             | Sync pagination/sort/filter to search params        |
 
 ## Common Mistakes
 
@@ -72,6 +74,8 @@ Place configuration at the narrowest scope that covers all consumers. Package-le
 | Leaving Router cache enabled alongside Query cache          | Set `defaultPreloadStaleTime: 0` so Query is the single caching source             |
 | Fetching data in components with `useQuery` without loaders | Use `ensureQueryData` in route loaders to prevent loading waterfalls               |
 | Manual `dehydrate`/`hydrate` calls for SSR                  | Use `setupRouterSsrQueryIntegration` for automatic SSR cache transfer              |
+| Handling server function errors in `onError`                | Server functions return errors in result object, check in `onSuccess`              |
+| Not resetting page on filter change in tables               | Set `page: 1` when search or filter params change                                  |
 
 ## Delegation
 
@@ -82,9 +86,9 @@ Place configuration at the narrowest scope that covers all consumers. Package-le
 ## References
 
 - [Router+Query setup and SSR integration](references/router-query-setup.md)
-- [Loader data flow and parallel loading patterns](references/loader-patterns.md)
-- [Form+Query integration, Zod validation, field arrays, and mutation patterns](references/form-query-integration.md)
-- [End-to-end flows: form submission, infinite scroll, auth-protected routes](references/end-to-end-flows.md)
+- [Loader data flow, parallel loading, and search-param-dependent loaders](references/loader-patterns.md)
+- [Form+Query integration, Zod validation, field arrays, server functions, and mutation patterns](references/form-query-integration.md)
+- [End-to-end flows: form submission, infinite scroll, paginated table, auth-protected routes, error handling](references/end-to-end-flows.md)
 - [Caching coordination and anti-patterns](references/caching-coordination.md)
 - [Recommended libraries for React + TanStack projects](references/recommended-libraries.md)
 - [Debugging guide: DevTools, profiling, memory leaks, error boundaries](references/debugging-guide.md)

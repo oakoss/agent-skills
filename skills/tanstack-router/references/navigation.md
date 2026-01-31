@@ -1,6 +1,6 @@
 ---
 title: Navigation
-description: Link component, active styling, relative navigation, hash links, route masks for modals, useBlocker for dirty forms, history state, and scroll restoration
+description: Link component, active styling with activeProps and data-status, relative navigation, hash links, route masks for modals, useBlocker for dirty forms with withResolver, history state, and scroll restoration
 tags:
   [
     navigation,
@@ -10,6 +10,7 @@ tags:
     route-mask,
     useBlocker,
     scroll-restoration,
+    useMatchRoute,
   ]
 ---
 
@@ -23,6 +24,7 @@ Prefer `<Link>` over `useNavigate()` for proper `<a>` tags, right-click, accessi
 <Link
   to="/posts/$postId"
   params={{ postId: '123' }}
+  search={{ tab: 'comments' }}
   activeProps={{ className: 'nav-link-active', 'aria-current': 'page' }}
   activeOptions={{ exact: true }}
   preload="intent"
@@ -35,6 +37,8 @@ Reserve `useNavigate()` for side effects: form submissions, auth redirects, prog
 
 ## Active Link Styling
 
+Three approaches, from simplest to most flexible:
+
 ```tsx
 // 1. activeProps / inactiveProps
 <Link
@@ -45,7 +49,7 @@ Reserve `useNavigate()` for side effects: form submissions, auth redirects, prog
   Dashboard
 </Link>
 
-// 2. data-status attribute (CSS-driven)
+// 2. data-status attribute (CSS-driven, no re-render on state change)
 <Link to="/posts" className="data-[status=active]:text-primary">
   Posts
 </Link>
@@ -54,6 +58,15 @@ Reserve `useNavigate()` for side effects: form submissions, auth redirects, prog
 const matchRoute = useMatchRoute();
 const isOnPosts = matchRoute({ to: '/posts', fuzzy: true });
 ```
+
+`activeOptions` controls matching behavior:
+
+| Option              | Default | Effect                                    |
+| ------------------- | ------- | ----------------------------------------- |
+| `exact`             | `false` | Match only exact path (not children)      |
+| `includeSearch`     | `false` | Include search params in active check     |
+| `includeHash`       | `false` | Include hash in active check              |
+| `explicitUndefined` | `false` | Treat undefined search params as explicit |
 
 ## Relative Navigation
 
@@ -75,18 +88,51 @@ navigate({ hash: 'section-2' });
 
 ## Route Masks (Modal URLs)
 
+Route masks display one URL while internally routing to another. Use for modals, side panels, and quick views:
+
 ```tsx
-<Link
-  to="/posts/$postId"
-  params={{ postId: post.id }}
-  mask={{ to: '/posts', search: { preview: post.id } }}
->
-  {post.title}
-</Link>
-// URL shows: /posts?preview=123 — Router navigates to: /posts/123
+function PostList() {
+  return (
+    <div>
+      {posts.map((post) => (
+        <Link
+          key={post.id}
+          to="/posts/$postId"
+          params={{ postId: post.id }}
+          mask={{
+            to: '/posts',
+            search: { preview: post.id },
+          }}
+        >
+          {post.title}
+        </Link>
+      ))}
+      <Outlet />
+    </div>
+  );
+}
 ```
 
+Programmatic navigation with mask:
+
+```ts
+navigate({
+  to: '/posts/$postId',
+  params: { postId: post.id },
+  mask: { to: '/posts' },
+});
+```
+
+| Scenario          | URL Shown  | Actual Route |
+| ----------------- | ---------- | ------------ |
+| Click masked link | Masked URL | Real route   |
+| Share/copy URL    | Real URL   | Real route   |
+| Direct navigation | Real URL   | Real route   |
+| Browser refresh   | URL in bar | Matches URL  |
+
 ## Block Navigation (Dirty Forms)
+
+Basic blocking with confirmation dialog:
 
 ```ts
 import { useBlocker } from '@tanstack/react-router';
@@ -100,6 +146,36 @@ function EditForm() {
       return !window.confirm('You have unsaved changes. Leave anyway?');
     },
   });
+}
+```
+
+Advanced blocking with custom UI using `withResolver`:
+
+```tsx
+function EditForm() {
+  const [isDirty, setIsDirty] = useState(false);
+
+  const { proceed, reset, status } = useBlocker({
+    shouldBlockFn: ({ current, next }) => {
+      if (!isDirty) return false;
+      return true;
+    },
+    enableBeforeUnload: true,
+    withResolver: true,
+  });
+
+  return (
+    <div>
+      <form>{/* form fields */}</form>
+      {status === 'blocked' ? (
+        <dialog open>
+          <p>You have unsaved changes.</p>
+          <button onClick={reset}>Stay</button>
+          <button onClick={proceed}>Leave</button>
+        </dialog>
+      ) : null}
+    </div>
+  );
 }
 ```
 
@@ -122,15 +198,28 @@ function PostPage() {
 
 ## Scroll Restoration
 
+Enable globally in router config:
+
 ```ts
-// Custom element scroll restoration
+const router = createRouter({
+  routeTree,
+  scrollRestoration: true,
+});
+```
+
+Custom element scroll restoration:
+
+```ts
 export const Route = createFileRoute('/posts')({
   scrollRestoration: {
     getElement: () => document.getElementById('posts-container'),
   },
 });
+```
 
-// Preserve scroll when updating filters
+Preserve scroll when updating filters:
+
+```ts
 navigate({
   search: (prev) => ({ ...prev, filter }),
   resetScroll: false,

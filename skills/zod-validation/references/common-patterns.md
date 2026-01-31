@@ -1,6 +1,6 @@
 ---
 title: Common Patterns
-description: Practical Zod patterns for form validation, API responses, environment variables, schema composition, error formatting, and branded types
+description: Practical Zod patterns for form validation, API responses, environment variables, schema composition, recursive types, branded types, and error formatting
 tags:
   [
     form,
@@ -13,10 +13,10 @@ tags:
     extend,
     merge,
     partial,
-    error,
-    formatting,
     branded,
-    ZodError,
+    recursive,
+    lazy,
+    getter,
   ]
 ---
 
@@ -63,6 +63,19 @@ const UserResponse = ApiResponse(
 );
 ```
 
+### Paginated Response
+
+```ts
+const PaginatedResponse = <T extends z.ZodType>(itemSchema: T) =>
+  z.object({
+    items: z.array(itemSchema),
+    total: z.number().int().nonnegative(),
+    page: z.number().int().positive(),
+    pageSize: z.number().int().positive(),
+    hasNext: z.boolean(),
+  });
+```
+
 ## Environment Variables
 
 ```ts
@@ -107,25 +120,60 @@ const fullProfileSchema = baseUserSchema.merge(
 );
 ```
 
-## Error Formatting
+## Recursive Types (v4 Getter Syntax)
+
+v4 supports getter-based recursion that retains full object methods (`.pick()`, `.partial()`, `.extend()`):
 
 ```ts
-function formatZodErrors(error: z.ZodError): Record<string, string> {
-  const errors: Record<string, string> = {};
-  for (const issue of error.issues) {
-    const path = issue.path.join('.');
-    if (!errors[path]) {
-      errors[path] = issue.message;
-    }
-  }
-  return errors;
-}
+// Single recursion
+const Category = z.object({
+  name: z.string(),
+  get subcategories() {
+    return z.array(Category);
+  },
+});
 
-const result = RegisterSchema.safeParse(formData);
-if (!result.success) {
-  const fieldErrors = formatZodErrors(result.error);
-  // { email: "Invalid email", confirmPassword: "Passwords must match" }
-}
+type Category = z.infer<typeof Category>;
+// { name: string; subcategories: Category[] }
+```
+
+### Mutually Recursive Types
+
+```ts
+const User = z.object({
+  email: z.email(),
+  get posts() {
+    return z.array(Post);
+  },
+});
+
+const Post = z.object({
+  title: z.string(),
+  get author() {
+    return User;
+  },
+});
+
+// Full object methods still work
+Post.pick({ title: true });
+Post.partial();
+Post.extend({ publishDate: z.date() });
+```
+
+### Legacy Recursive Types (z.lazy)
+
+Still supported but the getter syntax is preferred in v4:
+
+```ts
+type Category = {
+  name: string;
+  children: Category[];
+};
+
+const CategorySchema: z.ZodType<Category> = z.object({
+  name: z.string(),
+  children: z.lazy(() => z.array(CategorySchema)),
+});
 ```
 
 ## Branded Types
@@ -145,16 +193,30 @@ const userId = UserId.parse('550e8400-e29b-41d4-a716-446655440000');
 getUser(userId); // OK
 ```
 
-## Recursive Schemas
+## Intersection
 
 ```ts
-type Category = {
-  name: string;
-  children: Category[];
-};
-
-const CategorySchema: z.ZodType<Category> = z.object({
-  name: z.string(),
-  children: z.lazy(() => z.array(CategorySchema)),
+const HasId = z.object({ id: z.string() });
+const HasTimestamps = z.object({
+  createdAt: z.date(),
+  updatedAt: z.date(),
 });
+
+// Combine schemas with intersection
+const Entity = z.intersection(HasId, HasTimestamps);
+// Shorthand
+const Entity2 = HasId.and(HasTimestamps);
+```
+
+## Preprocess
+
+Transform input before schema validation:
+
+```ts
+const CommaSeparated = z.preprocess(
+  (val) => (typeof val === 'string' ? val.split(',') : val),
+  z.array(z.string()),
+);
+
+CommaSeparated.parse('a,b,c'); // ["a", "b", "c"]
 ```

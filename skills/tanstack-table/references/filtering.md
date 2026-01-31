@@ -124,7 +124,35 @@ const table = useReactTable({
 });
 ```
 
-## Faceted Filters (Server-Side)
+## Client-Side Faceted Filters
+
+Use faceted row models for local filter option counts:
+
+```tsx
+import {
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFacetedMinMaxValues,
+} from '@tanstack/react-table';
+
+const table = useReactTable({
+  data,
+  columns,
+  getCoreRowModel: getCoreRowModel(),
+  getFilteredRowModel: getFilteredRowModel(),
+  getFacetedRowModel: getFacetedRowModel(),
+  getFacetedUniqueValues: getFacetedUniqueValues(),
+  getFacetedMinMaxValues: getFacetedMinMaxValues(),
+});
+
+// Get unique values for a column (for building filter dropdowns)
+const uniqueValues = column.getFacetedUniqueValues(); // Map<value, count>
+
+// Get min/max for a numeric column (for range filters)
+const [min, max] = column.getFacetedMinMaxValues() ?? [0, 0];
+```
+
+## Server-Side Faceted Filters
 
 Fetch distinct values from the server and use them as filter options:
 
