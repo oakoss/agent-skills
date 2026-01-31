@@ -1,16 +1,18 @@
 ---
 title: Middleware
-description: Persist, devtools, immer middleware configuration, combining middlewares, custom middleware, and TypeScript patterns
+description: Persist, devtools, immer, subscribeWithSelector middleware configuration, combining middlewares, custom middleware, custom storage, and TypeScript patterns
 tags:
   [
     middleware,
     persist,
     devtools,
     immer,
+    subscribeWithSelector,
     custom,
     combine,
     localStorage,
     createJSONStorage,
+    superjson,
   ]
 ---
 
@@ -19,6 +21,7 @@ tags:
 ## Persist Middleware
 
 ```ts
+import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 const useStore = create<UserPreferences>()(
@@ -59,6 +62,11 @@ persist(
     name: 'app-storage',
     version: 2,
     migrate: (persistedState: any, version: number) => {
+      if (version === 0) {
+        persistedState.position = { x: persistedState.x, y: persistedState.y };
+        delete persistedState.x;
+        delete persistedState.y;
+      }
       if (version === 1) {
         return { ...persistedState, newField: 'default' };
       }
@@ -75,6 +83,44 @@ persist((set) => ({ user: null, theme: 'dark', temp: 0 }), {
   name: 'settings',
   partialize: (state) => ({ theme: state.theme }),
 });
+```
+
+### Custom Storage with Superjson
+
+For complex types like `Map`, `Set`, `Date`, and `RegExp`:
+
+```ts
+import superjson from 'superjson';
+import { type PersistStorage } from 'zustand/middleware';
+
+interface AppState {
+  cache: Map<string, string>;
+  tags: Set<string>;
+  lastUpdated: Date;
+}
+
+const storage: PersistStorage<AppState> = {
+  getItem: (name) => {
+    const str = localStorage.getItem(name);
+    if (!str) return null;
+    return superjson.parse(str);
+  },
+  setItem: (name, value) => {
+    localStorage.setItem(name, superjson.stringify(value));
+  },
+  removeItem: (name) => localStorage.removeItem(name),
+};
+
+const useStore = create<AppState>()(
+  persist(
+    (set) => ({
+      cache: new Map(),
+      tags: new Set(),
+      lastUpdated: new Date(),
+    }),
+    { name: 'app-storage', storage },
+  ),
+);
 ```
 
 ## Devtools Middleware
@@ -103,14 +149,58 @@ For safe nested state mutations:
 ```ts
 import { immer } from 'zustand/middleware/immer';
 
+interface Todo {
+  id: string;
+  title: string;
+  done: boolean;
+}
+
+type TodoStore = {
+  todos: Record<string, Todo>;
+  toggleTodo: (todoId: string) => void;
+};
+
 const useStore = create<TodoStore>()(
   immer((set) => ({
-    todos: [],
-    addTodo: (text) =>
+    todos: {},
+    toggleTodo: (todoId) =>
       set((state) => {
-        state.todos.push({ id: Date.now().toString(), text });
+        state.todos[todoId].done = !state.todos[todoId].done;
       }),
   })),
+);
+```
+
+## SubscribeWithSelector Middleware
+
+Subscribe to specific state slices outside React components:
+
+```ts
+import { createStore } from 'zustand/vanilla';
+import { subscribeWithSelector } from 'zustand/middleware';
+
+type PositionStore = {
+  position: { x: number; y: number };
+  setPosition: (pos: { x: number; y: number }) => void;
+};
+
+const store = createStore<PositionStore>()(
+  subscribeWithSelector((set) => ({
+    position: { x: 0, y: 0 },
+    setPosition: (position) => set({ position }),
+  })),
+);
+
+// Subscribe to a slice of state
+store.subscribe(
+  (state) => state.position,
+  (position) => console.log('Position changed:', position),
+);
+
+// Subscribe to a nested value
+store.subscribe(
+  (state) => state.position.x,
+  (x) => console.log('X changed:', x),
 );
 ```
 
@@ -135,10 +225,21 @@ Outer middleware wraps inner. Devtools should be outermost for debugging visibil
 ## Custom Middleware
 
 ```ts
-const logger = (f, name) => (set, get, store) => {
-  const loggedSet = (...a) => {
+import { type StateCreator, type StoreMutatorIdentifier } from 'zustand';
+
+type Logger = <
+  T,
+  Mps extends [StoreMutatorIdentifier, unknown][] = [],
+  Mcs extends [StoreMutatorIdentifier, unknown][] = [],
+>(
+  f: StateCreator<T, Mps, Mcs>,
+  name?: string,
+) => StateCreator<T, Mps, Mcs>;
+
+const logger: Logger = (f, name) => (set, get, store) => {
+  const loggedSet: typeof set = (...a) => {
     set(...a);
-    console.log(`[${name}]:`, get());
+    console.log(`[${name ?? 'store'}]:`, get());
   };
   return f(loggedSet, get, store);
 };
@@ -146,25 +247,10 @@ const logger = (f, name) => (set, get, store) => {
 
 ## TypeScript with Middleware
 
-### With Devtools
-
-```ts
-const useStore = create<Store>()(
-  devtools(
-    (set) => ({
-      count: 0,
-      increment: () =>
-        set((state) => ({ count: state.count + 1 }), undefined, 'increment'),
-    }),
-    { name: 'Store' },
-  ),
-);
-```
-
 ### Slices with Middleware Mutators
 
 ```ts
-import { StateCreator } from 'zustand';
+import { type StateCreator } from 'zustand';
 
 const createBearSlice: StateCreator<
   BearSlice & FishSlice,
@@ -175,25 +261,5 @@ const createBearSlice: StateCreator<
   bears: 0,
   addBear: () =>
     set((state) => ({ bears: state.bears + 1 }), undefined, 'bear/add'),
-});
-```
-
-## Testing Zustand Stores
-
-```ts
-import { describe, it, expect, beforeEach } from 'vitest';
-import { createCounterStore } from './counter-store';
-
-describe('Counter Store', () => {
-  let store;
-  beforeEach(() => {
-    store = createCounterStore();
-  });
-
-  it('increments count', () => {
-    const { increment } = store.getState();
-    increment();
-    expect(store.getState().count).toBe(1);
-  });
 });
 ```

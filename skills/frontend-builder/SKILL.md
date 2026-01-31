@@ -1,106 +1,59 @@
 ---
 name: frontend-builder
-description: Build modern React/Next.js frontends. Use when creating web applications, choosing frontend stack, structuring components, or implementing UI/UX designs. Covers React, Next.js, Tailwind CSS, and component patterns.
-version: 1.0.0
+description: 'Builds modern React and Next.js frontends. Use when creating web applications, choosing frontend stack, structuring components, implementing UI/UX designs, or setting up project architecture. Use for React, Next.js, Tailwind CSS, shadcn/ui, server components, and component patterns.'
 ---
 
 # Frontend Builder
 
-Build maintainable, performant React and Next.js frontends.
+Builds maintainable, performant React and Next.js frontends using a server-first architecture. Covers component design, state management, data fetching, forms, styling, and performance optimization. Not for backend API design, database schema, or deployment infrastructure.
 
-## Core Principles
+## Quick Reference
 
-| Principle              | Description                                        |
-| ---------------------- | -------------------------------------------------- |
-| Component Composition  | Small, reusable, single-purpose components         |
-| State Proximity        | Keep state as close to where it's used as possible |
-| Performance by Default | Optimize rendering, code splitting, asset loading  |
-| Developer Experience   | Clear naming, consistent patterns, helpful errors  |
-
-## Framework Selection
-
-| Criterion          | React + Vite         | Next.js       |
-| ------------------ | -------------------- | ------------- |
-| SEO needed         | No                   | Yes           |
-| Server rendering   | No                   | Yes           |
-| API routes         | No                   | Yes           |
-| Static hosting     | Yes                  | Yes           |
-| Image optimization | Manual               | Built-in      |
-| Recommended for    | SPAs, internal tools | Most projects |
-
-## Component Types
-
-| Type    | Purpose                     | Example Path                       |
-| ------- | --------------------------- | ---------------------------------- |
-| Page    | Route entry point           | `app/users/page.tsx`               |
-| Feature | Business logic + data       | `components/features/UserList.tsx` |
-| UI      | Reusable, no business logic | `components/ui/button.tsx`         |
-| Layout  | Page structure              | `components/layouts/Header.tsx`    |
-
-## State Management Decision
-
-| Scope                  | Solution                    |
-| ---------------------- | --------------------------- |
-| Single component       | `useState`                  |
-| Parent + children      | Props or `useState` + props |
-| Siblings               | Lift state to common parent |
-| App-wide (theme, auth) | Context API                 |
-| Complex app state      | Zustand                     |
-
-## Data Fetching
-
-| Pattern              | When to Use                                                |
-| -------------------- | ---------------------------------------------------------- |
-| TanStack Query       | Client-side fetching with caching, mutations, invalidation |
-| Server Components    | Next.js App Router — data fetched on server                |
-| `use client` + Query | Interactive lists with client-side state                   |
-
-## Folder Structure (Next.js App Router)
-
-| Directory              | Contents                                     |
-| ---------------------- | -------------------------------------------- |
-| `app/`                 | Route groups, pages, layouts, API routes     |
-| `components/ui/`       | shadcn/ui components (button, input, dialog) |
-| `components/features/` | Feature components (UserList, UserProfile)   |
-| `components/layouts/`  | Header, Footer, Sidebar                      |
-| `lib/`                 | Utility functions, API client, Zod schemas   |
-| `hooks/`               | Custom React hooks                           |
-| `stores/`              | Zustand stores                               |
-
-## Styling Preference
-
-| Approach                 | When to Use                            |
-| ------------------------ | -------------------------------------- |
-| Tailwind CSS + shadcn/ui | Recommended default                    |
-| CSS Modules              | Legacy projects, CSS-in-JS alternative |
-| Styled Components        | Existing projects using it             |
+| Pattern          | Approach                                                    | Key Points                                                 |
+| ---------------- | ----------------------------------------------------------- | ---------------------------------------------------------- |
+| Framework        | Next.js App Router (default), React + Vite (SPAs)           | Server-first rendering, file-based routing                 |
+| Components       | Page, Feature, UI, Layout types                             | Single responsibility, typed props, composition            |
+| Server vs Client | Server Components default, `'use client'` at leaf nodes     | Push interactivity to edges of component tree              |
+| State (local)    | `useState`, props, lift to parent                           | Keep state close to where it is consumed                   |
+| State (global)   | Context API (theme, auth), Zustand (complex)                | Avoid Context for frequently changing values               |
+| Data fetching    | Server Components (server), TanStack Query (client)         | Server Actions for mutations, `revalidatePath` for cache   |
+| Forms            | React Hook Form + Zod, or Server Actions + `useActionState` | Schema validation, optimistic updates with `useOptimistic` |
+| Styling          | Tailwind CSS v4 + shadcn/ui                                 | CSS-first config with `@theme`, OKLCH colors               |
+| Performance      | Suspense streaming, code splitting, memoization             | `React.lazy()`, `next/dynamic`, selective `memo()`         |
+| Error handling   | Error boundaries, `error.tsx` per route                     | Wrap feature sections, not individual components           |
 
 ## Common Mistakes
 
-| Mistake                                            | Correct Pattern                                                        |
-| -------------------------------------------------- | ---------------------------------------------------------------------- |
-| Giant multi-responsibility component               | Break into focused sub-components with single purposes                 |
-| Placing all state at the top of the component tree | Keep state as close to where it is consumed as possible                |
-| Using `useEffect` to compute derived data          | Use `useMemo` for derived values; reserve `useEffect` for side effects |
-| Missing error boundaries around feature sections   | Wrap feature areas with `ErrorBoundary` to prevent full-page crashes   |
-| No code splitting on heavy routes                  | Use `React.lazy()` or Next.js `dynamic()` for route-level splitting    |
+| Mistake                                                           | Correct Pattern                                                                                   |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Adding `'use client'` to every component                          | Default to Server Components; add `'use client'` only for interactivity                           |
+| Giant multi-responsibility component                              | Break into focused sub-components with single purposes                                            |
+| Placing all state at the top of the component tree                | Keep state as close to where it is consumed as possible                                           |
+| Using `useEffect` to compute derived data                         | Use `useMemo` for derived values; reserve `useEffect` for side effects                            |
+| Missing error boundaries around feature sections                  | Wrap feature areas with error boundaries to prevent full-page crashes                             |
+| Creating API routes for simple mutations                          | Use Server Actions with `'use server'` for form submissions and mutations                         |
+| Passing non-serializable props to Client Components               | Props crossing server/client boundary must be serializable (no functions, classes)                |
+| Using `tailwind.config.js` with Tailwind v4                       | Use CSS-first configuration with `@theme` directive in CSS file                                   |
+| Fetching data in Client Components when Server Components suffice | Fetch in Server Components by default; use TanStack Query only when client-side caching is needed |
 
 ## Delegation
 
-When building frontends, delegate to:
+When building frontends, delegate to specialized skills:
 
-- `react` — React hooks and performance patterns
-- `tanstack-query` — Data fetching and caching
-- `tanstack-form` — Form handling and validation
-- `tailwind` — Tailwind CSS patterns
-- `design-system` — Token hierarchy and component architecture
-- `performance-optimizer` — Performance profiling and optimization
+- `react` -- React hooks, rendering patterns, and performance optimization
+- `nextjs` -- Next.js routing, middleware, and deployment configuration
+- `tanstack-query` -- Client-side data fetching, caching, and mutations
+- `tanstack-form` -- Complex form handling and field-level validation
+- `tailwind` -- Tailwind CSS utility patterns and responsive design
+- `design-system` -- Token hierarchy and component architecture
+- `performance-optimizer` -- Profiling, bundle analysis, and Core Web Vitals
 
 ## References
 
-- [Component Architecture](references/component-architecture.md) — Page, feature, and UI component patterns with TypeScript
-- [State Management](references/state-management.md) — useState, Context API, and Zustand patterns
-- [Data Fetching](references/data-fetching.md) — TanStack Query and Next.js Server Components
-- [Forms and Validation](references/forms.md) — React Hook Form with Zod validation
-- [Styling](references/styling.md) — Tailwind CSS and CSS Modules patterns
-- [Performance and Errors](references/performance-and-errors.md) — React memoization, Next.js optimization, error boundaries
+- [Component Architecture](references/component-architecture.md) -- Component types, folder structure, TypeScript patterns, and composition
+- [Server Components](references/server-components.md) -- Server/client boundary, Server Actions, Suspense streaming, and data flow
+- [State Management](references/state-management.md) -- useState, Context API, Zustand, and URL state patterns
+- [Data Fetching](references/data-fetching.md) -- TanStack Query, Server Components data, and cache revalidation
+- [Forms and Validation](references/forms.md) -- React Hook Form, Zod schemas, Server Actions, and useActionState
+- [Styling](references/styling.md) -- Tailwind CSS v4, shadcn/ui, CSS-first config, and responsive patterns
+- [Performance and Errors](references/performance-and-errors.md) -- Memoization, code splitting, Suspense streaming, and error boundaries

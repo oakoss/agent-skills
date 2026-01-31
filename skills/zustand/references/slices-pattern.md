@@ -1,7 +1,16 @@
 ---
 title: Slices Pattern
-description: Splitting stores into functional modules with StateCreator, combining slices, cross-slice access, and TypeScript patterns
-tags: [slices, StateCreator, combine, cross-slice, architecture, domain]
+description: Splitting stores into functional modules with StateCreator, combining slices, shared slices, cross-slice access, and TypeScript patterns
+tags:
+  [
+    slices,
+    StateCreator,
+    combine,
+    cross-slice,
+    shared-slice,
+    architecture,
+    domain,
+  ]
 ---
 
 # Slices Pattern
@@ -14,7 +23,7 @@ A slice is a function that returns a part of the state and actions:
 
 ```ts
 // src/stores/slices/user-slice.ts
-import { StateCreator } from 'zustand';
+import { type StateCreator } from 'zustand';
 
 export interface UserSlice {
   name: string;
@@ -72,24 +81,32 @@ export const createAuthSlice: StateCreator<UserSlice & AuthSlice> = (
   isLoggedIn: false,
   login: () => {
     set({ isLoggedIn: true });
-    console.log(`User ${get().name} logged in`); // Accessing UserSlice state
+    console.log(`User ${get().name} logged in`);
   },
 });
 ```
 
-## Complete Example
+## Shared Slices
+
+Create slices that compose actions from other slices:
 
 ```ts
-import { create, StateCreator } from 'zustand';
+import { create, type StateCreator } from 'zustand';
 
 interface BearSlice {
   bears: number;
   addBear: () => void;
+  eatFish: () => void;
 }
 
 interface FishSlice {
   fishes: number;
   addFish: () => void;
+}
+
+interface SharedSlice {
+  addBoth: () => void;
+  getBoth: () => number;
 }
 
 const createBearSlice: StateCreator<
@@ -100,6 +117,7 @@ const createBearSlice: StateCreator<
 > = (set) => ({
   bears: 0,
   addBear: () => set((state) => ({ bears: state.bears + 1 })),
+  eatFish: () => set((state) => ({ fishes: state.fishes - 1 })),
 });
 
 const createFishSlice: StateCreator<
@@ -112,9 +130,23 @@ const createFishSlice: StateCreator<
   addFish: () => set((state) => ({ fishes: state.fishes + 1 })),
 });
 
-const useStore = create<BearSlice & FishSlice>()((...a) => ({
+const createSharedSlice: StateCreator<
+  BearSlice & FishSlice,
+  [],
+  [],
+  SharedSlice
+> = (_set, get) => ({
+  addBoth: () => {
+    get().addBear();
+    get().addFish();
+  },
+  getBoth: () => get().bears + get().fishes,
+});
+
+const useBoundStore = create<BearSlice & FishSlice & SharedSlice>()((...a) => ({
   ...createBearSlice(...a),
   ...createFishSlice(...a),
+  ...createSharedSlice(...a),
 }));
 ```
 
@@ -152,6 +184,7 @@ const createBearSlice: StateCreator<AllSlices, [], [], BearSlice> = (set) => ({
 
 - **Atomic Actions**: Keep actions close to the data they modify
 - **Type Safety**: Use `StateCreator` type to ensure slices access the combined store type
-- **Avoid Duplication**: Don't repeat state keys across slices
+- **Avoid Duplication**: Do not repeat state keys across slices
 - **File Organization**: One slice per file in `stores/slices/`
 - **Naming**: Name slices by domain (user, auth, cart), not by feature
+- **Shared Slices**: Use a shared slice for cross-cutting actions that coordinate between domains

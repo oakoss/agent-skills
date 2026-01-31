@@ -1,7 +1,19 @@
 ---
 title: Store Patterns and TypeScript
-description: Basic store creation, TypeScript double-parentheses syntax, selectors, derived values, async actions, reset, and vanilla stores
-tags: [store, TypeScript, selectors, useShallow, async, reset, vanilla, create]
+description: Basic store creation, TypeScript double-parentheses syntax, selectors, useShallow, derived values, async actions, reset with getInitialState, vanilla stores, and auto-generating selectors
+tags:
+  [
+    store,
+    TypeScript,
+    selectors,
+    useShallow,
+    async,
+    reset,
+    vanilla,
+    create,
+    auto-selectors,
+    getInitialState,
+  ]
 ---
 
 # Store Patterns and TypeScript
@@ -40,7 +52,7 @@ const useStore = create<MyStore>()((set) => ({
 }));
 ```
 
-The currying syntax `create<T>()()` enables middleware type inference in TypeScript.
+The currying syntax `create<T>()()` enables middleware type inference in TypeScript. Always use it even without middleware for future-proofing.
 
 ## Store Interface Pattern
 
@@ -88,12 +100,14 @@ const bears = useStore((state) => state.bears);
 const fishes = useStore((state) => state.fishes);
 
 // Good - useShallow for multiple values
-import { useShallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 
 const { bears, fishes } = useStore(
   useShallow((state) => ({ bears: state.bears, fishes: state.fishes })),
 );
 ```
+
+`useShallow` performs shallow comparison on the selector output, preventing re-renders when the selected values have not changed.
 
 ### Computed/Derived Selectors
 
@@ -121,13 +135,17 @@ const useAsyncStore = create<AsyncStore>()((set) => ({
 }));
 ```
 
-## Reset Store
+## Reset Store with getInitialState
+
+Use `store.getInitialState()` which Zustand provides automatically:
 
 ```ts
-const initialState = { count: 0, name: '' };
-const useStore = create<ResettableStore>()((set) => ({
-  ...initialState,
-  reset: () => set(initialState),
+const useStore = create<State & Actions>()((set, get, store) => ({
+  count: 0,
+  name: '',
+  reset: () => {
+    set(store.getInitialState());
+  },
 }));
 ```
 
@@ -148,7 +166,7 @@ store.getState().increment();
 ## Custom Hook with Types
 
 ```ts
-import { useStore } from 'zustand';
+import { createStore, useStore } from 'zustand';
 
 const bearStore = createStore<BearStore>()((set) => ({
   bears: 0,
@@ -158,6 +176,46 @@ const bearStore = createStore<BearStore>()((set) => ({
 function useBearStore<T>(selector: (state: BearStore) => T): T {
   return useStore(bearStore, selector);
 }
+```
+
+## Auto-Generating Selectors
+
+Create typed `store.use.field()` hooks automatically instead of writing selectors manually:
+
+```ts
+import { type StoreApi, useStore, createStore } from 'zustand';
+
+type WithSelectors<S> = S extends { getState: () => infer T }
+  ? S & { use: { [K in keyof T]: () => T[K] } }
+  : never;
+
+const createSelectors = <S extends StoreApi<object>>(_store: S) => {
+  const store = _store as WithSelectors<typeof _store>;
+  store.use = {} as any;
+  for (const k of Object.keys(store.getState())) {
+    (store.use as any)[k] = () =>
+      useStore(_store, (s) => s[k as keyof typeof s]);
+  }
+  return store;
+};
+
+interface BearState {
+  bears: number;
+  increase: (by: number) => void;
+  increment: () => void;
+}
+
+const store = createStore<BearState>()((set) => ({
+  bears: 0,
+  increase: (by) => set((state) => ({ bears: state.bears + by })),
+  increment: () => set((state) => ({ bears: state.bears + 1 })),
+}));
+
+const useBearStore = createSelectors(store);
+
+// Usage - no manual selector needed
+const bears = useBearStore.use.bears();
+const increment = useBearStore.use.increment();
 ```
 
 ## Direct State Mutation Anti-Pattern

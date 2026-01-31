@@ -1,6 +1,6 @@
 ---
 title: Hooks and Server Actions
-description: React 19 use() API, useActionState, useOptimistic, useTransition, and useEffectEvent patterns
+description: React 19 use() API, useActionState, useOptimistic, useTransition, useEffectEvent, and useId patterns
 tags:
   [
     hooks,
@@ -8,6 +8,8 @@ tags:
     useActionState,
     useOptimistic,
     useTransition,
+    useEffectEvent,
+    useId,
     server-actions,
     forms,
   ]
@@ -17,7 +19,7 @@ tags:
 
 ## The `use()` API (React 19)
 
-Replaces the `useEffect` + `useState` fetch pattern. Unwraps promises or context values within the render body.
+Replaces the `useEffect` + `useState` fetch pattern. Unwraps promises or context values within the render body. Must be used inside a Suspense boundary when reading promises.
 
 ```tsx
 // Bad: The old useEffect boilerplate
@@ -67,6 +69,22 @@ function DataSummary({ dataPromise }: { dataPromise: Promise<Data> }) {
 
 Both components share the same promise, so only one fetch occurs.
 
+### Reading Context with use()
+
+`use()` can also read context, replacing `useContext`. Unlike `useContext`, it can be called conditionally:
+
+```tsx
+import { use } from 'react';
+
+function StatusIcon({ isLoggedIn }: { isLoggedIn: boolean }) {
+  if (isLoggedIn) {
+    const theme = use(ThemeContext);
+    return <Icon color={theme.primary} />;
+  }
+  return <Icon color="gray" />;
+}
+```
+
 ## `useActionState` (Form Management)
 
 Built-in pending states and error states for forms with Server Actions:
@@ -92,32 +110,67 @@ function ProfileForm() {
 }
 ```
 
+### Server Action Pattern
+
+```tsx
+'use server';
+
+export async function updateProfile(
+  prevState: { message: string | null },
+  formData: FormData,
+) {
+  const username = formData.get('username');
+  if (!username) {
+    return { message: 'Username is required' };
+  }
+  await db.user.update({ where: { id: session.userId }, data: { username } });
+  return { message: 'Profile updated' };
+}
+```
+
 ## `useOptimistic` (Instant UI Feedback)
 
 Show temporary state while an async action is in flight:
 
 ```tsx
-import { useOptimistic } from 'react';
+import { useOptimistic, useRef, startTransition } from 'react';
 
-function ChatList({ messages }) {
+function ChatList({
+  messages,
+  sendMessage,
+}: {
+  messages: Message[];
+  sendMessage: (formData: FormData) => Promise<void>;
+}) {
+  const formRef = useRef<HTMLFormElement>(null);
   const [optimisticMessages, addOptimisticMessage] = useOptimistic(
     messages,
-    (state, newMessage) => [...state, { text: newMessage, sending: true }],
+    (state, newMessage: string) => [
+      ...state,
+      { text: newMessage, sending: true },
+    ],
   );
 
-  async function formAction(formData) {
-    const text = formData.get('message');
+  function formAction(formData: FormData) {
+    const text = formData.get('message') as string;
     addOptimisticMessage(text);
-    await sendMessage(text);
+    formRef.current?.reset();
+    startTransition(async () => {
+      await sendMessage(formData);
+    });
   }
 
   return (
     <div>
-      {optimisticMessages.map((m) => (
-        <div key={m.id}>{m.text}</div>
+      {optimisticMessages.map((m, i) => (
+        <div key={i}>
+          {m.text}
+          {m.sending ? <small> (Sending...)</small> : null}
+        </div>
       ))}
-      <form action={formAction}>
+      <form action={formAction} ref={formRef}>
         <input name="message" />
+        <button type="submit">Send</button>
       </form>
     </div>
   );
@@ -140,14 +193,49 @@ const handleSearch = (query: string) => {
 };
 ```
 
-## `useEffectEvent` (React 19.2+)
-
-For logic that depends on reactive values but shouldn't trigger the effect:
+### Calling Server Functions with Transitions
 
 ```tsx
-function Chat({ roomId, theme }) {
+'use client';
+
+import { useState, useTransition } from 'react';
+import { updateName } from './actions';
+
+function UpdateName() {
+  const [name, setName] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const submitAction = () => {
+    startTransition(async () => {
+      const result = await updateName(name);
+      if (result.error) {
+        setError(result.error);
+      } else {
+        setName('');
+      }
+    });
+  };
+
+  return (
+    <form action={submitAction}>
+      <input type="text" name="name" disabled={isPending} />
+      {error ? <span>Failed: {error}</span> : null}
+    </form>
+  );
+}
+```
+
+## `useEffectEvent` (React 19.2)
+
+For logic that depends on reactive values but should not trigger the effect. Stable in React 19.2+, replacing the old `useRef` workaround pattern.
+
+```tsx
+import { useEffect, useEffectEvent } from 'react';
+
+function Chat({ roomId, theme }: { roomId: string; theme: string }) {
   const onConnected = useEffectEvent(() => {
-    logAnalytics('Connected', { theme }); // theme captured but doesn't re-run effect
+    logAnalytics('Connected', { theme }); // reads latest theme
   });
 
   useEffect(() => {
@@ -157,6 +245,34 @@ function Chat({ roomId, theme }) {
   }, [roomId]); // theme is NOT a dependency
 }
 ```
+
+Rules for `useEffectEvent`:
+
+- Call at the top level of your component
+- Only call the returned function inside `useEffect`, `useLayoutEffect`, or `useInsertionEffect`
+- Do not pass effect events to other components or hooks
+
+## `useId` (Hydration-Safe IDs)
+
+Generates unique IDs that are consistent between server and client rendering:
+
+```tsx
+import { useId } from 'react';
+
+function PasswordField() {
+  const passwordId = useId();
+  const hintId = useId();
+  return (
+    <div>
+      <label htmlFor={passwordId}>Password</label>
+      <input id={passwordId} type="password" aria-describedby={hintId} />
+      <p id={hintId}>Must be at least 8 characters</p>
+    </div>
+  );
+}
+```
+
+Never use `Math.random()`, incrementing counters, or `Date.now()` for IDs in server-rendered components.
 
 ## React Query (Client-Side Server State)
 

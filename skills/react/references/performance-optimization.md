@@ -198,9 +198,7 @@ function EditorButton({ onClick }: { onClick: () => void }) {
 
 ## Re-render Optimization (MEDIUM)
 
-### React Compiler (Forget)
-
-Automatic memoization for code following Rules of React. Check for "Memo" badge in React DevTools. Requirements: pure render functions, no side effects, treat props/state as immutable.
+For React Compiler rules, manual memoization patterns, and detailed re-render diagnosis, see the dedicated React Compiler reference.
 
 ### useMemo Targeting
 
@@ -256,7 +254,7 @@ function Parent() {
 - **`<Activity>` component** (React 19.2+) -- show/hide with preserved state
 - **CSS `content-visibility`** -- skip rendering for off-screen content
 - **Hoist static JSX** -- extract constant JSX outside component functions
-- **Hydration mismatch prevention** -- use inline scripts for client-only data
+- **Hydration mismatch prevention** -- use `useId` for stable IDs, inline scripts for client-only data
 - **Ternary conditionals** -- prefer `condition ? <A /> : null` over `condition && <A />`
 
 ## JavaScript Micro-Optimizations (LOW-MEDIUM)

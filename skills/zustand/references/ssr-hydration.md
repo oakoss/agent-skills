@@ -1,6 +1,6 @@
 ---
 title: SSR and Hydration
-description: Next.js provider pattern, per-request stores, persist hydration handling, skipHydration, and onRehydrateStorage
+description: Next.js provider pattern, per-request stores, persist hydration handling, skipHydration, onRehydrateStorage, and scoped stores with Context
 tags:
   [
     SSR,
@@ -11,6 +11,7 @@ tags:
     createStore,
     skipHydration,
     useRef,
+    scoped,
   ]
 ---
 
@@ -28,18 +29,14 @@ Create a store instance per request and share via React Context:
 // src/providers/store-provider.tsx
 'use client';
 
-import { createContext, useContext, useRef } from 'react';
+import { createContext, useContext, useRef, type ReactNode } from 'react';
 import { useStore } from 'zustand';
 import { createCounterStore, type CounterStore } from '@/stores/counter-store';
 
 export const CounterStoreContext = createContext<CounterStore | null>(null);
 
-export const CounterStoreProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const storeRef = useRef<CounterStore>();
+export const CounterStoreProvider = ({ children }: { children: ReactNode }) => {
+  const storeRef = useRef<CounterStore>(undefined);
   if (!storeRef.current) {
     storeRef.current = createCounterStore();
   }
@@ -74,7 +71,7 @@ Pass initial data from a Server Component to the store via the Provider:
 
 ```tsx
 export const createCounterStore = (initState: Partial<CounterState> = {}) => {
-  return create<CounterStore>()((set) => ({
+  return createStore<CounterStore>()((set) => ({
     count: 0,
     ...initState,
     increment: () => set((state) => ({ count: state.count + 1 })),
@@ -88,7 +85,7 @@ export const CounterStoreProvider = ({
   children: React.ReactNode;
   initialCount: number;
 }) => {
-  const storeRef = useRef<CounterStore>();
+  const storeRef = useRef<CounterStore>(undefined);
   if (!storeRef.current) {
     storeRef.current = createCounterStore({ count: initialCount });
   }
@@ -97,6 +94,57 @@ export const CounterStoreProvider = ({
       {children}
     </CounterStoreContext.Provider>
   );
+};
+```
+
+## Scoped Stores with Dynamic Keys
+
+For multi-instance scenarios (tabs, panels), use a Map to hold store instances:
+
+```tsx
+'use client';
+
+import {
+  type ReactNode,
+  useState,
+  useCallback,
+  useContext,
+  createContext,
+} from 'react';
+import { createStore, useStore } from 'zustand';
+
+const StoresContext = createContext<Map<
+  string,
+  ReturnType<typeof createCounterStore>
+> | null>(null);
+
+export const StoresProvider = ({ children }: { children: ReactNode }) => {
+  const [stores] = useState(
+    () => new Map<string, ReturnType<typeof createCounterStore>>(),
+  );
+
+  return (
+    <StoresContext.Provider value={stores}>{children}</StoresContext.Provider>
+  );
+};
+
+export const useScopedStore = <T,>(
+  key: string,
+  selector: (state: CounterState) => T,
+): T => {
+  const stores = useContext(StoresContext);
+  if (!stores) {
+    throw new Error('useScopedStore must be used within StoresProvider');
+  }
+
+  const getOrCreate = useCallback(() => {
+    if (!stores.has(key)) {
+      stores.set(key, createCounterStore());
+    }
+    return stores.get(key)!;
+  }, [stores, key]);
+
+  return useStore(getOrCreate(), selector);
 };
 ```
 
@@ -185,17 +233,10 @@ export function MyComponent() {
 import { persist, createJSONStorage } from 'zustand/middleware';
 ```
 
-### Persist Race Condition (v5.0.9 and earlier)
-
-**Fix**: Upgrade to zustand v5.0.10+. No code changes needed.
-
-### Experimental SSR Safe Middleware
-
-`unstable_ssrSafe` middleware is available in v5.0.9+ but experimental. Continue using the `_hasHydrated` pattern until API stabilizes.
-
 ## Key Rules
 
 - Never read Zustand stores in React Server Components
 - Pass data via props from Server to Client components
 - Use `createStore` (not `create`) with the provider pattern
 - Each SSR request must get its own store instance
+- Use `useRef` (not `useState`) to hold the store reference in providers

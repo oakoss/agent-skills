@@ -8,7 +8,7 @@ tags: [performance, bundle-size, lazy-motion, virtualization, gpu, optimization]
 
 ## Bundle Size Reduction
 
-### LazyMotion (Recommended — 34 KB → 4.6 KB)
+### LazyMotion (Recommended -- 34 KB to 4.6 KB)
 
 ```tsx
 import { LazyMotion, domAnimation, m } from 'motion/react';
@@ -20,22 +20,41 @@ import { LazyMotion, domAnimation, m } from 'motion/react';
 </LazyMotion>;
 ```
 
-`domAnimation` includes transforms, opacity, gestures, layout, useScroll. For SVG path animations use `domMax` (~6 KB).
+`domAnimation` includes transforms, opacity, gestures, layout, and useScroll. For SVG path animations use `domMax` (~6 KB).
 
-### useAnimate Mini (Smallest — 2.3 KB)
+### Async Feature Loading
+
+Load features asynchronously for even smaller initial bundle:
+
+```tsx
+const loadFeatures = () =>
+  import('motion/dom-animation').then((res) => res.default);
+
+<LazyMotion features={loadFeatures} strict>
+  <m.div animate={{ opacity: 1 }}>Loaded async</m.div>
+</LazyMotion>;
+```
+
+The `strict` prop throws an error if `motion` is used instead of `m` inside LazyMotion.
+
+### useAnimate Mini (Smallest -- 2.3 KB)
 
 ```tsx
 import { useAnimate } from 'motion/react';
 
-const [scope, animate] = useAnimate();
+function Component() {
+  const [scope, animate] = useAnimate();
 
-useEffect(() => {
-  animate(scope.current, { opacity: 1, x: 0 });
-}, []);
+  useEffect(() => {
+    animate(scope.current, { opacity: 1, x: 0 });
+  }, []);
 
-<div ref={scope} style={{ opacity: 0, transform: 'translateX(-20px)' }}>
-  Content
-</div>;
+  return (
+    <div ref={scope} style={{ opacity: 0, transform: 'translateX(-20px)' }}>
+      Content
+    </div>
+  );
+}
 ```
 
 ### useAnimate Hybrid (17 KB)
@@ -45,22 +64,49 @@ Includes stagger support for imperative animations:
 ```tsx
 import { useAnimate, stagger } from 'motion/react';
 
-const [scope, animate] = useAnimate();
+function StaggeredList() {
+  const [scope, animate] = useAnimate();
 
-const handleAnimate = () => {
-  animate('li', { opacity: 1, x: 0 }, { delay: stagger(0.1) });
-};
+  const handleAnimate = () => {
+    animate('li', { opacity: 1, x: 0 }, { delay: stagger(0.1) });
+  };
 
-<ul ref={scope}>
-  {items.map((item) => (
-    <li key={item.id}>{item.text}</li>
-  ))}
-</ul>;
+  return (
+    <ul ref={scope}>
+      {items.map((item) => (
+        <li key={item.id} style={{ opacity: 0 }}>
+          {item.text}
+        </li>
+      ))}
+    </ul>
+  );
+}
 ```
+
+### Bundle Size Summary
+
+| Approach                  | Size   | Includes                              |
+| ------------------------- | ------ | ------------------------------------- |
+| useAnimate mini           | 2.3 KB | Imperative animations only            |
+| LazyMotion + domAnimation | 4.6 KB | Transforms, opacity, gestures, layout |
+| LazyMotion + domMax       | ~6 KB  | Above + SVG path animations           |
+| useAnimate hybrid         | 17 KB  | Imperative + stagger + selectors      |
+| Full `motion` component   | 34 KB  | All features                          |
 
 ## Hardware Acceleration
 
-Add `willChange` for animated transforms:
+### GPU-Accelerated Properties
+
+| Animate (GPU-accelerated)   | Avoid (triggers layout reflow)   |
+| --------------------------- | -------------------------------- |
+| `x`, `y`, `scale`, `rotate` | `width`, `height`                |
+| `opacity`                   | `top`, `left`, `right`, `bottom` |
+| `filter` (blur, brightness) | `padding`, `margin`              |
+| `clipPath`                  | `fontSize`                       |
+
+### willChange Hint
+
+Add `willChange` for frequently animated transforms:
 
 ```tsx
 <motion.div
@@ -69,14 +115,27 @@ Add `willChange` for animated transforms:
 />
 ```
 
-Animate `transform` and `opacity` (GPU-accelerated). Avoid `width`, `height`, `top`, `left` (triggers layout reflow). Use `layout` prop for size changes instead.
+Use sparingly -- adding `willChange` to too many elements wastes GPU memory.
+
+### Use layout Prop for Size Changes
+
+Instead of animating `width`/`height` directly, use the `layout` prop:
+
+```tsx
+<motion.div layout>
+  {isExpanded ? <LargeContent /> : <SmallContent />}
+</motion.div>
+```
+
+The `layout` prop uses FLIP (First, Last, Invert, Play) to animate via transforms instead of layout properties.
 
 ## Large Lists (50+ Items)
 
-### Virtualization (Recommended)
+### Virtualization (Best for 100+ Items)
 
 ```tsx
 import { FixedSizeList } from 'react-window';
+import { motion } from 'motion/react';
 
 <FixedSizeList height={600} itemCount={1000} itemSize={50}>
   {({ index, style }) => (
@@ -87,7 +146,9 @@ import { FixedSizeList } from 'react-window';
 </FixedSizeList>;
 ```
 
-### Stagger with delayChildren (10–30 Items)
+Only renders visible items, reducing DOM nodes from 1000+ to ~20.
+
+### Stagger with delayChildren (10-30 Items)
 
 ```tsx
 const container = {
@@ -102,7 +163,7 @@ const container = {
 };
 ```
 
-### whileInView (Lazy Load)
+### whileInView Lazy Animation
 
 ```tsx
 <motion.div
@@ -114,7 +175,9 @@ const container = {
 </motion.div>
 ```
 
-### Adaptive Simplification
+Only animates when scrolled into view. Use `once: true` to avoid repeated triggers.
+
+### Adaptive Simplification (50+ Items)
 
 ```tsx
 const useReducedAnimations = items.length > 50;
@@ -130,15 +193,15 @@ const useReducedAnimations = items.length > 50;
 
 | Approach              | FPS       | DOM Nodes |
 | --------------------- | --------- | --------- |
-| No optimization       | 5–10 fps  | 1000+     |
-| Stagger only          | 15–20 fps | 1000+     |
-| whileInView           | 40–50 fps | 1000+     |
-| Simplified animations | 50–60 fps | 1000+     |
+| No optimization       | 5-10 fps  | 1000+     |
+| Stagger only          | 15-20 fps | 1000+     |
+| whileInView           | 40-50 fps | 1000+     |
+| Simplified animations | 50-60 fps | 1000+     |
 | Virtualization        | 60 fps    | ~20       |
 
 ## AnimatePresence Optimization
 
-Use `mode="wait"` for modals (sequential enter/exit, fewer DOM nodes):
+Use `mode="wait"` for sequential enter/exit (fewer simultaneous DOM nodes):
 
 ```tsx
 <AnimatePresence mode="wait">
@@ -146,7 +209,7 @@ Use `mode="wait"` for modals (sequential enter/exit, fewer DOM nodes):
 </AnimatePresence>
 ```
 
-Only wrap components that actually exit — avoid wrapping entire layouts.
+Only wrap components that actually exit -- avoid wrapping entire layouts in AnimatePresence.
 
 ## Gesture Performance
 
@@ -156,7 +219,7 @@ Disable momentum when not needed (precise positioning, drag-to-reorder):
 <motion.div drag dragMomentum={false} dragElastic={0.1} />
 ```
 
-Default elasticity is 0.5. Use 0.1–0.2 for most cases, 0 for performance mode.
+Default elasticity is 0.5. Use 0.1-0.2 for most cases, 0 for maximum performance.
 
 ## Transition Types
 
@@ -164,6 +227,16 @@ Default elasticity is 0.5. Use 0.1–0.2 for most cases, 0 for performance mode.
 | ------ | -------------------- | ------------ |
 | spring | Interactive gestures | More JS calc |
 | tween  | Simple UI animations | Less JS calc |
+
+Spring animations run more JavaScript per frame but feel more natural. Use tween for simple opacity/position changes where spring physics are not needed.
+
+## Duration Guidelines
+
+| Range     | Effect                 |
+| --------- | ---------------------- |
+| < 100ms   | Too fast (abrupt)      |
+| 200-400ms | Sweet spot for most UI |
+| > 500ms   | Too slow (sluggish)    |
 
 ## Performance Budget
 
@@ -178,13 +251,14 @@ Default elasticity is 0.5. Use 0.1–0.2 for most cases, 0 for performance mode.
 ## Production Checklist
 
 - Bundle optimized (LazyMotion or useAnimate)
-- `willChange` added for animated transforms
+- `willChange` added for frequently animated transforms
 - Only GPU-accelerated properties (transform, opacity)
 - `layout` prop instead of animating width/height
 - Large lists use virtualization (50+ items)
 - AnimatePresence only wraps necessary components
-- `layoutScroll` on scrollable containers
-- `layoutRoot` on fixed elements
+- `layoutScroll` on scrollable containers with layout animations
+- `layoutRoot` on fixed-position elements with layout animations
+- `layoutDependency` set where layout changes are state-driven
 - Tested on low-end devices (throttle CPU in DevTools)
 - Tested with `prefers-reduced-motion` enabled
-- Frame rate verified (60fps minimum)
+- Frame rate verified (60fps target)

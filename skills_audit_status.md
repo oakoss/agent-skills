@@ -9,7 +9,7 @@ Plan: `.claude/plans/splendid-sparking-dragonfly.md`
 | ----- | ------------------ | -------------------------------- | ------ | ------- | ------------------------------------ |
 | 0     | `agent-skills-191` | Fix existing validation warnings | --     | done    | Already clean — 0 errors, 0 warnings |
 | 1     | `agent-skills-d3i` | TanStack Ecosystem               | 6      | done    | All 6 skills enriched, validated     |
-| 2     | `agent-skills-2rd` | React & Frontend Core            | 8      | pending | blocked by Phase 0                   |
+| 2     | `agent-skills-2rd` | React & Frontend Core            | 8      | done    | All 8 skills enriched, validated     |
 | 3     | `agent-skills-31d` | Testing & Quality                | 5      | pending | blocked by Phase 0                   |
 | 4     | `agent-skills-cm4` | Security & Auth                  | 5      | pending | blocked by Phase 0                   |
 | 5     | `agent-skills-6rv` | DevOps, Git & Infra              | 8      | pending | blocked by Phase 0                   |
@@ -20,7 +20,7 @@ Plan: `.claude/plans/splendid-sparking-dragonfly.md`
 | 10    | `agent-skills-5z4` | New skills recommendations       | --     | pending | blocked by Batches 1-9               |
 | 11    | `agent-skills-7h2` | Final validation pass            | --     | pending | blocked by Phase 10                  |
 
-**Total skills: 69** | **Completed: 6/69** | **Phases done: 2/12**
+**Total skills: 69** | **Completed: 14/69** | **Phases done: 3/12**
 
 ## Dependency Chain
 
@@ -53,14 +53,14 @@ Phase 0 (fix warnings)
 
 | Skill              | Sources Read | Docs Validated | Enriched | Validated |
 | ------------------ | ------------ | -------------- | -------- | --------- |
-| react              |              |                |          |           |
-| shadcn-ui          |              |                |          |           |
-| tailwind           |              |                |          |           |
-| design-system      |              |                |          |           |
-| zustand            |              |                |          |           |
-| motion             |              |                |          |           |
-| frontend-builder   |              |                |          |           |
-| hydration-guardian |              |                |          |           |
+| react              | done         | done           | done     | done      |
+| shadcn-ui          | done         | done           | done     | done      |
+| tailwind           | done         | done           | done     | done      |
+| design-system      | done         | done           | done     | done      |
+| zustand            | done         | done           | done     | done      |
+| motion             | done         | done           | done     | done      |
+| frontend-builder   | done         | done           | done     | done      |
+| hydration-guardian | done         | done           | done     | done      |
 
 ### Batch 3: Testing & Quality (Phase 3)
 
@@ -154,8 +154,9 @@ Phase 0 (fix warnings)
 
 ## Changelog
 
-| Date       | Phase | Action                                                   |
-| ---------- | ----- | -------------------------------------------------------- |
-| 2026-01-30 | setup | Created beads issues and status tracker                  |
-| 2026-01-30 | 0     | Phase 0 complete — all skills already passing validation |
-| 2026-01-30 | 1     | Batch 1 complete — 6 TanStack + zod skills enriched      |
+| Date       | Phase | Action                                                     |
+| ---------- | ----- | ---------------------------------------------------------- |
+| 2026-01-30 | setup | Created beads issues and status tracker                    |
+| 2026-01-30 | 0     | Phase 0 complete — all skills already passing validation   |
+| 2026-01-30 | 1     | Batch 1 complete — 6 TanStack + zod skills enriched        |
+| 2026-01-30 | 2     | Batch 2 complete — 8 React & Frontend Core skills enriched |

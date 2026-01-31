@@ -150,21 +150,26 @@ const useStore = create<Store>()(
 );
 ```
 
-#### 3. Shallow Import
+#### 3. useShallow Import Path
 
 ```ts
 // v4
 import shallow from 'zustand/shallow';
 
-// v5
+// v5 - shallow comparison function (named export)
 import { shallow } from 'zustand/shallow';
+
+// v5 - useShallow hook (different import path)
+import { useShallow } from 'zustand/react/shallow';
 ```
+
+Note: `zustand/shallow` exports the plain `shallow` comparison function. The `useShallow` React hook is at `zustand/react/shallow`.
 
 #### 4. Devtools Import Path
 
 In v5, devtools is exported from `'zustand/middleware'` (not `'zustand/middleware/devtools'`).
 
-#### 5. Immer Import (v5.0.4+)
+#### 5. Immer Import
 
 ```ts
 import { immer } from 'zustand/middleware/immer';
@@ -177,6 +182,7 @@ import { immer } from 'zustand/middleware/immer';
 3. **Improved TypeScript**: Native support for combined stores and middleware
 4. **Context-Store pattern**: Official SSR standard to prevent data leakage
 5. **Manual rehydration control**: `skipHydration: true` for fine-grained persist timing
+6. **`getInitialState()`**: Stores expose initial state for reliable resets
 
 ## Migration Strategies
 
@@ -195,6 +201,7 @@ import { immer } from 'zustand/middleware/immer';
 - Removed Redux boilerplate (if migrating from Redux)
 - Updated all `useSelector` to Zustand selectors
 - Updated all `useDispatch` to direct function calls
+- Updated `useShallow` imports to `zustand/react/shallow`
 - Added `persist` if state needs persistence
 - Added `devtools` if using Redux DevTools
 - Tested all components

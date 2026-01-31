@@ -1,10 +1,12 @@
 ---
 title: Core Animation Patterns
-description: Copy-paste ready Motion patterns for fade, exit, stagger, hover, modal, scroll, parallax, layout, drag, page transitions, loading, SVG, counters, and micro-interactions
-tags: [motion, animation, patterns, gestures, scroll, layout, svg, drag]
+description: Copy-paste ready Motion patterns for fade, exit, stagger, gestures, modal, accordion, tabs, layout, drag, page transitions, loading, SVG, counters, and custom components
+tags: [motion, animation, patterns, gestures, layout, svg, drag, variants]
 ---
 
 # Core Animation Patterns
+
+Import for all examples: `import { motion, AnimatePresence } from "motion/react"`
 
 ## Fade In on Mount
 
@@ -35,9 +37,9 @@ tags: [motion, animation, patterns, gestures, scroll, layout, svg, drag]
 </AnimatePresence>
 ```
 
-**Critical**: AnimatePresence must stay mounted. All children need unique `key` props.
+AnimatePresence must stay mounted. All children need unique `key` props.
 
-## Staggered List
+## Staggered List with Variants
 
 ```tsx
 const container = {
@@ -51,15 +53,19 @@ const item = {
 };
 
 <motion.ul variants={container} initial="hidden" animate="show">
-  {items.map((text, i) => (
-    <motion.li key={i} variants={item}>
+  {items.map((text) => (
+    <motion.li key={text} variants={item}>
       {text}
     </motion.li>
   ))}
 </motion.ul>;
 ```
 
-## Button Hover / Tap
+Variants flow down to children automatically. Parent orchestrates timing with `staggerChildren` and `delayChildren`.
+
+## Gesture Animations
+
+### Hover and Tap
 
 ```tsx
 <motion.button
@@ -71,6 +77,42 @@ const item = {
 </motion.button>
 ```
 
+### Focus
+
+```tsx
+<motion.input
+  whileFocus={{ borderColor: '#3b82f6', boxShadow: '0 0 0 2px #3b82f6' }}
+  transition={{ duration: 0.2 }}
+/>
+```
+
+### Drag
+
+```tsx
+<motion.div
+  drag
+  dragConstraints={{ left: 0, right: 300, top: 0, bottom: 300 }}
+  dragElastic={0.1}
+  whileDrag={{ scale: 1.1 }}
+  className="cursor-grab active:cursor-grabbing"
+/>
+```
+
+### Variants with Gestures
+
+```tsx
+const buttonVariants = {
+  hover: { scale: 1.1 },
+  tap: { scale: 0.95 },
+};
+
+<motion.button whileTap="tap" whileHover="hover" variants={buttonVariants}>
+  Button
+</motion.button>;
+```
+
+Variant names in gesture props propagate to children with matching variants.
+
 ## Modal Dialog
 
 ```tsx
@@ -78,6 +120,7 @@ const item = {
   {isOpen && (
     <>
       <motion.div
+        key="backdrop"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -85,6 +128,7 @@ const item = {
         className="fixed inset-0 bg-black/50 z-40"
       />
       <motion.div
+        key="dialog"
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -100,7 +144,7 @@ const item = {
 </AnimatePresence>
 ```
 
-## Accordion
+## Accordion (Animate Height)
 
 ```tsx
 <motion.div
@@ -112,72 +156,26 @@ const item = {
 </motion.div>
 ```
 
-## Tabs with Shared Underline
+## Tabs with Shared Underline (layoutId)
 
 ```tsx
-<div className="flex gap-4 border-b">
+<div className="flex gap-4 border-b relative">
   {tabs.map((tab) => (
-    <button key={tab.id} onClick={() => setActive(tab.id)}>
+    <button
+      key={tab.id}
+      onClick={() => setActive(tab.id)}
+      className="relative pb-2"
+    >
       {tab.label}
       {active === tab.id && (
         <motion.div
           layoutId="underline"
-          className="absolute bottom-0 h-0.5 bg-blue-600"
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
         />
       )}
     </button>
   ))}
 </div>
-```
-
-## Scroll-Triggered Reveal (whileInView)
-
-```tsx
-<motion.div
-  initial={{ opacity: 0, y: 50 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  viewport={{ once: true, margin: '-100px' }}
->
-  Fades in when 100px from entering viewport
-</motion.div>
-```
-
-## Scroll-Linked / Parallax
-
-```tsx
-import { useScroll, useTransform } from 'motion/react';
-
-const { scrollYProgress } = useScroll();
-const y = useTransform(scrollYProgress, [0, 1], [0, -300]);
-
-<motion.div style={{ y }}>Moves up as user scrolls</motion.div>;
-```
-
-**Parallax hero pattern**:
-
-```tsx
-const { scrollY } = useScroll();
-const y = useTransform(scrollY, [0, 500], [0, 150]);
-
-<div className="relative h-screen overflow-hidden">
-  <motion.div style={{ y }} className="absolute inset-0">
-    <img src="/bg.jpg" alt="" className="w-full h-full object-cover" />
-  </motion.div>
-  <div className="relative z-10 flex items-center justify-center h-full">
-    <h1>Parallax Effect</h1>
-  </div>
-</div>;
-```
-
-## Scroll Progress Indicator
-
-```tsx
-const { scrollYProgress } = useScroll();
-
-<motion.div
-  style={{ scaleX: scrollYProgress }}
-  className="fixed top-0 left-0 right-0 h-1 bg-blue-600 origin-left z-50"
-/>;
 ```
 
 ## Layout Animations (FLIP)
@@ -186,26 +184,28 @@ const { scrollYProgress } = useScroll();
 <motion.div layout>{isExpanded ? <FullContent /> : <Summary />}</motion.div>
 ```
 
-**Shared element transitions** between views:
+Options for `layout` prop: `true` (animate position and size), `"position"` (position only), `"size"` (size only).
+
+### Shared Element Transitions
 
 ```tsx
 <motion.div layoutId="card-1">Card content</motion.div>
 ```
 
-Special props: `layoutScroll` (scrollable containers), `layoutRoot` (fixed-position elements).
+When a new element with the same `layoutId` enters the DOM, it animates from the previous element's position and size.
 
-## Drag
+### Layout Performance
 
 ```tsx
-<motion.div
-  drag
-  dragConstraints={{ left: 0, right: 300, top: 0, bottom: 300 }}
-  dragElastic={0.1}
-  className="cursor-grab active:cursor-grabbing"
-/>
+<motion.nav layout layoutDependency={isOpen} />
 ```
 
-Drag carousel: `drag="x"` with `dragConstraints`.
+`layoutDependency` reduces measurements -- layout changes are only detected when this value changes instead of every render.
+
+### Special Layout Props
+
+- `layoutScroll`: Add to scrollable containers so layout animations account for scroll offset
+- `layoutRoot`: Add to `position: fixed` containers so layout animations account for page scroll
 
 ## Page Transition
 
@@ -226,7 +226,7 @@ import { motion } from 'motion/react';
 
 ## Loading Animations
 
-**Spinner**:
+### Spinner
 
 ```tsx
 <motion.div
@@ -236,7 +236,7 @@ import { motion } from 'motion/react';
 />
 ```
 
-**Skeleton loader**:
+### Skeleton Loader
 
 ```tsx
 <motion.div
@@ -246,7 +246,7 @@ import { motion } from 'motion/react';
 />
 ```
 
-**Pulsing dots**:
+### Pulsing Dots
 
 ```tsx
 {
@@ -269,14 +269,7 @@ import { motion } from 'motion/react';
 ## SVG Path Drawing
 
 ```tsx
-<motion.svg
-  width="48"
-  height="48"
-  viewBox="0 0 48 48"
-  initial={{ scale: 0 }}
-  animate={{ scale: 1 }}
-  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
->
+<motion.svg width="48" height="48" viewBox="0 0 48 48">
   <motion.circle
     cx="24"
     cy="24"
@@ -302,6 +295,8 @@ import { motion } from 'motion/react';
 </motion.svg>
 ```
 
+SVG path animations work with `pathLength`, `pathSpacing`, and `pathOffset` (values between 0 and 1). Compatible with `circle`, `ellipse`, `line`, `path`, `polygon`, `polyline`, and `rect` elements.
+
 ## Animated Number Counter
 
 ```tsx
@@ -323,6 +318,7 @@ useEffect(() => {
 <AnimatePresence>
   {isVisible && (
     <motion.div
+      key="toast"
       initial={{ opacity: 0, x: 300 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 300 }}
@@ -351,15 +347,7 @@ useEffect(() => {
 }
 ```
 
-## Card Expand
-
-```tsx
-<motion.div layout onClick={toggle} className={isExpanded ? 'w-full' : 'w-64'}>
-  {isExpanded && <p>Extra content</p>}
-</motion.div>
-```
-
-## Carousel
+## Carousel (Drag)
 
 ```tsx
 <motion.div
@@ -368,7 +356,27 @@ useEffect(() => {
   className="flex"
 >
   {images.map((img) => (
-    <img key={img.id} src={img.url} />
+    <img key={img.id} src={img.url} alt={img.alt} />
   ))}
 </motion.div>
+```
+
+## Custom Components with motion.create
+
+```tsx
+import { motion } from 'motion/react';
+
+const MotionCard = motion.create(Card);
+
+<MotionCard
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  whileHover={{ y: -4 }}
+/>;
+```
+
+For custom SVG components, pass `{ type: "svg" }`:
+
+```tsx
+const MotionIcon = motion.create(MyIcon, { type: 'svg' });
 ```

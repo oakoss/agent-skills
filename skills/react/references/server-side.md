@@ -1,7 +1,17 @@
 ---
 title: Server-Side Rendering
-description: Partial Pre-rendering, React.cache(), RSC serialization, parallel composition, and post-response operations
-tags: [ssr, ppr, server-components, cache, streaming, hydration]
+description: Partial Pre-rendering, React.cache(), cacheSignal, RSC serialization, parallel composition, and Activity component
+tags:
+  [
+    ssr,
+    ppr,
+    server-components,
+    cache,
+    cacheSignal,
+    streaming,
+    hydration,
+    activity,
+  ]
 ---
 
 # Server-Side Rendering

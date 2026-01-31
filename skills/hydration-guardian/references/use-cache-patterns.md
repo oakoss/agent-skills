@@ -1,6 +1,6 @@
 ---
 title: Use Cache Patterns
-description: Preventing data drift with the @use cache directive and React use() hook for deterministic hydration in Next.js
+description: Preventing data drift with the Next.js use cache directive, React 19 use() hook for deterministic hydration, and server-to-client data bridges
 tags:
   [
     use-cache,
@@ -14,7 +14,7 @@ tags:
 
 # Use Cache Patterns
 
-Data drift occurs when the data fetched on the server changes by the time the client tries to hydrate (a stock price update, a new comment appearing, a counter incrementing). The `@use cache` directive eliminates this class of hydration errors.
+Data drift occurs when data fetched on the server changes by the time the client hydrates. The Next.js `'use cache'` directive and React 19 `use()` hook work together to eliminate this class of hydration errors.
 
 ## The Problem: Data Drift
 
@@ -24,33 +24,96 @@ Without caching, the server renders with data at time T1, but the client hydrate
 
 - Real-time data (stock prices, counters, notifications)
 - Time-dependent formatting (relative timestamps like "2 minutes ago")
-- Session-dependent content (user name, avatar that loads asynchronously)
+- Session-dependent content (user name, avatar loaded asynchronously)
 - A/B test variants resolved at different times
 
-## The Solution: @use cache Directive
+## Next.js use cache Directive
 
-Next.js `@use cache` caches a specific data-fetching promise and shares its exact result between server and client during the hydration window.
+The `'use cache'` directive caches the return value of async functions and components. The cached result is embedded in the server-rendered payload, ensuring the client uses the exact same data.
+
+### Enabling use cache
+
+```ts
+// next.config.ts
+const nextConfig = {
+  experimental: {
+    cacheComponents: true,
+  },
+};
+
+export default nextConfig;
+```
+
+### Caching a Data Fetcher
 
 ```tsx
-'use server';
-
-async function getStableProductData(id: string) {
+async function getProductData(id: string) {
   'use cache';
   const product = await db.product.findUnique({ where: { id } });
   return product;
 }
 ```
 
-The cached result is embedded in the server-rendered HTML payload, so the client uses the exact same data without re-fetching.
+Arguments automatically become part of the cache key, so different inputs produce separate cache entries.
 
-## Consuming with the use() Hook
+### Cache Variants
+
+| Directive              | Storage              | Use Case                                       |
+| ---------------------- | -------------------- | ---------------------------------------------- |
+| `'use cache'`          | In-memory (server)   | Default; fast for typical data                 |
+| `'use cache: remote'`  | External cache store | Durable caching across deployments             |
+| `'use cache: private'` | Browser memory only  | Personalized data with `cookies()`/`headers()` |
+
+### Controlling Cache Lifetime
 
 ```tsx
-import { Suspense, use } from 'react';
-import { getStableProductData } from './data-actions';
+import { cacheLife } from 'next/cache';
 
-export default function ProductPage({ id }: { id: string }) {
-  const dataPromise = getStableProductData(id);
+async function getProductData(id: string) {
+  'use cache';
+  cacheLife('hours');
+  return await db.product.findUnique({ where: { id } });
+}
+```
+
+Built-in profiles: `'seconds'`, `'minutes'`, `'hours'`, `'days'`, `'weeks'`, `'max'`.
+
+### Cache Revalidation
+
+```tsx
+import { cacheTag } from 'next/cache';
+import { revalidateTag } from 'next/cache';
+
+async function getProductData(id: string) {
+  'use cache';
+  cacheTag(`product-${id}`);
+  return await db.product.findUnique({ where: { id } });
+}
+
+// In a mutation or webhook handler
+async function updateProduct(id: string) {
+  'use server';
+  await db.product.update({ where: { id }, data: { ... } });
+  revalidateTag(`product-${id}`);
+}
+```
+
+## React 19 use() Hook
+
+The `use()` API reads the value of a Promise or context. Unlike other hooks, `use()` can be called inside conditionals and loops.
+
+### Server-to-Client Data Bridge
+
+Pass a Promise from a Server Component to a Client Component. The client resolves it via `use()` without re-fetching.
+
+```tsx
+// Server Component
+import { Suspense } from 'react';
+import { getProductData } from './data';
+import { ProductDetail } from './ProductDetail';
+
+export default function ProductPage({ params }: { params: { id: string } }) {
+  const dataPromise = getProductData(params.id);
 
   return (
     <Suspense fallback={<ProductSkeleton />}>
@@ -58,76 +121,34 @@ export default function ProductPage({ id }: { id: string }) {
     </Suspense>
   );
 }
+```
 
-function ProductDetail({ dataPromise }: { dataPromise: Promise<Product> }) {
-  const data = use(dataPromise);
+```tsx
+// Client Component
+'use client';
+
+import { use } from 'react';
+
+export function ProductDetail({
+  dataPromise,
+}: {
+  dataPromise: Promise<Product>;
+}) {
+  const product = use(dataPromise);
 
   return (
     <article>
-      <h1>{data.name}</h1>
-      <p>{data.description}</p>
-      <span>{formatPrice(data.price)}</span>
+      <h1>{product.name}</h1>
+      <p>{product.description}</p>
+      <span>{formatPrice(product.price)}</span>
     </article>
   );
 }
 ```
 
-## Complete Hydration-Safe Component
+**Why this prevents hydration mismatches:** The Promise created on the server is serialized into the HTML payload. The client `use()` call resolves the same data, producing identical output.
 
-Combining `@use cache`, `use()`, `Suspense`, and `Pausable` for a fully resilient component:
-
-```tsx
-import { Pausable, Suspense, use } from 'react';
-
-async function getHydrationData(userId: string) {
-  'use cache';
-  return {
-    timestamp: Date.now(),
-    userName: await fetchName(userId),
-  };
-}
-
-export default function ResilientWidget({ userId }: { userId: string }) {
-  const dataPromise = getHydrationData(userId);
-
-  return (
-    <section>
-      <h2>User Dashboard</h2>
-      <Suspense fallback={<Skeleton />}>
-        <DashboardContent dataPromise={dataPromise} />
-      </Suspense>
-    </section>
-  );
-}
-
-function DashboardContent({
-  dataPromise,
-}: {
-  dataPromise: Promise<DashboardData>;
-}) {
-  const data = use(dataPromise);
-
-  return (
-    <Pausable fallback={<div>Initializing locale...</div>}>
-      <div>
-        <span>Welcome back, {data.userName}</span>
-        <span>{getLocalizedTime(data.timestamp)}</span>
-      </div>
-    </Pausable>
-  );
-}
-```
-
-## Benefits
-
-| Benefit                   | Description                                                           |
-| ------------------------- | --------------------------------------------------------------------- |
-| Zero data drift           | Client guaranteed to see exactly what the server rendered             |
-| No double fetch           | Client uses payload embedded in HTML; no re-fetch needed              |
-| Automatic synchronization | Next.js handles cache re-validation seamlessly when cache expires     |
-| Reduced API load          | Eliminates "hydration fetch" pattern, reducing API calls by up to 40% |
-
-## use() vs useEffect + useState
+### use() vs useEffect + useState
 
 ```tsx
 // LEGACY: Double-fetch pattern (causes hydration mismatch)
@@ -142,21 +163,103 @@ function LegacyProduct({ id }: { id: string }) {
   return <ProductView product={data} />;
 }
 
-// MODERN: Deterministic bridge (zero mismatch)
+// MODERN: Deterministic bridge via use() (zero mismatch)
 function ModernProduct({ dataPromise }: { dataPromise: Promise<Product> }) {
   const data = use(dataPromise);
   return <ProductView product={data} />;
 }
 ```
 
-The `use()` hook consumes the exact promise result from the server, ensuring the client renders identical content.
+### Error Handling with use()
+
+`use()` cannot be called in a try-catch block. Use Error Boundaries or Promise `.catch()`:
+
+```tsx
+// Option 1: Error Boundary
+import { ErrorBoundary } from 'react-error-boundary';
+
+function ProductPage({ dataPromise }: { dataPromise: Promise<Product> }) {
+  return (
+    <ErrorBoundary fallback={<ProductError />}>
+      <Suspense fallback={<ProductSkeleton />}>
+        <ProductDetail dataPromise={dataPromise} />
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+
+// Option 2: Promise .catch() for fallback value
+function ProductDetail({ dataPromise }: { dataPromise: Promise<Product> }) {
+  const safePromise = dataPromise.catch(() => DEFAULT_PRODUCT);
+  const product = use(safePromise);
+  return <ProductView product={product} />;
+}
+```
+
+### Limitations of use() with Promises
+
+- Promises created inside Client Components are not yet supported (only via frameworks or Suspense-compatible libraries)
+- Pass Promises from Server Components to Client Components for the intended pattern
+- `use()` integrates with Suspense; the parent must have a Suspense boundary
+
+## Complete Hydration-Safe Pattern
+
+Combining `'use cache'`, `use()`, and `Suspense` for a fully resilient component:
+
+```tsx
+// data.ts (Server)
+async function getDashboardData(userId: string) {
+  'use cache';
+  cacheTag(`dashboard-${userId}`);
+  return {
+    userName: await fetchName(userId),
+    stats: await fetchStats(userId),
+  };
+}
+
+// DashboardPage.tsx (Server Component)
+import { Suspense } from 'react';
+
+export default function DashboardPage({ userId }: { userId: string }) {
+  const dataPromise = getDashboardData(userId);
+
+  return (
+    <section>
+      <h2>Dashboard</h2>
+      <Suspense fallback={<DashboardSkeleton />}>
+        <DashboardContent dataPromise={dataPromise} />
+      </Suspense>
+    </section>
+  );
+}
+
+// DashboardContent.tsx (Client Component)
+('use client');
+
+import { use } from 'react';
+
+export function DashboardContent({
+  dataPromise,
+}: {
+  dataPromise: Promise<DashboardData>;
+}) {
+  const data = use(dataPromise);
+
+  return (
+    <div>
+      <span>Welcome back, {data.userName}</span>
+      <StatsGrid stats={data.stats} />
+    </div>
+  );
+}
+```
 
 ## Cache Payload Considerations
 
 - **Audit payload size** to ensure cached data does not bloat the initial HTML document
-- **Prefer** `@use cache` for data rendered in the initial viewport
-- **Avoid** caching large datasets; cache only the fields needed for the initial render
-- **Set appropriate TTL** based on data freshness requirements
+- **Cache only fields** needed for the initial render, not entire database rows
+- **Set appropriate TTL** based on data freshness requirements via `cacheLife`
+- **Use `cacheTag`** for on-demand revalidation when data changes
 
 ## Troubleshooting
 
@@ -164,5 +267,6 @@ The `use()` hook consumes the exact promise result from the server, ensuring the
 | ------------------------------- | ------------------------------------ | ------------------------------------------------- |
 | Data still mismatches           | `'use cache'` not applied to fetcher | Verify the directive is inside the async function |
 | Large initial HTML payload      | Too much data cached                 | Cache only fields needed for initial render       |
-| Stale data after cache expiry   | No re-validation configured          | Configure cache TTL and re-validation strategy    |
-| `use()` throws during hydration | Promise rejected on server           | Add error boundary around the consuming component |
+| Stale data after mutation       | No revalidation configured           | Use `cacheTag` and `revalidateTag`                |
+| `use()` throws during hydration | Promise rejected on server           | Add Error Boundary around the consuming component |
+| `use()` suspends indefinitely   | No Suspense boundary above           | Wrap in `<Suspense fallback={...}>`               |

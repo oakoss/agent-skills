@@ -1,7 +1,17 @@
 ---
 title: Component Patterns
-description: Component architecture, state management patterns, useEffect decision tree, and derived state
-tags: [components, state, useEffect, derived-state, props, architecture]
+description: Component architecture, state management patterns, useEffect decision tree, derived state, and form handling
+tags:
+  [
+    components,
+    state,
+    useEffect,
+    derived-state,
+    props,
+    architecture,
+    forms,
+    useId,
+  ]
 ---
 
 # Component Patterns
@@ -15,7 +25,6 @@ tags: [components, state, useEffect, derived-state, props, architecture]
 - **UI Components** -- Reusable primitives with no business logic (buttons, inputs, cards).
 
 ```tsx
-// Feature component: owns data, delegates rendering
 export function UserList() {
   const { data, isLoading } = useUsers();
   if (isLoading) return <LoadingSpinner />;
@@ -36,9 +45,52 @@ export function UserList() {
 - Compose over inheritance
 - Co-locate related code
 
+## Component Structure
+
+Follow a consistent internal order:
+
+```tsx
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { userQueries } from '@/features/users/api';
+import { type User } from '@/features/users/types';
+
+interface UserCardProps {
+  userId: string;
+  onSelect?: (user: User) => void;
+}
+
+export function UserCard({ userId, onSelect }: UserCardProps) {
+  const { data: user } = useSuspenseQuery(userQueries.detail(userId));
+
+  const fullName = `${user.firstName} ${user.lastName}`;
+
+  const handleClick = () => onSelect?.(user);
+
+  if (!user.isActive) return null;
+
+  return (
+    <article onClick={handleClick} className="user-card">
+      <h3>{fullName}</h3>
+      <p>{user.email}</p>
+    </article>
+  );
+}
+```
+
+Order: imports (external, internal, types) then types then component (queries/mutations, derived state, handlers, early returns, JSX).
+
 ## State Management
 
 **State proximity:** keep state as close to where it is used as possible.
+
+| How many components need the state? | Solution              |
+| ----------------------------------- | --------------------- |
+| One component                       | `useState`            |
+| Parent + children                   | Props                 |
+| Siblings                            | Lift to common parent |
+| Widely used                         | Context API           |
+| Complex app state                   | Zustand               |
+| Server data with caching            | React Query           |
 
 **Lazy initialization:** pass a function to `useState` for expensive initial values.
 
@@ -59,13 +111,10 @@ setCount((prev) => prev + 1);
 Compute during render, never in effects. Prefer computing values from existing state over synchronizing with effects.
 
 ```tsx
-// Derive during render
 const fullName = `${user.firstName} ${user.lastName}`;
 
-// Subscribe to derived booleans, not raw values
 const isEmpty = items.length === 0;
 
-// Memoize only when the derivation is expensive
 const sortedItems = useMemo(
   () => items.toSorted((a, b) => a.name.localeCompare(b.name)),
   [items],
@@ -121,16 +170,47 @@ const handleSubmit = async () => {
 
 ## Form Handling
 
-Use React Hook Form + Zod for validated forms:
+Use `useActionState` for forms with Server Actions (React 19+):
 
 ```tsx
-const {
-  register,
-  handleSubmit,
-  formState: { errors },
-} = useForm<FormData>({
-  resolver: zodResolver(schema),
-});
+import { useActionState } from 'react';
+import { updateProfile } from './actions';
+
+function ProfileForm() {
+  const [state, action, isPending] = useActionState(updateProfile, {
+    message: null,
+  });
+
+  return (
+    <form action={action}>
+      <input name="username" disabled={isPending} />
+      <button type="submit" disabled={isPending}>
+        {isPending ? 'Saving...' : 'Save'}
+      </button>
+      {state.message ? <p>{state.message}</p> : null}
+    </form>
+  );
+}
+```
+
+For complex client-side forms with field-level validation, use React Hook Form + Zod or TanStack Form.
+
+## Unique IDs with useId
+
+Use `useId` for hydration-safe unique identifiers. Never use `Math.random()` or counters for IDs that appear in server-rendered HTML.
+
+```tsx
+import { useId } from 'react';
+
+function EmailField() {
+  const id = useId();
+  return (
+    <div>
+      <label htmlFor={id}>Email</label>
+      <input id={id} type="email" />
+    </div>
+  );
+}
 ```
 
 ## Error Handling

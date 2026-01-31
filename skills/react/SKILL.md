@@ -18,43 +18,40 @@ Comprehensive React skill covering component architecture, performance optimizat
 
 ## Quick Reference
 
-| Pattern               | API / Approach                   | Key Points                                       |
-| --------------------- | -------------------------------- | ------------------------------------------------ |
-| Data fetching         | `use(dataPromise)`               | Replaces useEffect+useState fetch pattern        |
-| Form handling         | `useActionState(action, init)`   | Built-in pending states and error handling       |
-| Optimistic UI         | `useOptimistic(state, updateFn)` | Instant feedback while server processes          |
-| Non-urgent updates    | `useTransition()`                | Mark updates as interruptible                    |
-| Server state          | React Query / `useSuspenseQuery` | Caching, deduplication, background refetch       |
-| Client state (local)  | `useState` / `useRef`            | Single component or transient values             |
-| Client state (global) | Zustand / Context                | Cross-component client-only state                |
-| Derived state         | Compute during render            | Never sync derived values with effects           |
-| Lazy initialization   | `useState(() => expensive())`    | Avoid eager computation on every render          |
-| Component types       | Page, Feature, UI                | Route entry, business logic, reusable primitives |
-| Memoization           | Trust React Compiler first       | Manual useMemo/useCallback only when needed      |
-| Code splitting        | `React.lazy()` + Suspense        | Lazy-load heavy components                       |
-| Parallel fetches      | `Promise.all()`                  | Eliminate sequential await waterfalls            |
-| Request dedup         | `React.cache()`                  | Per-request server-side deduplication            |
-
-## State Decision Tree
-
-| How many components need the state? | Solution              |
-| ----------------------------------- | --------------------- |
-| One component                       | `useState`            |
-| Parent + children                   | Props                 |
-| Siblings                            | Lift to common parent |
-| Widely used                         | Context API           |
-| Complex app state                   | Zustand               |
-| Server data with caching            | React Query           |
+| Pattern               | API / Approach                   | Key Points                                          |
+| --------------------- | -------------------------------- | --------------------------------------------------- |
+| Data fetching         | `use(dataPromise)`               | Replaces useEffect+useState fetch pattern           |
+| Form handling         | `useActionState(action, init)`   | Built-in pending states and error handling          |
+| Optimistic UI         | `useOptimistic(state, updateFn)` | Instant feedback while server processes             |
+| Non-urgent updates    | `useTransition()`                | Mark updates as interruptible                       |
+| Effect events         | `useEffectEvent(fn)`             | Reactive values without re-triggering effects       |
+| Unique IDs            | `useId()`                        | Hydration-safe IDs for accessibility                |
+| Server state          | React Query / `useSuspenseQuery` | Caching, deduplication, background refetch          |
+| Client state (local)  | `useState` / `useRef`            | Single component or transient values                |
+| Client state (global) | Zustand / Context                | Cross-component client-only state                   |
+| Derived state         | Compute during render            | Never sync derived values with effects              |
+| Lazy initialization   | `useState(() => expensive())`    | Avoid eager computation on every render             |
+| Component types       | Page, Feature, UI                | Route entry, business logic, reusable primitives    |
+| Memoization           | Trust React Compiler first       | Manual useMemo/useCallback only when needed         |
+| Code splitting        | `React.lazy()` + Suspense        | Lazy-load heavy components                          |
+| Parallel fetches      | `Promise.all()`                  | Eliminate sequential await waterfalls               |
+| Request dedup         | `React.cache()`                  | Per-request server-side deduplication               |
+| Abort server work     | `cacheSignal()`                  | Cancel expensive async work when client disconnects |
+| State preservation    | `<Activity>`                     | Hide UI while keeping state mounted                 |
 
 ## Common Mistakes
 
-| Mistake                                                  | Correct Pattern                                                                                         |
-| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Fetching data in useEffect with useState                 | Use the React 19 `use()` API or React Query for data fetching with built-in caching                     |
-| Storing derived values in state and syncing with effects | Compute derived values during render; never use effects for state synchronization                       |
-| Wrapping everything in useMemo and useCallback           | Trust React Compiler first; only add manual memoization for expensive computations or memoized children |
-| Using `array.sort()` which mutates state                 | Use `array.toSorted()` for immutable sorting to avoid unexpected re-renders                             |
-| Using `&&` for conditional rendering                     | Use ternary `condition ? <Component /> : null` to avoid rendering falsy values like `0`                 |
+| Mistake                                                     | Correct Pattern                                                                                         |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Fetching data in useEffect with useState                    | Use the `use()` API or React Query for data fetching with built-in caching                              |
+| Storing derived values in state and syncing with effects    | Compute derived values during render; never use effects for state synchronization                       |
+| Wrapping everything in useMemo and useCallback              | Trust React Compiler first; only add manual memoization for expensive computations or memoized children |
+| Using `array.sort()` which mutates state                    | Use `array.toSorted()` for immutable sorting to avoid unexpected re-renders                             |
+| Using `&&` for conditional rendering                        | Use ternary `condition ? <Component /> : null` to avoid rendering falsy values like `0`                 |
+| Using Math.random() or Date for IDs                         | Use `useId()` for hydration-safe unique identifiers                                                     |
+| Putting reactive values in effect deps to read latest value | Use `useEffectEvent` to access latest values without re-triggering effects                              |
+| Creating object literals as effect dependencies             | Hoist static objects outside the component or use primitive dependencies                                |
+| Mutating props or state during render                       | Follow Rules of React for React Compiler compatibility: pure renders, no side effects                   |
 
 ## Delegation
 
@@ -67,5 +64,6 @@ Comprehensive React skill covering component architecture, performance optimizat
 - [Component patterns, state management, and useEffect decisions](references/component-patterns.md)
 - [Performance optimization: waterfalls, bundles, and re-renders](references/performance-optimization.md)
 - [Hooks, Server Actions, and React 19 APIs](references/hooks-and-actions.md)
+- [React Compiler patterns and re-render optimization](references/react-compiler.md)
 - [Server-side rendering and React Server Components](references/server-side.md)
 - [Anti-patterns and troubleshooting guide](references/anti-patterns.md)

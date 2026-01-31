@@ -1,14 +1,27 @@
 ---
 title: Theming
-description: Theme provider with React context, dark mode via semantic tokens, multi-brand theming, Tailwind v4 CSS-first theming, and z-index scale
-tags: [theming, dark-mode, theme-provider, tailwind-v4, multi-brand, z-index]
+description: Dark mode via semantic tokens, React theme provider, multi-brand theming, Tailwind v4 CSS-first configuration, SSR flash prevention, and z-index scale
+tags:
+  [theming, dark-mode, theme-provider, tailwind-v4, multi-brand, z-index, ssr]
 ---
 
 # Theming
 
 ## Dark Mode via Semantic Tokens
 
+Override semantic tokens per theme — components reference semantic tokens and automatically adapt.
+
 ```css
+:root,
+[data-theme='light'] {
+  --text-primary: var(--color-gray-900);
+  --text-secondary: var(--color-gray-600);
+  --surface-default: #f9fafb;
+  --surface-elevated: var(--color-gray-50);
+  --border-default: var(--color-gray-200);
+  --interactive-primary: var(--color-blue-500);
+}
+
 [data-theme='dark'] {
   --text-primary: var(--color-gray-50);
   --text-secondary: var(--color-gray-400);
@@ -21,9 +34,10 @@ tags: [theming, dark-mode, theme-provider, tailwind-v4, multi-brand, z-index]
 
 Dark mode checklist:
 
-- Reduce pure white (#fff) to off-white (#f9fafb)
-- Reduce pure black (#000) to dark gray (#111827)
-- Increase contrast on dark backgrounds
+- Reduce pure white (`#fff`) to off-white (`#f9fafb`)
+- Reduce pure black (`#000`) to dark gray (`#111827`)
+- Lighten interactive colors for dark backgrounds (blue-500 becomes blue-400)
+- Re-verify all contrast ratios in both themes
 - Support system preference via `prefers-color-scheme`
 
 ## Theme Provider (React)
@@ -89,23 +103,70 @@ export const useTheme = () => {
 };
 ```
 
+## SSR Flash Prevention
+
+Theme resolution on the client causes a flash of the wrong theme. Inject a blocking script in `<head>` before the body renders.
+
+```html
+<head>
+  <script>
+    (function () {
+      var theme = localStorage.getItem('theme') || 'system';
+      var resolved = theme;
+      if (theme === 'system') {
+        resolved = window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light';
+      }
+      document.documentElement.setAttribute('data-theme', resolved);
+      document.documentElement.classList.add(resolved);
+    })();
+  </script>
+</head>
+```
+
+For cookie-based SSR (Next.js, Remix), read the theme from a cookie on the server and set `data-theme` in the initial HTML response to avoid any flash.
+
 ## Multi-Brand Theming
 
-Apply brand tokens at runtime:
+Override semantic tokens per brand at runtime:
 
 ```ts
-function applyTheme(theme: {
+interface BrandTheme {
   colors: Record<string, string>;
   fontFamily: string;
-}) {
+  spacing?: { unit: number };
+}
+
+function applyBrandTheme(theme: BrandTheme) {
+  const root = document.documentElement;
   Object.entries(theme.colors).forEach(([key, value]) => {
-    document.documentElement.style.setProperty(`--color-${key}`, value);
+    root.style.setProperty(`--color-${key}`, value);
   });
-  document.documentElement.style.setProperty('--font-base', theme.fontFamily);
+  root.style.setProperty('--font-base', theme.fontFamily);
+  if (theme.spacing) {
+    root.style.setProperty('--space-unit', `${theme.spacing.unit}px`);
+  }
 }
 ```
 
+Brand definitions share the same token interface — only values differ:
+
+```ts
+const acmeBrand: BrandTheme = {
+  colors: { primary: '#3b82f6', secondary: '#8b5cf6' },
+  fontFamily: 'Inter, sans-serif',
+};
+
+const contosoBrand: BrandTheme = {
+  colors: { primary: '#dc2626', secondary: '#f59e0b' },
+  fontFamily: 'Roboto, sans-serif',
+};
+```
+
 ## Tailwind v4 CSS-First Theme
+
+Tailwind v4 replaces `tailwind.config.js` with CSS `@theme` blocks. Tokens become native CSS custom properties.
 
 ```css
 @import 'tailwindcss';
@@ -122,9 +183,9 @@ function applyTheme(theme: {
 }
 ```
 
-### TW4 Monorepo Pattern
+### Tailwind v4 Monorepo Pattern
 
-Centralized theme package (`@repo/design-tokens`):
+Centralize tokens in a shared package:
 
 ```css
 /* @repo/design-tokens/base.css */
@@ -145,12 +206,17 @@ Consuming apps import the shared theme:
 
 ## Z-Index Scale
 
+Define a consistent z-index system to avoid arbitrary stacking conflicts.
+
 ```css
 :root {
   --z-dropdown: 100;
   --z-sticky: 200;
+  --z-modal-backdrop: 250;
   --z-modal: 300;
   --z-toast: 400;
   --z-tooltip: 500;
 }
 ```
+
+Components reference these tokens instead of hardcoded z-index values.

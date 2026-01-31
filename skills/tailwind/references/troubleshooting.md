@@ -1,67 +1,242 @@
 ---
 title: Troubleshooting
-description: Common Tailwind v4 errors and fixes including missing styles, dark mode issues, build failures, migration from v3, and shadcn/ui compatibility
-tags: [troubleshooting, migration, v3-to-v4, build-errors, dark-mode]
+description: Common Tailwind v4 errors and fixes including missing styles, dark mode issues, build failures, CSS layer problems, PostCSS errors, and shadcn/ui compatibility
+tags: [troubleshooting, errors, build-fixes, dark-mode, postcss, css-layers]
 ---
 
 # Troubleshooting
 
-## `bg-primary` doesn't apply styles
+## `bg-primary` Doesn't Apply Styles
 
-Missing `@theme inline` mapping. Add `@theme inline { --color-primary: var(--primary); }`.
+**Cause**: Missing `@theme inline` mapping.
 
-## Colors all black/white
+**Fix**: Add the variable mapping so Tailwind generates the utility class:
 
-Double `hsl()` wrapping. Use `var(--color)` not `hsl(var(--color))`.
+```css
+@theme inline {
+  --color-primary: var(--primary);
+}
+```
 
-## Dark mode not switching
+## Colors All Black or White
 
-Missing ThemeProvider. Wrap app in `<ThemeProvider>` that toggles `.dark` class on `<html>`.
+**Cause**: Double `hsl()` wrapping.
 
-## Build fails with "Unexpected config file"
+**Fix**: Reference variables directly, never wrap:
 
-Delete `tailwind.config.ts`. v4 uses CSS-only configuration.
+```css
+/* Wrong */
+background-color: hsl(var(--background));
 
-## "Cannot find module tailwindcss-animate"
+/* Correct */
+background-color: var(--background);
+```
 
-Replace with v4-compatible package: `pnpm add -D tw-animate-css`, then `@import "tw-animate-css";`.
+## Dark Mode Not Switching
 
-## "Cannot apply unknown utility class"
+**Cause**: Missing ThemeProvider or wrong class target.
 
-In v4, `@apply` only works with `@utility`-defined classes, not `@layer components` classes. Migrate to `@utility` directive.
+**Fix**:
 
-## `@layer base` styles ignored
+1. Wrap app in `<ThemeProvider>` that toggles `.dark` class
+2. Verify `.dark` class toggles on `<html>` element (not `<body>`)
+3. For class-based dark mode, add: `@custom-variant dark (&:where(.dark, .dark *));`
 
-v4 uses native CSS layers. Options: (a) define layers explicitly with separate imports, or (b) avoid `@layer base` and define styles at root level.
+## Build Fails with "Unexpected Config File"
 
-## `@theme inline` breaks dark mode in multi-theme
+**Cause**: v4 does not use `tailwind.config.ts`.
 
-`@theme inline` bakes values at build time. Use `@theme` (without `inline`) for multi-theme systems.
+**Fix**: Delete the config file. All configuration goes in CSS via `@theme`.
 
-## Ring width thinner than v3
+```bash
+rm -f tailwind.config.ts tailwind.config.js
+```
 
-Default changed from 3px to 1px. Use `ring-3` to match v3 appearance.
+## "Cannot Find Module tailwindcss-animate"
 
-## Headings/lists unstyled after migration
+**Cause**: `tailwindcss-animate` is incompatible with v4.
 
-v4 removed default element styles from Preflight. Use `@tailwindcss/typography` (`prose` class) or add custom base styles.
+**Fix**: Replace with v4-compatible package:
 
-## PostCSS plugin errors
+```bash
+pnpm remove tailwindcss-animate
+pnpm add -D tw-animate-css
+```
 
-Use `@tailwindcss/vite` for Vite projects instead of PostCSS:
+```css
+@import 'tailwindcss';
+@import 'tw-animate-css';
+```
+
+## "Cannot Apply Unknown Utility Class"
+
+**Cause**: In v4, `@apply` only works with `@utility`-defined classes.
+
+**Fix**: Migrate from `@layer components` to `@utility`:
+
+```css
+/* Wrong: v3 pattern */
+@layer components {
+  .custom-button {
+    @apply px-4 py-2 bg-blue-500;
+  }
+}
+
+/* Correct: v4 pattern */
+@utility custom-button {
+  @apply px-4 py-2 bg-blue-500;
+}
+```
+
+## `@layer base` Styles Not Applying
+
+**Cause**: v4 uses native CSS cascade layers. Base-layer styles have lower specificity than utility-layer styles.
+
+**Fix Option 1**: Define styles at root level without `@layer`:
+
+```css
+@import 'tailwindcss';
+
+body {
+  background-color: var(--background);
+}
+```
+
+**Fix Option 2**: Import layers explicitly for correct ordering:
+
+```css
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/base.css' layer(base);
+@import 'tailwindcss/components.css' layer(components);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@layer base {
+  body {
+    background-color: var(--background);
+  }
+}
+```
+
+## `@theme inline` Breaks Multi-Theme Dark Mode
+
+**Cause**: `@theme inline` bakes values at build time. When dark mode changes the underlying CSS variables, utilities still reference the inlined original values.
+
+**Fix**: Use `@theme` (without `inline`) for multi-theme:
+
+```css
+@theme {
+  --color-text-primary: var(--color-slate-900);
+  --color-bg-primary: var(--color-white);
+}
+
+.dark {
+  --color-text-primary: var(--color-white);
+  --color-bg-primary: var(--color-slate-900);
+}
+```
+
+**When to use `@theme inline`**: Single theme + light/dark toggle (shadcn/ui default).
+
+**When to use `@theme`**: Multi-theme systems, dynamic theme switching.
+
+## Ring Width Thinner Than v3
+
+**Cause**: Default ring width changed from 3px to 1px in v4.
+
+**Fix**: Use `ring-3` to match v3 appearance:
+
+```tsx
+<button className="ring-3">Match v3 ring width</button>
+```
+
+## Headings and Lists Unstyled After Migration
+
+**Cause**: v4 removed default element styles from Preflight. All headings render at the same size, lists lose padding.
+
+**Fix**: Use the typography plugin or add custom base styles:
+
+```css
+@plugin "@tailwindcss/typography";
+```
+
+```tsx
+<article className="prose dark:prose-invert">
+  {/* All elements styled automatically */}
+</article>
+```
+
+## PostCSS Plugin Errors
+
+**Error**: "It looks like you're trying to use tailwindcss directly as a PostCSS plugin"
+
+**Cause**: v4's PostCSS plugin is a separate package.
+
+**Fix for Vite projects**: Use the Vite plugin instead:
 
 ```ts
 import tailwindcss from '@tailwindcss/vite';
-export default defineConfig({ plugins: [react(), tailwindcss()] });
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+});
 ```
 
-## Migration tool fails
+**Fix for non-Vite projects**: Install the PostCSS package:
 
-The `@tailwindcss/upgrade` utility often fails with complex configs. Manual migration steps:
+```bash
+pnpm add -D @tailwindcss/postcss
+```
 
-1. Delete `tailwind.config.ts`
-2. Move theme to CSS with `@theme`
+```js
+// postcss.config.js
+export default {
+  plugins: {
+    '@tailwindcss/postcss': {},
+  },
+};
+```
+
+## Duplicate `@layer base` Error
+
+**Cause**: Multiple `@layer base` blocks in CSS (shadcn init may add one).
+
+**Fix**: Consolidate to a single `@layer base` block. Keep `:root`/`.dark` variables outside any layer.
+
+## `@apply` Not Working in Vue/Svelte Scoped Styles
+
+**Cause**: Scoped `<style>` blocks do not have access to theme variables.
+
+**Fix**: Use `@reference` to import definitions:
+
+```html
+<style>
+  @reference '../../app.css';
+
+  h1 {
+    @apply text-2xl font-bold text-red-500;
+  }
+</style>
+```
+
+## Classes from External Library Not Detected
+
+**Cause**: Tailwind ignores dependencies listed in `.gitignore` by default.
+
+**Fix**: Add the source path explicitly:
+
+```css
+@source '../node_modules/@mycompany/ui/src';
+```
+
+## Migration Tool Fails
+
+The `@tailwindcss/upgrade` utility often fails with complex configurations.
+
+**Workaround**: Follow manual migration steps. Key changes:
+
+1. Replace `@tailwind` directives with `@import "tailwindcss"`
+2. Move theme to `@theme` in CSS, delete config file
 3. Replace `tailwindcss-animate` with `tw-animate-css`
 4. Update plugins: `require()` to `@plugin`
-5. Replace `@tailwind base; @tailwind components; @tailwind utilities;` with `@import "tailwindcss";`
-6. Move `:root`/`.dark` out of `@layer base`
+5. Move `:root`/`.dark` out of `@layer base`
+6. Replace `@layer utilities` with `@utility`

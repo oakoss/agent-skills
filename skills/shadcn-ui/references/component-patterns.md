@@ -1,12 +1,13 @@
 ---
 title: Component Patterns and Variants
-description: shadcn/ui component authoring patterns including CVA variants, direct refs, polymorphic slots, and accessible composition
-tags: [components, cva, variants, radix, accessibility, composition, ref]
+description: shadcn/ui component authoring patterns including CVA variants, direct refs, polymorphic slots, accessible composition, and Base UI support
+tags:
+  [components, cva, variants, radix, base-ui, accessibility, composition, ref]
 ---
 
 # Component Patterns and Variants
 
-shadcn/ui components are source code you own. They combine Radix UI primitives for accessibility with CVA for variant management and Tailwind for styling.
+shadcn/ui components are source code you own. They combine Radix UI or Base UI primitives for accessibility with CVA for variant management and Tailwind for styling.
 
 ## React 19 Direct Ref Pattern
 
@@ -90,7 +91,7 @@ function NavButton() {
 }
 ```
 
-This renders a `<a>` tag with all the Button styles and accessibility behavior.
+This renders an `<a>` tag with all the Button styles and accessibility behavior.
 
 ## CVA Variant Authoring
 
@@ -98,6 +99,7 @@ Class Variance Authority (CVA) provides type-safe variant definitions:
 
 ```tsx
 import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
 
 const badgeVariants = cva(
   'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors',
@@ -183,34 +185,90 @@ export function ConfirmDialog() {
 }
 ```
 
+## Component Library Choice
+
+When initializing with `npx shadcn@latest create`, you can choose between:
+
+- **Radix UI** -- The default. Headless primitives with built-in accessibility (ARIA, keyboard navigation, focus management).
+- **Base UI** -- Alternative from the MUI team. Every shadcn/ui component has been rebuilt for Base UI with the same abstraction layer.
+
+Both libraries are fully compatible. Components from remote registries auto-detect your library choice and apply the right transformations.
+
 ## Component Prop Ordering Convention
 
 Sort props in this order: reserved, boolean, data, callbacks:
 
 ```tsx
 interface CardProps {
-  // Reserved
   className?: string;
   ref?: React.Ref<HTMLDivElement>;
-  // Boolean
   bordered?: boolean;
   elevated?: boolean;
-  // Data
   title: string;
   description?: string;
-  // Callbacks
   onClick?: () => void;
 }
 ```
 
 ## Adding New Components
 
-Always use the canary CLI to add components:
+Use the CLI to add components:
 
 ```bash
-bun x shadcn-ui@canary add button
-bun x shadcn-ui@canary add dialog
-bun x shadcn-ui@canary add form
+npx shadcn@latest add button
+npx shadcn@latest add dialog
+npx shadcn@latest add field
 ```
 
-Components are copied to `src/components/ui/` (or the configured path). From that point, you own the source code and customize it directly.
+Components are copied to your configured components directory (typically `src/components/ui/` or `components/ui/`). From that point, you own the source code and customize it directly.
+
+To add all available components at once:
+
+```bash
+npx shadcn@latest add --all
+```
+
+## Extending Components
+
+Since you own the source, extend components by editing them directly:
+
+```tsx
+const buttonVariants = cva('...', {
+  variants: {
+    variant: {
+      default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+      destructive:
+        'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+      outline:
+        'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+      secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+      ghost: 'hover:bg-accent hover:text-accent-foreground',
+      link: 'text-primary underline-offset-4 hover:underline',
+      warning: 'bg-warning text-warning-foreground hover:bg-warning/90',
+    },
+    size: {
+      default: 'h-10 px-4 py-2',
+      sm: 'h-9 rounded-md px-3',
+      lg: 'h-11 rounded-md px-8',
+      xl: 'h-14 rounded-lg px-12 text-lg',
+      icon: 'h-10 w-10',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+    size: 'default',
+  },
+});
+```
+
+Use `npx shadcn@latest diff button` to check for upstream changes before customizing.
+
+## Monorepo Pattern
+
+In monorepos, components are shared from a UI package:
+
+```tsx
+import { Button } from '@workspace/ui/components/button';
+```
+
+The CLI auto-detects monorepo structure and installs components to the correct package (e.g., `packages/ui`), while page-level compositions go to the app directory.

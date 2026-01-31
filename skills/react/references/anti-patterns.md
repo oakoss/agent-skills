@@ -9,6 +9,7 @@ tags:
     stale-closures,
     re-renders,
     bundle-size,
+    memory-leaks,
   ]
 ---
 
@@ -18,7 +19,7 @@ tags:
 
 - Fetching in `useEffect` with `useState` -- use `use()` or React Query
 - Sequential awaits for independent data -- use `Promise.all()`
-- Fetching the same data in multiple components -- deduplicate with `React.cache()` or SWR
+- Fetching the same data in multiple components -- deduplicate with `React.cache()` or React Query
 
 ## State Anti-Patterns
 
@@ -26,6 +27,7 @@ tags:
 - Syncing state with effects -- derive inline or use `useSyncExternalStore`
 - Prop drilling through many layers -- use Context or Zustand
 - Orphan event listeners -- deduplicate global listeners
+- Using index as key for dynamic lists -- use stable unique identifiers
 
 ## Component Anti-Patterns
 
@@ -38,7 +40,6 @@ tags:
 
 - Manual `useMemo`/`useCallback` on everything -- trust React Compiler first
 - `array.sort()` mutating state -- use `toSorted()` for immutability
-- Animating SVG elements directly -- wrap in a `div` and animate the wrapper
 - Eager initialization in `useState` -- use lazy initializer function
 - `Array.includes` in render loops -- use `Set` with `useMemo` for O(1) lookups
 - Object literals as props to memoized children -- define outside component or use `useMemo`
@@ -49,12 +50,75 @@ tags:
 ### Hydration Mismatch
 
 - **Cause:** Server and client render different output (dates, random values, browser APIs)
-- **Fix:** Use inline `<script>` to set client-only values before React hydrates; use `suppressHydrationWarning` for intentional mismatches
+- **Fix:** Use `useId` for unique IDs; use `suppressHydrationWarning` for intentional mismatches; defer client-only values to effects
+
+```tsx
+// Bad -- different on server vs client
+function Input() {
+  const id = `input-${Math.random()}`;
+  return <input id={id} />;
+}
+
+// Good -- hydration-safe
+import { useId } from 'react';
+function Input() {
+  const id = useId();
+  return <input id={id} />;
+}
+```
+
+```tsx
+// Bad -- browser API during SSR
+const [width, setWidth] = useState(window.innerWidth);
+
+// Good -- safe initialization
+const [width, setWidth] = useState(0);
+useEffect(() => {
+  setWidth(window.innerWidth);
+}, []);
+```
 
 ### Unnecessary Re-renders
 
 - **Cause:** Object/array references changing, subscribing to unused state
 - **Fix:** Defer state reads to callbacks, use primitive dependencies, hoist default non-primitive props, check React Compiler output
+
+### Infinite Re-renders
+
+- **Cause:** Object created during render used as effect dependency, or setState in effect without dependencies
+
+```tsx
+// Bad -- new object every render triggers infinite effect loop
+function Component() {
+  const config = { theme: 'dark' };
+  useEffect(() => {
+    applyConfig(config);
+  }, [config]);
+}
+
+// Good -- stable reference outside component
+const CONFIG = { theme: 'dark' };
+function Component() {
+  useEffect(() => {
+    applyConfig(CONFIG);
+  }, []);
+}
+```
+
+```tsx
+// Bad -- derived state anti-pattern causes extra renders
+function UserList({ users }: { users: User[] }) {
+  const [filtered, setFiltered] = useState<User[]>([]);
+  useEffect(() => {
+    setFiltered(users.filter((u) => u.active));
+  }, [users]);
+}
+
+// Good -- derive during render
+function UserList({ users }: { users: User[] }) {
+  const filtered = useMemo(() => users.filter((u) => u.active), [users]);
+}
+```
 
 ### Data Fetching Waterfalls
 
@@ -69,18 +133,18 @@ tags:
 ### Stale Closures
 
 - **Cause:** Event handlers or effects capturing old state values
-- **Fix:** Use refs for latest values (`useLatest` pattern), functional `setState`, or `useEffectEvent`
+- **Fix:** Use functional `setState`, `useEffectEvent`, or refs for latest values
 
 ```tsx
-// BUG: count is always 0 inside the interval
+// Bug: count is always 0 inside the interval
 useEffect(() => {
   const interval = setInterval(() => {
-    setCount(count + 1); // Always sets to 1
+    setCount(count + 1); // always sets to 1
   }, 1000);
   return () => clearInterval(interval);
 }, []);
 
-// FIX: Functional update
+// Fix: functional update
 useEffect(() => {
   const interval = setInterval(() => {
     setCount((prev) => prev + 1);
@@ -92,15 +156,15 @@ useEffect(() => {
 ### Race Conditions
 
 - **Cause:** Old async response overriding newer one when dependencies change quickly
-- **Fix:** AbortController, cancelled flag, or TanStack Query (handles automatically)
+- **Fix:** AbortController, cancelled flag, or React Query (handles automatically)
 
 ```tsx
-// BUG: User A request -> User B request -> User A response arrives last
+// Bug: User A response arrives after User B response
 useEffect(() => {
   fetchUser(userId).then(setUser);
 }, [userId]);
 
-// FIX: AbortController
+// Fix: AbortController
 useEffect(() => {
   const controller = new AbortController();
   fetchUser(userId, { signal: controller.signal })
@@ -122,6 +186,20 @@ useEffect(() => {
   const unsubscribe = eventBus.on('event', handler);
   return () => unsubscribe();
 }, []);
+```
+
+Unbounded state growth is another leak pattern:
+
+```tsx
+// Bad -- array grows forever
+socket.on('message', (msg) => {
+  setMessages((prev) => [...prev, msg]);
+});
+
+// Good -- limit array size
+socket.on('message', (msg) => {
+  setMessages((prev) => [...prev, msg].slice(-100));
+});
 ```
 
 ### TypeScript Pitfalls

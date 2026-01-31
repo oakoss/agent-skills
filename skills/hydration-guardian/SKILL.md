@@ -1,59 +1,69 @@
 ---
 name: hydration-guardian
-description: 'Ensures zero-mismatch integrity between server-rendered HTML and client-side React trees. Use when debugging hydration errors, fixing text content mismatches, handling browser extension DOM pollution, or implementing Pausable Composition and deterministic bridges in React and Next.js.'
+description: >
+  Ensures zero-mismatch integrity between server-rendered HTML and client-side
+  React trees. Use when debugging hydration errors, fixing text content
+  mismatches, handling browser extension DOM pollution, implementing selective
+  hydration with Suspense, using the React 19 use() hook for deterministic
+  server-to-client data bridges, or applying Next.js use cache for data drift
+  prevention. Use for hydration mismatch, SSR, hydrateRoot, suppressHydrationWarning,
+  onRecoverableError, two-pass rendering.
 ---
 
 # Hydration Guardian
 
 ## Overview
 
-Ensures zero-mismatch integrity between server-rendered HTML and client-side React trees. Covers hydration error diagnosis, Pausable Composition for non-deterministic UI, deterministic data bridges with the `use` hook, `@use cache` for eliminating data drift, and automated sensory validation of rendered DOM state.
+Ensures zero-mismatch integrity between server-rendered HTML and client-side React trees. Covers hydration error diagnosis, selective hydration via Suspense boundaries, deterministic data bridges with the React 19 `use()` hook, `'use cache'` for eliminating data drift, two-pass rendering for client-only content, and automated validation of rendered DOM state.
 
-**When to use:** Debugging hydration mismatch errors, fixing text content mismatches, handling browser extension DOM pollution, implementing deterministic data bridges, optimizing SSR/client hydration performance.
+**When to use:** Debugging hydration mismatch errors, fixing text content mismatches, handling browser extension DOM pollution, implementing deterministic data bridges, optimizing SSR/client hydration performance, setting up error monitoring with `onRecoverableError`.
 
 **When NOT to use:** Client-only React applications without SSR, static sites without hydration, API-only backends.
 
 ## Quick Reference
 
-| Pattern              | Approach                                          | Key Points                                             |
-| -------------------- | ------------------------------------------------- | ------------------------------------------------------ |
-| Pausable Composition | `<Pausable fallback={...}>` boundary              | Delays hydration of branches without blocking the page |
-| Deterministic bridge | `use(serverPromise)` instead of useEffect         | Seamless server-to-client data transition              |
-| Cache directive      | `'use cache'` in data fetchers                    | Share exact server result with client during hydration |
-| Sensory validation   | Automated DOM audit via browser tools             | Detect silent hydration warnings that do not crash     |
-| Priority hydration   | `<Pausable priority="high">` for viewport content | Hydrate above-the-fold content first                   |
-| Date/time safety     | UTC normalization or server-synced context        | Prevent locale-dependent hydration mismatches          |
-| Extension resilience | Test with common browser extensions active        | Detect DOM pollution from translators, dark-mode tools |
-| Mutation monitoring  | MutationObserver within first 100ms               | Flag excessive DOM changes during hydration            |
+| Pattern              | Approach                                   | Key Points                                              |
+| -------------------- | ------------------------------------------ | ------------------------------------------------------- |
+| Selective hydration  | `<Suspense fallback={...}>` boundary       | Hydrates independently; prioritizes user interaction    |
+| Deterministic bridge | `use(serverPromise)` instead of useEffect  | Seamless server-to-client data transition (React 19)    |
+| Cache directive      | `'use cache'` in data fetchers             | Share exact server result with client during hydration  |
+| Two-pass rendering   | `useState` + `useEffect` for client-only   | First render matches server; second adds client content |
+| Client-only skip     | `next/dynamic` with `ssr: false`           | Exclude component from server render entirely           |
+| Error monitoring     | `onRecoverableError` on `hydrateRoot`      | Detect and report silent hydration recovery             |
+| Date/time safety     | UTC normalization or server-synced context | Prevent locale-dependent hydration mismatches           |
+| Extension resilience | Test with common browser extensions active | Detect DOM pollution from translators, dark-mode tools  |
 
 ## Hydration Error Diagnosis
 
-| Error Message                  | Likely Cause                             | Corrective Action                                       |
-| ------------------------------ | ---------------------------------------- | ------------------------------------------------------- |
-| `Text content did not match`   | Conditional rendering in inline elements | Wrap in `<Pausable>` or use `use(data)` pattern         |
-| `Extra attributes from server` | Server-side metadata pollution           | Use `'use cache'` to isolate server-side data           |
-| `Hydration failed (Extension)` | Third-party extension modifying DOM      | Verify extension resilience in hydration-guardian logic |
-| `Pausable boundary timed out`  | Deadlocked promise in `use()`            | Implement timeout strategy for paused boundaries        |
+| Error Message                        | Likely Cause                                    | Corrective Action                                         |
+| ------------------------------------ | ----------------------------------------------- | --------------------------------------------------------- |
+| `Text content did not match`         | Non-deterministic render (dates, random values) | Use two-pass rendering or `suppressHydrationWarning`      |
+| `Expected server HTML to contain`    | Client renders content server did not           | Move client-only code to `useEffect` or dynamic import    |
+| `Hydration failed`                   | Invalid HTML nesting (`<p>` inside `<p>`)       | Fix HTML structure; browsers auto-correct causing drift   |
+| `Extra attributes from server`       | Server-only attributes not on client            | Ensure attribute parity or use `suppressHydrationWarning` |
+| `There was an error while hydrating` | Extension-modified DOM or major mismatch        | Check for browser extensions; verify HTML validity        |
 
 ## Common Mistakes
 
-| Mistake                                                             | Correct Pattern                                                             |
-| ------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| Using `suppressHydrationWarning` on container elements              | Fix the root cause; use `Pausable` boundaries for non-deterministic content |
-| Accessing `window` or `document` directly in the render body        | Wrap client-only code in `useEffect` or a `Pausable` boundary               |
-| Using `Math.random()` or `new Date()` without stable seeds          | Use UTC normalization or server-cached deterministic values                 |
-| Ignoring silent hydration warnings that do not crash the app        | Run the sensory validation protocol to detect hidden mismatches             |
-| Using `dangerouslySetInnerHTML` with server/client content mismatch | Use a dedicated `key` change or move dynamic content to `Pausable`          |
-| Over-pausing everything causing a "dead" app feel                   | Pause only non-deterministic branches; keep critical UI interactive         |
+| Mistake                                                     | Correct Pattern                                                                 |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Using `suppressHydrationWarning` on container elements      | Fix the root cause; suppress only on leaf elements with unavoidable differences |
+| Accessing `window` or `document` in the render body         | Wrap client-only code in `useEffect` or use `next/dynamic` with `ssr: false`    |
+| Using `Math.random()` or `new Date()` without stable seeds  | Use UTC normalization, server-cached values, or two-pass rendering              |
+| Ignoring silent hydration recovery in production            | Configure `onRecoverableError` on `hydrateRoot` to log and monitor              |
+| Using `dangerouslySetInnerHTML` with server/client mismatch | Ensure identical content or use a dedicated `key` change to force remount       |
+| Checking `typeof window !== 'undefined'` in render          | Use two-pass rendering; the check runs on server too (it returns false)         |
+| Nesting `<p>` inside `<p>` or `<div>` inside `<p>`          | Fix invalid HTML nesting; browsers correct it causing server/client drift       |
 
 ## Delegation
 
 - **Scan rendered pages for hidden hydration warnings**: Use `Explore` agent with Chrome DevTools to run the hydration audit script
 - **Fix hydration mismatches across multiple routes**: Use `Task` agent to isolate, correct, and verify each affected component
-- **Design hydration-safe architecture for new features**: Use `Plan` agent to select between Pausable, deterministic bridge, and cache patterns
+- **Design hydration-safe architecture for new features**: Use `Plan` agent to select between Suspense boundaries, two-pass rendering, and cache patterns
 
 ## References
 
-- [Sensory Validation](references/sensory-validation.md) -- automated DOM verification, flash detection, mutation monitoring, environment simulation
-- [Pausable Composition](references/pausable-composition.md) -- React Pausable primitive, frozen state, priority hydration, nesting patterns
-- [Use Cache Patterns](references/use-cache-patterns.md) -- data drift prevention, `@use cache` directive, `use()` hook consumption, performance impact
+- [Common Mismatches](references/common-mismatches.md) -- causes, diagnosis, and fixes for hydration mismatch errors including dates, locales, HTML nesting, and browser extensions
+- [Selective Hydration](references/selective-hydration.md) -- Suspense-based selective hydration, streaming SSR, two-pass rendering, and client-only components
+- [Use Cache Patterns](references/use-cache-patterns.md) -- data drift prevention, Next.js use cache directive, React 19 use() hook, deterministic data bridges
+- [Validation Techniques](references/validation-techniques.md) -- automated DOM verification, mutation monitoring, onRecoverableError, and production hydration monitoring

@@ -1,16 +1,20 @@
 ---
 title: Next.js Integration
-description: Motion with Next.js App Router client component patterns, Pages Router setup, known issues with soft navigation and Reorder, and deployment checklist
+description: Motion with Next.js App Router client component patterns, motion/react-client import, Pages Router setup, template.tsx for page transitions, and deployment checklist
 tags: [nextjs, app-router, pages-router, use-client, ssr, react-client]
 ---
 
 # Next.js Integration
 
-## App Router (Next.js 13+)
+Motion requires React 18.2+. Compatible with both App Router and Pages Router.
 
-Motion requires Client Components. Three patterns in order of recommendation:
+## App Router
+
+Motion components only work in Client Components. Three patterns ordered by recommendation:
 
 ### Pattern 1: Wrapper Component (Recommended)
+
+Create a single client component that re-exports Motion:
 
 ```tsx
 // src/components/motion-client.tsx
@@ -40,20 +44,24 @@ export default function Page() {
 }
 ```
 
+Use `motion/react-client` instead of `motion/react` in App Router -- it excludes server-side code, reducing client JavaScript.
+
 ### Pattern 2: Direct Client Component
 
 ```tsx
 'use client';
 import { motion } from 'motion/react-client';
 
-export default function Page() {
+export default function AnimatedSection() {
   return <motion.div animate={{ opacity: 1 }}>Content</motion.div>;
 }
 ```
 
-Downside: entire page becomes client-rendered.
+Downside: entire component tree becomes client-rendered.
 
 ### Pattern 3: Server Data + Client Animation
+
+Keep data fetching on the server, pass to client components for animation:
 
 ```tsx
 // src/components/AnimatedCard.tsx
@@ -110,13 +118,33 @@ export function MotionProvider({ children }: { children: ReactNode }) {
 
 Add to root layout for global reduced-motion support.
 
-### Import: `motion/react-client` vs `motion/react`
+### LazyMotion in App Router
 
-Always use `motion/react-client` in App Router — it excludes server-side code, reducing client JavaScript.
+```tsx
+// src/components/LazyMotionProvider.tsx
+'use client';
+import { LazyMotion, domAnimation } from 'motion/react-client';
 
-## Pages Router (Next.js 12)
+export function LazyMotionProvider({ children }: { children: ReactNode }) {
+  return <LazyMotion features={domAnimation}>{children}</LazyMotion>;
+}
 
-Works out of the box with `import { motion } from 'motion/react'`. No `"use client"` needed.
+export { m as motion } from 'motion/react-client';
+```
+
+Reduces Motion bundle from 34 KB to 4.6 KB.
+
+## Pages Router
+
+Works out of the box. No `"use client"` needed:
+
+```tsx
+import { motion } from 'motion/react';
+
+export default function Page() {
+  return <motion.div>No "use client" needed</motion.div>;
+}
+```
 
 For hydration errors, use dynamic import:
 
@@ -129,13 +157,9 @@ const AnimatedComponent = dynamic(
 );
 ```
 
-## Known Issues
+## Page Transitions with template.tsx
 
-### Soft Navigation Breaks Exit Animations
-
-Next.js App Router soft navigation doesn't trigger React unmount, so AnimatePresence exit animations don't fire for page transitions.
-
-**Solution**: Use AnimatePresence for component-level animations only (modals, dropdowns, tooltips). For page enter animations, use `template.tsx`:
+Next.js App Router soft navigation does not trigger React unmount, so AnimatePresence exit animations do not fire for route changes. Use `template.tsx` for page enter animations:
 
 ```tsx
 // src/app/template.tsx
@@ -145,8 +169,8 @@ import { motion } from 'motion/react-client';
 export default function Template({ children }: { children: ReactNode }) {
   return (
     <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
       {children}
@@ -155,24 +179,15 @@ export default function Template({ children }: { children: ReactNode }) {
 }
 ```
 
+`template.tsx` re-mounts on every navigation (unlike `layout.tsx`), making it the correct place for page enter animations.
+
+For exit animations, use AnimatePresence at the component level (modals, dropdowns, tooltips) rather than page level.
+
+## Known Issues
+
 ### Reorder Component Incompatibility
 
-Motion's `<Reorder>` component has issues with Next.js routing (stuck states, items don't reorder). Use `@dnd-kit/core` instead.
-
-### Large Bundle Size
-
-Use LazyMotion to reduce from 34 KB → 4.6 KB:
-
-```tsx
-'use client';
-import { LazyMotion, domAnimation } from 'motion/react-client';
-
-export function MotionProvider({ children }: { children: ReactNode }) {
-  return <LazyMotion features={domAnimation}>{children}</LazyMotion>;
-}
-
-export { m as motion } from 'motion/react-client';
-```
+Motion's `<Reorder>` component has issues with Next.js routing (stuck states, items not reordering). Auto-scroll only works inside `overflow: auto/scroll` containers, not page-level scroll. For complex drag-and-drop (multi-row, cross-column), use `@dnd-kit/core` instead.
 
 ### Code Splitting
 
@@ -194,5 +209,6 @@ const AnimatedHero = dynamic(() => import('@/components/AnimatedHero'), {
 - MotionConfig with `reducedMotion="user"` set up
 - No Motion usage in Server Components
 - AnimatePresence only for component-level animations (not routes)
+- Page enter animations use `template.tsx`
 - Tested with `prefers-reduced-motion` enabled
 - Bundle analyzed (target < 5 KB for Motion)
