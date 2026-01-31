@@ -143,6 +143,16 @@ metadata:
 - Self-contained with code examples, no cross-references between files
 - Topic-scoped (e.g., `mutations.md` not `mut-optimistic-updates.md`)
 
+### Progressive Disclosure
+
+Skills are loaded in three tiers to minimize context usage:
+
+1. **Metadata** (~100 tokens): `name` and `description` are loaded at startup for all installed skills
+2. **Instructions** (<5000 tokens recommended): The full `SKILL.md` body is loaded when the skill is activated
+3. **Resources** (as needed): Files in `references/`, `scripts/`, and `assets/` are loaded only when required
+
+This is why SKILL.md should be a lean index — it's loaded in full on activation. Detailed content belongs in reference files that are loaded on demand.
+
 ### Size Thresholds
 
 | File           | Target        | Warn | Max |
@@ -151,6 +161,16 @@ metadata:
 | Reference file | —             | 400  | 500 |
 
 Skills under 500 lines can remain as a single SKILL.md without `references/`.
+
+### Scripts and Assets
+
+**`scripts/`** — Executable code that agents can run:
+
+- Must be self-contained or clearly document dependencies
+- Must include error handling (don't punt errors to the agent)
+- Supported languages depend on the agent (common: Python, Bash, JavaScript)
+
+**`assets/`** — Static resources (templates, images, schemas, data files).
 
 ### Naming Rules
 
