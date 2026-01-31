@@ -202,10 +202,22 @@ Identified purely from cross-reference analysis.
 | 3         | 4      | None (gap-driven)                  | Create from scratch using official docs                         |
 | **Total** | **14** |                                    |                                                                 |
 
+### Architecture Decision: Self-Contained Skills
+
+Each skill should own its own integration surface via reference files rather than relying on separate integration skills. For example:
+
+- `tanstack-query` should have `references/router-integration.md` and `references/start-integration.md`
+- `tanstack-router` should have `references/query-prefetching.md`
+- `tanstack-form` should have `references/shadcn-fields.md`, `references/rac-fields.md`
+
+This causes some duplication across skills but makes each skill fully self-contained — a user installing one skill gets everything they need without knowing about or installing other skills. Reference files covering the same integration from different angles (e.g., Query's cache invalidation perspective vs Router's loader perspective) will overlap but not be identical.
+
+**Action item**: Deprecate `tanstack-integration` and migrate its content into the individual TanStack skills as integration reference files. Each skill owns its own integrations.
+
 ### Notes
 
 - **zod** — Already covered by `zod-validation`. No new skill needed.
-- **integration-patterns** — Already covered by `tanstack-integration`. No new skill needed.
+- **tanstack-integration** — To be deprecated. Content should be migrated into individual TanStack skills as integration reference files (see architecture decision above).
 - **meta-\*** skills (meta-skill-creator, meta-agent-creator, etc.) — These are tooling/internal skills, not candidates for public distribution.
 - Tier 1 skills have the highest ROI: source material already exists and they fill gaps referenced by multiple existing skills.
 - **Naming review**: Names follow ecosystem conventions observed on [skills.sh](https://skills.sh) — tool-specific (`drizzle-orm`, `vitest-testing`) or pattern-specific (`typescript-patterns`, `react-error-handling`) rather than generic categories.
