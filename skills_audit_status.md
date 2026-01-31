@@ -185,11 +185,12 @@ Additional sources available but need more curation.
 
 Identified purely from cross-reference analysis.
 
-| #   | Skill Name           | Description                                              | Rationale                                                                                                    |
-| --- | -------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| 10  | `pnpm-workspace`     | pnpm workspace patterns, shared configs, dependency mgmt | Turborepo skill is build-tool-specific. General workspace architecture patterns                              |
-| 11  | `react-email`        | React Email + Resend, transactional email templates      | Referenced in better-auth (email OTP). Resend has official skills; we can cover the React Email side         |
-| 12  | `stripe-integration` | Stripe Checkout, subscriptions, webhook handling         | Referenced in better-auth (Stripe plugin). Stripe has official skills; ours would cover integration patterns |
+| #   | Skill Name           | Description                                                | Rationale                                                                                                                   |
+| --- | -------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| 10  | `pnpm-workspace`     | pnpm workspace patterns, shared configs, dependency mgmt   | Turborepo skill is build-tool-specific. General workspace architecture patterns                                             |
+| 11  | `react-email`        | React Email templating, component previews, HTML rendering | Referenced in better-auth (email OTP). Minimal Resend integration ref, recommends `resend` skill for full delivery coverage |
+| 12  | `resend`             | Resend email delivery API, domains, webhooks               | Pairs with `react-email`. Minimal React Email integration ref, recommends `react-email` skill for templating                |
+| 13  | `stripe-integration` | Stripe Checkout, subscriptions, webhook handling           | Referenced in better-auth (Stripe plugin). Stripe has official skills; ours would cover integration patterns                |
 
 ### Summary
 
@@ -197,8 +198,8 @@ Identified purely from cross-reference analysis.
 | --------- | ------ | ---------------------------------- | --------------------------------------------------------------- |
 | 1         | 6      | `.claude/skills/` (ready)          | Create skills using existing sources + official docs validation |
 | 2         | 3      | `.agents/skills/` (needs curation) | Create skills with heavier doc validation                       |
-| 3         | 3      | None (gap-driven)                  | Create from scratch using official docs                         |
-| **Total** | **12** |                                    |                                                                 |
+| 3         | 4      | None (gap-driven)                  | Create from scratch using official docs                         |
+| **Total** | **13** |                                    |                                                                 |
 
 ### Architecture Decision: Self-Contained Skills
 
