@@ -1,6 +1,5 @@
 ---
 name: data-visualizer
-id: data-visualizer
 description: 'Charts, dashboards, and data visualizations using Recharts, Chart.js, and D3.js. Use when building charts, dashboards, or interactive data displays. Use for chart type selection, responsive design, accessibility, and performance optimization.'
 ---
 
@@ -10,11 +9,11 @@ Build charts, dashboards, and interactive data visualizations using modern libra
 
 ## Library Selection
 
-| Library  | Best For                            | React   | Custom   | Bundle          |
-| -------- | ----------------------------------- | ------- | -------- | --------------- |
-| Recharts | Quick React charts, standard types  | Native  | Limited  | ~45KB           |
-| Chart.js | Framework-agnostic, simple API      | Wrapper | Moderate | ~60KB           |
-| D3.js    | Custom visualizations, full control | Manual  | Full     | ~30KB (modular) |
+| Library  | Best For                            | React   | Custom   | Bundle (gzip)          |
+| -------- | ----------------------------------- | ------- | -------- | ---------------------- |
+| Recharts | Quick React charts, standard types  | Native  | Limited  | ~139KB                 |
+| Chart.js | Framework-agnostic, simple API      | Wrapper | Moderate | ~68KB (tree-shakeable) |
+| D3.js    | Custom visualizations, full control | Manual  | Full     | ~13-30KB per module    |
 
 ## Chart Type Selection
 

@@ -1,23 +1,31 @@
 ---
 name: figma-developer
-description: 'Extracts components from Figma and converts designs to React code. Use when syncing Figma tokens to CSS variables, exporting icons as SVG components, or generating code from Figma designs. Use for design-to-code automation, token extraction, and CI-based Figma sync.'
-version: 1.0.0
-tags: [figma, design-to-code, design-tokens, component-generation]
+description: 'Extracts design data from Figma via the REST API and converts designs to React code. Use when syncing Figma tokens to CSS variables, exporting icons as SVG components, generating code from Figma designs, or automating design-to-code workflows. Use for design token extraction, icon export, component generation, and CI-based Figma sync.'
 ---
 
 # Figma Developer
 
-Design is the single source of truth. Automate the Figma-to-code bridge.
+## Overview
 
-## Workflow
+Automates the Figma-to-code bridge using the Figma REST API. Extracts design tokens (colors, typography, spacing) as CSS variables and JSON, exports icons as SVG React components, generates React components from Figma node structures, and sets up CI pipelines for continuous design sync.
 
-| Phase      | Action                                         | Output                                  |
-| ---------- | ---------------------------------------------- | --------------------------------------- |
-| Setup      | Auth token + FigmaClient init                  | API connection                          |
-| Tokens     | Extract colors, typography, spacing            | CSS variables + JSON + TypeScript types |
-| Assets     | Export icons as SVG, generate React components | `components/icons/` barrel export       |
-| Components | Extract structure + variants from Figma        | Generated React components with props   |
-| Automation | GitHub Actions cron or webhook                 | Auto-sync PRs on Figma updates          |
+**When to use:** Syncing design tokens from Figma to code, exporting icon sets as React components, generating component scaffolding from Figma variants, setting up automated design sync in CI.
+
+**When NOT to use:** Manual one-off design tweaks (just copy values), Figma plugin development (use the Plugin API instead), real-time collaborative editing (use Figma webhooks directly), or projects without a Figma design system.
+
+## Quick Reference
+
+| Pattern            | API / Approach                                          | Key Points                                           |
+| ------------------ | ------------------------------------------------------- | ---------------------------------------------------- |
+| Get file data      | `GET /v1/files/:key`                                    | Returns full document tree with styles and fills     |
+| Get specific nodes | `GET /v1/files/:key/nodes?ids=...`                      | Fetch only the nodes you need to reduce payload      |
+| Export images      | `GET /v1/images/:key?ids=...&format=svg`                | Renders nodes as SVG/PNG/PDF; URLs expire in 14 days |
+| Get styles         | `GET /v1/files/:key/styles`                             | Lists all published color, text, and effect styles   |
+| Get components     | `GET /v1/files/:key/components`                         | Lists all published components with metadata         |
+| Get component sets | `GET /v1/files/:key/component_sets`                     | Returns variant groupings for components             |
+| Get variables      | `GET /v1/files/:key/variables/local`                    | Extracts Figma Variables (colors, spacing, etc.)     |
+| Token extraction   | Parse styles from file response, transform to CSS/JSON  | No built-in "extract tokens" endpoint exists         |
+| CI sync            | GitHub Actions cron + `peter-evans/create-pull-request` | Auto-sync PRs on Figma file changes                  |
 
 ## Figma File Organization
 
@@ -29,35 +37,28 @@ Design is the single source of truth. Automate the Figma-to-code bridge.
 | Components | Variant groups (`Button/Primary`, `Card/Default`)   |
 | Icons      | All icons in one exportable frame                   |
 
-## Key APIs
-
-| Method                                    | Purpose                             |
-| ----------------------------------------- | ----------------------------------- |
-| `client.getFile(fileKey)`                 | Fetch full Figma file               |
-| `client.extractDesignTokens(fileKey)`     | Extract colors, typography, spacing |
-| `client.exportTokensAsCSS(fileKey)`       | Generate CSS custom properties      |
-| `client.exportImages(fileKey, ids, opts)` | Export nodes as SVG/PNG             |
-| `client.getFileComponents(fileKey)`       | List all components and variants    |
-| `client.getComponentSets(fileKey)`        | Get variant groupings               |
-
 ## Common Mistakes
 
-| Mistake                                         | Fix                                                       |
-| ----------------------------------------------- | --------------------------------------------------------- |
-| Hardcoding Figma values instead of using tokens | Extract tokens to CSS variables, reference with `var()`   |
-| Not normalizing Figma style names               | Lowercase + replace special chars with hyphens            |
-| Forgetting Figma uses 0-1 RGB not 0-255         | Multiply by 255 and round before hex conversion           |
-| No API response caching                         | Cache with TTL to avoid rate limits                       |
-| Manual icon exports                             | Automate with `exportImages` + React component generation |
-| No CI sync workflow                             | GitHub Actions cron + `create-pull-request` action        |
+| Mistake                                                   | Fix                                                              |
+| --------------------------------------------------------- | ---------------------------------------------------------------- |
+| Using fabricated API methods like `extractDesignTokens()` | Parse styles from `GET /v1/files/:key` response manually         |
+| Hardcoding Figma values instead of using tokens           | Extract tokens to CSS variables, reference with `var()`          |
+| Not normalizing Figma style names                         | Lowercase + replace special chars with hyphens                   |
+| Forgetting Figma uses 0-1 RGB not 0-255                   | Multiply by 255 and round before hex conversion                  |
+| No API response caching                                   | Cache with TTL to avoid rate limits                              |
+| Manual icon exports                                       | Automate with `GET /v1/images/:key` + React component generation |
+| No CI sync workflow                                       | GitHub Actions cron + `create-pull-request` action               |
+| Using expired image URLs                                  | Image export URLs expire in 14 days; re-fetch before use         |
 
 ## Libraries
 
-| Package                | Purpose                           |
-| ---------------------- | --------------------------------- |
-| `@figma/rest-api-spec` | TypeScript types for Figma API    |
-| `figma-api`            | Alternative Figma client          |
-| `style-dictionary`     | Transform tokens across platforms |
+| Package                | Purpose                                  |
+| ---------------------- | ---------------------------------------- |
+| `figma-api`            | Community Figma REST API client (typed)  |
+| `@figma/rest-api-spec` | Official TypeScript types for Figma API  |
+| `style-dictionary`     | Transform design tokens across platforms |
+| `svgo`                 | Optimize exported SVGs before use        |
+| `@svgr/core`           | Convert SVG files to React components    |
 
 ## Delegation
 

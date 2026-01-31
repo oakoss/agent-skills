@@ -54,11 +54,11 @@ Designs intuitive, accessible user experiences grounded in research rather than 
 ## Delegation
 
 - **User research and testing**: Use `Task` agent to plan card sorting, tree testing, and usability test sessions
-- **Accessibility audit**: Use `Explore` agent to verify WCAG 2.1 AA compliance across all screens using automated tools
+- **Accessibility audit**: Use `Explore` agent to verify WCAG 2.2 AA compliance across all screens using automated tools
 - **Design system architecture**: Use `Plan` agent to define color scales, typography hierarchy, spacing grid, and component library structure
 
 ## References
 
 - [Design Process](references/design-process.md) -- 5-phase UX process, information architecture, user flows, wireframing, prototyping, and handoff
-- [Accessibility Guide](references/accessibility-guide.md) -- WCAG 2.1 AA compliance, keyboard navigation, screen readers, color contrast, and audit checklists
+- [Accessibility Guide](references/accessibility-guide.md) -- WCAG 2.2 AA compliance, keyboard navigation, screen readers, color contrast, and audit checklists
 - [Tools and Resources](references/tools-and-resources.md) -- design tools, prototyping platforms, testing services, and accessibility checkers

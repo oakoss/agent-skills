@@ -46,6 +46,7 @@ Iterative enhancement workflow that elevates working web applications from decen
 - **Desktop and mobile polish in parallel**: Use `Task` agent to run separate polish passes for each modality
 - **Visual regression verification**: Use `Explore` agent to check that polish iterations have not broken layout or accessibility
 - **Design system alignment planning**: Use `Plan` agent to establish spacing, typography, and color patterns before polishing
+- **Comprehensive accessibility audits**: Delegate to `accessibility` skill for in-depth WCAG compliance, ARIA patterns, focus management, and screen reader testing
 
 ## References
 

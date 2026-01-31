@@ -18,9 +18,21 @@ tags:
 
 ## Screen Reader Testing (10 minutes)
 
+**Recommended pairings (by usage):**
+
+| Priority | Screen Reader | Browser | Platform       |
+| -------- | ------------- | ------- | -------------- |
+| 1        | JAWS          | Chrome  | Windows        |
+| 2        | NVDA          | Chrome  | Windows (free) |
+| 3        | VoiceOver     | Safari  | macOS / iOS    |
+| 4        | NVDA          | Firefox | Windows (free) |
+| 5        | TalkBack      | Chrome  | Android        |
+
 **VoiceOver (Mac, built-in):** Cmd+F5 to start, VO+Right/Left to navigate (VO = Ctrl+Option), VO+A to read all.
 
 **NVDA (Windows, free):** Ctrl+Alt+N to start, arrow keys or Tab to navigate, NVDA+Down to read.
+
+**JAWS (Windows, paid):** Insert+Down to start reading, Tab to navigate interactive elements, Insert+F7 to list links.
 
 **Screen reader shortcuts:** H/Shift+H to navigate by heading, D/Shift+D to navigate by landmark.
 
@@ -32,10 +44,16 @@ tags:
 
 **Lighthouse** (Chrome built-in): F12 then Lighthouse tab, select Accessibility, generate report. Target score 90+.
 
-## jest-axe Unit Tests
+## Unit Tests with axe
+
+Use `jest-axe` for Jest or `vitest-axe` for Vitest. Both wrap `axe-core` with the same API.
 
 ```ts
+// Jest: npm install --save-dev jest-axe
 import { axe, toHaveNoViolations } from 'jest-axe';
+
+// Vitest: npm install --save-dev vitest-axe
+// import { axe, toHaveNoViolations } from 'vitest-axe';
 
 expect.extend(toHaveNoViolations);
 
@@ -45,6 +63,10 @@ it('has no accessibility violations', async () => {
   expect(results).toHaveNoViolations();
 });
 ```
+
+Color contrast checks do not work in JSDOM and are disabled by default. Use axe DevTools or Lighthouse for contrast auditing.
+
+For browser-based or E2E testing, use `@axe-core/playwright` or `cypress-axe` instead.
 
 ## Troubleshooting
 

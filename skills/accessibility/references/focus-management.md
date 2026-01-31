@@ -23,6 +23,25 @@ button:focus-visible {
 
 Never remove focus outlines without replacement. Use `:focus-visible` to show outlines only for keyboard users. Ensure 3:1 contrast ratio for focus indicators.
 
+## Focus Not Obscured (WCAG 2.4.11)
+
+When an element receives keyboard focus, it must not be entirely hidden by sticky headers, footers, cookie banners, or other author-created overlays. At least a portion of the focused element must remain visible.
+
+```css
+/* Account for sticky header when focusing elements */
+:target {
+  scroll-margin-top: 80px;
+}
+
+/* Ensure focused elements are not hidden under sticky elements */
+*:focus-visible {
+  scroll-margin-top: 80px;
+  scroll-margin-bottom: 40px;
+}
+```
+
+Common violations: sticky navigation bars, fixed cookie consent banners, chat widgets overlapping focused content.
+
 ## Dialog with Focus Trap
 
 ```tsx

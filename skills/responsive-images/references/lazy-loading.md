@@ -57,10 +57,10 @@ tags:
 
 | Browser      | Lazy Loading | fetchpriority |
 | ------------ | ------------ | ------------- |
-| Chrome 77+   | Yes          | Chrome 101+   |
-| Firefox 75+  | Yes          | Firefox 118+  |
-| Safari 15.4+ | Yes          | Safari 17.2+  |
-| Edge 79+     | Yes          | Edge 101+     |
+| Chrome 77+   | Yes          | Chrome 102+   |
+| Firefox 121+ | Yes          | Firefox 132+  |
+| Safari 16.4+ | Yes          | Safari 17.2+  |
+| Edge 79+     | Yes          | Edge 102+     |
 
 Polyfill not needed -- gracefully degrades to eager loading.
 

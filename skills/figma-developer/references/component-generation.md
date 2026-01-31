@@ -8,47 +8,57 @@ tags: [figma, component-generation, variants, react, props, styles, sync]
 
 ## Extract Component Structure
 
+Use `GET /v1/files/:key/components` and `GET /v1/files/:key/component_sets`:
+
 ```ts
-import { FigmaClient } from '@/integrations/design-tools/figma/client';
+import { Api } from 'figma-api';
 
 async function extractComponents() {
-  const client = new FigmaClient();
+  const api = new Api({
+    personalAccessToken: process.env.FIGMA_ACCESS_TOKEN,
+  });
   const fileKey = 'YOUR_FIGMA_FILE_KEY';
 
-  const components = await client.getFileComponents(fileKey);
+  const { meta } = await api.getFileComponents({ file_key: fileKey });
 
-  for (const [key, component] of Object.entries(components)) {
-    console.log(`${component.name} — Key: ${component.key}`);
+  for (const component of meta.components) {
+    console.log(`${component.name} -- Key: ${component.key}`);
+    console.log(`  Description: ${component.description}`);
   }
 
-  const componentSets = await client.getComponentSets(fileKey);
+  const sets = await api.getFileComponentSets({ file_key: fileKey });
 
-  for (const [setId, variants] of Object.entries(componentSets)) {
-    for (const variant of variants) {
-      console.log(`  ${variant.name}`);
-    }
+  for (const set of sets.meta.component_sets) {
+    console.log(`Set: ${set.name}`);
   }
 }
 ```
 
 ## Generate Component from Figma Node
 
+Fetch the component node, extract styles, and generate a React component:
+
 ```ts
+import { Api } from 'figma-api';
+import fs from 'fs/promises';
+
 async function generateButtonComponent() {
-  const client = new FigmaClient();
+  const api = new Api({
+    personalAccessToken: process.env.FIGMA_ACCESS_TOKEN,
+  });
   const fileKey = 'YOUR_FIGMA_FILE_KEY';
 
-  const components = await client.getFileComponents(fileKey);
-  const buttonComponent = Object.values(components).find((c) =>
+  const { meta } = await api.getFileComponents({ file_key: fileKey });
+  const buttonMeta = meta.components.find((c) =>
     c.name.toLowerCase().includes('button'),
   );
 
-  if (!buttonComponent) {
+  if (!buttonMeta) {
     throw new Error('Button component not found');
   }
 
-  const file = await client.getFile(fileKey);
-  const buttonNode = findNodeById(file.document, buttonComponent.key);
+  const file = await api.getFile({ file_key: fileKey });
+  const buttonNode = findNodeById(file.document, buttonMeta.node_id);
 
   if (!buttonNode) {
     throw new Error('Button node not found');
@@ -57,8 +67,6 @@ async function generateButtonComponent() {
   const styles = extractStyles(buttonNode);
 
   const component = `
-import React from 'react'
-
 interface ButtonProps {
   variant?: 'primary' | 'secondary' | 'ghost'
   size?: 'sm' | 'md' | 'lg'
@@ -116,6 +124,8 @@ export function Button({
 
 ## Style Extraction
 
+Parse visual properties from Figma node data:
+
 ```ts
 function extractStyles(node: any) {
   return {
@@ -162,19 +172,46 @@ Keep components in sync with Figma as designs evolve:
 
 ```ts
 async function syncComponent(componentName: string) {
-  const client = new FigmaClient();
+  const api = new Api({
+    personalAccessToken: process.env.FIGMA_ACCESS_TOKEN,
+  });
   const fileKey = 'YOUR_FIGMA_FILE_KEY';
 
-  const components = await client.getFileComponents(fileKey);
-  const component = Object.values(components).find(
-    (c) => c.name === componentName,
-  );
+  const { meta } = await api.getFileComponents({ file_key: fileKey });
+  const component = meta.components.find((c) => c.name === componentName);
 
   if (!component) {
     throw new Error(`Component not found: ${componentName}`);
   }
 
-  const code = await generateComponentCode(component);
+  const file = await api.getFile({ file_key: fileKey });
+  const node = findNodeById(file.document, component.node_id);
+
+  if (!node) {
+    throw new Error(`Node not found for: ${componentName}`);
+  }
+
+  const styles = extractStyles(node);
+  const code = generateComponentCode(componentName, styles);
   await fs.writeFile(`components/${componentName}.tsx`, code);
+}
+```
+
+## Fetching Specific Nodes
+
+For large files, fetch only the nodes you need instead of the entire file:
+
+```ts
+async function getComponentNode(fileKey: string, nodeId: string) {
+  const api = new Api({
+    personalAccessToken: process.env.FIGMA_ACCESS_TOKEN,
+  });
+
+  const { nodes } = await api.getFileNodes({
+    file_key: fileKey,
+    queryParams: { ids: nodeId },
+  });
+
+  return nodes[nodeId]?.document;
 }
 ```

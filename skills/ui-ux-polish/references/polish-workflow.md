@@ -76,7 +76,7 @@ Multiple agents can work on UI/UX polish simultaneously:
 
 ### Mobile Optimization
 
-- Touch target sizes (minimum 44x44px)
+- Touch target sizes (24x24px AA minimum, 44x44px recommended)
 - Responsive breakpoints
 - Mobile-specific navigation
 - Gesture support

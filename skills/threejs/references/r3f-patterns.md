@@ -213,6 +213,43 @@ function Floor() {
 
 Each component handles one concern: lighting, model loading, ground plane, camera controls.
 
+## WebGPU with React Three Fiber
+
+R3F v9 supports WebGPU through an async `gl` prop. You must import from `three/webgpu` and call `extend()` to register the node-based elements:
+
+```tsx
+'use client';
+
+import * as THREE from 'three/webgpu';
+import * as TSL from 'three/tsl';
+import { Canvas, extend, type ThreeToJSXElements } from '@react-three/fiber';
+
+declare module '@react-three/fiber' {
+  interface ThreeElements extends ThreeToJSXElements<typeof THREE> {}
+}
+
+extend(THREE as any);
+
+export default function Scene() {
+  return (
+    <Canvas
+      gl={async (props) => {
+        const renderer = new THREE.WebGPURenderer(props as any);
+        await renderer.init();
+        return renderer;
+      }}
+    >
+      <mesh>
+        <boxGeometry />
+        <meshBasicNodeMaterial />
+      </mesh>
+    </Canvas>
+  );
+}
+```
+
+Note: In R3F v9, `state.gl` is renamed to `state.renderer`.
+
 ## React Compiler Considerations
 
 The React Compiler (React 19) handles memoization automatically. Avoid manual `useMemo` for geometries and materials unless profiling reveals a specific leak. The compiler optimizes re-render paths without explicit memoization hints.

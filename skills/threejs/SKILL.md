@@ -1,13 +1,13 @@
 ---
 name: threejs
-description: 'Builds 3D web experiences with Three.js v172+, WebGPU rendering, TSL shaders, and React Three Fiber. Covers scene setup, asset optimization, performance tuning, and React 19 integration. Use when creating 3D scenes, setting up WebGPU rendering, writing TSL shaders, optimizing draw calls, or integrating Three.js with React and Next.js.'
+description: 'Builds 3D web experiences with Three.js, WebGPU rendering, TSL shaders, and React Three Fiber. Covers scene setup, asset optimization, performance tuning, and React 19 integration. Use when creating 3D scenes, setting up WebGPU rendering, writing TSL shaders, optimizing draw calls, or integrating Three.js with React and Next.js.'
 ---
 
 # Three.js
 
 ## Overview
 
-Guides building high-performance 3D web experiences with Three.js v172+, WebGPU-first rendering, TSL (Three Shader Language), and React Three Fiber. Covers scene architecture, asset compression, draw call budgets, and React 19 / Next.js integration patterns.
+Guides building high-performance 3D web experiences with Three.js, WebGPU-first rendering, TSL (Three Shader Language), and React Three Fiber. Covers scene architecture, asset compression, draw call budgets, and React 19 / Next.js integration patterns.
 
 **When to use:** Creating 3D scenes, WebGPU rendering setup, TSL shader authoring, asset optimization (Draco/KTX2), React Three Fiber composition, Next.js streaming for 3D content.
 
@@ -15,20 +15,20 @@ Guides building high-performance 3D web experiences with Three.js v172+, WebGPU-
 
 ## Quick Reference
 
-| Pattern           | API / Approach                             | Key Points                                       |
-| ----------------- | ------------------------------------------ | ------------------------------------------------ |
-| WebGPU renderer   | `new THREE.WebGPURenderer()`               | Must `await renderer.init()` before first render |
-| R3F canvas        | `<Canvas gl={...}>` with Suspense          | Wrap in `<Suspense>` for streaming support       |
-| Frame updates     | `useFrame((state, delta) => ...)`          | Mutate refs directly; never use `setState`       |
-| TSL shaders       | `import { ... } from 'three/tsl'`          | Node-based; compiles to WGSL or GLSL             |
-| Instancing        | `<instancedMesh>` with matrix updates      | Single draw call for repeated geometry           |
-| Batched mesh      | `BatchedMesh` (r156+)                      | Different geometries sharing one material        |
-| Draco compression | `gltf-pipeline -i in.gltf -o out.glb -d`   | Up to 90% geometry size reduction                |
-| KTX2 textures     | Basis Universal via `toktx`                | Stays compressed in VRAM                         |
-| LOD               | `THREE.LOD` with distance thresholds       | Swap detail levels by camera distance            |
-| On-demand render  | `<Canvas frameloop="demand">`              | Only render when scene state changes             |
-| Cleanup           | `.dispose()` on unmount                    | Geometries, materials, and textures              |
-| Compute shaders   | `THREE.ComputeNode` + `renderer.compute()` | GPU-side physics, particles, flocking            |
+| Pattern           | API / Approach                           | Key Points                                       |
+| ----------------- | ---------------------------------------- | ------------------------------------------------ |
+| WebGPU renderer   | `import * as THREE from 'three/webgpu'`  | Must `await renderer.init()` before first render |
+| R3F canvas        | `<Canvas gl={...}>` with Suspense        | Wrap in `<Suspense>` for streaming support       |
+| Frame updates     | `useFrame((state, delta) => ...)`        | Mutate refs directly; never use `setState`       |
+| TSL shaders       | `import { ... } from 'three/tsl'`        | Node-based; compiles to WGSL or GLSL             |
+| Instancing        | `<instancedMesh>` with matrix updates    | Single draw call for repeated geometry           |
+| Batched mesh      | `BatchedMesh` (r156+)                    | Different geometries sharing one material        |
+| Draco compression | `gltf-pipeline -i in.gltf -o out.glb -d` | Up to 90% geometry size reduction                |
+| KTX2 textures     | Basis Universal via `toktx`              | Stays compressed in VRAM                         |
+| LOD               | `THREE.LOD` with distance thresholds     | Swap detail levels by camera distance            |
+| On-demand render  | `<Canvas frameloop="demand">`            | Only render when scene state changes             |
+| Cleanup           | `.dispose()` on unmount                  | Geometries, materials, and textures              |
+| Compute shaders   | `Fn(() => {...})().compute(count)`       | GPU-side physics, particles, flocking            |
 
 ## Common Mistakes
 

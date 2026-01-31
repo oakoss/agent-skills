@@ -1,6 +1,6 @@
 ---
 title: Accessibility Guide
-description: WCAG 2.1 AA compliance guidelines covering color contrast, keyboard navigation, screen readers, focus states, and comprehensive audit checklists
+description: WCAG 2.2 AA compliance guidelines covering color contrast, keyboard navigation, screen readers, focus states, and comprehensive audit checklists
 tags:
   [
     accessibility,
@@ -14,7 +14,7 @@ tags:
 
 # Accessibility Guide
 
-Accessibility ensures that all users, regardless of ability, can effectively use the interface. Target WCAG 2.1 AA compliance as the minimum standard.
+Accessibility ensures that all users, regardless of ability, can effectively use the interface. Target WCAG 2.2 AA compliance as the minimum standard.
 
 ## Color Contrast Requirements
 
@@ -151,3 +151,6 @@ All interactive elements must be operable via keyboard alone.
 - [ ] Dynamic content updates announced via `aria-live` regions
 - [ ] Modals trap focus and return focus on close
 - [ ] Skip navigation link available for keyboard users
+- [ ] Focus not obscured by sticky headers or overlays (WCAG 2.4.11)
+- [ ] Touch targets at least 24x24px with adequate spacing (WCAG 2.5.8)
+- [ ] Dragging actions have single-pointer alternatives (WCAG 2.5.7)

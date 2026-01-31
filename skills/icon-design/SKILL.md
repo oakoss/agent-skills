@@ -43,7 +43,7 @@ Select the right icon for the job. Maps concepts to icons across three modern li
 | **Heroicons** | Tailwind projects, minimal style | `@heroicons/react`      |
 | **Phosphor**  | Weight variations needed         | `@phosphor-icons/react` |
 
-Default recommendation: Lucide (1,400+ icons, excellent React integration).
+Default recommendation: Lucide (1,500+ icons, excellent React integration).
 
 ## Selection Process
 

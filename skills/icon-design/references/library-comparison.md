@@ -10,15 +10,15 @@ Detailed comparison of Lucide, Heroicons, and Phosphor icon libraries.
 
 ## Overview
 
-| Feature            | Lucide            | Heroicons          | Phosphor                |
-| ------------------ | ----------------- | ------------------ | ----------------------- |
-| **Icons**          | 1,400+            | 292                | 7,000+                  |
-| **Weights**        | 1                 | 2 (outline, solid) | 6 (thin to fill)        |
-| **Package**        | `lucide-react`    | `@heroicons/react` | `@phosphor-icons/react` |
-| **Size (gzip)**    | ~5KB per icon set | ~3KB               | ~7KB                    |
-| **Tree-shakeable** | Yes               | Yes                | Yes                     |
-| **License**        | ISC               | MIT                | MIT                     |
-| **Origin**         | Fork of Feather   | Tailwind Labs      | Independent             |
+| Feature            | Lucide            | Heroicons                       | Phosphor                |
+| ------------------ | ----------------- | ------------------------------- | ----------------------- |
+| **Icons**          | 1,500+            | 316                             | 7,000+                  |
+| **Weights**        | 1                 | 4 (outline, solid, mini, micro) | 6 (thin to fill)        |
+| **Package**        | `lucide-react`    | `@heroicons/react`              | `@phosphor-icons/react` |
+| **Size (gzip)**    | ~5KB per icon set | ~3KB                            | ~7KB                    |
+| **Tree-shakeable** | Yes               | Yes                             | Yes                     |
+| **License**        | ISC               | MIT                             | MIT                     |
+| **Origin**         | Fork of Feather   | Tailwind Labs                   | Independent             |
 
 ## Lucide (Default Recommendation)
 
@@ -51,13 +51,14 @@ npm install @heroicons/react
 import { HomeIcon } from '@heroicons/react/24/outline';
 import { HomeIcon } from '@heroicons/react/24/solid';
 import { HomeIcon } from '@heroicons/react/20/solid';
+import { HomeIcon } from '@heroicons/react/16/solid';
 
 <HomeIcon className="w-6 h-6" />;
 ```
 
-Strengths: Official Tailwind integration, consistent design, two styles per icon, three sizes (16, 20, 24px).
+Strengths: Official Tailwind integration, consistent design, four styles per icon (outline, solid, mini, micro), three sizes (16, 20, 24px).
 
-Limitations: Smaller library (292 icons), only 2 weight variations, verbose import paths.
+Limitations: Smaller library (316 icons), verbose import paths.
 
 ## Phosphor
 

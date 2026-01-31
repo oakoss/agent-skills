@@ -53,8 +53,8 @@ Responsive images serve the right image size and format based on viewport, devic
 | ------ | --------- | --------- | --------------- | ------------------------------- |
 | JPEG   | Good      | Medium    | 100%            | Photos, complex images          |
 | PNG    | Lossless  | Large     | 100%            | Logos, transparency             |
-| WebP   | Excellent | Small     | 97%+            | Modern browsers, photos         |
-| AVIF   | Excellent | Smallest  | 90%+            | Cutting-edge, fallback required |
+| WebP   | Excellent | Small     | 96%+            | Modern browsers, photos         |
+| AVIF   | Excellent | Smallest  | 93%+            | Cutting-edge, fallback required |
 
 ## Common Mistakes
 

@@ -13,7 +13,7 @@ Maps concepts to icons across Lucide, Heroicons, and Phosphor libraries. Find th
 | Concept         | Lucide        | Heroicons        | Phosphor      |
 | --------------- | ------------- | ---------------- | ------------- |
 | Award-Winning   | `Trophy`      | `trophy`         | `Trophy`      |
-| Quality Assured | `BadgeCheck`  | `badge-check`    | `SealCheck`   |
+| Quality Assured | `BadgeCheck`  | `check-badge`    | `SealCheck`   |
 | Certified       | `Award`       | `document-check` | `Certificate` |
 | Excellence      | `Star`        | `star`           | `Star`        |
 | Trusted         | `ShieldCheck` | `shield-check`   | `ShieldCheck` |
@@ -80,7 +80,7 @@ Maps concepts to icons across Lucide, Heroicons, and Phosphor libraries. Find th
 | Protected | `Lock`        | `lock-closed`    | `Lock`        |
 | Private   | `EyeOff`      | `eye-slash`      | `EyeSlash`    |
 | Insured   | `FileCheck`   | `document-check` | `FileCheck`   |
-| Licensed  | `BadgeCheck`  | `badge-check`    | `Certificate` |
+| Licensed  | `BadgeCheck`  | `check-badge`    | `Certificate` |
 | Encrypted | `KeyRound`    | `key`            | `Key`         |
 
 ## Speed and Efficiency

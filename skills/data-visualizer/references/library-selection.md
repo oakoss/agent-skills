@@ -125,11 +125,11 @@ function createBarChart(data: Array<{ name: string; value: number }>) {
 
 ## Comparison
 
-| Feature           | Recharts         | Chart.js        | D3.js           |
-| ----------------- | ---------------- | --------------- | --------------- |
-| Rendering         | SVG              | Canvas          | SVG/Canvas      |
-| React integration | Native           | Wrapper         | Manual          |
-| Customization     | Moderate         | Moderate        | Full            |
-| Learning curve    | Low              | Low             | High            |
-| Bundle size       | ~45KB            | ~60KB           | ~30KB (modular) |
-| Best for          | React dashboards | Multi-framework | Custom viz      |
+| Feature           | Recharts         | Chart.js               | D3.js               |
+| ----------------- | ---------------- | ---------------------- | ------------------- |
+| Rendering         | SVG              | Canvas                 | SVG/Canvas          |
+| React integration | Native           | Wrapper                | Manual              |
+| Customization     | Moderate         | Moderate               | Full                |
+| Learning curve    | Low              | Low                    | High                |
+| Bundle size (gz)  | ~139KB           | ~68KB (tree-shakeable) | ~13-30KB per module |
+| Best for          | React dashboards | Multi-framework        | Custom viz          |

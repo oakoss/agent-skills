@@ -136,3 +136,7 @@ Design for temporary and situational disabilities:
 | Screen readers (NVDA, JAWS, VoiceOver) | Manual assistive technology testing |
 | Keyboard-only navigation               | Navigate entire app without a mouse |
 | Color contrast analyzer                | Verify contrast ratios meet WCAG    |
+
+## Further Reading
+
+For comprehensive WCAG compliance, ARIA widget patterns, focus management, screen reader testing, and form accessibility, delegate to the `accessibility` skill.

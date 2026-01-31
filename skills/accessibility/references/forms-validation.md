@@ -40,3 +40,39 @@ function EmailInput({ error }: { error?: string }) {
 - Mark required fields with `aria-required="true"` and visual indicator
 - Provide clear instructions before complex forms
 - Identify errors in text, not just color
+
+## Redundant Entry (WCAG 3.3.7)
+
+Do not require users to re-enter information they have already provided in the same process. Auto-populate from earlier steps or offer a selection from previously entered data.
+
+```tsx
+// Multi-step form: carry forward previous answers
+function ShippingStep({ billingAddress }: { billingAddress: Address }) {
+  const [useSameAddress, setUseSameAddress] = useState(true);
+
+  return (
+    <fieldset>
+      <legend>Shipping Address</legend>
+      <label>
+        <input
+          type="checkbox"
+          checked={useSameAddress}
+          onChange={(e) => setUseSameAddress(e.target.checked)}
+        />
+        Same as billing address
+      </label>
+      {useSameAddress ? null : <AddressForm />}
+    </fieldset>
+  );
+}
+```
+
+## Accessible Authentication (WCAG 3.3.8)
+
+Login flows must not require cognitive function tests (like remembering a password from memory without paste). Allow password managers (do not block paste), support autofill with `autocomplete` attributes, and provide alternatives to CAPTCHAs.
+
+```html
+<input type="password" id="password" autocomplete="current-password" />
+<!-- Never set autocomplete="off" on password fields -->
+<!-- Never block paste events on password fields -->
+```

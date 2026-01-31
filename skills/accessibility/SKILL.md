@@ -18,11 +18,15 @@ Build for everyone — accessibility is a requirement, not a feature.
 | Large text (>= 18pt or 14pt bold)  | 3:1           |
 | UI components and focus indicators | 3:1           |
 
-## Target Sizes (WCAG 2.2)
+## WCAG 2.2 New AA Criteria
 
-| Element             | Minimum Size |
-| ------------------- | ------------ |
-| Touch/click targets | 24x24px      |
+| Criterion                           | Requirement                                                                          |
+| ----------------------------------- | ------------------------------------------------------------------------------------ |
+| Target Size Minimum (2.5.8)         | Interactive targets at least 24x24 CSS pixels                                        |
+| Focus Not Obscured Minimum (2.4.11) | Focused element at least partially visible, not hidden by sticky headers or overlays |
+| Dragging Movements (2.5.7)          | Provide single-pointer alternative for any drag interaction                          |
+| Redundant Entry (3.3.7)             | Do not require re-entering previously provided information                           |
+| Accessible Authentication (3.3.8)   | No cognitive function test for login (allow paste, autofill, or alternatives)        |
 
 ## Essential Keyboard Patterns
 
@@ -62,12 +66,12 @@ Build for everyone — accessibility is a requirement, not a feature.
 
 ## WCAG 2.2 AA Checklist Summary
 
-| Principle      | Key Requirements                                                                                                        |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Perceivable    | Alt text on images, contrast >= 4.5:1, color not sole indicator, text resizable to 200%, captions on video              |
-| Operable       | All functionality keyboard accessible, visible focus indicators, touch targets >= 24px, skip links, logical focus order |
-| Understandable | `<html lang="en">`, consistent navigation, form labels, error identification, error prevention                          |
-| Robust         | Valid HTML, name/role/value on all UI components, `aria-live` for status messages                                       |
+| Principle      | Key Requirements                                                                                                                             |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Perceivable    | Alt text on images, contrast >= 4.5:1, color not sole indicator, text resizable to 200%, captions on video, `prefers-reduced-motion` support |
+| Operable       | Keyboard accessible, visible focus not obscured, targets >= 24px, skip links, dragging alternatives, logical focus order                     |
+| Understandable | `<html lang="en">`, consistent navigation, form labels, error identification, no redundant entry, accessible authentication                  |
+| Robust         | Valid HTML, name/role/value on all UI components, `aria-live` for status messages                                                            |
 
 ## Anti-Patterns
 
@@ -94,15 +98,27 @@ Build for everyone — accessibility is a requirement, not a feature.
 | Adding keyboard handlers to non-focusable elements             | Use native interactive elements or add `tabindex="0"` plus `role` and key handlers                   |
 | Testing only with automated tools like axe                     | Automated scans catch ~30% of issues; always supplement with keyboard-only and screen reader testing |
 
+## Screen Reader and Browser Pairings
+
+| Screen Reader | Browser | Platform           |
+| ------------- | ------- | ------------------ |
+| JAWS          | Chrome  | Windows            |
+| NVDA          | Chrome  | Windows (free)     |
+| NVDA          | Firefox | Windows (free)     |
+| VoiceOver     | Safari  | macOS / iOS        |
+| TalkBack      | Chrome  | Android            |
+| Narrator      | Edge    | Windows (built-in) |
+
 ## Testing Quick Guide
 
 | Method         | Tool                                    | Effort  |
 | -------------- | --------------------------------------- | ------- |
 | Keyboard-only  | Hide mouse, Tab through page            | 5 min   |
-| Screen reader  | VoiceOver (Cmd+F5) or NVDA              | 10 min  |
+| Screen reader  | JAWS + Chrome or NVDA + Chrome/Firefox  | 10 min  |
+| Screen reader  | VoiceOver + Safari (macOS)              | 10 min  |
 | Automated scan | axe DevTools browser extension          | 2 min   |
 | Lighthouse     | Chrome F12 > Lighthouse > Accessibility | 2 min   |
-| Unit tests     | jest-axe in component tests             | Ongoing |
+| Unit tests     | jest-axe (Jest) or vitest-axe (Vitest)  | Ongoing |
 
 ## Delegation
 
@@ -123,8 +139,8 @@ When working on accessibility, delegate to:
 ## References
 
 - [Semantic HTML and Structure](references/semantic-html.md) — Document landmarks, heading hierarchy, element selection, skip links
-- [Focus Management](references/focus-management.md) — Focus indicators, dialog focus traps, SPA route focus, focus-visible patterns
-- [ARIA Patterns](references/aria-patterns.md) — Accessible tabs, live regions, dialogs with ARIA attributes
-- [Forms and Validation](references/forms-validation.md) — Label association, error announcement, aria-invalid, role="alert"
-- [Color and Media](references/color-and-media.md) — Contrast requirements, color-only indicators, video captions, alt text
-- [Testing](references/testing.md) — Keyboard testing, screen reader testing, axe DevTools, jest-axe unit tests
+- [Focus Management](references/focus-management.md) — Focus indicators, focus not obscured, dialog focus traps, SPA route focus, focus-visible patterns
+- [ARIA Patterns](references/aria-patterns.md) — Accessible tabs, live regions, data tables with ARIA attributes
+- [Forms and Validation](references/forms-validation.md) — Label association, error announcement, redundant entry, accessible authentication
+- [Color and Media](references/color-and-media.md) — Contrast requirements, reduced motion, dragging alternatives, video captions, alt text
+- [Testing](references/testing.md) — Keyboard testing, screen reader pairings, axe DevTools, jest-axe and vitest-axe unit tests

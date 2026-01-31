@@ -62,4 +62,34 @@ For complex images, use `<figure>` with `<figcaption>` containing a `<details>` 
 </video>
 ```
 
-Require user interaction to start media. Use `prefers-reduced-motion` to disable autoplay animations.
+Require user interaction to start media.
+
+## Reduced Motion
+
+Respect the user's system motion preferences. Animations that are purely decorative should be disabled. Essential motion (progress indicators, transitions that convey meaning) can be simplified rather than removed entirely.
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+```
+
+## Dragging Alternatives (WCAG 2.5.7)
+
+Any interaction that requires dragging must also work with a single pointer without dragging. Examples: drag-and-drop reordering needs up/down buttons, custom sliders need direct value input, carousels need prev/next buttons.
+
+```html
+<!-- Sortable list with both drag and button alternatives -->
+<li draggable="true">
+  <span>Item 1</span>
+  <button aria-label="Move Item 1 up">Up</button>
+  <button aria-label="Move Item 1 down">Down</button>
+</li>
+```

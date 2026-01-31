@@ -12,8 +12,8 @@ tags: [webp, avif, jpeg, png, formats, compression, sharp, imagemagick]
 | ------ | --------- | --------- | ------------ | --------------- |
 | JPEG   | Good      | Medium    | No           | 100%            |
 | PNG    | Lossless  | Large     | Yes          | 100%            |
-| WebP   | Excellent | Small     | Yes          | 97%+            |
-| AVIF   | Excellent | Smallest  | Yes          | 90%+            |
+| WebP   | Excellent | Small     | Yes          | 96%+            |
+| AVIF   | Excellent | Smallest  | Yes          | 93%+            |
 
 **Real Example** (1920x1080 photo): JPEG 500KB, WebP 250KB (-50%), AVIF 150KB (-70%).
 
@@ -155,7 +155,7 @@ Need transparency or animation?
 ## Common Mistakes
 
 - **Only serving JPEG** -- Missing 50-70% potential size savings
-- **WebP without JPEG fallback** -- Breaks in Safari < 14
+- **WebP without JPEG fallback** -- Breaks in older browsers without WebP support
 - **Wrong source order** -- JPEG before WebP means browser picks JPEG first
 - **Missing type attribute** -- Browser downloads all sources to check format
 
@@ -170,12 +170,17 @@ async function supportsWebP() {
 }
 ```
 
-## CSS Feature Detection
+## CSS Modern Format Backgrounds
+
+Use `image-set()` for format negotiation in CSS backgrounds:
 
 ```css
-@supports (background-image: url('test.webp')) {
-  .hero {
-    background-image: url('/hero.webp');
-  }
+.hero {
+  background-image: url('/hero.jpg');
+  background-image: image-set(
+    url('/hero.avif') type('image/avif'),
+    url('/hero.webp') type('image/webp'),
+    url('/hero.jpg') type('image/jpeg')
+  );
 }
 ```

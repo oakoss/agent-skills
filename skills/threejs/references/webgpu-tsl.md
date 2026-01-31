@@ -6,7 +6,7 @@ tags: [webgpu, tsl, shaders, compute, wgsl, renderer, async-init]
 
 # WebGPU and TSL Shader Patterns
 
-WebGPU is the production standard for Three.js v172+. TSL (Three Shader Language) is a node-based shader system that compiles to WGSL (WebGPU) or GLSL (WebGL fallback).
+WebGPU is the production standard for modern Three.js. TSL (Three Shader Language) is a node-based shader system that compiles to WGSL (WebGPU) or GLSL (WebGL fallback). Import from `three/webgpu` for the WebGPU renderer and from `three/tsl` for TSL utilities.
 
 ## Why WebGPU
 
@@ -22,7 +22,7 @@ WebGPU is the production standard for Three.js v172+. TSL (Three Shader Language
 WebGPU requires asynchronous setup. Rendering before initialization produces black screens or race conditions.
 
 ```ts
-import * as THREE from 'three';
+import * as THREE from 'three/webgpu';
 
 const renderer = new THREE.WebGPURenderer({ antialias: true });
 await renderer.init();
@@ -35,9 +35,11 @@ In React Three Fiber, pass a custom renderer factory to `<Canvas>`:
 ```tsx
 'use client';
 
-import { Canvas } from '@react-three/fiber';
+import * as THREE from 'three/webgpu';
+import { Canvas, extend } from '@react-three/fiber';
 import { Suspense } from 'react';
-import * as THREE from 'three';
+
+extend(THREE as any);
 
 export default function Scene() {
   return (
@@ -45,11 +47,12 @@ export default function Scene() {
       <Canvas
         shadows
         camera={{ position: [0, 0, 5], fov: 75 }}
-        gl={(canvas) => {
+        gl={async (props) => {
           const renderer = new THREE.WebGPURenderer({
-            canvas,
+            ...props,
             antialias: true,
           });
+          await renderer.init();
           return renderer;
         }}
       >
@@ -69,6 +72,7 @@ TSL looks like JavaScript but describes shader operations as a node graph. It co
 ### Animated Color
 
 ```ts
+import * as THREE from 'three/webgpu';
 import { color, mix, oscSine, timerLocal } from 'three/tsl';
 
 const material = new THREE.MeshStandardNodeMaterial();
@@ -80,6 +84,7 @@ material.colorNode = animatedColor;
 ### Vertex Displacement (Wave Shader)
 
 ```ts
+import * as THREE from 'three/webgpu';
 import { positionLocal, timerLocal, sin, float, vec3 } from 'three/tsl';
 
 const material = new THREE.MeshStandardNodeMaterial();
@@ -95,6 +100,7 @@ material.positionNode = newPos;
 ### UV-Based Texture Mixing
 
 ```ts
+import * as THREE from 'three/webgpu';
 import { texture, uv, mix, timerLocal, oscSine } from 'three/tsl';
 
 const tex1 = new THREE.TextureLoader().load('/texture1.jpg');
@@ -107,36 +113,52 @@ material.colorNode = mix(texture(tex1, uv()), texture(tex2, uv()), t);
 
 ## Compute Shaders
 
-Run arbitrary GPU calculations without rendering:
+Run arbitrary GPU calculations without rendering. Define compute functions with `Fn` and dispatch with `renderer.computeAsync()`:
 
 ```ts
-import * as THREE from 'three';
+import * as THREE from 'three/webgpu';
+import {
+  Fn,
+  instancedArray,
+  instanceIndex,
+  float,
+  vec3,
+  hash,
+} from 'three/tsl';
 
-const computeNode = new THREE.ComputeNode(({ storage }) => {
-  // GPU-side logic for physics, particle simulation, etc.
-});
+const count = 10000;
+const positionBuffer = instancedArray(count, 'vec3');
 
-await renderer.compute(computeNode);
+const computeInit = Fn(() => {
+  const i = float(instanceIndex);
+  positionBuffer.element(instanceIndex).assign(
+    vec3(hash(i), hash(i.add(1)), hash(i.add(2)))
+      .mul(10)
+      .sub(5),
+  );
+})().compute(count);
+
+await renderer.computeAsync(computeInit);
 ```
 
 Use cases: particle systems, physics simulations, flocking algorithms, procedural generation.
 
 ## WebGL Fallback Strategy
 
-TSL automatically compiles to GLSL when targeting WebGL. For explicit fallback:
+`WebGPURenderer` automatically falls back to WebGL 2 when WebGPU is not available. No separate code path is needed -- ship one renderer and Three.js handles compatibility. To force WebGL for testing:
 
 ```ts
-async function createRenderer(canvas: HTMLCanvasElement) {
-  if (navigator.gpu) {
-    const renderer = new THREE.WebGPURenderer({ canvas, antialias: true });
-    await renderer.init();
-    return renderer;
-  }
-  return new THREE.WebGLRenderer({ canvas, antialias: true });
-}
+import * as THREE from 'three/webgpu';
+
+const renderer = new THREE.WebGPURenderer({
+  canvas,
+  antialias: true,
+  forceWebGL: true,
+});
+await renderer.init();
 ```
 
-Check for WebGPU support before initializing. Enterprise environments and older mobile devices may not support WebGPU.
+TSL automatically compiles to GLSL when the renderer falls back to WebGL.
 
 ## TSL vs GLSL Comparison
 
