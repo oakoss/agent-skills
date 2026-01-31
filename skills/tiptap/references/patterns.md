@@ -29,7 +29,7 @@ const ydoc = new Y.Doc();
 const editor = useEditor({
   extensions: [
     StarterKit.configure({
-      history: false,
+      undoRedo: false,
     }),
     Collaboration.configure({
       document: ydoc,
@@ -39,7 +39,7 @@ const editor = useEditor({
 });
 ```
 
-Disable history when using Collaboration — local undo/redo conflicts with Y.js CRDT.
+Disable undo/redo when using Collaboration — local undo/redo conflicts with Y.js CRDT. In v3, the config key is `undoRedo` (renamed from `history`).
 
 ## Markdown Support
 
@@ -61,11 +61,9 @@ editor.commands.setContent('## New heading', { contentType: 'markdown' });
 editor.commands.insertContent('**Bold** text', { contentType: 'markdown' });
 ```
 
-Install: `npm install @tiptap/markdown@3.16.0`
+Install: `npm install @tiptap/markdown`
 
 Always specify `contentType: 'markdown'` when setting markdown content — without it, content is parsed as HTML.
-
-Status: Beta (released Oct 2025, API stable but may change).
 
 ## Form Integration with react-hook-form
 

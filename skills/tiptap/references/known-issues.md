@@ -1,6 +1,6 @@
 ---
 title: Known Issues and Errors
-description: 12 documented Tiptap issues with solutions covering SSR, performance, styling, image upload, build errors, TypeScript, extensions, content sync, placeholders, and collaboration
+description: Documented Tiptap issues with solutions covering SSR, performance, styling, image upload, build errors, TypeScript, extensions, content sync, placeholders, and collaboration
 tags:
   [
     tiptap,
@@ -20,7 +20,7 @@ tags:
 
 **Error**: "SSR has been detected, please set `immediatelyRender` explicitly to `false`"
 
-Tiptap v3 defaults to `immediatelyRender: true`, causing server/client HTML mismatch.
+Tiptap defaults to `immediatelyRender: true`, causing server/client HTML mismatch.
 
 **Fix**: Set `immediatelyRender: false` in `useEditor()`.
 
@@ -70,9 +70,9 @@ const extensions = [
 
 **Error**: "jsx-runtime" module resolution errors.
 
-CRA is incompatible with Tiptap v3 module structure.
+CRA is incompatible with Tiptap v3 ESM module structure.
 
-**Fix**: Switch to Vite.
+**Fix**: Switch to Vite or another modern bundler.
 
 ## Issue #6: ProseMirror Multiple Versions Conflict
 
@@ -92,7 +92,11 @@ Installing additional Tiptap extensions can pull different ProseMirror versions.
 }
 ```
 
-Or clean reinstall: `rm -rf node_modules package-lock.json && npm install`
+Or clean reinstall:
+
+```bash
+rm -rf node_modules package-lock.json && npm install
+```
 
 ## Issue #7: EditorProvider vs useEditor Confusion
 
@@ -100,11 +104,11 @@ Using both together causes SSR errors. EditorProvider is a wrapper around useEdi
 
 **Fix**: Choose one:
 
-```ts
+```tsx
 // Option 1: EditorProvider only
 <EditorProvider immediatelyRender={false} extensions={[StarterKit]}>
   <EditorContent />
-</EditorProvider>
+</EditorProvider>;
 
 // Option 2: useEditor only
 const editor = useEditor({
@@ -121,12 +125,20 @@ const editor = useEditor({
 
 **Fix**: Guard before use:
 
-```ts
-const editor = useEditor({ ... });
+```tsx
+const editor = useEditor({
+  extensions: [StarterKit],
+  immediatelyRender: false,
+});
 if (!editor) return null;
 
 // Event handlers
-<button onClick={() => editor?.chain().focus().toggleBold().run()} disabled={!editor}>
+<button
+  disabled={!editor}
+  onClick={() => editor?.chain().focus().toggleBold().run()}
+>
+  Bold
+</button>;
 ```
 
 ## Issue #9: Extensions Not Working
@@ -171,10 +183,10 @@ useEffect(() => {
 
 **Symptom**: Content overwrites, cursor positions wrong, undo/redo breaks.
 
-**Fix**: Disable local history when using Y.js:
+**Fix**: Disable undo/redo when using Y.js. In v3, use `undoRedo: false` (renamed from `history`):
 
 ```ts
-StarterKit.configure({ history: false });
+StarterKit.configure({ undoRedo: false });
 ```
 
 ## Debugging Tips

@@ -116,7 +116,7 @@ Before tackling a complex feature, prepare a context bundle:
 repomix --include "src/features/auth/**" --output auth-context.md --compress
 
 # Add the dependency graph from llm-tldr
-tldr context src/features/auth/login.ts --depth 2 >> auth-context.md
+tldr context login --project src/features/auth >> auth-context.md
 ```
 
 ## Troubleshooting
@@ -126,4 +126,4 @@ tldr context src/features/auth/login.ts --depth 2 >> auth-context.md
 | Model ignores key context    | Important info buried in middle | Move critical content to start or end of context       |
 | Output contradicts context   | Conflicting information packed  | Remove contradictory sources; keep authoritative one   |
 | Model hallucinates functions | Signatures missing from context | Add module signatures before requesting implementation |
-| Token limit exceeded         | Too much implementation detail  | Switch to signatures-only mode with `--no-code-bodies` |
+| Token limit exceeded         | Too much implementation detail  | Switch to compressed mode with `--compress`            |

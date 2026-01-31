@@ -1,17 +1,7 @@
 ---
 title: Extensions Catalog
-description: Complete Tiptap extension catalog — StarterKit contents, additional extensions with config, community extensions, Pro extensions, and custom extension development templates
-tags:
-  [
-    tiptap,
-    extensions,
-    starterkit,
-    custom-extensions,
-    community,
-    pro,
-    node,
-    mark,
-  ]
+description: Tiptap extension catalog with StarterKit contents, additional extensions, community extensions, and custom extension development templates
+tags: [tiptap, extensions, starterkit, custom-extensions, community, node, mark]
 ---
 
 # Extensions Catalog
@@ -22,7 +12,9 @@ tags:
 
 **Nodes**: Document, Paragraph, Text, Heading, BulletList, OrderedList, ListItem, Blockquote, CodeBlock, HorizontalRule, HardBreak
 
-**Functionality**: History, Dropcursor, Gapcursor, ListKeymap (v3), TrailingNode (v3)
+**Functionality**: Undo/Redo, Dropcursor, Gapcursor, ListKeymap (v3), TrailingNode (v3)
+
+The v3 config key for disabling undo/redo is `undoRedo` (renamed from `history`).
 
 ## Additional Official Extensions
 
@@ -34,18 +26,12 @@ import Image from '@tiptap/extension-image';
 Image.configure({
   inline: true,
   allowBase64: false,
-  resize: {
-    enabled: true,
-    directions: ['top-right', 'bottom-right', 'bottom-left', 'top-left'],
-    minWidth: 100,
-    alwaysPreserveAspectRatio: true,
-  },
 });
 ```
 
 ### Text Styling
 
-- **TextStyle** — `@tiptap/extension-text-style` — text style container
+- **TextStyle** — `@tiptap/extension-text-style` — text style container (required by Color)
 - **Color** — `@tiptap/extension-color` — text color
 - **Highlight** — `@tiptap/extension-highlight` — highlighting
 - **FontFamily** — `@tiptap/extension-font-family`
@@ -55,7 +41,7 @@ Image.configure({
 
 ```ts
 import Typography from '@tiptap/extension-typography';
-// Converts: (c) → ©, -> → →, ... → …, "text" → "text"
+// Converts: (c) -> copyright, -> -> arrow, ... -> ellipsis, "text" -> smart quotes
 ```
 
 ### Placeholder
@@ -68,6 +54,8 @@ Placeholder.configure({
   emptyEditorClass: 'is-editor-empty',
 });
 ```
+
+Requires CSS for the placeholder to display. See [Prose Styling](prose-styling.md) reference.
 
 ### Tables
 
@@ -120,6 +108,24 @@ const extensions = [
   }),
 ];
 ```
+
+### Markdown
+
+```ts
+import { Markdown } from '@tiptap/markdown';
+
+const editor = useEditor({
+  extensions: [StarterKit, Markdown],
+  content: '# Hello',
+  contentType: 'markdown',
+  immediatelyRender: false,
+});
+
+const md = editor.getMarkdown();
+editor.commands.setContent('## New heading', { contentType: 'markdown' });
+```
+
+Package: `@tiptap/markdown` (not `@tiptap/extension-markdown`).
 
 ### Utilities
 
@@ -253,6 +259,9 @@ npm install @tiptap/extension-code-block-lowlight lowlight
 
 # Collaboration
 npm install @tiptap/extension-collaboration @tiptap/extension-collaboration-cursor yjs
+
+# Markdown
+npm install @tiptap/markdown
 
 # Utilities
 npm install @tiptap/extension-character-count @tiptap/extension-focus @tiptap/extension-text-align

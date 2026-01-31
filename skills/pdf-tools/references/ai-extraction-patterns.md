@@ -6,7 +6,7 @@ tags: [extraction, AI, OCR, vision, tables, Zod, summarization]
 
 ## The Extraction Stack
 
-1. **Layer 1 -- Raw Byte Parsing (unpdf)**: Extract text, metadata, and image locations quickly
+1. **Layer 1 -- Raw Text Parsing (unpdf)**: Extract text and metadata via `extractText` and `getDocumentProxy`
 2. **Layer 2 -- Vision Analysis (Gemini/GPT-4o)**: "Look" at the page to identify tables, headers, and signatures
 3. **Layer 3 -- Schema Mapping (AI SDK)**: Force the output into a validated Zod/JSON structure
 
@@ -15,11 +15,12 @@ tags: [extraction, AI, OCR, vision, tables, Zod, summarization]
 Use LLMs to turn unstructured PDF text into validated schemas:
 
 ```ts
-import { unpdf } from 'unpdf';
+import { extractText, getDocumentProxy } from 'unpdf';
 import { generateObject } from 'ai';
 
-async function extractInvoice(buffer: Buffer) {
-  const { text } = await unpdf.extractText(buffer);
+async function extractInvoice(buffer: ArrayBuffer) {
+  const pdf = await getDocumentProxy(new Uint8Array(buffer));
+  const { text } = await extractText(pdf, { mergePages: true });
 
   const { object } = await generateObject({
     model: myModel,

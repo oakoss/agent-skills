@@ -128,7 +128,7 @@ For straight lines on the map, use linear interpolation between coordinates (not
 
 ## Parameters with Zod
 
-Requires `zod@3.22.3`. Define a schema alongside the component:
+Remotion requires a specific Zod 3.x version (check project dependencies or Remotion docs for the exact version). Remove the `^` prefix from the version number to avoid conflicts. Define a schema alongside the component:
 
 ```tsx
 import { z } from 'zod';

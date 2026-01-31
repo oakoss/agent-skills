@@ -76,13 +76,27 @@ export async function createPdfFromReact(Component, props) {
 
 For professional printing, consider CMYK color profiles in CSS.
 
+## Playwright Equivalent
+
+Playwright uses `networkidle` instead of Puppeteer's `networkidle0`. Playwright does not support `networkidle2`. The `page.pdf()` API is otherwise identical:
+
+```ts
+import { chromium } from 'playwright';
+
+const browser = await chromium.launch();
+const page = await browser.newPage();
+await page.goto(url, { waitUntil: 'networkidle' });
+const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
+await browser.close();
+```
+
 ## Font Handling in Containers
 
 System fonts may not be available in Docker or serverless environments:
 
 - Embed Google Fonts via `<link>` or inline CSS
 - Bundle WOFF2 files in the project and load via `@font-face`
-- Ensure `waitUntil: 'networkidle0'` to allow font loading
+- Ensure `waitUntil: 'networkidle0'` (Puppeteer) or `'networkidle'` (Playwright) to allow font loading
 
 ## Browser Pool Optimization
 
@@ -94,9 +108,9 @@ Launching a browser takes approximately 500ms. In high-traffic APIs:
 
 ## Troubleshooting
 
-| Issue          | Cause                         | Fix                                           |
-| -------------- | ----------------------------- | --------------------------------------------- |
-| Missing fonts  | System fonts not in container | Embed Google Fonts or WOFF2                   |
-| Huge file size | High-res images not optimized | Compress with ghostscript or pdf-lib          |
-| Blank pages    | Content not loaded before PDF | Use `waitUntil: 'networkidle0'`               |
-| Wrong margins  | Default browser margins       | Set explicit `margin` in `page.pdf()` options |
+| Issue          | Cause                         | Fix                                                          |
+| -------------- | ----------------------------- | ------------------------------------------------------------ |
+| Missing fonts  | System fonts not in container | Embed Google Fonts or WOFF2                                  |
+| Huge file size | High-res images not optimized | Compress with ghostscript or pdf-lib                         |
+| Blank pages    | Content not loaded before PDF | Use `networkidle0` (Puppeteer) or `networkidle` (Playwright) |
+| Wrong margins  | Default browser margins       | Set explicit `margin` in `page.pdf()` options                |

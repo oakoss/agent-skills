@@ -1,12 +1,12 @@
 ---
-title: SGE Optimization
-description: Optimizing content for Google's Search Generative Experience and AI overview visibility
-tags: [sge, ai-overviews, snippets, structured-content, entities]
+title: AI Overviews Optimization
+description: Optimizing content for Google AI Overviews visibility and AI-generated search summaries
+tags: [ai-overviews, snippets, structured-content, entities, search-visibility]
 ---
 
-# SGE Optimization
+# AI Overviews Optimization
 
-Google's Search Generative Experience (SGE) uses LLMs to synthesize answers directly in search results. Visibility in these AI-generated summaries is a primary goal of content optimization.
+Google AI Overviews use LLMs to synthesize answers directly in search results. Visibility in these AI-generated summaries is a primary goal of content optimization.
 
 ## Scannable Answer Boxes
 
@@ -54,7 +54,7 @@ AI searches for entities (people, places, things, concepts) and their relationsh
 
 ## Topical Depth (The 360-Degree Rule)
 
-SGE favors content that covers a topic from multiple angles. A single page should address:
+AI Overviews favor content that covers a topic from multiple angles. A single page should address:
 
 | Angle          | Example Heading                         |
 | -------------- | --------------------------------------- |
@@ -65,25 +65,25 @@ SGE favors content that covers a topic from multiple angles. A single page shoul
 | Implementation | Step-by-step lazy loading setup         |
 | Real-world use | Lazy loading in production applications |
 
-## Question-Based and LSI Keywords
+## Question-Based and Semantically Related Keywords
 
-**Question keywords** target the query patterns that trigger SGE summaries:
+**Question keywords** target the query patterns that trigger AI Overview summaries:
 
 - "What are the benefits of..."
 - "Step-by-step guide to..."
 - "How does X compare to Y..."
 
-**LSI (Latent Semantic Indexing) terms** are related concepts that naturally appear in high-quality discussions. Include them without forcing:
+**Semantically related terms** are concepts that naturally co-occur in high-quality discussions of a topic. Include them without forcing:
 
 ```text
 Topic: "React Server Components"
-LSI terms: streaming, hydration, bundle size, server-side rendering,
-           client components, use server directive, RSC payload
+Related terms: streaming, hydration, bundle size, server-side rendering,
+               client components, use server directive, RSC payload
 ```
 
 ## Visual Data Insights
 
-SGE can extract insights from tables, charts, and structured data.
+AI Overviews can extract insights from tables, charts, and structured data.
 
 **Data table requirement:** Include at least one data table or comparison chart per long-form article. Tables are highly extractable by AI models.
 
@@ -99,7 +99,7 @@ SGE can extract insights from tables, charts, and structured data.
 />
 ```
 
-## Content Structure for SGE Visibility
+## Content Structure for AI Overview Visibility
 
 Effective structure for AI extraction:
 

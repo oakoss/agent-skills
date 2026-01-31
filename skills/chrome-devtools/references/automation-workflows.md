@@ -1,7 +1,7 @@
 ---
 title: Browser Automation Workflows
 description: Common browser automation patterns including testing, data extraction, email management, and multi-site research
-tags: [automation, workflows, testing, data-extraction, email]
+tags: [automation, workflows, testing, data-extraction, email, multi-tab]
 ---
 
 # Browser Automation Workflows
@@ -9,44 +9,66 @@ tags: [automation, workflows, testing, data-extraction, email]
 ## Testing Local Development
 
 ```text
-"Open localhost:3000, test the new form validation, check console for errors,
-and screenshot any issues you find"
+Open localhost:3000, test the new form validation, check console for errors,
+and screenshot any issues you find
 ```
 
 ## Authenticated Data Extraction
 
 ```text
-"Go to my Google Analytics, get this week's traffic summary,
-and save it to a file"
+Go to my Google Analytics, get this week's traffic summary,
+and save it to a file
 ```
 
 ## Content Management
 
 ```text
-"Open my Notion workspace, find the Q4 planning doc,
-and add a new section with today's meeting notes"
+Open my Notion workspace, find the Q4 planning doc,
+and add a new section with today's meeting notes
 ```
 
 ## Email Drafts
 
 ```text
-"Open Gmail, find unread emails from the engineering team,
-and draft replies for each one without sending"
+Open Gmail, find unread emails from the engineering team,
+and draft replies for each one without sending
 ```
 
 ## Multi-Site Research
 
 ```text
-"Compare pricing on our product page vs the top 3 competitors.
-Create a markdown table with the differences."
+Compare pricing on our product page vs the top 3 competitors.
+Create a markdown table with the differences.
 ```
 
 ## Form Automation
 
 ```text
-"I have contacts in contacts.csv. For each row, go to crm.example.com,
-click 'Add Contact', and fill in the name, email, and phone fields."
+I have contacts in contacts.csv. For each row, go to crm.example.com,
+click "Add Contact", and fill in the name, email, and phone fields.
 ```
+
+## Design Verification
+
+```text
+Build this UI from the Figma mock, then open it in the browser
+and verify it matches the design
+```
+
+## Live Debugging Loop
+
+```text
+Open the dashboard page, check the console for errors on load,
+then fix the code that caused them and verify the fix in the browser
+```
+
+## Multi-Tab Workflows
+
+Claude works across tabs in the same tab group. Drag tabs into Claude's tab group for simultaneous access.
+
+- Reference information from multiple tabs
+- Copy data between tabs
+- Coordinate actions across sites
 
 ## When to Use Browser Automation
 
@@ -65,21 +87,14 @@ click 'Add Contact', and fill in the name, email, and phone fields."
 - Subjective decisions
 - Exploratory research (use Claude.ai chat instead)
 
-## Multi-Tab Workflows
-
-Claude can see and work across tabs in the same tab group:
-
-- Reference information from multiple tabs
-- Copy data between tabs
-- Coordinate actions across sites
-
 ## Tips
 
-1. **Be specific** - Ambiguous instructions produce inconsistent results
-2. **Add verification** - For long lists, add "verify you completed all items"
-3. **Handle modals** - Dismiss alerts manually, then tell Claude to continue
-4. **Use fresh tabs** - If a tab becomes unresponsive, ask for a new one
-5. **Filter console output** - Specify patterns vs. requesting all logs
+1. **Be specific** -- Ambiguous instructions produce inconsistent results
+2. **Add verification** -- For long lists, add "verify you completed all items"
+3. **Handle modals** -- Dismiss alerts manually, then tell Claude to continue
+4. **Use fresh tabs** -- If a tab becomes unresponsive, ask for a new one
+5. **Filter console output** -- Specify patterns instead of requesting all logs
+6. **Chain browser + terminal** -- Claude can scrape a site, analyze the data, generate code, and commit in one workflow
 
 ## Security
 

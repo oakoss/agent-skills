@@ -1,8 +1,6 @@
 ---
 name: remotion
 description: 'Best practices for Remotion - Video creation in React. Use when creating programmatic videos with Remotion, adding animations or transitions, working with audio/captions, rendering compositions, embedding 3D content, building charts, or using Mapbox maps in video.'
-metadata:
-  tags: remotion, video, react, animation, composition
 ---
 
 ## Overview
@@ -27,7 +25,7 @@ Remotion enables programmatic video creation using React components. Composition
 | Fonts             | `@remotion/google-fonts` or `@remotion/fonts`                       | Call `loadFont()` at top level; blocks rendering until ready                          |
 | 3D content        | `<ThreeCanvas>` from `@remotion/three`                              | Must set `width`/`height`; `useFrame()` from R3F is forbidden                         |
 | Text measurement  | `measureText()`, `fitText()` from `@remotion/layout-utils`          | Load fonts first; match properties for measurement and render                         |
-| Parameters        | Zod schema on `<Composition schema>`                                | Top-level must be `z.object()`; requires `zod@3.22.3`                                 |
+| Parameters        | Zod schema on `<Composition schema>`                                | Top-level must be `z.object()`; exact Zod version required (check Remotion docs)      |
 | Transparent video | `--pixel-format=yuva420p --codec=vp9`                               | WebM for browser; ProRes 4444 for editing software                                    |
 | Maps              | Mapbox with `useCurrentFrame()`                                     | Set `interactive: false`, `fadeDuration: 0`; render with `--gl=angle --concurrency=1` |
 

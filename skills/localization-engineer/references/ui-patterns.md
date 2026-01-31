@@ -1,24 +1,35 @@
 ---
 title: UI Patterns
-description: Language switcher component, RTL layout support with CSS logical properties, and browser language detection with localStorage persistence
-tags: [language-switcher, rtl, language-detection, ui-components]
+description: Language switcher using next-intl navigation, RTL layout support with CSS logical properties, dir attribute configuration, and browser language detection
+tags: [language-switcher, rtl, language-detection, ui-components, navigation]
 ---
 
 # UI Patterns
 
 ## Language Switcher
 
+Use navigation APIs created from `next-intl/navigation` with the shared routing config:
+
 ```ts
+// i18n/navigation.ts
+import { createNavigation } from 'next-intl/navigation';
+import { routing } from './routing';
+
+export const { Link, redirect, usePathname, useRouter } =
+  createNavigation(routing);
+```
+
+```tsx
 'use client';
 import { useLocale } from 'next-intl';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname } from '@/i18n/navigation';
 
 const languages = [
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-  { code: 'ja', name: '日本語', flag: '🇯🇵' },
+  { code: 'en', name: 'English' },
+  { code: 'es', name: 'Español' },
+  { code: 'fr', name: 'Français' },
+  { code: 'de', name: 'Deutsch' },
+  { code: 'ja', name: '日本語' },
 ];
 
 export function LanguageSwitcher() {
@@ -26,20 +37,15 @@ export function LanguageSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const switchLanguage = (newLocale: string) => {
-    const pathWithoutLocale = pathname.replace(`/${locale}`, '');
-    router.push(`/${newLocale}${pathWithoutLocale}`);
-  };
+  function switchLocale(newLocale: string) {
+    router.replace(pathname, { locale: newLocale });
+  }
 
   return (
-    <select
-      value={locale}
-      onChange={(e) => switchLanguage(e.target.value)}
-      className="px-4 py-2 border rounded"
-    >
+    <select value={locale} onChange={(e) => switchLocale(e.target.value)}>
       {languages.map((lang) => (
         <option key={lang.code} value={lang.code}>
-          {lang.flag} {lang.name}
+          {lang.name}
         </option>
       ))}
     </select>
@@ -49,18 +55,24 @@ export function LanguageSwitcher() {
 
 ## RTL (Right-to-Left) Support
 
-```ts
+Set the `dir` attribute on `<html>` based on locale:
+
+```tsx
 // app/[locale]/layout.tsx
-import { useLocale } from 'next-intl';
+import { getLocale } from 'next-intl/server';
 
-const rtlLanguages = ['ar', 'he', 'fa'];
+const rtlLocales = ['ar', 'he', 'fa'];
 
-export default function LocaleLayout({ children }) {
-  const locale = useLocale();
-  const isRTL = rtlLanguages.includes(locale);
+export default async function LocaleLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const locale = await getLocale();
+  const dir = rtlLocales.includes(locale) ? 'rtl' : 'ltr';
 
   return (
-    <html lang={locale} dir={isRTL ? 'rtl' : 'ltr'}>
+    <html lang={locale} dir={dir}>
       <body>{children}</body>
     </html>
   );
@@ -69,38 +81,46 @@ export default function LocaleLayout({ children }) {
 
 ### RTL CSS
 
-Use CSS logical properties for automatic RTL support:
+Use CSS logical properties for automatic RTL support without separate stylesheets:
 
 ```css
-/* Automatically flips for RTL */
 .container {
   margin-inline-start: 1rem;
   padding-inline-end: 1rem;
+  border-inline-start: 2px solid;
 }
 
-/* Manual RTL handling */
-[dir='rtl'] .menu {
-  left: auto;
-  right: 0;
+.sidebar {
+  inset-inline-start: 0;
+  inset-inline-end: auto;
+}
+```
+
+Physical-to-logical property mapping:
+
+| Physical Property  | Logical Property       |
+| ------------------ | ---------------------- |
+| `margin-left`      | `margin-inline-start`  |
+| `margin-right`     | `margin-inline-end`    |
+| `padding-left`     | `padding-inline-start` |
+| `padding-right`    | `padding-inline-end`   |
+| `left`             | `inset-inline-start`   |
+| `right`            | `inset-inline-end`     |
+| `text-align: left` | `text-align: start`    |
+
+For cases where logical properties are insufficient:
+
+```css
+[dir='rtl'] .icon-arrow {
+  transform: scaleX(-1);
 }
 ```
 
-## Language Detection
+## RTL Languages Reference
 
-```ts
-// lib/detect-locale.ts
-export function detectUserLocale(): string {
-  // 1. Check URL parameter
-  const urlParams = new URLSearchParams(window.location.search);
-  const urlLocale = urlParams.get('lang');
-  if (urlLocale) return urlLocale;
-
-  // 2. Check localStorage
-  const savedLocale = localStorage.getItem('preferredLocale');
-  if (savedLocale) return savedLocale;
-
-  // 3. Check browser language
-  const browserLocale = navigator.language.split('-')[0];
-  return browserLocale;
-}
-```
+| Language | Code | Direction |
+| -------- | ---- | --------- |
+| Arabic   | ar   | RTL       |
+| Hebrew   | he   | RTL       |
+| Farsi    | fa   | RTL       |
+| Urdu     | ur   | RTL       |

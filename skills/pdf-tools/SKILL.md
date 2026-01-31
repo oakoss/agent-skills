@@ -13,19 +13,19 @@ Full-lifecycle PDF engineering covering extraction, generation, modification, fo
 
 ## Quick Reference
 
-| Task                       | Tool                      | Key Point                                     |
-| -------------------------- | ------------------------- | --------------------------------------------- |
-| Generate PDF from HTML     | Puppeteer / Playwright    | `page.pdf()` with `waitUntil: 'networkidle0'` |
-| Extract text (lightweight) | unpdf                     | Edge/serverless compatible                    |
-| Extract tables (AI)        | Vision model + Zod schema | Multi-column and merged cell support          |
-| Extract tables (non-AI)    | pdfplumber (Python)       | Precise cell boundary detection               |
-| Modify, merge, split       | pdf-lib                   | Byte-level PDF manipulation in JS             |
-| Fill fillable forms        | pdf-lib                   | Inspect AcroForm fields before writing        |
-| Fill non-fillable forms    | Python annotation scripts | Visual analysis + bounding box annotations    |
-| Encrypt PDF                | qpdf                      | AES-256: `qpdf --encrypt user owner 256 --`   |
-| Repair corrupted PDF       | qpdf                      | `qpdf input.pdf --replace-input`              |
-| Fast text extraction (CLI) | poppler-utils             | `pdftotext -layout input.pdf -`               |
-| Merge thousands of files   | pypdf (Python)            | Lighter than headless browser                 |
+| Task                       | Tool                          | Key Point                                                                  |
+| -------------------------- | ----------------------------- | -------------------------------------------------------------------------- |
+| Generate PDF from HTML     | Puppeteer / Playwright        | `page.pdf()`; use `networkidle0` (Puppeteer) or `networkidle` (Playwright) |
+| Extract text (lightweight) | unpdf                         | Edge/serverless compatible                                                 |
+| Extract tables (AI)        | Vision model + Zod schema     | Multi-column and merged cell support                                       |
+| Extract tables (non-AI)    | pdfplumber (Python)           | Precise cell boundary detection                                            |
+| Modify, merge, split       | pdf-lib (or `@pdfme/pdf-lib`) | Byte-level PDF manipulation in JS                                          |
+| Fill fillable forms        | pdf-lib (or `@pdfme/pdf-lib`) | Inspect AcroForm fields before writing                                     |
+| Fill non-fillable forms    | Python annotation scripts     | Visual analysis + bounding box annotations                                 |
+| Encrypt PDF                | qpdf                          | AES-256: `qpdf --encrypt user owner 256 --`                                |
+| Repair corrupted PDF       | qpdf                          | `qpdf input.pdf --replace-input`                                           |
+| Fast text extraction (CLI) | poppler-utils                 | `pdftotext -layout input.pdf -`                                            |
+| Merge thousands of files   | pypdf (Python)                | Lighter than headless browser                                              |
 
 ## Common Mistakes
 
@@ -39,6 +39,7 @@ Full-lifecycle PDF engineering covering extraction, generation, modification, fo
 | Using pypdf for complex layout extraction              | Use pdfplumber or AI OCR for multi-column or overlapping text     |
 | Skipping font embedding in containerized environments  | Embed Google Fonts or WOFF2 files with Puppeteer                  |
 | Writing to flattened PDF form fields                   | Inspect AcroForm fields with pdf-lib before writing               |
+| Using unmaintained `pdf-lib` for encrypted PDFs        | Use `@cantoo/pdf-lib` fork which adds encrypted PDF support       |
 
 ## Delegation
 

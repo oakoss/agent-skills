@@ -10,16 +10,18 @@ tags:
 ## Installation
 
 ```bash
-npm install @tiptap/react @tiptap/starter-kit @tiptap/pm @tiptap/extension-image @tiptap/extension-color @tiptap/extension-text-style @tiptap/extension-typography
+npm install @tiptap/react @tiptap/starter-kit @tiptap/pm
 ```
 
 - `@tiptap/pm` is a required peer dependency (ProseMirror engine)
-- StarterKit bundles 20+ essential extensions
-- Image/color/typography are common additions not in StarterKit
+- StarterKit bundles marks, nodes, and functionality extensions
+- Additional extensions (Image, Color, Typography) installed separately as needed
 
 ## SSR-Safe Editor
 
-```ts
+```tsx
+'use client';
+
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
@@ -35,11 +37,13 @@ export function Editor() {
     },
   });
 
+  if (!editor) return null;
+
   return <EditorContent editor={editor} />;
 }
 ```
 
-`immediatelyRender: false` is required for Next.js/SSR apps. Without it, you get: "SSR has been detected, please set `immediatelyRender` explicitly to `false`". This is the #1 reported Tiptap error.
+`immediatelyRender: false` is required for Next.js/SSR apps. Without it: "SSR has been detected, please set `immediatelyRender` explicitly to `false`". This is the most common Tiptap error.
 
 ## Tailwind Typography
 
@@ -62,7 +66,6 @@ Without this, formatted content (headings, lists, links) looks unstyled.
 ```ts
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
-import Link from '@tiptap/extension-link';
 import Typography from '@tiptap/extension-typography';
 
 const editor = useEditor({
@@ -74,17 +77,6 @@ const editor = useEditor({
     Image.configure({
       inline: true,
       allowBase64: false,
-      resize: {
-        enabled: true,
-        directions: ['top-right', 'bottom-right', 'bottom-left', 'top-left'],
-        minWidth: 100,
-        minHeight: 100,
-        alwaysPreserveAspectRatio: true,
-      },
-    }),
-    Link.configure({
-      openOnClick: false,
-      HTMLAttributes: { class: 'text-primary underline' },
     }),
     Typography,
   ],
@@ -93,6 +85,8 @@ const editor = useEditor({
 ```
 
 Extension order matters — dependencies must load first. Set `allowBase64: false` to prevent huge JSON payloads.
+
+Link and Underline are included in StarterKit v3 by default. Do not install them separately.
 
 ## React Version Compatibility
 
@@ -104,9 +98,9 @@ Extension order matters — dependencies must load first. Set `allowBase64: fals
 
 Pro drag-handle extension depends on archived tippyjs-react without React 19 support.
 
-## Drag Handle Note
+## Bundler Compatibility
 
-Drag handle functionality requires minimum v3.14.0 (regression fixed in that release).
+Tiptap v3 ships as ESM. Create React App (CRA) is incompatible with the v3 module structure. Use Vite or another modern bundler.
 
 ## Package Version Resolutions
 
@@ -121,3 +115,13 @@ If you encounter ProseMirror multiple version conflicts:
   }
 }
 ```
+
+## shadcn Minimal Tiptap
+
+Pre-built component with toolbar, dark mode, and image upload:
+
+```bash
+npx shadcn@latest add https://raw.githubusercontent.com/Aslam97/shadcn-minimal-tiptap/main/registry/block-registry.json
+```
+
+Requires wrapping the app with `TooltipProvider` from `@/components/ui/tooltip`.

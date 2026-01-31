@@ -1,7 +1,8 @@
 ---
 title: Semantic Entity SEO
 description: Topic cluster architecture, intent mapping, NLP-friendly writing, and Schema.org entity definitions
-tags: [semantic-seo, topic-clusters, intent-mapping, schema-org, lsi, nlp]
+tags:
+  [semantic-seo, topic-clusters, intent-mapping, schema-org, nlp, related-terms]
 ---
 
 # Semantic Entity SEO
@@ -129,7 +130,7 @@ Strong: "React Server Components render on the server."
 Weak:   "Rendering on the server is done by React Server Components."
 ```
 
-**LSI terms:** Include terms that naturally co-occur in quality discussions of the topic. Do not force them; weave them in where they fit.
+**Semantically related terms:** Include terms that naturally co-occur in quality discussions of the topic. Do not force them; weave them in where they fit.
 
 **Consistent terminology:** Pick one term and use it throughout. Do not alternate between "endpoint," "route," and "URL" for the same concept.
 

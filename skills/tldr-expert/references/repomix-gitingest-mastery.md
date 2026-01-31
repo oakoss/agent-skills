@@ -39,24 +39,23 @@ repomix
 # Pack specific subdirectory with compression
 repomix --include "src/features/auth/**" --output auth-context.md --compress
 
-# Signatures only (understand a module without hitting token limits)
-repomix --include "src/huge-module/**" --no-code-bodies
-
-# Top-level exports only
-repomix --include "src/**" --top-level-only
+# Compressed mode (extracts signatures via Tree-sitter, removes function bodies)
+repomix --include "src/huge-module/**" --compress
 
 # Pack with Markdown output instead of XML
 repomix --style markdown --output context.md
+
+# Metadata only without file contents
+repomix --no-files
 ```
 
 ### Output Modes
 
-| Mode            | Flag               | Token Savings | Use Case                             |
-| --------------- | ------------------ | ------------- | ------------------------------------ |
-| Full            | (default)          | None          | Small modules, full understanding    |
-| Compressed      | `--compress`       | ~40%          | Medium modules, reasoning tasks      |
-| Signatures only | `--no-code-bodies` | ~85%          | Large modules, architectural mapping |
-| Top-level only  | `--top-level-only` | ~90%          | Very large modules, export discovery |
+| Mode       | Flag         | Token Savings | Use Case                              |
+| ---------- | ------------ | ------------- | ------------------------------------- |
+| Full       | (default)    | None          | Small modules, full understanding     |
+| Compressed | `--compress` | ~70%          | Medium-large modules, reasoning tasks |
+| No files   | `--no-files` | ~95%          | Repository structure analysis only    |
 
 ### Security: Secretlint Integration
 
@@ -66,42 +65,43 @@ Repomix includes built-in secretlint scanning to ensure context bundles never co
 - PII (personally identifiable information)
 - Internal IP addresses or sensitive metadata
 
-This runs automatically on every pack operation.
+This runs automatically on every pack operation. Disable with `--no-security-check` if needed.
 
 ## Gitingest: Repository Digest Tool
 
-Gitingest transforms entire Git repositories into structured text digests optimized for LLM consumption.
+Gitingest (Python: `pip install gitingest`) transforms entire Git repositories into structured text digests optimized for LLM consumption.
 
 ### Key Use Cases
 
 **Dependency discovery:** Point Gitingest at a library's GitHub URL to understand its API surface.
 
 ```bash
-gitingest https://github.com/org/library --output library-digest.txt
+gitingest https://github.com/org/library -o library-digest.txt
 ```
 
 **Architecture review:** Get a tree view and file-size breakdown for quick orientation.
 
 ```bash
-gitingest . --output project-digest.txt
+gitingest . -o project-digest.txt
 ```
 
 **Onboarding digest:** Create a prompt-friendly summary for new contributors or sub-agents.
 
 ```bash
-gitingest . --exclude "node_modules,dist,build" --max-size 1mb --output digest.txt
+gitingest . -o digest.txt
 ```
 
 ### Configuration Tips
 
-- Always exclude `node_modules`, `dist`, `build`, and `.git` directories
-- Set `--max-size` to prevent oversized outputs
-- Ensure a valid `.gitignore` exists at the project root for clean output
-- Use remote URLs for third-party library analysis
+- Ensure a valid `.gitignore` exists at the project root for clean output (files in `.gitignore` are skipped by default)
+- Use `--include-gitignored` if you need ignored files in the digest
+- Use `-o -` to pipe output to STDOUT instead of a file
+- Use `--token` or `GITHUB_TOKEN` env var for private repository access
+- Use remote GitHub URLs for third-party library analysis
 
 ## Tree-sitter Signature Extraction
 
-Tree-sitter (used internally by llm-tldr) extracts the "shape" of code without implementation details.
+Tree-sitter (used internally by Repomix `--compress` and llm-tldr) extracts the "shape" of code without implementation details.
 
 ```ts
 // Tree-sitter extraction produces signatures like:
@@ -118,7 +118,7 @@ This gives the AI the "what" without the "how," saving thousands of tokens while
 
 | Issue                    | Likely Cause                        | Corrective Action                                         |
 | ------------------------ | ----------------------------------- | --------------------------------------------------------- |
-| Context bundle too large | Too many implementation details     | Use `--top-level-only` or `--no-code-bodies`              |
+| Context bundle too large | Too many implementation details     | Use `--compress` to extract signatures only               |
 | Gitingest output messy   | Missing `.gitignore` configuration  | Ensure a valid `.gitignore` exists at the root            |
 | Secretlint blocks output | Detected potential secret in source | Review flagged files and remove or rotate exposed secrets |
 | XML parsing errors       | Special characters in source code   | Switch to Markdown output with `--style markdown`         |

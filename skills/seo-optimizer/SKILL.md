@@ -1,13 +1,13 @@
 ---
 name: seo-optimizer
-description: 'SEO architecture and content strategy for search visibility. Covers entity-first optimization, structured data, E-E-A-T signals, SGE optimization, and content auditing. Use when optimizing search rankings, implementing JSON-LD schema, improving E-E-A-T signals, auditing site performance, planning topical authority, or structuring content for featured snippets.'
+description: 'SEO architecture and content strategy for search visibility. Covers entity-first optimization, structured data, E-E-A-T signals, AI Overviews optimization, and content auditing. Use when optimizing search rankings, implementing JSON-LD schema, improving E-E-A-T signals, auditing site performance, planning topical authority, or structuring content for AI Overviews and featured snippets.'
 ---
 
 # SEO Optimizer
 
 ## Overview
 
-Optimizes digital visibility through entity-based SEO, structured data, and content architecture. Focuses on SGE (Search Generative Experience) optimization, E-E-A-T authority signals, and semantic topic clustering rather than keyword-centric approaches.
+Optimizes digital visibility through entity-based SEO, structured data, and content architecture. Focuses on AI Overviews optimization, E-E-A-T authority signals, and semantic topic clustering rather than keyword-centric approaches.
 
 **When to use:** Search ranking optimization, structured data implementation, content audits, topical authority planning, featured snippet targeting, Core Web Vitals improvement.
 
@@ -17,11 +17,11 @@ Optimizes digital visibility through entity-based SEO, structured data, and cont
 
 | Pattern           | Approach                                | Key Points                                                     |
 | ----------------- | --------------------------------------- | -------------------------------------------------------------- |
-| SGE optimization  | Question-based H2s with direct answers  | 1-2 sentence answer before expanding; scannable lists          |
+| AI Overviews      | Question-based H2s with direct answers  | 1-2 sentence answer before expanding; scannable lists          |
 | E-E-A-T signals   | Experience-led content with author bios | First-hand evidence, SME review labels, credentials            |
 | Structured data   | JSON-LD schema for entities             | Organization, Article, FAQ, Breadcrumb schemas                 |
 | Topic clusters    | Pillar page + cluster architecture      | Internal links flow between pillar and clusters                |
-| Semantic SEO      | Intent mapping + LSI terms              | Map pages to Informational/Commercial/Transactional intent     |
+| Semantic SEO      | Intent mapping + related terms          | Map pages to Informational/Commercial/Transactional intent     |
 | Content audit     | 30-point scoring methodology            | Title, meta, keywords, structure, snippets, linking, technical |
 | Featured snippets | Format-matched content blocks           | 40-60 word definitions, numbered steps, comparison tables      |
 | Schema markup     | Explicit entity definitions             | Define Who/What/Where in first paragraph + Schema.org          |
@@ -32,7 +32,7 @@ Optimizes digital visibility through entity-based SEO, structured data, and cont
 
 | Mistake                                                             | Correct Pattern                                                               |
 | ------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| Keyword stuffing to boost rankings                                  | Use LSI and semantic SEO with natural language patterns                       |
+| Keyword stuffing to boost rankings                                  | Use semantic SEO with semantically related terms and natural language         |
 | Publishing generic AI-generated content without expert review       | Lead with first-hand experience and E-E-A-T signals                           |
 | Ignoring Core Web Vitals (LCP, CLS, INP) impact on rankings         | Implement performance-first design and monitor vitals continuously            |
 | Using hidden or incomplete JSON-LD schema markup                    | Define explicit, complete structured data that maps entities clearly          |
@@ -49,7 +49,7 @@ Optimizes digital visibility through entity-based SEO, structured data, and cont
 
 ## References
 
-- [SGE optimization and AI overview visibility](references/sge-optimization.md)
+- [AI Overviews optimization and search visibility](references/ai-overviews.md)
 - [E-E-A-T standards and authority building](references/eeat-standards.md)
 - [Semantic entity SEO and topic clusters](references/semantic-entity-seo.md)
 - [Schema markup patterns with JSON-LD](references/schema-markup.md)

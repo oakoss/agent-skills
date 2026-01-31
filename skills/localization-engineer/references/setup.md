@@ -1,7 +1,15 @@
 ---
 title: Setup & Configuration
-description: next-intl installation, request config for loading locale messages, middleware for locale routing, and translation file structure
-tags: [next-intl, setup, middleware, configuration, translation-files]
+description: next-intl installation, defineRouting for centralized locale config, createMiddleware for locale negotiation, getRequestConfig for server-side message loading, and translation file structure
+tags:
+  [
+    next-intl,
+    setup,
+    middleware,
+    defineRouting,
+    configuration,
+    translation-files,
+  ]
 ---
 
 # Setup & Configuration
@@ -12,15 +20,40 @@ tags: [next-intl, setup, middleware, configuration, translation-files]
 npm install next-intl
 ```
 
-## Request Config
+## Routing Configuration
+
+Define routing centrally so middleware and navigation share the same config:
 
 ```ts
-// i18n/request.ts
-import { getRequestConfig } from 'next-intl/server';
+// i18n/routing.ts
+import { defineRouting } from 'next-intl/routing';
 
-export default getRequestConfig(async ({ locale }) => ({
-  messages: (await import(`../messages/${locale}.json`)).default,
-}));
+export const routing = defineRouting({
+  locales: ['en', 'es', 'fr', 'de', 'ja'],
+  defaultLocale: 'en',
+});
+```
+
+With localized pathnames:
+
+```ts
+// i18n/routing.ts
+import { defineRouting } from 'next-intl/routing';
+
+export const routing = defineRouting({
+  locales: ['en', 'es', 'fr', 'de'],
+  defaultLocale: 'en',
+  localePrefix: 'as-needed',
+  pathnames: {
+    '/': '/',
+    '/about': {
+      en: '/about',
+      es: '/acerca-de',
+      fr: '/a-propos',
+      de: '/ueber-uns',
+    },
+  },
+});
 ```
 
 ## Middleware
@@ -28,18 +61,41 @@ export default getRequestConfig(async ({ locale }) => ({
 ```ts
 // middleware.ts
 import createMiddleware from 'next-intl/middleware';
+import { routing } from './i18n/routing';
 
-export default createMiddleware({
-  locales: ['en', 'es', 'fr', 'de', 'ja'],
-  defaultLocale: 'en',
-});
+export default createMiddleware(routing);
 
 export const config = {
-  matcher: ['/((?!api|_next|.*\\..*).*)'],
+  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)',
 };
 ```
 
+## Request Config
+
+The `requestLocale` parameter must be awaited. This runs once per request via React `cache`:
+
+```ts
+// i18n/request.ts
+import { getRequestConfig } from 'next-intl/server';
+import { routing } from './routing';
+
+export default getRequestConfig(async ({ requestLocale }) => {
+  let locale = await requestLocale;
+
+  if (!locale || !routing.locales.includes(locale)) {
+    locale = routing.defaultLocale;
+  }
+
+  return {
+    locale,
+    messages: (await import(`../../messages/${locale}.json`)).default,
+  };
+});
+```
+
 ## Translation File Structure
+
+Organize messages by namespace in flat JSON files per locale:
 
 ```json
 // messages/en.json
@@ -84,5 +140,36 @@ export const config = {
     "emailPlaceholder": "Ingrese su correo electrónico",
     "passwordPlaceholder": "Ingrese su contraseña"
   }
+}
+```
+
+## Next.js Layout Integration
+
+Wrap the app with `NextIntlClientProvider` in the locale layout:
+
+```tsx
+// app/[locale]/layout.tsx
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
+
+export default async function LocaleLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const messages = await getMessages();
+
+  return (
+    <html lang={locale}>
+      <body>
+        <NextIntlClientProvider messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
 }
 ```

@@ -1,11 +1,11 @@
 ---
 title: Backend Performance
-description: Async background processing with Bull queues, API response optimization with compression and pagination, and rate limiting configuration
+description: Async background processing with BullMQ queues, API response optimization with compression and pagination, and rate limiting configuration
 tags:
   [
     backend,
     background-jobs,
-    bull,
+    bullmq,
     queue,
     pagination,
     compression,
@@ -25,9 +25,11 @@ app.post('/send-email', async (req, res) => {
 });
 
 // Queue job (fast response)
-import Bull from 'bull';
+import { Queue, Worker } from 'bullmq';
 
-const emailQueue = new Bull('emails', 'redis://localhost:6379');
+const emailQueue = new Queue('emails', {
+  connection: { host: 'localhost', port: 6379 },
+});
 
 app.post('/send-email', async (req, res) => {
   await emailQueue.add('send', req.body);
@@ -35,9 +37,13 @@ app.post('/send-email', async (req, res) => {
 });
 
 // Process jobs in background worker
-emailQueue.process('send', async (job) => {
-  await sendEmail(job.data);
-});
+const worker = new Worker(
+  'emails',
+  async (job) => {
+    await sendEmail(job.data);
+  },
+  { connection: { host: 'localhost', port: 6379 } },
+);
 ```
 
 ## API Response Optimization

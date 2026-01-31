@@ -1,86 +1,73 @@
 ---
 name: tiptap
-description: 'Builds rich text editors with Tiptap — headless editor framework with React and Tailwind v4. Covers SSR-safe setup, image uploads, prose styling, and collaborative editing. Use when adding a rich text editor, configuring Tiptap extensions, handling image uploads in editors, or setting up collaborative editing with Y.js.'
-version: 1.0.0
-tags: [tiptap, rich-text, editor, prosemirror, react, tailwind]
+description: 'Builds rich text editors with Tiptap, a headless ProseMirror-based editor framework for React with Tailwind v4 support. Covers SSR-safe setup, image uploads, prose styling, collaborative editing, and markdown support. Use when adding a rich text editor, configuring Tiptap extensions, handling image uploads in editors, or setting up collaborative editing with Y.js. Use for tiptap, rich text, editor, prosemirror, react, tailwind.'
 ---
 
 # Tiptap Rich Text Editor
 
-Headless rich text editor built on ProseMirror. React 19 supported, Tailwind v4 compatible.
+## Overview
 
-## Critical Setup Rules
+Tiptap is a headless rich text editor built on ProseMirror, providing a modular extension system for React applications. It supports React 19, Tailwind v4, and SSR frameworks like Next.js. Use when building blog editors, comment systems, documentation tools, or Notion-like collaborative apps. Do NOT use with Create React App (CRA is incompatible with Tiptap v3 ESM module structure; use Vite instead).
 
-| Rule                                            | Why                                                                        |
-| ----------------------------------------------- | -------------------------------------------------------------------------- |
-| Set `immediatelyRender: false` in `useEditor()` | Required for SSR/Next.js — prevents hydration mismatch (#1 reported error) |
-| Install `@tiptap/pm` peer dependency            | ProseMirror engine, required but not auto-installed                        |
-| Install `@tailwindcss/typography`               | Without it, formatted content looks unstyled                               |
-| Set `allowBase64: false` on Image extension     | Prevents megabyte-size JSON payloads                                       |
-| Use Vite, not Create React App                  | CRA incompatible with Tiptap v3 module structure                           |
+## Quick Reference
+
+| Pattern              | API / Key Point                                                                                                           |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Create editor        | `useEditor({ extensions: [StarterKit], immediatelyRender: false })`                                                       |
+| Render editor        | `<EditorContent editor={editor} />`                                                                                       |
+| Prose styling        | Add `className="prose dark:prose-invert max-w-none"` to container                                                         |
+| Configure StarterKit | `StarterKit.configure({ heading: { levels: [1, 2, 3] } })`                                                                |
+| Disable undo/redo    | `StarterKit.configure({ undoRedo: false })` (required for Y.js collab)                                                    |
+| Image upload         | Set `allowBase64: false`, use upload handler with URL replacement                                                         |
+| Markdown support     | `import { Markdown } from '@tiptap/markdown'` (official, open-source)                                                     |
+| shadcn component     | `npx shadcn@latest add https://raw.githubusercontent.com/Aslam97/shadcn-minimal-tiptap/main/registry/block-registry.json` |
+| Null guard           | `useEditor()` returns `Editor \| null` — guard before calling methods                                                     |
 
 ## Core Dependencies
 
-| Package                   | Purpose                                                              |
-| ------------------------- | -------------------------------------------------------------------- |
-| `@tiptap/react`           | React integration                                                    |
-| `@tiptap/starter-kit`     | 20+ essential extensions (headings, lists, bold, italic, link, etc.) |
-| `@tiptap/pm`              | ProseMirror peer dependency                                          |
-| `@tailwindcss/typography` | Prose styling for headings, lists, links                             |
+| Package                   | Purpose                                                    |
+| ------------------------- | ---------------------------------------------------------- |
+| `@tiptap/react`           | React integration (React 19 supported since v2.10.0)       |
+| `@tiptap/starter-kit`     | Bundled extensions: marks, nodes, and functionality        |
+| `@tiptap/pm`              | ProseMirror peer dependency (required, not auto-installed) |
+| `@tailwindcss/typography` | Prose styling for headings, lists, links                   |
 
-## StarterKit Extensions (v3)
+## StarterKit v3 Contents
 
 | Category      | Included                                                                                                                |
 | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Marks         | Bold, Italic, Strike, Code, Link (new), Underline (new)                                                                 |
+| Marks         | Bold, Italic, Strike, Code, Link (v3), Underline (v3)                                                                   |
 | Nodes         | Document, Paragraph, Text, Heading, BulletList, OrderedList, ListItem, Blockquote, CodeBlock, HorizontalRule, HardBreak |
-| Functionality | History, Dropcursor, Gapcursor, ListKeymap (new), TrailingNode (new)                                                    |
+| Functionality | Undo/Redo, Dropcursor, Gapcursor, ListKeymap (v3), TrailingNode (v3)                                                    |
 
 ## Common Additional Extensions
 
-| Extension         | Package                                 | Use Case                            |
-| ----------------- | --------------------------------------- | ----------------------------------- |
-| Image             | `@tiptap/extension-image`               | Image support with resize           |
-| Color             | `@tiptap/extension-color`               | Text color                          |
-| Typography        | `@tiptap/extension-typography`          | Smart quotes, dashes, ellipsis      |
-| Placeholder       | `@tiptap/extension-placeholder`         | Placeholder text                    |
-| Table             | `@tiptap/extension-table`               | Table support (+ Row, Cell, Header) |
-| TaskList          | `@tiptap/extension-task-list`           | Checkbox task lists                 |
-| CodeBlockLowlight | `@tiptap/extension-code-block-lowlight` | Syntax-highlighted code             |
-| Collaboration     | `@tiptap/extension-collaboration`       | Real-time multi-user editing        |
-| Markdown          | `@tiptap/extension-markdown`            | Bidirectional markdown (Beta)       |
-
-## Use Case Extension Bundles
-
-| Use Case       | Extensions                                                             |
-| -------------- | ---------------------------------------------------------------------- |
-| Blog editor    | StarterKit + Image + Typography + Placeholder + CharacterCount         |
-| Comment system | StarterKit (minimal) + Link + Typography + Placeholder                 |
-| Documentation  | StarterKit + Image + Table + CodeBlockLowlight + TaskList              |
-| Notion-like    | StarterKit + Image + Table + TaskList + Collaboration + slash commands |
-| Form input     | StarterKit (minimal) + Placeholder + CharacterCount                    |
+| Extension         | Package                                 | Use Case                             |
+| ----------------- | --------------------------------------- | ------------------------------------ |
+| Image             | `@tiptap/extension-image`               | Image support with resize            |
+| Color             | `@tiptap/extension-color`               | Text color (requires TextStyle)      |
+| Typography        | `@tiptap/extension-typography`          | Smart quotes, dashes, ellipsis       |
+| Placeholder       | `@tiptap/extension-placeholder`         | Placeholder text (requires CSS)      |
+| Table             | `@tiptap/extension-table`               | Table support (+ Row, Cell, Header)  |
+| TaskList          | `@tiptap/extension-task-list`           | Checkbox task lists                  |
+| CodeBlockLowlight | `@tiptap/extension-code-block-lowlight` | Syntax-highlighted code              |
+| Collaboration     | `@tiptap/extension-collaboration`       | Real-time multi-user editing (Y.js)  |
+| Markdown          | `@tiptap/markdown`                      | Bidirectional markdown (open-source) |
 
 ## Common Mistakes
 
 | Mistake                                   | Fix                                                                |
 | ----------------------------------------- | ------------------------------------------------------------------ |
-| Missing `immediatelyRender: false`        | Add to `useEditor()` config — required for SSR                     |
+| Missing `immediatelyRender: false`        | Add to `useEditor()` config — required for SSR/Next.js             |
 | No `prose` classes on editor container    | Add `className="prose prose-sm dark:prose-invert max-w-none"`      |
-| Images stored as base64                   | Set `allowBase64: false`, use upload handler                       |
+| Images stored as base64                   | Set `allowBase64: false`, use upload handler with URL replacement  |
 | Using EditorProvider + useEditor together | Choose one — EditorProvider wraps useEditor internally             |
-| History enabled with Collaboration        | Set `history: false` in StarterKit when using Y.js                 |
+| Undo/Redo enabled with Collaboration      | Set `undoRedo: false` in StarterKit when using Y.js                |
 | ProseMirror version conflicts             | Add `resolutions` for prosemirror-model/view/state in package.json |
-| Using CRA with Tiptap v3                  | Switch to Vite                                                     |
+| Using Create React App                    | Switch to Vite — CRA incompatible with v3 ESM modules              |
 | Not checking `editor` for null            | `useEditor()` returns `Editor \| null` — guard before use          |
-
-## Integration Options
-
-| Option                | When to Use                                               |
-| --------------------- | --------------------------------------------------------- |
-| shadcn minimal-tiptap | Pre-built component with toolbar, dark mode, image upload |
-| Custom `useEditor()`  | Full control, headless approach                           |
-
-Install shadcn component: `npx shadcn@latest add https://raw.githubusercontent.com/Aslam97/shadcn-minimal-tiptap/main/registry/block-registry.json`
+| Using `history: false` for collab         | Config key renamed to `undoRedo` in v3                             |
+| Importing `@tiptap/extension-markdown`    | Correct package is `@tiptap/markdown`                              |
 
 ## Delegation
 

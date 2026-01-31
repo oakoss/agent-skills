@@ -15,38 +15,30 @@ Achieves high-fidelity codebase comprehension at a fraction of the token cost th
 
 ## Quick Reference
 
-| Pattern            | Tool / Command                                | Key Points                                             |
-| ------------------ | --------------------------------------------- | ------------------------------------------------------ |
-| Context packing    | `repomix --include "src/**" --compress`       | Package subdirectories into AI-optimized bundles       |
-| Signatures only    | `repomix --include "src/**" --no-code-bodies` | Extract function shapes without implementation details |
-| Repository digest  | `gitingest . --output digest.txt`             | Prompt-friendly summary for quick onboarding           |
-| Dependency graph   | `tldr context src/file.ts --depth 2`          | Recursive type/function retrieval up to N levels       |
-| Caller tracing     | `tldr callers functionName`                   | Find every call site to assess change blast radius     |
-| Callee tracing     | `tldr callee functionName`                    | Understand what a function depends on internally       |
-| Semantic search    | `tldr semantic "session expiration logic"`    | Find logic by meaning when naming is inconsistent      |
-| Architecture audit | `tldr arch`                                   | Detect circular deps, layer violations, dead code      |
-| Index health check | `tldr status`                                 | Verify index freshness before analysis                 |
-| Secret scanning    | Repomix built-in secretlint                   | Ensure context bundles contain no keys or PII          |
-
-## Token Saving Benchmarks
-
-| Method               | Token Usage | Fidelity         | Best For                           |
-| -------------------- | ----------- | ---------------- | ---------------------------------- |
-| Raw file read        | 100%        | 100%             | Final implementation and debugging |
-| Gitingest digest     | 25%         | 85%              | Initial onboarding and planning    |
-| Repomix (compressed) | 15%         | 90%              | Context packing for reasoning      |
-| llm-tldr query       | 2%          | 95% (structural) | Architectural mapping and tracing  |
+| Pattern            | Tool / Command                          | Key Points                                             |
+| ------------------ | --------------------------------------- | ------------------------------------------------------ |
+| Context packing    | `repomix --include "src/**" --compress` | Package subdirectories into AI-optimized bundles       |
+| Signatures only    | `repomix --include "src/**" --compress` | Compression extracts signatures via Tree-sitter        |
+| Repository digest  | `gitingest . -o digest.txt`             | Prompt-friendly summary for quick onboarding           |
+| Dependency context | `tldr context funcName --project .`     | LLM-ready context for a function with 95% token saving |
+| Caller tracing     | `tldr impact functionName .`            | Reverse call graph to assess change blast radius       |
+| Forward call graph | `tldr calls .`                          | Build forward call graph across the project            |
+| Semantic search    | `tldr semantic "session expiry" .`      | Find logic by meaning when naming is inconsistent      |
+| Architecture audit | `tldr arch .`                           | Detect circular deps, layer violations, dead code      |
+| Dead code finder   | `tldr dead .`                           | Find unreachable functions with zero callers           |
+| File extraction    | `tldr extract src/file.ts`              | Extract AST (functions, classes, imports) from a file  |
+| Secret scanning    | Repomix built-in secretlint             | Ensure context bundles contain no keys or PII          |
 
 ## Common Mistakes
 
-| Mistake                                                     | Correct Pattern                                                                    |
-| ----------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Reading entire large files without checking structure first | Run `tldr extract` to get signatures before reading full files                     |
-| Using `grep` for dependency tracing across files            | Use `tldr callers`/`callees` tools that understand dynamic imports                 |
-| Packing `node_modules` or `dist` into context bundles       | Configure Repomix ignore-list to exclude generated and vendor directories          |
-| Assuming semantic search results are exhaustive             | Verify top matches against actual source and cross-reference with `rg`             |
-| Running Repomix without compression on large directories    | Use `--compress` or `--signatures-only` flags to stay within context window limits |
-| Including irrelevant context that dilutes signal quality    | Follow top-down priority: index, signatures, core logic, then adjacent context     |
+| Mistake                                                     | Correct Pattern                                                                |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Reading entire large files without checking structure first | Run `tldr extract` to get signatures before reading full files                 |
+| Using `grep` for dependency tracing across files            | Use `tldr impact` for reverse call graph that understands dynamic imports      |
+| Packing `node_modules` or `dist` into context bundles       | Configure Repomix ignore-list to exclude generated and vendor directories      |
+| Assuming semantic search results are exhaustive             | Verify top matches against actual source and cross-reference with `rg`         |
+| Running Repomix without compression on large directories    | Use `--compress` flag to stay within context window limits                     |
+| Including irrelevant context that dilutes signal quality    | Follow top-down priority: index, signatures, core logic, then adjacent context |
 
 ## Delegation
 
@@ -57,5 +49,5 @@ Achieves high-fidelity codebase comprehension at a fraction of the token cost th
 ## References
 
 - [Context Engineering Patterns](references/context-engineering-patterns.md) -- packing strategies, XML tagging, signal-to-noise optimization, warm-up prompts
-- [Repomix and Gitingest Mastery](references/repomix-gitingest-mastery.md) -- configuration, signatures-only mode, digest generation, Tree-sitter extraction
-- [Semantic Graph Analysis](references/semantic-graph-analysis.md) -- llm-tldr MCP tools, callers/callees, semantic search, architectural audits
+- [Repomix and Gitingest Mastery](references/repomix-gitingest-mastery.md) -- configuration, compression mode, digest generation, Tree-sitter extraction
+- [Semantic Graph Analysis](references/semantic-graph-analysis.md) -- llm-tldr CLI tools, impact analysis, semantic search, architectural audits

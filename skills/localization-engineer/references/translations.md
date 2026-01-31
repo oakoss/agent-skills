@@ -1,14 +1,25 @@
 ---
 title: Translations & Variables
-description: Using useTranslations in client and server components, variable interpolation, ICU pluralization, and locale-specific content patterns
-tags: [translations, useTranslations, variables, pluralization, icu-format]
+description: Using useTranslations in Client Components, getTranslations in async Server Components, variable interpolation, ICU pluralization, rich text with React components, and message existence checks
+tags:
+  [
+    translations,
+    useTranslations,
+    getTranslations,
+    variables,
+    pluralization,
+    icu-format,
+    rich-text,
+  ]
 ---
 
 # Translations & Variables
 
 ## Client Component
 
-```ts
+Use `useTranslations` for synchronous translation access in Client Components:
+
+```tsx
 'use client';
 import { useTranslations } from 'next-intl';
 
@@ -27,11 +38,13 @@ export function LoginForm() {
 
 ## Server Component
 
-```ts
-import { useTranslations } from 'next-intl';
+Use `getTranslations` from `next-intl/server` for async Server Components:
 
-export default function HomePage() {
-  const t = useTranslations('common');
+```tsx
+import { getTranslations } from 'next-intl/server';
+
+export default async function HomePage() {
+  const t = await getTranslations('common');
 
   return (
     <div>
@@ -43,6 +56,8 @@ export default function HomePage() {
 
 ## Variables
 
+Message files use ICU message syntax for interpolation:
+
 ```json
 {
   "welcome": "Welcome, {name}!",
@@ -51,7 +66,7 @@ export default function HomePage() {
 }
 ```
 
-```ts
+```tsx
 'use client';
 import { useTranslations } from 'next-intl';
 
@@ -66,10 +81,11 @@ export function Greeting({ userName }: { userName: string }) {
     </div>
   );
 }
-// Output: "Welcome, John!" / "You have 3 items in your cart" / "Price: $49.99"
 ```
 
 ## Pluralization
+
+ICU plural format supports `=0`, `one`, `other`, and language-specific categories (`two`, `few`, `many`):
 
 ```json
 {
@@ -79,7 +95,7 @@ export function Greeting({ userName }: { userName: string }) {
 }
 ```
 
-```ts
+```tsx
 'use client';
 import { useTranslations } from 'next-intl';
 
@@ -87,28 +103,64 @@ export function ItemCounter({ count }: { count: number }) {
   const t = useTranslations('items');
   return <p>{t('count', { count })}</p>;
 }
-// count = 0: "No items" | count = 1: "1 item" | count = 5: "5 items"
 ```
 
-## Locale-Specific Content
+## Rich Text
 
-```ts
-import { useLocale } from 'next-intl';
+Embed React components inside translations using `t.rich()`:
 
-export default function HomePage() {
-  const locale = useLocale();
+```json
+{
+  "terms": "By signing up, you agree to our <link>Terms of Service</link> and <bold>Privacy Policy</bold>."
+}
+```
 
-  const content = {
-    en: { hero: 'Build amazing apps', description: 'The best platform for developers' },
-    es: { hero: 'Crea aplicaciones increíbles', description: 'La mejor plataforma para desarrolladores' },
-    ja: { hero: '素晴らしいアプリを作成', description: '開発者のための最高のプラットフォーム' },
-  };
+```tsx
+'use client';
+import { useTranslations } from 'next-intl';
+
+export function TermsNotice() {
+  const t = useTranslations();
 
   return (
-    <div>
-      <h1>{content[locale].hero}</h1>
-      <p>{content[locale].description}</p>
-    </div>
+    <p>
+      {t.rich('terms', {
+        link: (chunks) => <a href="/terms">{chunks}</a>,
+        bold: (chunks) => <strong>{chunks}</strong>,
+      })}
+    </p>
   );
+}
+```
+
+## Message Existence Check
+
+Check whether a translation key exists before rendering:
+
+```tsx
+'use client';
+import { useTranslations } from 'next-intl';
+
+export function OptionalBanner() {
+  const t = useTranslations('promo');
+
+  if (!t.has('banner')) return null;
+
+  return <div>{t('banner')}</div>;
+}
+```
+
+## Raw Messages
+
+Access raw message content (HTML strings or other non-text formats):
+
+```tsx
+'use client';
+import { useTranslations } from 'next-intl';
+
+export function LegalDisclaimer() {
+  const t = useTranslations('legal');
+
+  return <div dangerouslySetInnerHTML={{ __html: t.raw('disclaimer') }} />;
 }
 ```

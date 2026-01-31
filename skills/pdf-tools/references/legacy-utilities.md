@@ -65,11 +65,20 @@ pdftotext -layout input.pdf -
 pdftotext -enc UTF-8 input.pdf output.txt
 ```
 
+## pdf-lib Maintenance Note
+
+The original `pdf-lib` (Hopding/pdf-lib) has not received updates since 2022. For active maintenance, use one of these forks:
+
+- **`@pdfme/pdf-lib`** -- Adds `drawSvg`, rounded rectangles, actively maintained
+- **`@cantoo/pdf-lib`** -- Adds encrypted PDF support (`{ ignoreEncryption: true }`)
+
+Both forks are API-compatible with the original. The original package still works for basic use cases (merge, split, form filling on unencrypted PDFs).
+
 ## Tool Selection Guide
 
 | Scenario                 | Recommended Tool                 |
 | ------------------------ | -------------------------------- |
-| Next.js API route        | JS: pdf-lib, Puppeteer           |
+| Next.js API route        | JS: pdf-lib (or fork), Puppeteer |
 | Heavy batch processing   | Python: pdfplumber, or CLI: qpdf |
 | AI RAG pipeline          | unpdf or pdftotext               |
 | Corrupted PDF repair     | qpdf                             |
