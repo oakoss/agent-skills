@@ -119,7 +119,12 @@ Skills under 500 lines can remain as a single SKILL.md without `references/`.
 
 - **Directories**: kebab-case, descriptive — no abbreviations (min 4 chars), no leading/trailing `-`, no `--`
 - **Frontmatter `name`**: must match directory name exactly
-- **Reference files**: kebab-case, topic-scoped
+- **Reference files**: kebab-case, topic-scoped. Filenames should include domain keywords so code-style rules load correctly:
+  - React patterns → `react-integration.md`, `component-patterns.md`, `hook-testing.md`
+  - Testing → `testing-patterns.md`, `test-organization.md`, `mocking.md`
+  - Styling → `styling.md`, `dark-mode.md`, `shadcn-integration.md`
+  - API/Server → `server-functions.md`, `api-routes.md`, `middleware.md`
+  - Error handling → `error-handling.md`, `troubleshooting.md`
 
 ## Content Guidelines
 

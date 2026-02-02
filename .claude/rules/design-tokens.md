@@ -1,13 +1,16 @@
 ---
 paths:
-  - 'skills/**/references/*design-tokens*.md'
-  - 'skills/**/references/*theming*.md'
-  - 'skills/**/references/*color*.md'
+  - 'skills/design-system/references/**'
+  - 'skills/icon-design/references/**'
+  - 'skills/brand-designer/references/**'
+  - 'skills/**/references/*design-token*'
+  - 'skills/**/references/*theming*'
+  - 'skills/**/references/*color*'
 ---
 
 # Design Tokens & Semantic Color System
 
-Rules for managing CSS custom properties and design tokens in the UI package theme.
+Conventions for code examples in design token and theming skill references.
 
 ## Token Architecture (2-Tier System)
 
@@ -46,7 +49,7 @@ Context-aware tokens that define HOW styles are applied. Components use these:
 
 ## Naming Convention
 
-Follow the shadcn/taki-ui convention:
+Follow the shadcn naming convention:
 
 | Token                 | Purpose                       |
 | --------------------- | ----------------------------- |
@@ -252,11 +255,11 @@ If you need state tokens, follow this pattern:
 | `selected` | Element is currently selected           |
 | `error`    | Element is in an error/invalid state    |
 
-### Current Approach
+### Recommended Default
 
-Our UI package uses **Approach 1** (Tailwind variants) for most interactive states. This keeps the token count manageable and leverages Tailwind's built-in state handling.
+Use **Approach 1** (Tailwind variants) for most interactive states. This keeps the token count manageable and leverages Tailwind's built-in state handling.
 
-Explicit state tokens are reserved for:
+Reserve explicit state tokens for:
 
 - Focus rings (`--ring`)
 - Complex interactive patterns where opacity modifiers aren't sufficient
@@ -405,71 +408,13 @@ For components that need their own theme independent of the page:
 
 For large teams or multi-product organizations, consider wrapping base components with organization-wide enhancements.
 
-### The Pattern
-
-```tsx
-// packages/enhanced-primitives/src/smart-button.tsx
-import { Button, type ButtonProps } from '@oakoss/ui/button';
-
-interface SmartButtonProps extends ButtonProps {
-  /** Analytics event ID */
-  trackingId?: string;
-  /** Additional tracking data */
-  trackingData?: Record<string, unknown>;
-  /** Error callback */
-  onError?: (error: Error) => void;
-  /** Debounce rapid clicks (ms) */
-  debounceMs?: number;
-}
-
-export function SmartButton({
-  trackingId,
-  trackingData,
-  onError,
-  debounceMs = 0,
-  onClick,
-  children,
-  ...props
-}: SmartButtonProps) {
-  const { track } = useAnalytics();
-  const [isDebouncing, setIsDebouncing] = useState(false);
-
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // Debounce
-    if (debounceMs > 0 && isDebouncing) return;
-    if (debounceMs > 0) {
-      setIsDebouncing(true);
-      setTimeout(() => setIsDebouncing(false), debounceMs);
-    }
-
-    // Analytics
-    if (trackingId) {
-      track(trackingId, { component: 'SmartButton', ...trackingData });
-    }
-
-    // Error boundary
-    try {
-      onClick?.(e);
-    } catch (error) {
-      onError?.(error as Error);
-    }
-  };
-
-  return (
-    <Button onClick={handleClick} {...props}>
-      {children}
-    </Button>
-  );
-}
-```
-
 ### Layer Architecture
 
 ```text
 Layer 4: Application Components    ← Team-specific (UserDashboard, CheckoutForm)
 Layer 3: Composed Patterns         ← Domain patterns (ProductCard, MetricCard)
 Layer 2: Enhanced Primitives       ← Org-wide (SmartButton, TrackedLink)
-Layer 1: Foundation (@oakoss/ui)   ← Base components + design tokens
+Layer 1: Foundation (UI library)   ← Base components + design tokens
 ```
 
 ### When to Use Enhanced Primitives
@@ -480,14 +425,14 @@ Layer 1: Foundation (@oakoss/ui)   ← Base components + design tokens
 
 ### When NOT to Use
 
-- **Single product** - adds unnecessary abstraction
-- **Small team** - coordination overhead outweighs benefits
-- **Simple use cases** - just use base components directly
+- **Single product** — adds unnecessary abstraction
+- **Small team** — coordination overhead outweighs benefits
+- **Simple use cases** — just use base components directly
 
 ### Implementation Notes
 
-- Keep enhanced primitives in a separate package (`@company/enhanced-ui`)
-- Don't modify the base UI package - extend it
+- Keep enhanced primitives in a separate package
+- Don't modify the base UI package — extend it
 - Enhanced primitives should be drop-in replacements (same base API)
 - Document which enhancements each wrapper provides
 
@@ -495,112 +440,25 @@ Layer 1: Foundation (@oakoss/ui)   ← Base components + design tokens
 
 ### Font Family
 
-We use Inter Variable as the primary sans-serif font, loaded via `@fontsource-variable/inter`:
+Register font tokens in the `@theme inline` block:
 
 ```css
 @theme inline {
   --font-sans: 'Inter Variable', sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
 }
 ```
 
-### Font Loading Strategy
+### Font Loading
 
-**Why Fontsource?**
+Use Fontsource for self-hosted variable fonts:
 
-- **Automatic `@font-face` declarations** - No manual font file hosting
-- **Variable font support** - Single file for all weights (100-900)
-- **Unicode subsetting** - Separate files per language for smaller bundles
-- **`font-display: swap`** - Better loading performance (text visible immediately)
+- **Automatic `@font-face` declarations** — no manual font file hosting
+- **Variable font support** — single file for all weights (100-900)
+- **Unicode subsetting** — separate files per language for smaller bundles
+- **`font-display: swap`** — text visible immediately during load
 
-**How it works:**
-
-```css
-/* In globals.css (app entry point) */
-@import '@fontsource-variable/inter';
-@import '@oakoss/ui/theme.css';
-
-@theme inline {
-  --font-sans: 'Inter Variable', sans-serif;
-}
-```
-
-The fontsource package provides:
-
-```css
-/* Auto-generated @font-face declarations */
-@font-face {
-  font-family: 'Inter Variable';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 100 900;
-  src: url(./files/inter-latin-wght-normal.woff2) format('woff2-variations');
-  unicode-range: U+0000-00FF, ...;
-}
-```
-
-### Font Configuration in Theme
-
-The font token is registered in the `@theme inline` block:
-
-```css
-@theme inline {
-  /* Typography */
-  --font-sans: 'Inter Variable', sans-serif;
-
-  /* Colors... */
-}
-```
-
-This makes `font-sans` available as a Tailwind utility class.
-
-### Using Fonts in Components
-
-```tsx
-// Via Tailwind (preferred)
-<body className="font-sans">
-
-// Base layer applies font globally
-@layer base {
-  body {
-    @apply font-sans bg-background text-foreground;
-  }
-}
-```
-
-### Adding Additional Fonts
-
-To add a new font family:
-
-1. **Install the fontsource package:**
-
-   ```bash
-   pnpm --filter @oakoss/ui add @fontsource-variable/geist-mono
-   ```
-
-2. **Import in globals.css:**
-
-   ```css
-   @import '@fontsource-variable/geist-mono';
-   ```
-
-3. **Register in @theme inline:**
-
-   ```css
-   @theme inline {
-     --font-sans: 'Inter Variable', sans-serif;
-     --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
-   }
-   ```
-
-4. **Use in components:**
-
-   ```tsx
-   <code className="font-mono">const x = 42;</code>
-   ```
-
-### Font Weight Considerations
-
-Inter Variable supports weights 100-900. Common usage:
+### Font Weight Conventions
 
 | Weight | Name       | Use For                             |
 | ------ | ---------- | ----------------------------------- |
@@ -648,14 +506,6 @@ All color pairings MUST meet WCAG AA contrast ratios:
 | Normal text                     | 4.5:1         |
 | Large text (18px+ or 14px bold) | 3:1           |
 | UI components                   | 3:1           |
-
-### Testing Contrast
-
-Always test both light AND dark modes:
-
-```bash
-pnpm test:storybook:both
-```
 
 ### Common Contrast Issues
 
@@ -808,4 +658,4 @@ When adding a new semantic token:
 3. Register in `@theme inline` block
 4. Test contrast in both modes
 5. Update component to use the token
-6. Run `pnpm test:storybook:both`
+6. Test contrast in both modes

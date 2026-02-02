@@ -1,16 +1,21 @@
 ---
 paths:
-  - 'skills/**/references/*navigation*.md'
-  - 'skills/**/references/*route*.md'
-  - 'skills/**/references/*auth-and-context*.md'
-  - 'skills/**/references/*data-loading*.md'
+  - 'skills/tanstack-router/references/**'
+  - 'skills/**/references/*route*'
+  - 'skills/**/references/*navigation*'
+  - 'skills/**/references/*loader*'
+  - 'skills/**/references/*data-loading*'
 ---
 
 # Route Conventions
 
+Conventions for code examples in routing and navigation skill references.
+
 ## Route Groups
 
-| Directory  | Purpose                              | Auth Required |
+Organize routes by auth requirement using pathless layout groups:
+
+| Group      | Purpose                              | Auth Required |
 | ---------- | ------------------------------------ | ------------- |
 | `_public/` | Public pages (landing, marketing)    | No            |
 | `_auth/`   | Auth pages (login, register, logout) | No            |
@@ -24,31 +29,6 @@ paths:
 1. There are no child routes, AND
 2. No layout is needed
 
-```sh
-routes/
-├── __root.tsx        # Root layout (shell, meta, CSS)
-├── index.tsx         # Homepage (/) - single file OK, no children
-├── _public/
-│   ├── route.tsx     # Public layout
-│   └── index.tsx     # /public landing
-├── _auth/
-│   ├── route.tsx     # Auth layout
-│   ├── login.tsx     # /login - single file OK within group
-│   └── register.tsx  # /register
-├── _app/
-│   ├── route.tsx     # Auth guard + app layout
-│   ├── index.tsx     # /app (dashboard)
-│   └── settings/     # Directory for settings routes
-│       ├── route.tsx # Settings layout (if needed)
-│       ├── index.tsx # /app/settings
-│       └── profile.tsx
-└── api/
-    ├── posts.ts      # /api/posts
-    └── auth/$.ts     # /api/auth/* (Better Auth)
-```
-
-## Decision Tree
-
 ```text
 Does this route have child routes?
   → Yes: Use a directory with route.tsx
@@ -57,9 +37,7 @@ Does this route have child routes?
     → No: Single file is OK
 ```
 
-## Avoid Dot Notation
-
-**Bad - Flat, hard to navigate:**
+**Bad — flat, hard to navigate:**
 
 ```sh
 routes/
@@ -68,7 +46,7 @@ routes/
 └── _app.settings.billing.tsx
 ```
 
-**Good - Scannable, supports layouts:**
+**Good — scannable, supports layouts:**
 
 ```sh
 routes/_app/settings/
@@ -78,15 +56,11 @@ routes/_app/settings/
 └── billing.tsx    # /app/settings/billing
 ```
 
-## route.tsx Pattern
+## Auth Guard Pattern
 
-The `route.tsx` file inside a route group folder serves dual purpose:
-
-1. **Auth guards** via `beforeLoad`
-2. **Layout** via `component`
+Route layout files serve dual purpose — auth guards via `beforeLoad` and layout via `component`:
 
 ```tsx
-// _app/route.tsx
 export const Route = createFileRoute('/_app')({
   beforeLoad: async () => {
     const session = await getSession();

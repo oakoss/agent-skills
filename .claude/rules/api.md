@@ -1,61 +1,19 @@
 ---
 paths:
-  - 'skills/**/references/*server*.md'
-  - 'skills/**/references/*api*.md'
-  - 'skills/**/references/*middleware*.md'
+  - 'skills/hono/references/**'
+  - 'skills/openapi/references/**'
+  - 'skills/better-auth/references/**'
+  - 'skills/*api*/references/**'
+  - 'skills/**/references/*server*'
+  - 'skills/**/references/*api*'
+  - 'skills/**/references/*middleware*'
+  - 'skills/**/references/*endpoint*'
+  - 'skills/**/references/*rpc*'
 ---
 
 # Server-Side API Patterns
 
-## Server Functions
-
-Use `createServerFn()` for type-safe server-side logic:
-
-```ts
-import { createServerFn } from '@tanstack/react-start';
-import { z } from 'zod';
-
-// GET - No input validation needed
-const getUsers = createServerFn({ method: 'GET' }).handler(async () => {
-  return await db.query.users.findMany();
-});
-
-// POST - Always validate with Zod
-const createUser = createServerFn({ method: 'POST' })
-  .validator(z.object({ name: z.string().min(1), email: z.email() }))
-  .handler(async ({ data }) => {
-    return await db.insert(users).values(data).returning();
-  });
-```
-
-## API Route Handlers
-
-Use `createAPIFileRoute()` for REST endpoints:
-
-```ts
-// apps/web/src/routes/api/posts.ts
-import { createAPIFileRoute } from '@tanstack/react-start/api';
-
-export const Route = createAPIFileRoute('/api/posts')({
-  GET: async () => {
-    const posts = await db.query.posts.findMany();
-    return Response.json(posts);
-  },
-
-  POST: async ({ request }) => {
-    const body = await request.json();
-    const result = schema.safeParse(body);
-    if (!result.success) {
-      return Response.json(
-        { error: 'Validation failed', code: 'VALIDATION_ERROR' },
-        { status: 400 },
-      );
-    }
-    const [post] = await db.insert(posts).values(result.data).returning();
-    return Response.json(post, { status: 201 });
-  },
-});
-```
+Conventions for code examples in API and server-related skill references.
 
 ## Standard Error Response
 
@@ -81,39 +39,31 @@ type ApiError = {
 | `CONFLICT`         | 409    | Resource already exists             |
 | `INTERNAL_ERROR`   | 500    | Server error (don't expose details) |
 
-## Auth in Server Functions
+## Auth Guard Pattern
 
 Always check authentication for protected operations:
 
 ```ts
-import { auth } from '@oakoss/auth/server';
+async function deletePost(id: string, session: Session | null) {
+  if (!session) {
+    throw new Error('AUTH_REQUIRED');
+  }
 
-const deletePost = createServerFn({ method: 'POST' })
-  .validator(z.object({ id: z.string() }))
-  .handler(async ({ data, request }) => {
-    // Get session from request headers
-    const session = await auth.api.getSession({ headers: request.headers });
-
-    if (!session) {
-      throw new Error('AUTH_REQUIRED');
-    }
-
-    // Check ownership
-    const post = await db.query.posts.findFirst({
-      where: eq(posts.id, data.id),
-    });
-
-    if (!post) {
-      throw new Error('NOT_FOUND');
-    }
-
-    if (post.authorId !== session.user.id) {
-      throw new Error('FORBIDDEN');
-    }
-
-    await db.delete(posts).where(eq(posts.id, data.id));
-    return { success: true };
+  const post = await db.query.posts.findFirst({
+    where: eq(posts.id, id),
   });
+
+  if (!post) {
+    throw new Error('NOT_FOUND');
+  }
+
+  if (post.authorId !== session.user.id) {
+    throw new Error('FORBIDDEN');
+  }
+
+  await db.delete(posts).where(eq(posts.id, id));
+  return { success: true };
+}
 ```
 
 ## Input Validation Rules
@@ -124,14 +74,14 @@ const deletePost = createServerFn({ method: 'POST' })
 4. **Validate** URL parameters and search params
 
 ```ts
-// Route params validation
-const getPost = createServerFn({ method: 'GET' })
-  .validator(z.object({ id: z.uuid() })) // Validate UUID format
-  .handler(async ({ data }) => {
-    return await db.query.posts.findFirst({
-      where: eq(posts.id, data.id),
-    });
-  });
+const schema = z.object({ id: z.uuid() });
+const result = schema.safeParse(input);
+if (!result.success) {
+  return Response.json(
+    { error: 'Validation failed', code: 'VALIDATION_ERROR' },
+    { status: 400 },
+  );
+}
 ```
 
 ## Response Patterns
@@ -164,15 +114,3 @@ return Response.json(
   { status: 400 },
 );
 ```
-
-## File Structure (Planned)
-
-```sh
-apps/web/src/routes/
-├── api/
-│   ├── posts.ts           # /api/posts (GET, POST)
-│   ├── posts/$id.ts       # /api/posts/:id (GET, PUT, DELETE)
-│   └── auth/$.ts          # /api/auth/* (Better Auth handler)
-```
-
-Note: The `api/` directory will be created when implementing API routes.

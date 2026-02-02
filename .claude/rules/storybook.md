@@ -1,12 +1,14 @@
 ---
 paths:
-  - 'skills/**/references/*stories*.md'
-  - 'skills/**/references/*storybook*.md'
+  - 'skills/storybook-stories/references/**'
+  - 'skills/**/references/*stories*'
+  - 'skills/**/references/*storybook*'
+  - 'skills/**/references/*interaction-test*'
 ---
 
 # Storybook Rules
 
-Project-specific patterns for writing stories in `packages/ui/`.
+Conventions for code examples in Storybook and component story skill references.
 
 ## Story Structure
 
@@ -114,42 +116,9 @@ export const Disabled: Story = {
 - **Different render structures** — stories with different DOM shapes serve different visual regression purposes
 - **Different interaction modalities** — keep ClickInteraction and KeyboardInteraction separate since they test different input methods
 
-## Running Tests
-
-```bash
-# From repo root - run all story tests
-pnpm test:storybook:light              # Light mode (default, fast)
-pnpm test:storybook:dark               # Dark mode only
-pnpm test:storybook:both               # Both modes (CI, thorough)
-
-# Run specific component tests
-pnpm test:storybook:light -- --run src/components/ui/button/
-pnpm test:storybook:dark -- --run src/components/ui/dialog/
-
-# From packages/ui directory
-pnpm test 'src/components/ui/command/'
-pnpm test:storybook:dark -- --run src/components/ui/alert/
-```
-
-**Important:** Use **path prefixes** (`src/components/ui/dialog/`) not filename patterns (`dialog.stories`). The Storybook plugin requires path-based filtering.
-
 ## Light/Dark Mode Testing
 
-Tests support three modes for theme testing:
-
-| Command                | Mode       | Use Case                      |
-| ---------------------- | ---------- | ----------------------------- |
-| `test:storybook:light` | Light only | Development, quick feedback   |
-| `test:storybook:dark`  | Dark only  | Debug dark-specific issues    |
-| `test:storybook:both`  | Both       | CI, pre-commit, thorough a11y |
-
-Environment variables (for direct vitest use):
-
-| Variable         | Effect                    |
-| ---------------- | ------------------------- |
-| (default)        | Light mode only           |
-| `TEST_DARK_ONLY` | Dark mode only            |
-| `TEST_ALL_MODES` | Both light and dark modes |
+Test both light and dark modes for visual regression and a11y coverage. Use environment variables or test scripts to control which mode runs.
 
 ## Portal-Rendered Components
 

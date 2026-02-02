@@ -1,7 +1,11 @@
 ---
 paths:
-  - 'skills/**/references/*error*.md'
-  - 'skills/**/references/*troubleshooting*.md'
+  - 'skills/*error*/references/**'
+  - 'skills/destructive-command-guard/references/**'
+  - 'skills/**/references/*error*'
+  - 'skills/**/references/*troubleshooting*'
+  - 'skills/**/references/*boundary*'
+  - 'skills/**/references/*fallback*'
 ---
 
 # Error Handling Patterns

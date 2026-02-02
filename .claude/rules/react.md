@@ -1,6 +1,16 @@
 ---
 paths:
-  - 'skills/**/references/**'
+  - 'skills/*react*/references/**'
+  - 'skills/shadcn-ui/references/**'
+  - 'skills/*hydration*/references/**'
+  - 'skills/**/references/*react*'
+  - 'skills/**/references/*component*'
+  - 'skills/**/references/*hook*'
+  - 'skills/**/references/*ssr*'
+  - 'skills/**/references/*hydration*'
+  - 'skills/**/references/*jsx*'
+  - 'skills/**/references/*render*'
+  - 'skills/**/references/*server-component*'
 ---
 
 # React Rules

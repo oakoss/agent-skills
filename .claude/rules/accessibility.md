@@ -1,9 +1,11 @@
 ---
 paths:
-  - 'skills/**/references/*accessibility*.md'
-  - 'skills/**/references/*aria*.md'
-  - 'skills/**/references/*focus*.md'
-  - 'skills/**/references/*forms*.md'
+  - 'skills/accessibility/references/**'
+  - 'skills/**/references/*accessibility*'
+  - 'skills/**/references/*aria*'
+  - 'skills/**/references/*focus*'
+  - 'skills/**/references/*a11y*'
+  - 'skills/**/references/*forms*'
 ---
 
 # Accessibility Rules (jsx-a11y recommended)

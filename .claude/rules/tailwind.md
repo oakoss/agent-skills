@@ -1,11 +1,15 @@
 ---
 paths:
-  - 'skills/**/references/*styling*.md'
-  - 'skills/**/references/*design-tokens*.md'
-  - 'skills/**/references/*component-patterns*.md'
-  - 'skills/**/references/*shadcn*.md'
-  - 'skills/**/references/*theming*.md'
-  - 'skills/**/references/*prose*.md'
+  - 'skills/tailwind/references/**'
+  - 'skills/shadcn-ui/references/**'
+  - 'skills/css-animation-patterns/references/**'
+  - 'skills/**/references/*styling*'
+  - 'skills/**/references/*design-token*'
+  - 'skills/**/references/*component-pattern*'
+  - 'skills/**/references/*shadcn*'
+  - 'skills/**/references/*theming*'
+  - 'skills/**/references/*dark-mode*'
+  - 'skills/**/references/*prose*'
 ---
 
 # Tailwind CSS v4

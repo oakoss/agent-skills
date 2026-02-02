@@ -1,7 +1,12 @@
 ---
 paths:
-  - 'skills/**/references/*testing*.md'
-  - 'skills/**/references/*test*.md'
+  - 'skills/*test*/references/**'
+  - 'skills/playwright/references/**'
+  - 'skills/quality-auditor/references/**'
+  - 'skills/**/references/*test*'
+  - 'skills/**/references/*mock*'
+  - 'skills/**/references/*assertion*'
+  - 'skills/**/references/*spec*'
 ---
 
 # Testing Rules

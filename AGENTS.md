@@ -47,7 +47,7 @@ bd sync               # Sync with git
 
 ## Project Overview
 
-Agent skills, distributed via Vercel's `skills` CLI (`pnpm dlx skills add oakoss/agent-skills`).
+Agent skills, distributed via Vercel's `skills` CLI (`pnpm dlx skills add oakoss/agent-skills`). This project uses **pnpm** as the package manager.
 
 - **`skills/`** — Public skills distributed to users
 
@@ -60,8 +60,6 @@ pnpm lint            # markdownlint-cli2 on all .md files
 pnpm lint:fix        # Lint and auto-fix markdown
 pnpm validate:skills # Validate all skills in skills/
 ```
-
-Git hooks (via lefthook) run markdown lint + prettier on pre-commit and commitlint on commit-msg.
 
 ## Commit Conventions
 
@@ -84,6 +82,10 @@ This project requires the Node.js version specified in `.nvmrc`.
 | `pre-push`      | beads sync                                                           |
 
 Pre-commit hooks auto-stage fixes, so markdown lint and Prettier corrections are included in the commit automatically. If the skill validator or commitlint fails, the commit is rejected — fix the issue and commit again.
+
+## Code Style Rules
+
+`.claude/rules/` contains coding convention rules scoped to skill reference files. These ensure code examples follow consistent patterns (TypeScript strict mode, React conventions, testing patterns, etc.). Rules use glob-based path scoping — they only load when editing files that match by skill name or reference filename.
 
 ## Skills
 
