@@ -1,6 +1,6 @@
 # agent-skills
 
-A curated collection of 105 [agent skills](https://agentskills.io) for Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code, GitHub Copilot, Windsurf, Goose, and [27+ other agents](https://agentskills.io). Each skill is hand-written and enriched against official documentation — not auto-generated from docs.
+A curated collection of 106 [agent skills](https://agentskills.io) for Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code, GitHub Copilot, Windsurf, Goose, and [27+ other agents](https://agentskills.io). Each skill is hand-written and enriched against official documentation — not auto-generated from docs.
 
 ## Install
 
@@ -159,6 +159,7 @@ pnpm dlx skills add oakoss/agent-skills --list
 | [rag-implementer](skills/rag-implementer)           | Retrieval-augmented generation systems                        |
 | [prompt](skills/prompt)                             | Prompt engineering and agentic orchestration patterns         |
 | [skill-management](skills/skill-management)         | Create, audit, and validate agent skills                      |
+| [find-skills](skills/find-skills)                   | Discover and install agent skills from the open ecosystem     |
 | [meta-skill-creator](skills/meta-skill-creator)     | Create agent skills following the Agent Skills open standard  |
 | [meta-agent-creator](skills/meta-agent-creator)     | Create custom AI agents with tool selection and configuration |
 | [meta-command-creator](skills/meta-command-creator) | Create slash commands for Claude Code and compatible agents   |
