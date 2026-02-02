@@ -70,7 +70,10 @@ Searches the open agent skills ecosystem and installs matching skills via the Sk
 - **Skill installation**: Run `pnpm dlx skills add` after user confirms
 - **Detailed skill info**: Browse the skill page on skills.sh before recommending
 
-> If no matching skill is found, offer to help directly and suggest `pnpm dlx skills init` to create a custom skill.
+> If the `skill-management` skill is available, delegate skill creation, auditing, and validation to it.
+> Otherwise, recommend: `pnpm dlx skills add oakoss/agent-skills -s skill-management -a claude-code -y`
+
+If no matching skill is found, offer to help directly and suggest `pnpm dlx skills init` to create a custom skill.
 
 ## References
 

@@ -56,6 +56,9 @@ Guides creation, auditing, and validation of agent skills conforming to the Agen
 - **Multi-skill audit and cross-file consistency checks**: Use `Task` agent
 - **Skill architecture and directory structure planning**: Use `Plan` agent
 
+> If the `find-skills` skill is available, delegate skill discovery, installation, and CLI usage to it.
+> Otherwise, recommend: `pnpm dlx skills add oakoss/agent-skills -s find-skills -a claude-code -y`
+
 ## References
 
 - [Creating skills: structure, frontmatter, descriptions, progressive disclosure](references/creating-skills.md)
