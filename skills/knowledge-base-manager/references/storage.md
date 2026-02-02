@@ -1,6 +1,6 @@
 ---
 title: Storage and Retrieval
-description: Database selection, TypeScript interfaces for document/entity/hybrid KB storage, search implementation, and technology stacks
+description: Database selection criteria, technology stack overview, and implementation delegation for KB storage
 tags:
   [
     knowledge-base,
@@ -16,56 +16,6 @@ tags:
 
 # Storage and Retrieval
 
-## Document-Based KB Interface
-
-```ts
-interface DocumentKB {
-  store: 'Pinecone' | 'Weaviate' | 'pgvector';
-  chunks: {
-    content: string;
-    embedding: number[];
-    metadata: {
-      source: string;
-      title: string;
-      updated_at: string;
-      category: string;
-    };
-  }[];
-}
-```
-
-## Entity-Based KB Interface
-
-```ts
-interface EntityKB {
-  store: 'Neo4j' | 'ArangoDB';
-  nodes: {
-    id: string;
-    type: 'Person' | 'Organization' | 'Product' | 'Concept';
-    properties: Record<string, any>;
-  }[];
-  relationships: {
-    from: string;
-    to: string;
-    type: string;
-    properties: Record<string, any>;
-  }[];
-}
-```
-
-## Hybrid KB Interface
-
-```ts
-interface HybridKB {
-  vectorDB: DocumentKB;
-  graphDB: EntityKB;
-  linker: {
-    linkDocumentToEntities(docId: string): string[];
-    linkEntityToDocuments(entityId: string): string[];
-  };
-}
-```
-
 ## Technology Stacks
 
 | Stack          | Vector DB                    | Graph DB        | Embeddings     | Search                    |
@@ -74,9 +24,21 @@ interface HybridKB {
 | Entity-based   | —                            | Neo4j, ArangoDB | —              | Cypher, AQL               |
 | Hybrid         | Any vector DB                | Any graph DB    | OpenAI, Cohere | Combined queries          |
 
+## Selection Criteria
+
+Choose storage based on the architecture decision from [Architecture and Types](architecture.md):
+
+| Architecture   | Primary concern                | Key trade-off                                      |
+| -------------- | ------------------------------ | -------------------------------------------------- |
+| Document-based | Query latency, embedding cost  | Easy to add content vs hard to query relationships |
+| Entity-based   | Graph modeling complexity      | Powerful traversal vs upfront schema design        |
+| Hybrid         | Synchronization between stores | Combined strengths vs operational complexity       |
+
 ## Implementation Steps
 
 1. Choose database(s) based on KB type
 2. Implement search/query layer (vector similarity for documents, graph traversal for entities)
 3. Add caching and optimization for common access patterns
 4. Target <100ms median query time
+
+> For document-based implementation details (chunking, embeddings, vector store configuration), use the `rag-implementer` skill. For entity-based implementation details (ontology design, entity extraction, graph database setup), use the `knowledge-graph-builder` skill.

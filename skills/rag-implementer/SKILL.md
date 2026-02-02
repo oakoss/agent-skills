@@ -1,6 +1,6 @@
 ---
 name: rag-implementer
-description: Implement retrieval-augmented generation systems. Use when building knowledge-intensive applications, document search, Q&A systems, or need to ground LLM responses in external data. Use for embedding strategy, vector stores, retrieval pipelines, chunking, hybrid search, re-ranking, and evaluation.
+description: 'Implements retrieval-augmented generation pipelines. Use when building document retrieval systems, choosing chunking strategies, selecting embedding models, configuring vector stores, implementing hybrid search, or evaluating RAG quality. Use for embedding strategy, vector stores, retrieval pipelines, chunking, hybrid search, re-ranking, and evaluation. For KB architecture selection and governance, use the knowledge-base-manager skill. For knowledge graphs, use the knowledge-graph-builder skill.'
 license: MIT
 metadata:
   author: oakoss
@@ -10,7 +10,7 @@ metadata:
 
 # RAG Implementer
 
-Build production-ready retrieval-augmented generation systems. RAG = Retrieval + Context Assembly + Generation. Use RAG when LLMs need access to fresh, domain-specific, or proprietary knowledge not in their training data. Do not use RAG when simpler alternatives (FAQ pages, keyword search, semantic search) suffice.
+Build production-ready retrieval-augmented generation systems. RAG = Retrieval + Context Assembly + Generation. Use RAG when LLMs need access to fresh, domain-specific, or proprietary knowledge not in their training data. Do not use RAG when simpler alternatives (FAQ pages, keyword search, semantic search) suffice. For KB architecture selection and governance, use the `knowledge-base-manager` skill. For knowledge graph implementation, use the `knowledge-graph-builder` skill.
 
 ## Overview
 
@@ -96,6 +96,8 @@ Most vector databases now achieve 10-100ms query latency on 1-10M vector dataset
 - **Discover data sources and assess knowledge base quality**: Use `Explore` agent to catalog documents, evaluate data freshness, and identify authoritative content
 - **Implement retrieval pipeline with hybrid search and re-ranking**: Use `Task` agent to build embedding, indexing, retrieval, and evaluation components
 - **Design RAG architecture and vector store topology**: Use `Plan` agent to select embedding models, vector databases, chunking strategies, and deployment architecture
+
+> For KB architecture selection, curation workflows, and governance, use the `knowledge-base-manager` skill. For knowledge graph implementation (ontology, entity extraction, graph databases), use the `knowledge-graph-builder` skill.
 
 ## References
 

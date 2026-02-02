@@ -1,6 +1,6 @@
 ---
 name: knowledge-base-manager
-description: 'Designs, builds, and maintains knowledge bases bridging document-based (RAG) and entity-based (graph) knowledge systems. Use when selecting KB architecture, curating content for RAG, implementing versioning and governance, or evaluating quality metrics for knowledge systems.'
+description: 'Knowledge base architecture selection, curation, and governance. Use when choosing between document-based (RAG), entity-based (graph), or hybrid KB architectures, establishing content curation workflows, implementing versioning and governance, or evaluating quality metrics. For building retrieval pipelines, use the rag-implementer skill. For building knowledge graphs, use the knowledge-graph-builder skill.'
 license: MIT
 metadata:
   author: oakoss
@@ -11,7 +11,9 @@ metadata:
 
 ## Overview
 
-Provides a structured methodology for designing, building, and maintaining knowledge bases that serve as curated, validated, and versioned information stores for questions and reasoning. Use when building AI-grounded information systems, unifying multiple knowledge sources, or establishing governance for organizational knowledge. Not needed when static documentation suffices, fewer than 50 FAQ items cover all questions, or no maintenance resources are available.
+Provides a structured methodology for selecting, designing, and governing knowledge bases. Covers architecture decisions (document-based vs entity-based vs hybrid), content curation, quality metrics, versioning strategies, and maintenance governance. Use when choosing a KB architecture, establishing curation workflows, or building governance processes for organizational knowledge.
+
+**When NOT to use:** Static documentation suffices, fewer than 50 FAQ items cover all questions, or no maintenance resources are available. For implementing retrieval pipelines (chunking, embeddings, vector stores), use the `rag-implementer` skill. For implementing knowledge graphs (ontology, entity extraction, graph databases), use the `knowledge-graph-builder` skill.
 
 ## Quick Reference
 
@@ -49,6 +51,8 @@ Provides a structured methodology for designing, building, and maintaining knowl
 - **Audit existing knowledge sources and classify content types**: Use `Explore` agent to inventory documents, assess quality, and identify gaps
 - **Implement end-to-end KB pipeline with storage and retrieval**: Use `Task` agent to deploy database, configure search, and run quality checks
 - **Design KB architecture and governance model**: Use `Plan` agent to select between document-based, entity-based, or hybrid approaches
+
+> For implementing document retrieval pipelines (chunking, embeddings, vector stores, hybrid search), use the `rag-implementer` skill. For implementing knowledge graphs (ontology design, entity extraction, graph databases), use the `knowledge-graph-builder` skill.
 
 ## References
 

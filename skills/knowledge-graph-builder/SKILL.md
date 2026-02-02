@@ -1,9 +1,9 @@
 ---
 name: knowledge-graph-builder
 description: >
-  Designs and builds knowledge graphs for AI-enhanced relational knowledge. Covers ontology design, graph database selection (Neo4j, Neptune, ArangoDB, TigerGraph), entity extraction, hybrid graph-vector architecture, query patterns, and AI integration.
+  Implements knowledge graphs for AI-enhanced relational knowledge. Covers ontology design, graph database selection (Neo4j, Neptune, ArangoDB, TigerGraph), entity extraction, hybrid graph-vector architecture, query patterns, and AI integration.
 
-  Use when modeling complex entity relationships, building semantic search with graph traversal, creating knowledge bases for AI grounding, or selecting a graph database. Use for knowledge graph, ontology design, entity resolution, graph RAG, hallucination detection.
+  Use when implementing knowledge graphs, designing ontologies, extracting entities and relationships, selecting a graph database, or building hybrid graph-vector search. Use for knowledge graph, ontology design, entity resolution, graph RAG, hallucination detection. For architecture selection and governance, use the knowledge-base-manager skill. For document retrieval pipelines, use the rag-implementer skill.
 license: MIT
 metadata:
   author: oakoss
@@ -18,7 +18,7 @@ Knowledge graphs make implicit relationships explicit, enabling AI systems to re
 
 **When to use:** Complex entity relationships central to the domain, verifying AI-generated facts against structured knowledge, semantic search combined with relationship traversal, recommendation systems, fraud detection, or pattern recognition.
 
-**When NOT to use:** Simple tabular data (use a relational database), purely document-based search with no relationships (use a vector database), read-heavy workloads with no traversal needs, or when the team lacks graph modeling expertise.
+**When NOT to use:** Simple tabular data (use a relational database), purely document-based search with no relationships (use the `rag-implementer` skill), read-heavy workloads with no traversal needs, or when the team lacks graph modeling expertise. For KB architecture selection and governance, use the `knowledge-base-manager` skill.
 
 ## Quick Reference
 
