@@ -1,9 +1,9 @@
 ---
 name: playwright
 description: |
-  Playwright browser automation, E2E testing, and web scraping. Covers test fixtures, locator assertions, API testing, stealth mode, anti-bot bypass, authenticated sessions, screenshots/PDFs, Docker deployment, and MCP integration with AI agents. Prevents documented errors including CI timeout hangs, extension testing failures, and navigation issues.
+  Playwright browser automation API, web scraping, and tooling. Covers locator strategies, assertions, API testing, stealth mode, anti-bot bypass, authenticated sessions, screenshots/PDFs, Docker deployment, configuration, debugging, and MCP integration with AI agents. Prevents documented errors including CI timeout hangs, extension testing failures, and navigation issues.
 
-  Use when writing E2E tests, automating browsers, scraping protected sites, bypassing bot detection, generating screenshots/PDFs, configuring Playwright Test, or troubleshooting Playwright errors.
+  Use when automating browsers, scraping protected sites, bypassing bot detection, generating screenshots/PDFs, configuring Playwright Test, troubleshooting Playwright errors, or learning Playwright API patterns. For E2E test architecture, Page Object Models, CI sharding strategies, or test organization patterns, use the e2e-testing skill instead.
 license: MIT
 metadata:
   author: oakoss
@@ -16,9 +16,9 @@ metadata:
 
 Playwright is a browser automation framework for Node.js and Python supporting Chromium, Firefox, and WebKit with a single API. It provides auto-waiting, web-first assertions, and full test isolation for reliable end-to-end testing.
 
-**When to use:** E2E testing, browser automation, web scraping, screenshot/PDF generation, API testing, visual regression testing, accessibility validation.
+**When to use:** Browser automation, web scraping, screenshot/PDF generation, API testing, configuring Playwright Test, troubleshooting Playwright errors, stealth mode and anti-bot bypass.
 
-**When NOT to use:** Simple HTTP requests (use `fetch`), unit testing (use Vitest/Jest), serverless scraping at scale (consider Cloudflare Browser Rendering).
+**When NOT to use:** Simple HTTP requests (use `fetch`), unit testing (use Vitest/Jest), serverless scraping at scale (consider Cloudflare Browser Rendering). For E2E test architecture (Page Object Models, CI sharding, test organization, authentication patterns), use the `e2e-testing` skill.
 
 ## Quick Reference
 
@@ -62,6 +62,8 @@ Playwright is a browser automation framework for Node.js and Python supporting C
 - **Selector troubleshooting**: Use `Explore` agent
 - **Test pattern review**: Use `Task` agent
 - **Code review**: Delegate to `code-reviewer` agent
+
+> For E2E test architecture, Page Object Model patterns, CI sharding strategies, authentication flows, visual regression workflows, or test organization, use the `e2e-testing` skill.
 
 ## References
 

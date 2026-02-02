@@ -1,6 +1,6 @@
 ---
 name: e2e-testing
-description: 'Builds end-to-end test suites with Playwright. Use when writing E2E tests, setting up visual regression, configuring CI sharding, or implementing authentication flows. Use for Page Object Model architecture, accessibility auditing with axe-core, network mocking, trace-based debugging, role-based locators, HAR replay, test fixtures, and storageState authentication.'
+description: 'E2E test architecture and patterns with Playwright. Use when designing test suites, structuring Page Object Models, planning CI sharding strategies, setting up authentication flows, or organizing tests with tags and annotations. Use for test architecture, accessibility auditing with axe-core, network mocking strategies, visual regression workflows, HAR replay, and storageState authentication patterns. For Playwright API details, browser automation, or web scraping, use the playwright skill instead.'
 license: MIT
 metadata:
   author: oakoss
@@ -11,11 +11,11 @@ metadata:
 
 ## Overview
 
-Builds resilient end-to-end test suites using Playwright with auto-waiting, role-based locators, and the Page Object Model. Covers authentication via storageState, visual regression testing, accessibility auditing via AxeBuilder, network mocking, CI sharding for parallel execution, test organization with tags and annotations, and trace-based forensic debugging.
+Covers E2E test architecture and patterns using Playwright — how to structure test suites, organize tests, and apply proven patterns for authentication, mocking, visual regression, accessibility auditing, and CI parallelism. Focuses on the WHY and WHEN of test patterns rather than Playwright API specifics.
 
-**When to use:** Writing E2E tests, setting up visual regression, configuring CI sharding, mocking network requests, auditing accessibility, implementing authentication flows, debugging test failures with traces.
+**When to use:** Designing test suite architecture, structuring Page Object Models, planning CI sharding strategies, setting up authentication flows, organizing tests with tags and annotations, implementing visual regression workflows, mocking network requests, auditing accessibility.
 
-**When NOT to use:** Unit testing (use Vitest/Jest), API-only testing (use integration tests), component testing in isolation (use component test runners).
+**When NOT to use:** Unit testing (use Vitest/Jest), API-only testing (use integration tests), component testing in isolation (use component test runners). For Playwright API details, browser automation, scraping, or troubleshooting Playwright errors, use the `playwright` skill.
 
 ## Quick Reference
 
@@ -56,6 +56,8 @@ Builds resilient end-to-end test suites using Playwright with auto-waiting, role
 - **Discover which user flows lack E2E coverage**: Use `Explore` agent
 - **Build a full Page Object Model test suite for an application**: Use `Task` agent
 - **Plan a CI sharding strategy for a large test suite**: Use `Plan` agent
+
+> For Playwright API details, browser automation, scraping, stealth mode, screenshots/PDFs, Docker deployment, or troubleshooting Playwright errors, use the `playwright` skill.
 
 ## References
 
