@@ -15,17 +15,20 @@ The `owner/repo` shorthand converts to an HTTPS URL internally. For private repo
 The most reliable method for private repos is passing an SSH URL directly:
 
 ```bash
-# GitHub private repo
-pnpm dlx skills add git@github.com:YourOrg/private-skills.git -y
+# GitHub private repo — install for Claude Code
+pnpm dlx skills add git@github.com:YourOrg/private-skills.git -a claude-code -y
 
 # GitHub private repo — specific skill
-pnpm dlx skills add git@github.com:YourOrg/private-skills.git --skill my-skill -y
+pnpm dlx skills add git@github.com:YourOrg/private-skills.git -s my-skill -a claude-code -y
 
 # GitHub private repo — global install
-pnpm dlx skills add git@github.com:YourOrg/private-skills.git --skill my-skill -g -y
+pnpm dlx skills add git@github.com:YourOrg/private-skills.git -s my-skill -a claude-code -g -y
 
 # GitLab private repo
-pnpm dlx skills add git@gitlab.com:YourOrg/private-skills.git -y
+pnpm dlx skills add git@gitlab.com:YourOrg/private-skills.git -a claude-code -y
+
+# Multiple agents at once
+pnpm dlx skills add git@github.com:YourOrg/private-skills.git -s my-skill -a claude-code opencode copilot -y
 
 # List available skills in a private repo
 pnpm dlx skills add git@github.com:YourOrg/private-skills.git --list
@@ -63,7 +66,7 @@ git config --global credential.helper store
 After configuring credentials, the `owner/repo` shorthand works normally:
 
 ```bash
-pnpm dlx skills add YourOrg/private-skills --skill my-skill -y
+pnpm dlx skills add YourOrg/private-skills -s my-skill -a claude-code -y
 ```
 
 ## Known Limitations
@@ -78,7 +81,7 @@ The CLI makes unauthenticated GitHub API calls to detect skill updates. For priv
 **Workaround:** Reinstall the skill to update it:
 
 ```bash
-pnpm dlx skills add git@github.com:YourOrg/private-skills.git --skill my-skill -y
+pnpm dlx skills add git@github.com:YourOrg/private-skills.git -s my-skill -a claude-code -y
 ```
 
 ### Spinner Hides Credential Prompts

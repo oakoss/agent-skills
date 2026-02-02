@@ -1,7 +1,7 @@
 ---
 title: Discovery Guide
-description: Step-by-step workflow for discovering and installing agent skills from the open ecosystem
-tags: [discovery, search, install, workflow, skills-cli]
+description: Step-by-step workflow for discovering and installing agent skills, with CLI reference and agent targeting
+tags: [discovery, search, install, workflow, skills-cli, claude-code, agents]
 ---
 
 # Discovery Guide
@@ -56,7 +56,7 @@ node scripts/enrich_find.js "react performance"
 When results are found, present each skill with:
 
 1. The skill name and what it does
-2. The install command
+2. The install command (defaulting to Claude Code as the target agent)
 3. A link to learn more on skills.sh
 
 Example response format:
@@ -66,21 +66,114 @@ I found a skill that might help! The "react-best-practices" skill provides
 React performance optimization guidelines.
 
 To install it:
-pnpm dlx skills add vercel-labs/agent-skills --skill react-best-practices -y
+pnpm dlx skills add vercel-labs/agent-skills -s react-best-practices -a claude-code -y
 
 Learn more: https://skills.sh/vercel-labs/agent-skills/react-best-practices
 ```
 
 ### Step 4: Offer to Install
 
-If the user wants to proceed, install with confirmation bypass:
+If the user wants to proceed, install with confirmation bypass. Default to Claude Code as the target agent:
 
 ```bash
-pnpm dlx skills add <owner/repo> --skill <name> -g -y
+pnpm dlx skills add <source> -s <name> -a claude-code -y
 ```
 
+For global (user-level) install:
+
+```bash
+pnpm dlx skills add <source> -s <name> -a claude-code -g -y
+```
+
+- `-a claude-code` targets Claude Code specifically
 - `-g` installs at user level (available across projects)
 - `-y` skips interactive confirmation
+
+## Agent Targeting
+
+The `-a` flag controls which agent(s) receive the skill. Always specify the target agent explicitly.
+
+**Default agent:** `claude-code`
+
+To install for multiple agents, pass multiple names:
+
+```bash
+pnpm dlx skills add <source> -s <name> -a claude-code opencode copilot -y
+```
+
+To install for all detected agents:
+
+```bash
+pnpm dlx skills add <source> -s <name> -a '*' -y
+```
+
+Common agent identifiers:
+
+| Agent          | CLI Name      |
+| -------------- | ------------- |
+| Claude Code    | `claude-code` |
+| OpenCode       | `opencode`    |
+| GitHub Copilot | `copilot`     |
+| Cursor         | `cursor`      |
+| VS Code        | `vscode`      |
+| Windsurf       | `windsurf`    |
+| Gemini CLI     | `gemini`      |
+
+## CLI Reference
+
+### Commands
+
+| Command               | Description                     |
+| --------------------- | ------------------------------- |
+| `skills add <source>` | Install skills from a source    |
+| `skills remove`       | Remove installed skills         |
+| `skills list`         | List installed skills           |
+| `skills find [query]` | Search for skills interactively |
+| `skills init [name]`  | Scaffold a new skill            |
+| `skills check`        | Check for available updates     |
+| `skills update`       | Update all installed skills     |
+
+### Add Options
+
+| Flag               | Short | Description                                    |
+| ------------------ | ----- | ---------------------------------------------- |
+| `--global`         | `-g`  | Install at user level instead of project       |
+| `--agent <agents>` | `-a`  | Target specific agents (default: all detected) |
+| `--skill <skills>` | `-s`  | Install specific skills from the source        |
+| `--list`           | `-l`  | List available skills without installing       |
+| `--yes`            | `-y`  | Skip confirmation prompts                      |
+| `--all`            |       | Shorthand for `-s '*' -a '*' -y`               |
+| `--full-depth`     |       | Search all subdirectories for skills           |
+
+### Remove Options
+
+| Flag               | Short | Description                      |
+| ------------------ | ----- | -------------------------------- |
+| `--global`         | `-g`  | Remove from global scope         |
+| `--agent <agents>` | `-a`  | Remove from specific agents      |
+| `--skill <skills>` | `-s`  | Remove specific skills           |
+| `--yes`            | `-y`  | Skip confirmation prompts        |
+| `--all`            |       | Shorthand for `-s '*' -a '*' -y` |
+
+### List Options
+
+| Flag               | Short | Description                           |
+| ------------------ | ----- | ------------------------------------- |
+| `--global`         | `-g`  | List global skills (default: project) |
+| `--agent <agents>` | `-a`  | Filter by specific agents             |
+
+### Source Formats
+
+The `<source>` argument accepts multiple formats:
+
+| Format                  | Example                           |
+| ----------------------- | --------------------------------- |
+| GitHub shorthand        | `vercel-labs/agent-skills`        |
+| GitHub URL              | `https://github.com/owner/repo`   |
+| GitLab URL              | `https://gitlab.com/owner/repo`   |
+| SSH URL (private repos) | `git@github.com:Org/repo.git`     |
+| Any git URL             | `https://example.com/repo.git`    |
+| Local path              | `./my-skills` or `/absolute/path` |
 
 ## Search Tips
 
@@ -89,6 +182,7 @@ pnpm dlx skills add <owner/repo> --skill <name> -g -y
 3. **Check popular sources** — many skills come from `vercel-labs/agent-skills` or `oakoss/agent-skills`
 4. **Browse the catalog** — `https://skills.sh/` shows curated listings
 5. **Combine domain + task** — "typescript validation", "nextjs auth", "react forms"
+6. **Preview before installing** — use `--list` to see available skills in a repo
 
 ## When No Skills Are Found
 

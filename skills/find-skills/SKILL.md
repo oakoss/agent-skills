@@ -23,15 +23,21 @@ Searches the open agent skills ecosystem and installs matching skills via the Sk
 
 ## Quick Reference
 
-| Action           | Command                                                 | Notes                            |
-| ---------------- | ------------------------------------------------------- | -------------------------------- |
-| Search skills    | `pnpm dlx skills find [query]`                          | Interactive or keyword search    |
-| Enriched search  | `node scripts/enrich_find.js "query"`                   | Adds descriptions from skills.sh |
-| Install skill    | `pnpm dlx skills add <owner/repo> --skill <name> -y`    | `-y` skips confirmation          |
-| Install globally | `pnpm dlx skills add <owner/repo> --skill <name> -g -y` | User-level install               |
-| Check updates    | `pnpm dlx skills check`                                 | Shows available updates          |
-| Update skills    | `pnpm dlx skills update`                                | Updates all installed            |
-| Browse online    | `https://skills.sh/`                                    | Web catalog                      |
+| Action              | Command                                                                  | Notes                                |
+| ------------------- | ------------------------------------------------------------------------ | ------------------------------------ |
+| Search skills       | `pnpm dlx skills find [query]`                                           | Interactive or keyword search        |
+| Enriched search     | `node scripts/enrich_find.js "query"`                                    | Adds descriptions from skills.sh     |
+| Install skill       | `pnpm dlx skills add <source> -s <name> -a claude-code -y`               | Default to Claude Code agent         |
+| Install globally    | `pnpm dlx skills add <source> -s <name> -a claude-code -g -y`            | User-level install                   |
+| Install all skills  | `pnpm dlx skills add <source> --all`                                     | All skills, all agents, skip prompts |
+| Multi-agent install | `pnpm dlx skills add <source> -s <name> -a claude-code opencode copilot` | Target multiple agents               |
+| List repo skills    | `pnpm dlx skills add <source> --list`                                    | Preview without installing           |
+| List installed      | `pnpm dlx skills list`                                                   | Project-level; add `-g` for global   |
+| Remove skill        | `pnpm dlx skills remove <name>`                                          | Interactive if no name given         |
+| Check updates       | `pnpm dlx skills check`                                                  | Shows available updates              |
+| Update skills       | `pnpm dlx skills update`                                                 | Updates all installed                |
+| Init new skill      | `pnpm dlx skills init <name>`                                            | Scaffolds SKILL.md                   |
+| Browse online       | `https://skills.sh/`                                                     | Web catalog                          |
 
 ## Common Skill Categories
 
@@ -47,15 +53,16 @@ Searches the open agent skills ecosystem and installs matching skills via the Sk
 
 ## Common Mistakes
 
-| Mistake                              | Correct Pattern                                         |
-| ------------------------------------ | ------------------------------------------------------- |
-| Using `npx skills`                   | Use `pnpm dlx skills` for consistent package management |
-| Forgetting `-y` on install           | Add `-y` to skip interactive confirmation prompts       |
-| Vague search terms like "help"       | Use specific keywords: "react testing", "pr review"     |
-| Not checking skills.sh first         | Browse `https://skills.sh/` for curated listings        |
-| Installing without reviewing         | Check the skill page on skills.sh before installing     |
-| Using `owner/repo` for private repos | Use SSH URL: `git@github.com:Org/repo.git`              |
-| Running enrichment without Node.js   | Script requires Node.js with `https` module (built-in)  |
+| Mistake                              | Correct Pattern                                          |
+| ------------------------------------ | -------------------------------------------------------- |
+| Using `npx skills`                   | Use `pnpm dlx skills` for consistent package management  |
+| Forgetting `-y` on install           | Add `-y` to skip interactive confirmation prompts        |
+| Vague search terms like "help"       | Use specific keywords: "react testing", "pr review"      |
+| Not checking skills.sh first         | Browse `https://skills.sh/` for curated listings         |
+| Installing without reviewing         | Check the skill page on skills.sh before installing      |
+| Installing without `-a claude-code`  | Always specify agent: `-a claude-code` (or target agent) |
+| Using `owner/repo` for private repos | Use SSH URL: `git@github.com:Org/repo.git`               |
+| Running enrichment without Node.js   | Script requires Node.js with `https` module (built-in)   |
 
 ## Delegation
 
