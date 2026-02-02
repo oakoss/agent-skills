@@ -98,7 +98,7 @@ The `-a` flag controls which agent(s) receive the skill. Always specify the targ
 To install for multiple agents, pass multiple names:
 
 ```bash
-pnpm dlx skills add <source> -s <name> -a claude-code opencode copilot -y
+pnpm dlx skills add <source> -s <name> -a claude-code opencode github-copilot -y
 ```
 
 To install for all detected agents:
@@ -107,17 +107,21 @@ To install for all detected agents:
 pnpm dlx skills add <source> -s <name> -a '*' -y
 ```
 
-Common agent identifiers:
+Common agent identifiers (full list at `github.com/vercel-labs/skills`):
 
-| Agent          | CLI Name      |
-| -------------- | ------------- |
-| Claude Code    | `claude-code` |
-| OpenCode       | `opencode`    |
-| GitHub Copilot | `copilot`     |
-| Cursor         | `cursor`      |
-| VS Code        | `vscode`      |
-| Windsurf       | `windsurf`    |
-| Gemini CLI     | `gemini`      |
+| Agent          | CLI Name         |
+| -------------- | ---------------- |
+| Claude Code    | `claude-code`    |
+| OpenCode       | `opencode`       |
+| GitHub Copilot | `github-copilot` |
+| Cursor         | `cursor`         |
+| Windsurf       | `windsurf`       |
+| Gemini CLI     | `gemini-cli`     |
+| Codex          | `codex`          |
+| Roo Code       | `roo`            |
+| Cline          | `cline`          |
+| Goose          | `goose`          |
+| Amp            | `amp`            |
 
 ## CLI Reference
 

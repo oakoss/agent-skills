@@ -28,7 +28,7 @@ pnpm dlx skills add git@github.com:YourOrg/private-skills.git -s my-skill -a cla
 pnpm dlx skills add git@gitlab.com:YourOrg/private-skills.git -a claude-code -y
 
 # Multiple agents at once
-pnpm dlx skills add git@github.com:YourOrg/private-skills.git -s my-skill -a claude-code opencode copilot -y
+pnpm dlx skills add git@github.com:YourOrg/private-skills.git -s my-skill -a claude-code opencode github-copilot -y
 
 # List available skills in a private repo
 pnpm dlx skills add git@github.com:YourOrg/private-skills.git --list
