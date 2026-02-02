@@ -7,7 +7,7 @@ export default defineConfig({
       fd: 'docs: fix typos',
       b: 'chore(deps): bump dependencies',
     },
-    allowCustomScopes: true,
+    allowCustomScopes: false,
     allowEmptyScopes: true,
     scopes: ['skills', 'validator', 'docs', 'config', 'deps', 'ci'],
   },

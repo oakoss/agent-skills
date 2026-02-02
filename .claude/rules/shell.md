@@ -38,43 +38,12 @@ rm -rf directory/
 - Use `echo "y" | command` as last resort if no flag exists
 - Test destructive commands on specific paths, not wildcards
 
-## Monorepo Commands
-
-Use Turborepo for running commands across packages:
+## Project Scripts
 
 ```sh
-# Run in all packages
-pnpm turbo run build
-
-# Run in specific package
-pnpm turbo run build --filter=@oakoss/ui
-
-# Run in web app only
-pnpm turbo run dev --filter=web
-
-# Run dev in parallel
-pnpm dev
-```
-
-## Common Scripts
-
-```sh
-# Development
-pnpm dev              # Start all dev servers
-pnpm build            # Build all packages
-pnpm typecheck        # Type check all packages
-pnpm lint             # Lint all packages
-pnpm lint:fix         # Lint and fix
-pnpm format           # Format with Prettier
-
-# Database
-pnpm db:generate      # Generate Drizzle migrations
-pnpm db:migrate       # Run migrations
-pnpm db:push          # Push schema to DB
-
-# Testing
-pnpm test             # Run tests
-
-# Cleanup
-pnpm clean            # Remove all build artifacts
+pnpm format          # Format with Prettier
+pnpm format:check    # Check formatting without writing
+pnpm lint            # markdownlint on all .md files
+pnpm lint:fix        # Lint and auto-fix markdown
+pnpm validate:skills # Validate all skills in skills/
 ```

@@ -65,7 +65,25 @@ Git hooks (via lefthook) run markdown lint + prettier on pre-commit and commitli
 
 ## Commit Conventions
 
-Conventional commits enforced by commitlint. Max header: 200 chars. Valid scopes: `skills`, `validator`, `docs`, `config`, `deps`, `ci`. Aliases: `fd` (docs fix), `b` (bump deps).
+Conventional commits enforced by commitlint. Max header: 200 chars. Scopes restricted to: `skills`, `validator`, `docs`, `config`, `deps`, `ci`. Aliases: `fd` (docs fix), `b` (bump deps).
+
+## Node Version
+
+This project requires the Node.js version specified in `.nvmrc`. Run `nvm use` or equivalent before working.
+
+## Git Hooks
+
+[Lefthook](https://github.com/evilmartians/lefthook) runs these hooks automatically:
+
+| Hook            | What runs                                                            |
+| --------------- | -------------------------------------------------------------------- |
+| `pre-commit`    | markdownlint (auto-fix), Prettier (auto-fix), skill validator, beads |
+| `commit-msg`    | commitlint                                                           |
+| `post-merge`    | beads import                                                         |
+| `post-checkout` | beads import                                                         |
+| `pre-push`      | beads sync                                                           |
+
+Pre-commit hooks auto-stage fixes, so markdown lint and Prettier corrections are included in the commit automatically. If the skill validator or commitlint fails, the commit is rejected — fix the issue and commit again.
 
 ## Skills
 
