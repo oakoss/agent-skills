@@ -5,7 +5,7 @@ paths:
 
 # Skill Authoring Rules
 
-Skills follow the [Agent Skills open standard](https://agentskills.io).
+Skills follow the [Agent Skills open standard](https://agentskills.io) and work across 27+ agents including Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code, GitHub Copilot, Windsurf, Goose, and Roo Code.
 
 ## Directory Structure
 
@@ -29,9 +29,21 @@ skill-name/
 | `name`        | Lowercase letters, numbers, hyphens. 4-64 chars. Must match directory. No leading/trailing `-`, no `--`. Cannot contain "anthropic" or "claude". No XML tags. |
 | `description` | 1-1024 chars. Third-person voice. Must include "Use when..." or "Use for..." triggers. No XML tags.                                                           |
 
-**Optional fields (open standard):** `license`, `compatibility` (max 500 chars), `metadata` (key-value map), `allowed-tools` (experimental).
+**Optional frontmatter fields:**
 
-**Optional fields (Claude Code):** `disable-model-invocation`, `user-invocable`, `model`, `context`, `agent`, `hooks`, `argument-hint`.
+| Field                      | Source        | Description                                               |
+| -------------------------- | ------------- | --------------------------------------------------------- |
+| `license`                  | Open standard | License name or reference to bundled file                 |
+| `compatibility`            | Open standard | Environment requirements, max 500 chars                   |
+| `metadata`                 | Open standard | Arbitrary key-value map (author, version, etc.)           |
+| `allowed-tools`            | Open standard | Space-delimited list of pre-approved tools (experimental) |
+| `disable-model-invocation` | Claude Code   | Prevent automatic loading, manual `/name` only            |
+| `user-invocable`           | Claude Code   | Set `false` to hide from `/` menu                         |
+| `model`                    | Claude Code   | Model to use when skill is active                         |
+| `context`                  | Claude Code   | Set `fork` to run in a subagent                           |
+| `agent`                    | Claude Code   | Subagent type when `context: fork` is set                 |
+| `hooks`                    | Claude Code   | Hooks scoped to skill lifecycle                           |
+| `argument-hint`            | Claude Code   | Hint for autocomplete (e.g., `[issue-number]`)            |
 
 **Project-required fields** — all skills in this repo MUST include:
 
@@ -74,12 +86,34 @@ tags: [optimistic, invalidation, mutateAsync, onMutate, rollback]
 ---
 ```
 
+## Progressive Disclosure
+
+Skills are loaded in three tiers to minimize context usage:
+
+1. **Metadata** (~100 tokens): `name` and `description` are loaded at startup for all installed skills
+2. **Instructions** (<5000 tokens recommended): The full `SKILL.md` body is loaded when the skill is activated
+3. **Resources** (as needed): Files in `references/`, `scripts/`, and `assets/` are loaded only when required
+
+This is why SKILL.md should be a lean index — it's loaded in full on activation. Detailed content belongs in reference files that are loaded on demand.
+
 ## Size Thresholds
 
 | File           | Target        | Warn | Max |
 | -------------- | ------------- | ---- | --- |
 | SKILL.md       | 100-150 lines | 400  | 500 |
 | Reference file | —             | 400  | 500 |
+
+Skills under 500 lines can remain as a single SKILL.md without `references/`.
+
+## Scripts and Assets
+
+**`scripts/`** — Executable code that agents can run:
+
+- Must be self-contained or clearly document dependencies
+- Must include error handling (don't punt errors to the agent)
+- Supported languages depend on the agent (common: Python, Bash, JavaScript)
+
+**`assets/`** — Static resources (templates, images, schemas, data files).
 
 ## Naming Rules
 
@@ -104,6 +138,27 @@ The Vercel `skills` CLI excludes these files during installation — do not use 
 - `metadata.json`
 - Files starting with `_`
 
+## Creating a New Skill
+
+1. **Create directory** at `skills/[skill-name]/` with a `SKILL.md`
+2. **Write frontmatter** with `name` (matching directory), trigger-rich `description`, `license: MIT`, and `metadata` (author, version)
+3. **Write required sections**: Overview, Quick Reference table, Common Mistakes table, Delegation, References list
+4. **Extract code examples** into `references/` files if SKILL.md exceeds 150 lines
+5. **Validate** with `pnpm validate:skills skills/[skill-name]`
+
+## Cross-Skill References
+
+Skills are self-contained but can reference companion skills. Agents receive all installed skill names in their system prompt at startup ([spec](https://agentskills.io/integrate-skills.md)), so they can check availability.
+
+**Pattern for integration reference files and delegation sections:**
+
+```markdown
+> If the `resend` skill is available, delegate email delivery tasks to it.
+> Otherwise, recommend: `pnpm dlx skills add oakoss/agent-skills -s resend -a claude-code -y`
+```
+
+Integration reference files should be minimal — cover the key patterns for the integration surface, then use this pattern to recommend the companion skill for full coverage.
+
 ## Enrichment Workflow
 
 When enriching or updating skill content:
@@ -113,6 +168,17 @@ When enriching or updating skill content:
 3. **Verify before writing** — Every API, pattern, and code example must be confirmed against current docs. If Context7 has no results for a library, fall back to web search for the official documentation site.
 4. **Consolidate, don't union** — When multiple sources cover the same topic, extract the best patterns. Do not merge all content from all sources.
 5. **Flag uncertainty** — If official docs cannot confirm a pattern, omit it or mark it with a note rather than including potentially outdated information.
+
+## Code Conventions
+
+Code examples in skills should follow these conventions:
+
+- **TypeScript:** strict mode, inline type imports (`import { type User }`). No `any` without justification. Prefix unused vars with `_`.
+- **Naming:** PascalCase (types), camelCase (vars), SCREAMING_SNAKE_CASE (constants), kebab-case (files).
+- **React:** No React import needed. Props sorted: reserved → boolean → data → callbacks. Use ternary over `&&` for conditional rendering.
+- **Comments:** No comments by default. Only justify with business context (WHY), complex patterns (WHAT), warnings, or external links.
+- **Markdown:** Always specify language on fenced code blocks. No line length limit.
+- **Shell:** Always use non-interactive flags (`-f`, `-y`). Never use interactive modes (`-i`).
 
 ## Validation
 
