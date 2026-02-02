@@ -47,14 +47,15 @@ Searches the open agent skills ecosystem and installs matching skills via the Sk
 
 ## Common Mistakes
 
-| Mistake                            | Correct Pattern                                         |
-| ---------------------------------- | ------------------------------------------------------- |
-| Using `npx skills`                 | Use `pnpm dlx skills` for consistent package management |
-| Forgetting `-y` on install         | Add `-y` to skip interactive confirmation prompts       |
-| Vague search terms like "help"     | Use specific keywords: "react testing", "pr review"     |
-| Not checking skills.sh first       | Browse `https://skills.sh/` for curated listings        |
-| Installing without reviewing       | Check the skill page on skills.sh before installing     |
-| Running enrichment without Node.js | Script requires Node.js with `https` module (built-in)  |
+| Mistake                              | Correct Pattern                                         |
+| ------------------------------------ | ------------------------------------------------------- |
+| Using `npx skills`                   | Use `pnpm dlx skills` for consistent package management |
+| Forgetting `-y` on install           | Add `-y` to skip interactive confirmation prompts       |
+| Vague search terms like "help"       | Use specific keywords: "react testing", "pr review"     |
+| Not checking skills.sh first         | Browse `https://skills.sh/` for curated listings        |
+| Installing without reviewing         | Check the skill page on skills.sh before installing     |
+| Using `owner/repo` for private repos | Use SSH URL: `git@github.com:Org/repo.git`              |
+| Running enrichment without Node.js   | Script requires Node.js with `https` module (built-in)  |
 
 ## Delegation
 
@@ -68,3 +69,4 @@ Searches the open agent skills ecosystem and installs matching skills via the Sk
 
 - [Discovery workflow and search strategies](references/discovery-guide.md)
 - [Enriched search script usage and options](references/enriched-search.md)
+- [Installing skills from private repositories](references/private-repos.md)
