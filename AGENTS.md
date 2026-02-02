@@ -69,7 +69,7 @@ Conventional commits enforced by commitlint. Max header: 200 chars. Scopes restr
 
 ## Node Version
 
-This project requires the Node.js version specified in `.nvmrc`. Run `nvm use` or equivalent before working.
+This project requires the Node.js version specified in `.nvmrc`.
 
 ## Git Hooks
 
