@@ -25,5 +25,4 @@ yarn-error.log*
 
 # Temporary source material
 .agents/
-.claude/skills/
 .claude/plans/
