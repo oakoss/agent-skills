@@ -211,6 +211,59 @@ Report format:
 - General security improvements
 ```
 
+## Exploration Agent
+
+A lightweight read-only agent for discovering and documenting patterns in the codebase.
+
+```markdown
+---
+name: <domain>-explorer
+description: Explore and understand <domain> patterns in the codebase. Use when researching existing implementations or understanding architecture.
+tools: Read, Grep, Glob
+model: haiku
+---
+
+# <Domain> Exploration Specialist
+
+You explore and document <domain> patterns in this codebase.
+
+## Exploration Process
+
+1. **Scope** - Identify relevant directories and file patterns
+2. **Discover** - Find implementations using Grep and Glob
+3. **Analyze** - Read and understand patterns
+4. **Document** - Summarize findings
+
+## Key Patterns to Look For
+
+- <Pattern 1>
+- <Pattern 2>
+- <Pattern 3>
+
+## Output Format
+
+\`\`\`markdown
+
+## <Domain> Exploration Results
+
+### Files Found
+
+| File | Purpose |
+| ---- | ------- |
+| ...  | ...     |
+
+### Patterns Identified
+
+#### <Pattern Name>
+
+[Description and examples]
+
+### Recommendations
+
+[How to apply these patterns]
+\`\`\`
+```
+
 ## Data Scientist
 
 A domain-specific subagent for data analysis with explicit model selection for capable analysis.
@@ -311,3 +364,128 @@ exit 0
 6. **Route simple tasks to haiku** and complex analysis to sonnet or opus
 7. **Check project agents into version control** for team sharing
 8. **Test and iterate** on system prompts for better results
+
+## Role Description Best Practices
+
+### Be Specific
+
+```markdown
+# Good - specific to project
+
+You are a senior code reviewer for a TanStack Start + Better Auth project.
+
+# Bad - too generic
+
+You are a helpful assistant.
+```
+
+### Include Context
+
+```markdown
+# Good - includes key conventions
+
+Review code for:
+
+- File naming: kebab-case
+- Imports: Use @/ alias
+- Types: Use `type` not `interface`
+
+# Bad - no context
+
+Review the code.
+```
+
+### Reference Skills
+
+```markdown
+## Skill References
+
+| Area     | Skill           |
+| -------- | --------------- |
+| Forms    | `tanstack-form` |
+| Auth     | `auth`          |
+| Database | `database`      |
+```
+
+### Use Proactive Triggers
+
+Include trigger phrases in descriptions:
+
+- "Use proactively after..."
+- "MUST BE USED when..."
+- "Use when encountering..."
+
+These help Claude know when to automatically invoke the agent.
+
+## Output Format Examples
+
+### Structured Review
+
+```markdown
+## Summary
+
+Brief overall assessment in 1-2 sentences.
+
+## Issues Found
+
+1. **[Category]**: [File:line] - [Description]
+   - Fix: [Suggested fix]
+
+## Recommendations
+
+- [Optional improvements not blocking approval]
+
+## Verdict
+
+APPROVE / REQUEST CHANGES / NEEDS DISCUSSION
+```
+
+### Investigation Report
+
+```markdown
+## Analysis
+
+**Error**: Exact error message
+**Location**: src/module/file.ts:123
+**Type**: Runtime / Type / Build
+
+## Root Cause
+
+Explanation of why this happened.
+
+## Evidence
+
+- src/file1.ts:45 - Finding description
+- src/file2.ts:78 - Related finding
+
+## Fix
+
+Specific code changes needed.
+
+## Verification
+
+Steps to confirm the fix works.
+```
+
+### Exploration Summary
+
+```markdown
+## Exploration Results
+
+### Files Found
+
+| File                   | Purpose            |
+| ---------------------- | ------------------ |
+| src/auth/index.ts      | Auth configuration |
+| src/auth/middleware.ts | Route protection   |
+
+### Patterns Identified
+
+#### Pattern Name
+
+Description with code examples.
+
+### Recommendations
+
+How to apply these patterns in new code.
+```
