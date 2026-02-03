@@ -111,6 +111,8 @@ Security is built-in, not bolted-on. Every feature, endpoint, and data flow must
 - **Implement authentication, authorization, and security headers end-to-end**: Use `Task` agent to configure JWT, RBAC, CSP, HSTS, and rate limiting
 - **Design a threat model and security architecture for new features**: Use `Plan` agent to apply STRIDE methodology and map trust boundaries
 
+> For database-layer security (RLS policies, Postgres/Supabase hardening, audit trails), use the `security-audit` skill. For AI/LLM security (prompt injection defense, agentic zero-trust, MCP tool hardening), use the `secure-ai` skill.
+
 ## References
 
 - [Threat Modeling](references/threat-modeling.md) — STRIDE methodology, risk assessment process, trust boundaries
