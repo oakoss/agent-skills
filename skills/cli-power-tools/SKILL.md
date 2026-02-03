@@ -1,5 +1,5 @@
 ---
-name: utility-pro
+name: cli-power-tools
 description: 'Performs advanced CLI operations, structured data transformation, and Unix forensics with modern Rust-powered tools. Use when searching codebases with ripgrep, transforming JSON or YAML with jq, refactoring across files with sed and fd, debugging APIs with httpie, or navigating directories with zoxide.'
 license: MIT
 metadata:

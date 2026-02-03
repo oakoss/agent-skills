@@ -1,5 +1,5 @@
 ---
-name: docs
+name: technical-docs
 description: 'Technical documentation writing and diagram generation. Use when creating docs, syncing documentation with code changes, building Mermaid diagrams, running doc coverage audits, or establishing writing style guides. Use for doc-as-code workflows, ERD generation, sequence diagrams, documentation gap analysis, and AI-assisted drafting.'
 license: MIT
 metadata:

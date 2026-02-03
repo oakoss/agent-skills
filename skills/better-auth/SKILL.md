@@ -108,7 +108,7 @@ Only define `baseURL`/`secret` in config if env vars are NOT set. CLI looks for 
 
 When working on auth, delegate to:
 
-- `security` — Security architecture and threat modeling
+- `application-security` — Security architecture and threat modeling
 - `database` — Drizzle ORM schema and migrations
 - `tanstack-start` — TanStack Start integration patterns
 

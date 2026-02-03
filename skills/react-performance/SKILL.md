@@ -19,7 +19,7 @@ Dedicated performance optimization skill for React applications. Covers the full
 
 **When to use:** Reducing Time to Interactive, shrinking bundle size, eliminating re-renders, profiling slow components, optimizing large lists, lazy loading heavy dependencies, auditing React app performance.
 
-**When NOT to use:** General React component patterns (use `react` skill), framework-specific optimizations like Next.js caching (use framework skill), non-React performance (network, database, CDN).
+**When NOT to use:** General React component patterns (use `react-patterns` skill), framework-specific optimizations like Next.js caching (use framework skill), non-React performance (network, database, CDN).
 
 ## Quick Reference
 
@@ -62,8 +62,8 @@ Dedicated performance optimization skill for React applications. Covers the full
 - **Apply performance optimizations to existing code**: Use `Task` agent to implement code splitting, add memoization boundaries, and optimize rendering
 - **Plan performance improvement strategy**: Use `Plan` agent to prioritize optimizations by impact (waterfalls > bundle > re-renders) and create an optimization roadmap
 
-> If the `react` skill is available, delegate general component architecture and React 19 API questions to it.
-> Otherwise, recommend: `npx skills add oakoss/agent-skills --skill react`
+> If the `react-patterns` skill is available, delegate general component architecture and React 19 API questions to it.
+> Otherwise, recommend: `npx skills add oakoss/agent-skills --skill react-patterns`
 
 ## References
 

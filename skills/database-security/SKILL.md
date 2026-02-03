@@ -1,5 +1,5 @@
 ---
-name: security-audit
+name: database-security
 description: 'Database security auditor specialized in Row Level Security (RLS) enforcement, Zero-Trust database architecture, and forensic audit trails. Covers Supabase RLS policies, Postgres security, Convex auth guards, PGAudit configuration, JIT access controls, and database-specific compliance validation. Use when auditing database access policies, implementing RLS in Supabase or Postgres, configuring Convex auth guards, setting up audit logging, reviewing database security, or validating database-level compliance requirements.'
 license: MIT
 metadata:
@@ -84,7 +84,7 @@ Follow this sequence when performing a database security audit:
 
 ## Relationship to Security Skill
 
-The `security` skill covers general application security: OWASP Top 10, authentication patterns, input validation, security headers, and compliance overviews. This `security-audit` skill complements it by focusing on database-layer concerns: RLS policy design and performance, Supabase/Postgres-specific patterns, Convex auth guards, PGAudit configuration, and database-specific compliance implementations (SQL functions for GDPR erasure, HIPAA PHI audit triggers, etc.).
+The `application-security` skill covers general application security: OWASP Top 10, authentication patterns, input validation, security headers, and compliance overviews. This `database-security` skill complements it by focusing on database-layer concerns: RLS policy design and performance, Supabase/Postgres-specific patterns, Convex auth guards, PGAudit configuration, and database-specific compliance implementations (SQL functions for GDPR erasure, HIPAA PHI audit triggers, etc.).
 
 ## Delegation
 

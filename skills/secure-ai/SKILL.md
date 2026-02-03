@@ -95,7 +95,7 @@ Aligned with the OWASP Top 10 for LLM Applications 2025 and the NIST AI Risk Man
 - **Assess supply chain risks**: Use `Explore` agent to inventory third-party models, datasets, and MCP servers with provenance records
 - **Set up security monitoring**: Use `Task` agent to configure audit logging, anomaly detection, and incident response alerts
 
-> For general application security (OWASP Top 10, auth patterns, security headers, input validation), use the `security` skill. For database-layer security (RLS policies, audit trails, Postgres hardening), use the `security-audit` skill.
+> For general application security (OWASP Top 10, auth patterns, security headers, input validation), use the `application-security` skill. For database-layer security (RLS policies, audit trails, Postgres hardening), use the `database-security` skill.
 
 ## References
 

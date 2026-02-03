@@ -1,5 +1,5 @@
 ---
-name: react
+name: react-patterns
 description: |
   React 19+ patterns, performance optimization, and component architecture. Covers hooks, state management decision trees, data fetching with use() API, Server Components, React Compiler, bundle optimization, and re-render elimination.
 

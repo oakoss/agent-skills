@@ -1,5 +1,5 @@
 ---
-name: tldr-expert
+name: codebase-packager
 description: 'Performs semantic code intelligence and token optimization through context engineering and automated context packing. Use when reducing token overhead for large codebases, creating repository digests with Gitingest, packaging code context with Repomix, or tracing cross-file dependencies with llm-tldr.'
 license: MIT
 metadata:

@@ -67,8 +67,8 @@ Provides a systematic approach to application performance optimization across th
 When working on performance optimization, delegate to:
 
 - `frontend-builder` -- React-specific performance patterns
-- `security` -- Rate limiting and DDoS protection
-- `ci-cd` -- Build pipeline optimization
+- `application-security` -- Rate limiting and DDoS protection
+- `ci-cd-architecture` -- Build pipeline optimization
 
 ## References
 

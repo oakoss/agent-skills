@@ -18,7 +18,7 @@ Covers deployment strategy selection, rollback safety, and progressive delivery 
 
 **When to use:** Choosing between blue-green, canary, or rolling deployments, implementing rollback procedures, configuring health checks and readiness gates, planning environment promotion workflows, integrating feature flags for progressive delivery.
 
-**When NOT to use:** CI/CD pipeline mechanics and GitHub Actions workflows (use `ci-cd` skill), infrastructure provisioning and cloud platform selection (use `ci-cd` skill), application architecture decisions (use framework-specific skills).
+**When NOT to use:** CI/CD pipeline mechanics and GitHub Actions workflows (use `ci-cd-architecture` skill), infrastructure provisioning and cloud platform selection (use `ci-cd-architecture` skill), application architecture decisions (use framework-specific skills).
 
 ## Quick Reference
 
@@ -56,8 +56,8 @@ Covers deployment strategy selection, rollback safety, and progressive delivery 
 - **Implement a specific deployment strategy**: Use `Task` agent to configure blue-green, canary, or rolling deployment for a target platform
 - **Plan migration from one deployment strategy to another**: Use `Plan` agent to evaluate current strategy, define migration steps, and identify risks
 
-> If the `ci-cd` skill is available, delegate CI/CD pipeline setup and GitHub Actions workflow configuration to it.
-> Otherwise, recommend: `npx skills add oakoss/agent-skills --skill ci-cd`
+> If the `ci-cd-architecture` skill is available, delegate CI/CD pipeline setup and GitHub Actions workflow configuration to it.
+> Otherwise, recommend: `npx skills add oakoss/agent-skills --skill ci-cd-architecture`
 
 ## References
 

@@ -1,5 +1,5 @@
 ---
-name: github
+name: github-cli
 description: 'GitHub CLI workflows for repositories, issues, pull requests, actions, releases, projects, and API calls. Use when creating PRs, reviewing code, triaging issues, triggering workflows, publishing releases, managing projects, verifying attestations, or querying the GitHub API. Use for gh cli, github automation, code review, release management.'
 license: MIT
 metadata:

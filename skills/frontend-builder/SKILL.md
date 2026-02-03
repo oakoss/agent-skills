@@ -45,7 +45,7 @@ Builds maintainable, performant React and Next.js frontends using a server-first
 
 When building frontends, delegate to specialized skills:
 
-- `react` -- React hooks, rendering patterns, and performance optimization
+- `react-patterns` -- React hooks, rendering patterns, and performance optimization
 - `nextjs` -- Next.js routing, middleware, and deployment configuration
 - `tanstack-query` -- Client-side data fetching, caching, and mutations
 - `tanstack-form` -- Complex form handling and field-level validation

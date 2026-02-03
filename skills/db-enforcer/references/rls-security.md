@@ -102,4 +102,4 @@ AFTER INSERT OR UPDATE OR DELETE ON sensitive_data
 FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 ```
 
-For Supabase projects, the `security-audit` skill covers PGAudit configuration and advanced audit trail patterns in more detail.
+For Supabase projects, the `database-security` skill covers PGAudit configuration and advanced audit trail patterns in more detail.

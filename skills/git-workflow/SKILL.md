@@ -9,7 +9,7 @@ metadata:
 
 # Git Workflow
 
-Covers branching strategies, conventional commits, CI/CD automation, repository hygiene, and git internals. GitHub CLI usage is handled by a separate `github` skill; this skill focuses on git workflow patterns and CI/CD configuration.
+Covers branching strategies, conventional commits, CI/CD automation, repository hygiene, and git internals. GitHub CLI usage is handled by a separate `github-cli` skill; this skill focuses on git workflow patterns and CI/CD configuration.
 
 ## Quick Reference
 

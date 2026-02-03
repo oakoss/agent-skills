@@ -1,5 +1,5 @@
 ---
-name: prompt
+name: prompt-engineering
 description: 'Prompt engineering and agentic orchestration patterns. Use when crafting prompts for reasoning models, implementing chain-of-thought or Tree-of-Thoughts, designing ReAct loops, building few-shot examples, optimizing prompt performance, structuring system prompts, using extended thinking, or designing tool use workflows. Use for prompt templates, multi-step agent workflows, structured thinking protocols, and multimodal prompting.'
 license: MIT
 metadata:

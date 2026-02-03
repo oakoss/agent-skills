@@ -1,5 +1,5 @@
 ---
-name: planning
+name: plan-first-development
 description: |
   Comprehensive planning methodology and session management for software projects.
   Covers markdown plan creation, iterative refinement, multi-model blending,

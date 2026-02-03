@@ -13,7 +13,7 @@ tags:
 
 # Database Access Security
 
-Patterns for securing database access from applications. For general OWASP Top 10 coverage and application-level security (XSS, CSRF, headers), see the `security` skill.
+Patterns for securing database access from applications. For general OWASP Top 10 coverage and application-level security (XSS, CSRF, headers), see the `application-security` skill.
 
 ## Supabase API Security
 

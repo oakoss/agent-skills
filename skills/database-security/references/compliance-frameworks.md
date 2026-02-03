@@ -6,7 +6,7 @@ tags: [compliance, gdpr, hipaa, soc2, pci-dss, data-retention, database-audit]
 
 # Database Compliance
 
-Database-specific compliance requirements and implementation patterns. For general compliance framework overviews and application-level controls, see the `security` skill.
+Database-specific compliance requirements and implementation patterns. For general compliance framework overviews and application-level controls, see the `application-security` skill.
 
 ## GDPR: Database Requirements
 

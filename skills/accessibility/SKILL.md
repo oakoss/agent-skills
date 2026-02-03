@@ -131,7 +131,7 @@ Build for everyone — accessibility is a requirement, not a feature.
 When working on accessibility, delegate to:
 
 - `design-system` — Color tokens and contrast verification
-- `react` — Component patterns and hooks
+- `react-patterns` — Component patterns and hooks
 - `testing` — jest-axe integration and test patterns
 
 ## Resources

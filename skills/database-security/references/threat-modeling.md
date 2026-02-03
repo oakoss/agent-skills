@@ -6,7 +6,7 @@ tags: [stride, threat-modeling, data-layer, rls-bypass, trust-boundaries]
 
 # Data Layer Threat Modeling
 
-Apply STRIDE specifically at data layer trust boundaries to identify database-level threats. For general application-level STRIDE coverage, see the `security` skill.
+Apply STRIDE specifically at data layer trust boundaries to identify database-level threats. For general application-level STRIDE coverage, see the `application-security` skill.
 
 ## STRIDE at the Data Layer
 
