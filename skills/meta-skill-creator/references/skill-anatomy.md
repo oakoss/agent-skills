@@ -201,6 +201,114 @@ When distributing via the Vercel `skills` CLI, these files are excluded during i
 - `metadata.json`
 - Files starting with `_`
 
+## External Dependencies
+
+If a skill requires external packages, document them clearly:
+
+### In Description
+
+```yaml
+---
+name: pdf-processing
+description: Extract text, fill forms, merge PDFs. Requires pypdf and pdfplumber packages.
+---
+```
+
+### In SKILL.md Body
+
+```markdown
+## Requirements
+
+Install required packages before using this skill:
+
+\`\`\`bash
+uv pip install pypdf pdfplumber
+\`\`\`
+
+Verify installation:
+
+\`\`\`bash
+uv run python -c "import pypdf, pdfplumber; print('OK')"
+\`\`\`
+```
+
+## Code Example Best Practices
+
+### Language Specifiers (MD040)
+
+Always specify language for fenced code blocks:
+
+| Content             | Language   |
+| ------------------- | ---------- |
+| TypeScript/React    | `tsx`      |
+| TypeScript (no JSX) | `ts`       |
+| Shell commands      | `bash`     |
+| Directory trees     | `sh`       |
+| JSON config         | `json`     |
+| YAML config         | `yaml`     |
+| Markdown templates  | `markdown` |
+| Python              | `python`   |
+
+### Show Correct and Incorrect
+
+```tsx
+// Good - specific, typed pattern
+function UserProfile({ user }: UserProfileProps) {
+  return <div>{user.name}</div>;
+}
+
+// Bad - untyped, implicit any
+const UserProfile = (props) => {
+  return <div>{props.user.name}</div>;
+};
+```
+
+### Follow Project Conventions
+
+Code examples in skills should match the project's conventions. Use the project's import aliases, type style preferences, and function declaration patterns. If the skill is generic (not project-specific), use common conventions like path aliases (`@/`) and TypeScript strict mode.
+
+## Reference File Patterns
+
+When to split content from SKILL.md into reference files:
+
+| Content Type                   | Keep in SKILL.md | Move to references/ |
+| ------------------------------ | ---------------- | ------------------- |
+| Quick start                    | Yes              |                     |
+| Core patterns                  | Yes              |                     |
+| Common mistakes                | Yes              |                     |
+| Detailed API reference         |                  | Yes                 |
+| Long code examples (>50 lines) |                  | Yes                 |
+| Configuration tables           |                  | Yes                 |
+| Migration guides               |                  | Yes                 |
+| Edge cases                     |                  | Yes                 |
+
+## Plugin Distribution
+
+To distribute skills via Claude Code plugins:
+
+```sh
+my-plugin/
+├── .claude-plugin/
+│   └── plugin.json
+└── skills/
+    └── my-skill/
+        ├── SKILL.md
+        ├── references/
+        │   └── patterns.md
+        └── scripts/
+            └── validate.py
+```
+
+```json
+{
+  "name": "my-plugin",
+  "version": "1.0.0",
+  "description": "Plugin with custom skills"
+}
+```
+
+Skills in plugins are auto-discovered from the `skills/` directory and appear with the `(plugin-name)` label in `/help`.
+
 ## Cross-Skill References
 
 Skills are self-contained but can reference companion skills. Agents receive all installed skill names at startup, so they can check availability:
