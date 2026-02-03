@@ -73,6 +73,8 @@ Evaluates tools, frameworks, systems, and codebases against the highest industry
 - **Execute targeted quality checks across dimensions**: Use `Task` agent to run linters, security scanners, performance profilers, and accessibility audits
 - **Design quality improvement roadmap**: Use `Plan` agent to prioritize quick wins, short-term, and long-term recommendations from audit findings
 
+> For stylistic cleanup of AI-generated prose and code (emdash overuse, slop vocabulary, over-commenting, verbose naming), use the `de-slopify` skill.
+
 ## References
 
 - [Audit Rubric](references/audit-rubric.md) -- pass/warn/fail thresholds, weighted scoring methodology, automated vs manual checklists, score caps, report format

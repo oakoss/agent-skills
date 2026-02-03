@@ -61,6 +61,8 @@ De-slopify is a methodology for removing telltale signs of AI-generated content 
 - **Plan a documentation voice guide and editorial workflow**: Use `Plan` agent
 - **Review AI-generated code for slop patterns**: Use `code-reviewer` agent
 
+> For systematic quality auditing across 12 dimensions (architecture, security, testing, performance, etc.), use the `quality-auditor` skill.
+
 ## References
 
 - [Prose patterns: emdash alternatives, phrase replacements, and voice calibration](references/prose-patterns.md)
