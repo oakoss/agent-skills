@@ -195,5 +195,36 @@ LSP servers provide real-time code intelligence (diagnostics, go-to-definition, 
 | `shutdownTimeout`       | Max graceful shutdown wait time (ms)            |
 | `restartOnCrash`        | Auto-restart on crash                           |
 | `maxRestarts`           | Maximum restart attempts                        |
+| `loggingConfig`         | Debug logging configuration                     |
+
+### TypeScript LSP Example
+
+Complete configuration showing initializationOptions and logging:
+
+```json
+{
+  "typescript": {
+    "command": "typescript-language-server",
+    "args": ["--stdio"],
+    "extensionToLanguage": {
+      ".ts": "typescript",
+      ".tsx": "typescriptreact",
+      ".js": "javascript",
+      ".jsx": "javascriptreact"
+    },
+    "initializationOptions": {
+      "preferences": {
+        "includeInlayParameterNameHints": "all"
+      }
+    },
+    "loggingConfig": {
+      "args": ["--log-level", "verbose"],
+      "env": {
+        "TSS_LOG": "-level verbose -file ${CLAUDE_PLUGIN_LSP_LOG_FILE}"
+      }
+    }
+  }
+}
+```
 
 The language server binary must be installed separately. The plugin configures how the agent connects to it.

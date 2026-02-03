@@ -229,3 +229,14 @@ When installed, plugins are copied to a cache directory rather than used in-plac
 - Files outside the plugin directory are not available after installation
 - Symlinks within the plugin directory are followed during copying
 - All file references must use `${CLAUDE_PLUGIN_ROOT}` to resolve correctly regardless of installation location
+
+### Using Symlinks for Shared Dependencies
+
+If you need to reference external files or shared utilities, create symlinks inside the plugin directory. Symlinks are followed during the copy process:
+
+```bash
+# Inside plugin directory
+ln -s /path/to/shared-utils ./shared-utils
+```
+
+The symlinked content becomes part of the plugin cache, allowing access to shared resources while maintaining plugin isolation.

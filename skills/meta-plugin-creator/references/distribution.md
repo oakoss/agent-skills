@@ -26,6 +26,8 @@ claude plugin install formatter@my-marketplace --scope project
 
 ## Environment Variables
 
+### Plugin Path Variables
+
 | Variable                | Purpose                                   |
 | ----------------------- | ----------------------------------------- |
 | `${CLAUDE_PLUGIN_ROOT}` | Absolute path to plugin install directory |
@@ -48,6 +50,24 @@ Always use `${CLAUDE_PLUGIN_ROOT}` for paths to files within the plugin. Absolut
     ]
   }
 }
+```
+
+### Auto-Update Configuration
+
+Control auto-update behavior for plugins and Claude Code:
+
+| Variable                   | Effect                                                |
+| -------------------------- | ----------------------------------------------------- |
+| `DISABLE_AUTOUPDATER`      | Disables all auto-updates (plugins and Claude Code)   |
+| `FORCE_AUTOUPDATE_PLUGINS` | Enables plugin updates even when autoupdater disabled |
+
+```bash
+# Disable all auto-updates
+export DISABLE_AUTOUPDATER=true
+
+# Keep plugin updates, disable Claude Code updates
+export DISABLE_AUTOUPDATER=true
+export FORCE_AUTOUPDATE_PLUGINS=true
 ```
 
 ## CLI Commands
