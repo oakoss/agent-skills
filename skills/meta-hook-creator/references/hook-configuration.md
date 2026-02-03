@@ -17,6 +17,36 @@ tags:
 
 # Hook Configuration
 
+## Choosing an Approach
+
+| Approach         | Complexity | Use Case                      | When                            |
+| ---------------- | ---------- | ----------------------------- | ------------------------------- |
+| **Hookify**      | Low        | Pattern-based warn/block      | Regex patterns, no logic        |
+| **Python hooks** | Medium     | Complex logic, external tools | File checks, API calls, parsing |
+| **Inline bash**  | Low        | Simple one-liners             | Quick commands, jq filters      |
+
+### Hookify Example
+
+Pattern-based rules without code. Personal rules use `.local.md` suffix and aren't committed:
+
+```markdown
+# .claude/hookify.warn-console-log.local.md
+
+---
+
+name: warn-console-log
+enabled: true
+event: file
+pattern: console\.log\(
+action: warn
+
+---
+
+Remove console.log before committing.
+```
+
+See the `hookify` skill for full hookify documentation.
+
 ## Settings Locations
 
 | Location                      | Scope                     | Shareable                 |

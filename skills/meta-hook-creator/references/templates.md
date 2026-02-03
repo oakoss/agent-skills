@@ -267,56 +267,6 @@ else
 fi
 ```
 
-## Modify Tool Input Before Execution
-
-Rewrite tool parameters using `updatedInput`. This example adds `--no-cache` to npm commands.
-
-```bash
-#!/bin/bash
-# .claude/hooks/add-no-cache.sh
-INPUT=$(cat)
-CMD=$(echo "$INPUT" | jq -r '.tool_input.command')
-
-if [[ "$CMD" == npm\ install* ]] && [[ "$CMD" != *--no-cache* ]]; then
-  cat <<EOF
-{
-  "hookSpecificOutput": {
-    "hookEventName": "PreToolUse",
-    "permissionDecision": "allow",
-    "permissionDecisionReason": "Added --no-cache flag",
-    "updatedInput": {
-      "command": "$CMD --no-cache"
-    }
-  }
-}
-EOF
-else
-  exit 0
-fi
-```
-
-## Agent Hook for Verification
-
-Use an agent hook that can read files and search code to verify conditions.
-
-```json
-{
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "agent",
-            "prompt": "Verify that all unit tests pass. Run the test suite and check the results. $ARGUMENTS",
-            "timeout": 120
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
 ## Python Hooks
 
 For complex logic, use Python with uv for dependency management. Python hooks are more readable and maintainable than inline bash for multi-step logic.
@@ -383,6 +333,31 @@ for pattern, message in BLOCKED_PATTERNS:
 sys.exit(0)
 ```
 
+### UserPromptSubmit with Context
+
+Add context to every user prompt:
+
+```python
+#!/usr/bin/env -S uv run --quiet --script
+# /// script
+# requires-python = ">=3.11"
+# ///
+import json
+import sys
+import datetime
+
+try:
+    data = json.load(sys.stdin)
+except json.JSONDecodeError:
+    sys.exit(1)
+
+# Add context to conversation
+context = f"Current time: {datetime.datetime.now()}"
+print(context)
+
+sys.exit(0)
+```
+
 ### Auto-Approve Documentation Files
 
 Automatically approve read access to documentation without prompting:
@@ -413,6 +388,31 @@ if tool_name == "Read" and file_path.endswith((".md", ".txt", ".json")):
         "suppressOutput": True
     }
     print(json.dumps(output))
+
+sys.exit(0)
+```
+
+### Schema Change Notification
+
+Notify when database schema files are modified:
+
+```python
+#!/usr/bin/env -S uv run --quiet --script
+# /// script
+# requires-python = ">=3.11"
+# ///
+import json
+import sys
+
+try:
+    data = json.load(sys.stdin)
+except json.JSONDecodeError:
+    sys.exit(1)
+
+file_path = data.get("tool_input", {}).get("file_path", "")
+
+if "schema" in file_path and file_path.endswith(".ts"):
+    print("Schema modified. Remember to run: pnpm db:generate")
 
 sys.exit(0)
 ```
