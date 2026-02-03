@@ -77,6 +77,19 @@ Load multiple plugins simultaneously:
 claude --plugin-dir ./plugin-one --plugin-dir ./plugin-two
 ```
 
+### Interactive UI
+
+```bash
+/plugin              # Open plugin manager
+```
+
+Tabs:
+
+- **Discover**: Browse available plugins from connected marketplaces
+- **Installed**: Manage installed plugins (enable, disable, uninstall)
+- **Marketplaces**: Add/remove marketplaces
+- **Errors**: View loading errors for troubleshooting
+
 ### Debugging
 
 ```bash
@@ -84,6 +97,26 @@ claude --debug
 ```
 
 Shows plugin loading details, manifest errors, component registration, and MCP server initialization.
+
+#### Common Issues
+
+| Issue                | Cause                           | Solution                                     |
+| -------------------- | ------------------------------- | -------------------------------------------- |
+| Plugin not loading   | Invalid `plugin.json`           | Validate JSON syntax                         |
+| Commands missing     | Wrong directory                 | Components at root, not in `.claude-plugin/` |
+| Hooks not firing     | Script not executable           | `chmod +x script.sh`                         |
+| MCP server fails     | Missing `${CLAUDE_PLUGIN_ROOT}` | Use variable for paths                       |
+| LSP not found        | Binary not installed            | Install language server                      |
+| Skills not appearing | Cache stale                     | Clear cache, reinstall                       |
+
+#### Debug Checklist
+
+1. Run `claude --debug` and check "loading plugin" messages
+2. Verify component directories appear in debug output
+3. Check file permissions on scripts
+4. Test scripts manually outside Claude
+5. Validate JSON syntax in all config files
+6. Clear cache if needed: `rm -rf ~/.claude/plugins/cache`
 
 ## Marketplace Publishing
 
@@ -218,6 +251,29 @@ For background auto-updates of private marketplace repos, set authentication tok
 | Bitbucket | `BITBUCKET_TOKEN`            |
 
 Manual installation and updates use existing git credential helpers.
+
+## Official Marketplace Plugins
+
+### Code Intelligence (LSP)
+
+- `pyright-lsp` — Python type checking
+- `typescript-lsp` — TypeScript/JavaScript
+- `rust-analyzer-lsp` — Rust
+- `gopls-lsp` — Go
+- `clangd-lsp` — C/C++
+
+### External Integrations (MCP)
+
+- `github`, `gitlab` — Source control
+- `atlassian`, `linear`, `notion` — Project management
+- `slack` — Communication
+- `vercel`, `firebase`, `supabase` — Infrastructure
+
+### Development Workflows
+
+- `commit-commands` — Git workflows
+- `pr-review-toolkit` — PR review agents
+- `plugin-dev` — Plugin development toolkit
 
 ## Validation Checklist
 

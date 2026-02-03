@@ -129,6 +129,99 @@ Follow semantic versioning (`MAJOR.MINOR.PATCH`):
 
 Start at `1.0.0` for the first stable release. Pre-release versions like `2.0.0-beta.1` are supported for testing.
 
+## Complete Plugin Example
+
+A deployment-tools plugin with commands, agents, skills, hooks, and MCP server:
+
+```sh
+deployment-tools/
+├── .claude-plugin/
+│   └── plugin.json
+├── commands/
+│   ├── deploy.md
+│   ├── rollback.md
+│   └── status.md
+├── agents/
+│   └── deployment-checker.md
+├── skills/
+│   └── infrastructure/
+│       ├── SKILL.md
+│       └── scripts/
+│           └── validate-config.py
+├── hooks/
+│   └── hooks.json
+├── .mcp.json
+├── scripts/
+│   ├── pre-deploy.sh
+│   └── notify.py
+├── LICENSE
+└── CHANGELOG.md
+```
+
+### plugin.json
+
+```json
+{
+  "name": "deployment-tools",
+  "version": "2.1.0",
+  "description": "Deployment automation for Claude Code",
+  "author": {
+    "name": "DevOps Team",
+    "email": "devops@company.com"
+  },
+  "repository": "https://github.com/company/deployment-tools",
+  "license": "MIT",
+  "keywords": ["deployment", "ci-cd", "automation"]
+}
+```
+
+### hooks.json
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/pre-deploy.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/notify.py"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### .mcp.json
+
+```json
+{
+  "mcpServers": {
+    "deployment-api": {
+      "command": "npx",
+      "args": ["@company/deploy-mcp-server"],
+      "cwd": "${CLAUDE_PLUGIN_ROOT}",
+      "env": {
+        "CONFIG_PATH": "${CLAUDE_PLUGIN_ROOT}/config.json"
+      }
+    }
+  }
+}
+```
+
 ## Plugin Caching
 
 When installed, plugins are copied to a cache directory rather than used in-place. This means:
