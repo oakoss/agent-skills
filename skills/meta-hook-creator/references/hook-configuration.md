@@ -236,6 +236,106 @@ Type `/hooks` in Claude Code to view, add, and delete hooks interactively. Hook 
 - Set `"disableAllHooks": true` in settings to temporarily disable all hooks
 - No way to disable individual hooks while keeping them in config
 
+## Hook Execution Details
+
+| Property        | Value                                           |
+| --------------- | ----------------------------------------------- |
+| Default timeout | 60 seconds (command), 30 seconds (prompt/agent) |
+| Execution       | All matching hooks run in parallel              |
+| Deduplication   | Identical commands deduplicated automatically   |
+| Environment     | Current directory with Claude's environment     |
+| Snapshot        | Hooks snapshotted at startup                    |
+| Reload          | Mid-session changes require `/hooks` review     |
+
+## Plugin Hooks
+
+Plugins define hooks in `hooks/hooks.json` within the plugin directory. Use `$CLAUDE_PLUGIN_ROOT` for paths relative to the plugin.
+
+```json
+{
+  "description": "Automatic code formatting",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/format.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Plugin hooks run alongside user/project hooks in parallel. They use the `[Plugin]` label in the `/hooks` menu.
+
+## Security Considerations
+
+1. **Validate inputs** — never trust stdin data blindly; use `try/except` or `jq -r '... // empty'`
+2. **Quote shell variables** — use `"$VAR"` not `$VAR` to prevent word splitting
+3. **Block path traversal** — check for `..` in file paths before processing
+4. **Use absolute paths** — reference scripts with `"$CLAUDE_PROJECT_DIR"/.claude/hooks/script.sh`
+5. **Skip sensitive files** — avoid processing `.env`, `.git/`, credential files
+6. **Hooks are snapshotted** — external modifications require `/hooks` review before taking effect
+7. **Changes don't affect current session** — a hook change mid-session only loads after explicit reload
+
 ## Debugging
 
-Run `claude --debug` to see hook execution details. Toggle verbose mode with `Ctrl+O`.
+### Enable Debug Mode
+
+```bash
+claude --debug
+```
+
+Debug output shows hook matching and execution:
+
+```text
+[DEBUG] Executing hooks for PostToolUse:Write
+[DEBUG] Found 1 hook matchers in settings
+[DEBUG] Matched 1 hooks for query "Write"
+[DEBUG] Hook command completed with status 0
+```
+
+Toggle verbose mode during a session with `Ctrl+O`.
+
+### Test Hook Manually
+
+Pipe sample JSON to the hook script to verify behavior outside Claude:
+
+```bash
+echo '{"tool_input":{"file_path":"test.ts"}}' | .claude/hooks/my-hook.sh
+echo $?
+```
+
+### Log Hook Execution
+
+Wrap a hook command to capture input for debugging:
+
+```json
+{
+  "type": "command",
+  "command": "bash -c 'input=$(cat); echo \"$input\" >> ~/.claude/hook-debug.log; echo \"$input\" | .claude/hooks/actual-hook.sh'"
+}
+```
+
+## jq Quick Reference
+
+Common patterns for extracting fields from hook stdin JSON:
+
+```bash
+# Extract file path
+jq -r '.tool_input.file_path // empty'
+
+# Extract command
+jq -r '.tool_input.command // empty'
+
+# Check pattern match (exit 0 if match, 1 if not)
+jq -e '.tool_input.command | test("pattern")'
+
+# Safe extraction with fallback
+jq -r '.field // "default"' 2>/dev/null
+```

@@ -317,89 +317,171 @@ Use an agent hook that can read files and search code to verify conditions.
 }
 ```
 
-## Log All MCP Operations
+## Python Hooks
 
-Track operations from a specific MCP server.
+For complex logic, use Python with uv for dependency management. Python hooks are more readable and maintainable than inline bash for multi-step logic.
 
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "mcp__memory__.*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -c 'INPUT=$(cat); echo \"$(date -u +\"%Y-%m-%dT%H:%M:%SZ\") $(echo $INPUT | jq -r .tool_name)\" >> \"$CLAUDE_PROJECT_DIR\"/.claude/mcp-operations.log'"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-## Skill-Scoped Hook
-
-Define hooks in skill frontmatter. They run only while the skill is active.
-
-```yaml
----
-name: secure-operations
-description: 'Perform operations with security checks. Use when running sensitive commands.'
-hooks:
-  PreToolUse:
-    - matcher: 'Bash'
-      hooks:
-        - type: command
-          command: './scripts/security-check.sh'
-          once: true
----
-```
-
-The `once: true` option runs the hook only once per session (skills only, not agents).
-
-## Python Script Hook
-
-For complex logic, use Python with uv for dependency management.
+### Python Hook Template
 
 ```python
 #!/usr/bin/env -S uv run --quiet --script
-# .claude/hooks/schema-change.py
+# /// script
+# requires-python = ">=3.11"
+# ///
+"""Hook description."""
+
 import json
 import sys
 
-input_data = json.loads(sys.stdin.read())
-file_path = input_data.get("tool_input", {}).get("file_path", "")
+def main() -> int:
+    input_data = json.loads(sys.stdin.read())
 
-if "src/modules/db/schema" in file_path:
-    print(json.dumps({
-        "hookSpecificOutput": {
-            "hookEventName": "PostToolUse",
-            "additionalContext": "Schema modified. Run: pnpm db:generate"
-        }
-    }))
+    # Extract relevant fields
+    tool_input = input_data.get("tool_input", {})
+    file_path = tool_input.get("file_path", "")
+    content = tool_input.get("content", "")
+
+    # Your logic here
+
+    # Exit codes: 0=success, 1=error, 2=block (PreToolUse only)
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
+```
+
+### PreToolUse Validator
+
+Block dangerous commands before execution using regex patterns:
+
+```python
+#!/usr/bin/env -S uv run --quiet --script
+# /// script
+# requires-python = ">=3.11"
+# ///
+import json
+import re
+import sys
+
+BLOCKED_PATTERNS = [
+    (r"\brm\s+-rf\b", "Blocked: rm -rf is dangerous"),
+    (r"--force\b", "Blocked: --force operations disabled"),
+]
+
+try:
+    data = json.load(sys.stdin)
+except json.JSONDecodeError:
+    sys.exit(1)
+
+command = data.get("tool_input", {}).get("command", "")
+
+for pattern, message in BLOCKED_PATTERNS:
+    if re.search(pattern, command, re.I):
+        print(message, file=sys.stderr)
+        sys.exit(2)
 
 sys.exit(0)
 ```
 
-## Session Cleanup
+### Auto-Approve Documentation Files
 
-Run cleanup tasks when a session ends.
+Automatically approve read access to documentation without prompting:
 
-```json
-{
-  "hooks": {
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -c 'echo \"Session ended at $(date)\" >> \"$CLAUDE_PROJECT_DIR\"/.claude/session.log'"
-          }
-        ]
-      }
-    ]
-  }
-}
+```python
+#!/usr/bin/env -S uv run --quiet --script
+# /// script
+# requires-python = ">=3.11"
+# ///
+import json
+import sys
+
+try:
+    data = json.load(sys.stdin)
+except json.JSONDecodeError:
+    sys.exit(1)
+
+tool_name = data.get("tool_name", "")
+file_path = data.get("tool_input", {}).get("file_path", "")
+
+if tool_name == "Read" and file_path.endswith((".md", ".txt", ".json")):
+    output = {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "allow",
+            "permissionDecisionReason": "Documentation auto-approved"
+        },
+        "suppressOutput": True
+    }
+    print(json.dumps(output))
+
+sys.exit(0)
+```
+
+### Protected File Blocker
+
+Block modifications to sensitive files:
+
+```python
+#!/usr/bin/env -S uv run --quiet --script
+# /// script
+# requires-python = ">=3.11"
+# ///
+import json
+import sys
+
+PROTECTED_PATTERNS = [
+    ".env",
+    ".env.local",
+    "credentials",
+    "secrets",
+    ".git/",
+]
+
+try:
+    data = json.load(sys.stdin)
+except json.JSONDecodeError:
+    sys.exit(1)
+
+file_path = data.get("tool_input", {}).get("file_path", "")
+
+for pattern in PROTECTED_PATTERNS:
+    if pattern in file_path:
+        print(f"Blocked: Cannot modify protected file ({pattern})", file=sys.stderr)
+        sys.exit(2)
+
+sys.exit(0)
+```
+
+### Post-Write Formatter
+
+Format files automatically after writing based on file type:
+
+```python
+#!/usr/bin/env -S uv run --quiet --script
+# /// script
+# requires-python = ">=3.11"
+# ///
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+try:
+    data = json.load(sys.stdin)
+except json.JSONDecodeError:
+    sys.exit(1)
+
+file_path = data.get("tool_input", {}).get("file_path", "")
+
+if not file_path or not Path(file_path).exists():
+    sys.exit(0)
+
+if file_path.endswith((".ts", ".tsx", ".js", ".jsx")):
+    subprocess.run(["npx", "prettier", "--write", file_path], capture_output=True)
+elif file_path.endswith(".py"):
+    subprocess.run(["ruff", "format", file_path], capture_output=True)
+elif file_path.endswith(".md"):
+    subprocess.run(["npx", "markdownlint", "--fix", file_path], capture_output=True)
+
+sys.exit(0)
 ```
