@@ -96,6 +96,8 @@ Subagents inherit all tools by default (including MCP tools). Use `tools` as an 
 - **Run parallel research**: Spawn multiple subagents simultaneously for independent investigations; Claude synthesizes findings when all complete
 - **Resume interrupted work**: Ask Claude to continue a previous subagent; resumed agents retain full conversation history including tool calls and reasoning
 
+> For project-level workflow sequencing, phase-gate validation, goal decomposition, and capability scoring, use the `orchestration` skill.
+
 ## References
 
 - [Agent types and design patterns](references/agent-types.md)
