@@ -249,6 +249,17 @@ Claude invokes commands programmatically via the Skill tool. Control access thro
 
 Skill descriptions consume a shared character budget (default: 15,000 characters). When exceeded, Claude sees fewer commands. Check with `/context` and increase via the `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable.
 
+### Enabling Automatic Invocation
+
+Reference commands in CLAUDE.md to encourage Claude to use them automatically:
+
+```markdown
+When writing tests, run /write-unit-test to generate test files.
+After fixing bugs, run /verify-fix to ensure the fix is complete.
+```
+
+This works because Claude reads CLAUDE.md at the start of every session and treats its content as project instructions.
+
 ## Built-in Commands
 
 These commands are built-in and cannot be overridden:

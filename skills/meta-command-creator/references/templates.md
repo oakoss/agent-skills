@@ -326,6 +326,68 @@ Use the existing component structure from the project.
 - Colocate tests as `component-name.test.tsx`
 ```
 
+## Best Practices
+
+### Clear Steps
+
+Use bold labels for phases in numbered steps:
+
+```markdown
+## Steps
+
+1. **Analyze** - Examine the current state
+2. **Plan** - Determine necessary changes
+3. **Execute** - Make the changes
+4. **Verify** - Confirm success
+```
+
+### Include Reference Commands
+
+Tell Claude which CLI tools to use:
+
+```markdown
+## Reference
+
+- Use `gh pr view` to inspect PR details
+- Use `git diff` to see changes
+- Use `pnpm test` to verify no regressions
+```
+
+### Provide Output Format
+
+Specify the expected structure of results:
+
+```markdown
+## Output Format
+
+\`\`\`markdown
+
+## Result
+
+**Status**: [Success/Failure]
+**Changes Made**:
+
+- [Change 1]
+- [Change 2]
+
+**Next Steps**:
+
+- [Recommendation]
+  \`\`\`
+```
+
+### Use File References
+
+Reference project files with `@` for context:
+
+```markdown
+Review the implementation considering:
+
+- Main file: @src/utils/helpers.ts
+- Tests: @src/utils/helpers.test.ts
+- Types: @src/types/helpers.d.ts
+```
+
 ## Checklist for New Commands
 
 When creating a command, verify:
