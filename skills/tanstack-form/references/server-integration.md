@@ -1,6 +1,6 @@
 ---
-title: Form+Query Integration
-description: TanStack Form setup with Zod validation, field-level and async validation, field arrays, custom components, server function integration, and Query cache coordination
+title: Server Integration
+description: Form submission with server functions, mutation cache coordination, optimistic updates, Zod validation, and error handling
 tags:
   [
     form,

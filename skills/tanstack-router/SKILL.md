@@ -95,3 +95,4 @@ Type-safe, file-based routing for React with route-level data loading, search pa
 - [Code Splitting](references/code-splitting.md) — lazy routes, auto splitting, preloading strategies, programmatic preloading
 - [Virtual File Routes](references/virtual-routes.md) — rootRoute, route, index, layout, physical builders, mixing file-based and code-based routing
 - [Known Issues](references/known-issues.md) — 20 documented issues with fixes, anti-patterns
+- [Loader+Query Patterns](references/loader-query-patterns.md) — ensureQueryData in loaders, parallel loading, critical vs non-critical data, search-param-dependent loaders

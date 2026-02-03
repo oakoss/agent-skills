@@ -1,5 +1,5 @@
 ---
-title: End-to-End Flows
+title: Integration Flows
 description: Complete patterns for form submission with cache update, infinite scroll, paginated tables with URL state, auth-protected routes, and error handling
 tags:
   [

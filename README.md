@@ -1,6 +1,6 @@
 # agent-skills
 
-A curated collection of 106 [agent skills](https://agentskills.io) for Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code, GitHub Copilot, Windsurf, Goose, and [27+ other agents](https://agentskills.io). Each skill is hand-written and enriched against official documentation — not auto-generated from docs.
+A curated collection of 105 [agent skills](https://agentskills.io) for Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code, GitHub Copilot, Windsurf, Goose, and [27+ other agents](https://agentskills.io). Each skill is hand-written and enriched against official documentation — not auto-generated from docs.
 
 ## Install
 
@@ -28,20 +28,19 @@ pnpm dlx skills add oakoss/agent-skills --list
 
 ### TanStack Ecosystem
 
-| Skill                                               | Description                                                              |
-| --------------------------------------------------- | ------------------------------------------------------------------------ |
-| [tanstack-query](skills/tanstack-query)             | TanStack Query v5 server state management for React                      |
-| [tanstack-router](skills/tanstack-router)           | Type-safe, file-based React routing with route loaders and search params |
-| [tanstack-start](skills/tanstack-start)             | Full-stack React framework built on TanStack Router                      |
-| [tanstack-table](skills/tanstack-table)             | TanStack Table v8 headless data tables for React                         |
-| [tanstack-form](skills/tanstack-form)               | TanStack Form for type-safe React forms with validation                  |
-| [tanstack-virtual](skills/tanstack-virtual)         | TanStack Virtual for virtualizing large lists, grids, and tables         |
-| [tanstack-store](skills/tanstack-store)             | TanStack Store framework-agnostic reactive state management              |
-| [tanstack-db](skills/tanstack-db)                   | TanStack DB reactive client-side database with live queries              |
-| [tanstack-pacer](skills/tanstack-pacer)             | TanStack Pacer for rate limiting, throttling, debouncing, and queuing    |
-| [tanstack-cli](skills/tanstack-cli)                 | TanStack Config shared build tooling and publishing                      |
-| [tanstack-devtools](skills/tanstack-devtools)       | TanStack DevTools for debugging Query, Router, and Form state            |
-| [tanstack-integration](skills/tanstack-integration) | Strategic adoption guide for TanStack libraries                          |
+| Skill                                         | Description                                                              |
+| --------------------------------------------- | ------------------------------------------------------------------------ |
+| [tanstack-query](skills/tanstack-query)       | TanStack Query v5 server state management for React                      |
+| [tanstack-router](skills/tanstack-router)     | Type-safe, file-based React routing with route loaders and search params |
+| [tanstack-start](skills/tanstack-start)       | Full-stack React framework built on TanStack Router                      |
+| [tanstack-table](skills/tanstack-table)       | TanStack Table v8 headless data tables for React                         |
+| [tanstack-form](skills/tanstack-form)         | TanStack Form for type-safe React forms with validation                  |
+| [tanstack-virtual](skills/tanstack-virtual)   | TanStack Virtual for virtualizing large lists, grids, and tables         |
+| [tanstack-store](skills/tanstack-store)       | TanStack Store framework-agnostic reactive state management              |
+| [tanstack-db](skills/tanstack-db)             | TanStack DB reactive client-side database with live queries              |
+| [tanstack-pacer](skills/tanstack-pacer)       | TanStack Pacer for rate limiting, throttling, debouncing, and queuing    |
+| [tanstack-cli](skills/tanstack-cli)           | TanStack Config shared build tooling and publishing                      |
+| [tanstack-devtools](skills/tanstack-devtools) | TanStack DevTools for debugging Query, Router, and Form state            |
 
 ### React & Frontend
 

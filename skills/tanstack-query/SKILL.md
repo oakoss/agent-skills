@@ -93,3 +93,4 @@ TanStack Query is an **async state manager**, not a data fetching library. You p
 - [TypeScript patterns](references/typescript-patterns.md)
 - [Testing with MSW and React Testing Library](references/testing.md)
 - [Known v5 issues and workarounds](references/known-issues.md)
+- [Caching coordination with Router](references/caching-coordination.md) — single-source caching strategy, disabling Router cache, coordinated configuration

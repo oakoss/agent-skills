@@ -1,11 +1,10 @@
 ---
-title: Router+Query Setup
-description: Setting up TanStack Router with Query context, SSR integration, and type-safe routing
-tags:
-  [router, query, setup, context, SSR, setupRouterSsrQueryIntegration, register]
+title: Query Integration
+description: Setting up TanStack Router with Query context, SSR integration, and setupRouterSsrQueryIntegration
+tags: [query, setup, context, SSR, setupRouterSsrQueryIntegration, QueryClient]
 ---
 
-# Router+Query Setup
+# Query Integration
 
 ## Root Route with Context
 

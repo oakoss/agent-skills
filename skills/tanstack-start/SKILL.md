@@ -99,3 +99,5 @@ Use this skill for TanStack Start server functions, middleware, SSR/streaming, r
 - [Error Handling](references/error-handling.md) — discriminated unions, custom error classes, status codes, result types vs try-catch
 - [File Organization](references/file-organization.md) — entry points, plugin config, execution boundaries, env validation, .server.ts convention
 - [Known Issues](references/known-issues.md) — 10 documented issues with workarounds
+- [Query Integration](references/query-integration.md) — Router+Query setup, SSR integration, setupRouterSsrQueryIntegration, DevTools
+- [Integration Flows](references/integration-flows.md) — form submission with cache update, infinite scroll, paginated tables, auth-protected routes, error handling
