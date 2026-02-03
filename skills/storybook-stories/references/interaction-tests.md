@@ -434,3 +434,32 @@ export const SlowAnimation: Story = {
   },
 };
 ```
+
+## Accessibility Testing
+
+Stories automatically run axe-core accessibility checks. Test specific accessible names in play functions:
+
+```tsx
+export const IconButtonAccessibility: Story = {
+  args: {
+    'aria-label': 'Add new item',
+    children: <Icon name="plus" className="size-4" />,
+    size: 'icon',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button', { name: 'Add new item' });
+    await expect(button).toHaveAccessibleName('Add new item');
+  },
+};
+```
+
+### Disabling A11y for Known Issues
+
+```tsx
+export const KnownA11yIssue: Story = {
+  parameters: {
+    a11y: { disable: true },
+  },
+};
+```

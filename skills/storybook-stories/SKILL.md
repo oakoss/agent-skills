@@ -56,6 +56,17 @@ Storybook is a frontend workshop for building UI components in isolation. Storie
 | Using boolean && for conditional rendering | Use ternary in stories for consistent snapshots          |
 | Not waiting for animations                 | Wrap assertions in waitFor for async state               |
 
+## Common Fixes
+
+| Problem                    | Solution                                        |
+| -------------------------- | ----------------------------------------------- |
+| Controls show placeholders | Add `args` at meta level with default values    |
+| Serialization error        | Disable `className`, `ref`, `style` in argTypes |
+| Portal element not found   | Search `body` instead of `canvas`               |
+| Animation timing issues    | Wrap assertions in `waitFor`                    |
+| Multiple buttons found     | Add `{ name: '...' }` to getByRole              |
+| A11y test failing          | Add `label` prop or `aria-label`                |
+
 ## Delegation
 
 - **Story structure review**: Use `code-reviewer` skill for CSF3 pattern validation
