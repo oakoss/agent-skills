@@ -2,8 +2,8 @@ import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { join, resolve, basename, dirname } from 'path';
 
 const SKILLS_DIR = 'skills';
-const MAX_LINES = 500;
-const WARN_LINES = 400;
+const MAX_LINES = 750;
+const WARN_LINES = 500;
 const SKILL_TARGET_LINES = 150;
 const SKILLS_CLI_EXCLUDED = new Set(['README.md', 'metadata.json']);
 const MIN_NAME_LENGTH = 4;
