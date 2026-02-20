@@ -73,13 +73,10 @@ This project requires the Node.js version specified in `.nvmrc`.
 
 [Lefthook](https://github.com/evilmartians/lefthook) runs these hooks automatically:
 
-| Hook            | What runs                                                            |
-| --------------- | -------------------------------------------------------------------- |
-| `pre-commit`    | markdownlint (auto-fix), Prettier (auto-fix), skill validator, beads |
-| `commit-msg`    | commitlint                                                           |
-| `post-merge`    | beads import                                                         |
-| `post-checkout` | beads import                                                         |
-| `pre-push`      | beads sync                                                           |
+| Hook         | What runs                                                     |
+| ------------ | ------------------------------------------------------------- |
+| `pre-commit` | markdownlint (auto-fix), Prettier (auto-fix), skill validator |
+| `commit-msg` | commitlint                                                    |
 
 Pre-commit hooks auto-stage fixes, so markdown lint and Prettier corrections are included in the commit automatically. If the skill validator or commitlint fails, the commit is rejected — fix the issue and commit again.
 
