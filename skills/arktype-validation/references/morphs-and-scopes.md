@@ -99,9 +99,48 @@ const passwordMatch = type({
 });
 ```
 
+## Assert (Throwing Validation)
+
+`.assert()` throws on invalid input instead of returning `type.errors`:
+
+```ts
+import { type } from 'arktype';
+
+const User = type({
+  name: 'string >= 1',
+  email: 'string.email',
+});
+
+const user = User.assert({ name: 'Alice', email: 'alice@example.com' });
+// Returns validated data or throws AggregateError
+```
+
+Use `assert` when invalid data is a programmer error rather than expected user input.
+
+## Branding
+
+Add type-only symbols so only directly validated values satisfy the type:
+
+```ts
+import { type } from 'arktype';
+
+const Even = type('(number % 2)#even');
+type Even = typeof Even.infer;
+
+const good: Even = Even.assert(2);
+// const bad: Even = 5; // TypeScript error — not branded
+```
+
+Fluent API:
+
+```ts
+const PositiveInt = type.number.moreThan(0).brand('positiveInt');
+type PositiveInt = typeof PositiveInt.infer;
+```
+
 ## Scopes
 
-Define named types that can reference each other:
+Define named types that can reference each other. Use `scope()` for complex type systems, `type.module()` for quick groups:
 
 ```ts
 import { scope } from 'arktype';
@@ -122,6 +161,27 @@ const types = scope({
 // Access types
 const user = types.User({ name: 'Alice', email: 'alice@example.com' });
 type User = typeof types.User.infer;
+```
+
+## Quick Modules
+
+`type.module()` is a lighter alternative when you don't need `scope`'s full power:
+
+```ts
+import { type } from 'arktype';
+
+const auth = type.module({
+  Credentials: {
+    username: 'string >= 3',
+    password: 'string >= 8',
+  },
+  Token: {
+    value: 'string',
+    expiresAt: 'Date',
+  },
+});
+
+const creds = auth.Credentials({ username: 'alice', password: 'secret123' });
 ```
 
 ## Recursive Types
@@ -223,3 +283,23 @@ const describe = match({
 describe('hello'); // "a string: hello"
 describe(42); // "a number: 42"
 ```
+
+## Standard Schema
+
+ArkType co-authors the [Standard Schema](https://github.com/standard-schema/standard-schema) spec with Zod and Valibot. Any ArkType schema works as a Standard Schema validator — libraries like TanStack Form, ArkEnv, and tRPC can consume it without coupling to a specific validation library.
+
+## arkregex
+
+The `arkregex` package infers string literal types from regular expressions at compile time with zero runtime overhead:
+
+```ts
+import { regex } from 'arkregex';
+
+const semver = regex('^(\\d*)\\.(\\d*)\\.(\\d*)$');
+// Regex<`${bigint}.${bigint}.${bigint}`, { captures: [...] }>
+
+const email = regex('^(?<name>\\w+)@(?<domain>\\w+\\.\\w+)$');
+// Named capture groups are typed
+```
+
+For most validation, ArkType's built-in `string.email`, `string.semver`, or inline `/regex/` syntax is sufficient. Use `arkregex` when you need typed capture groups or compile-time string type inference.

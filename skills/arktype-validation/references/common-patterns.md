@@ -112,15 +112,193 @@ const UserResponse = ApiResponse({
 type UserResponse = typeof UserResponse.infer;
 ```
 
-## Environment Variables
+## Environment Variables with ArkEnv
+
+[ArkEnv](https://arkenv.js.org) wraps ArkType for environment variable validation with automatic coercion, defaults, and framework plugins.
+
+Install alongside ArkType:
+
+```bash
+pnpm add arkenv arktype
+```
+
+### Basic Usage
 
 ```ts
-const EnvSchema = type({
-  DATABASE_URL: 'string.url',
-  PORT: 'string.numeric.parse',
-  NODE_ENV: "'development' | 'production' | 'test'",
+import arkenv from 'arkenv';
+
+const env = arkenv({
+  HOST: "string.ip | 'localhost'",
+  PORT: '0 <= number.integer <= 65535',
+  NODE_ENV: "'development' | 'production' | 'test' = 'development'",
+  DEBUGGING: 'boolean = false',
   SESSION_SECRET: 'string >= 32',
   'API_KEY?': 'string',
+});
+
+env.PORT; // number (auto-coerced from string)
+env.DEBUGGING; // boolean
+env.NODE_ENV; // 'development' | 'production' | 'test'
+```
+
+ArkEnv auto-coerces environment strings to the target type. If validation fails, the app exits with a clear error:
+
+```text
+ArkEnvError: Errors found while validating environment variables
+  HOST must be a string or "localhost" (was missing)
+  PORT must be a number (was a string)
+```
+
+### Arrays
+
+Comma-separated values are parsed automatically:
+
+```ts
+import arkenv from 'arkenv';
+import { type } from 'arkenv/arktype';
+
+const env = arkenv({
+  ALLOWED_ORIGINS: type('string[]').default(() => ['localhost']),
+  FEATURE_FLAGS: type('string[]').default(() => []),
+});
+```
+
+```text
+ALLOWED_ORIGINS=http://localhost:3000,https://example.com
+```
+
+### Lazy Validation with Proxy
+
+Defer validation until the first property access. This allows `.env` files or test setup to load before validation runs:
+
+```ts
+import arkenv from 'arkenv';
+import { type } from 'arkenv/arktype';
+
+export const Env = type({
+  DATABASE_URL: 'string > 0',
+  BETTER_AUTH_SECRET: 'string >= 32',
+  BETTER_AUTH_URL: 'string.url',
+  PASSWORD_MIN_LENGTH: '6 <= number.integer <= 128 = 8',
+  TRUSTED_ORIGINS: 'string > 0',
+  'OTEL_EXPORTER_OTLP_ENDPOINT?': 'string.url',
+  VITE_APP_TITLE: "string > 0 = 'My App'",
+});
+
+type ValidatedEnv = typeof Env.infer;
+
+let _env: ValidatedEnv | undefined;
+
+function getEnv(): ValidatedEnv {
+  if (!_env) {
+    if (process.env.SKIP_ENV_VALIDATION === 'true') {
+      return process.env as unknown as ValidatedEnv;
+    }
+    _env = arkenv(Env, {
+      env: process.env,
+      coerce: true,
+      onUndeclaredKey: 'delete',
+    });
+  }
+  return _env;
+}
+
+export const env = new Proxy({} as ValidatedEnv, {
+  get(_, prop: string) {
+    return getEnv()[prop as keyof ValidatedEnv];
+  },
+});
+```
+
+`SKIP_ENV_VALIDATION` bypasses validation for CI builds or test environments that don't set all variables.
+
+### Vite Plugin
+
+The `@arkenv/vite-plugin` validates env vars at build time and auto-filters `VITE_*` prefixed variables for the client bundle:
+
+```bash
+pnpm add @arkenv/vite-plugin
+```
+
+Define the schema in a shared config file so both vite.config and type augmentation can import it:
+
+```ts
+// src/configs/env.ts
+import { type } from 'arkenv/arktype';
+
+export const Env = type({
+  PORT: 'number.port',
+  VITE_API_URL: 'string',
+  VITE_FEATURE_FLAGS: 'boolean = false',
+});
+```
+
+Use `@dotenvx/dotenvx` to load `.env` files before the plugin validates. The `flow` convention loads files in dotenv-flow order (`.env.local`, `.env`):
+
+```ts
+// vite.config.ts
+import arkenvVitePlugin from '@arkenv/vite-plugin';
+import { config } from '@dotenvx/dotenvx';
+import tailwindcss from '@tailwindcss/vite';
+import { tanstackStart } from '@tanstack/react-start/plugin/vite';
+import viteReact from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+import viteTsConfigPaths from 'vite-tsconfig-paths';
+
+import { Env } from './src/configs/env';
+
+config({ convention: 'flow', quiet: true });
+
+export default defineConfig({
+  plugins: [
+    viteTsConfigPaths({ projects: ['./tsconfig.json'] }),
+    arkenvVitePlugin(Env),
+    tailwindcss(),
+    tanstackStart(),
+    viteReact(),
+  ],
+  server: { port: 3000 },
+});
+```
+
+The plugin auto-filters to only expose `VITE_*` prefixed variables to the client bundle — server-only variables like `DATABASE_URL` are excluded.
+
+Type-safe `import.meta.env` in client code via `vite-env.d.ts`:
+
+```ts
+/// <reference types="vite/client" />
+
+import type { ImportMetaEnvAugmented as ArkenvImportMetaEnvAugmented } from '@arkenv/vite-plugin';
+
+import type { Env } from '@/configs/env';
+
+type ImportMetaEnvAugmented = ArkenvImportMetaEnvAugmented<typeof Env>;
+
+interface ViteTypeOptions {
+  strictImportMetaEnv: unknown;
+}
+
+interface ImportMetaEnv extends ImportMetaEnvAugmented {}
+```
+
+```tsx
+const apiUrl = import.meta.env.VITE_API_URL; // string — validated at build
+// import.meta.env.PORT — TypeScript error, server-only
+```
+
+### Standard Schema Validators
+
+ArkEnv also works with Zod, Valibot, or any Standard Schema validator:
+
+```ts
+import arkenv from 'arkenv';
+import { z } from 'zod';
+
+const env = arkenv({
+  PORT: z.coerce.number().int().min(0).max(65535),
+  NODE_ENV: z
+    .enum(['development', 'production', 'test'])
+    .default('development'),
 });
 ```
 

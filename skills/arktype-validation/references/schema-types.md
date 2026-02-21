@@ -73,6 +73,7 @@ type('string.creditCard');
 type('string.base64');
 type('string.base64.url');
 type('string.json');
+type('string.host'); // Hostname (IP or domain)
 
 // Morphs (transform the value)
 type('string.trim'); // Trims whitespace
@@ -93,7 +94,8 @@ type('string.url.parse'); // Parses URL string to URL instance
 ```ts
 type('string >= 1'); // Min length 1
 type('string <= 100'); // Max length 100
-type('string >= 1 & string <= 100'); // Range
+type('string >= 1 & string <= 100'); // Range (intersection)
+type('5 <= string <= 20'); // Range (compact syntax)
 type('string == 5'); // Exact length
 
 // Regex patterns
@@ -110,8 +112,12 @@ type('number < 100'); // Less than 100
 type('number % 2'); // Divisible by 2 (even)
 type('number.integer'); // Integer only
 type('number.safe'); // Safe integer range
-type('number.epoch'); // Unix timestamp (safe integer)
-type('number > 0 & number < 100'); // Range
+type('number.epoch'); // Unix timestamp (safe integer >= 0)
+type('number.port'); // Valid port (integer 0-65535)
+type('number > 0 & number < 100'); // Range (intersection)
+type('0 <= number <= 100'); // Range (compact syntax)
+type('1 <= number.integer <= 5'); // Constrained range
+type('0 <= number.integer % 5 <= 100'); // Range + divisibility
 
 // Fluent API constraints
 type.number.atLeast(0);
@@ -249,6 +255,41 @@ type('string >= 1 & string <= 50');
 const Named = type({ name: 'string' });
 const Aged = type({ age: 'number' });
 const Person = Named.and(Aged);
+```
+
+## Date Constraints
+
+```ts
+// String syntax with date literals
+const Bounded = type({
+  dateInThePast: `Date < ${Date.now()}`,
+  dateAfter2000: "Date > d'2000-01-01'",
+  dateAtOrAfter1970: 'Date >= 0',
+});
+
+// Fluent API
+const FluentBounded = type({
+  dateInThePast: type.Date.earlierThan(Date.now()),
+  dateAfter2000: type.Date.laterThan('2000-01-01'),
+  dateAtOrAfter1970: type.Date.atOrAfter(0),
+});
+```
+
+## Index Signatures and keyof
+
+```ts
+// Index signatures
+type('Record<string, unknown>');
+const Dict = type({ '[string]': 'number' });
+
+// Extract object keys as union type
+const User = type({
+  name: 'string',
+  email: 'string.email',
+});
+
+const UserKey = User.keyof();
+type UserKey = typeof UserKey.infer; // "name" | "email"
 ```
 
 ## Special Types
