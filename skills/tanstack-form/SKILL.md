@@ -82,3 +82,4 @@ TanStack Form is a **headless form state manager**, not a UI component library. 
 - [Advanced patterns (multi-step forms, file uploads)](references/advanced-patterns.md)
 - [Server integration (mutations, cache coordination, server functions)](references/server-integration.md)
 - [Field components (React Aria integration, listeners, checkbox groups)](references/field-components.md)
+- [shadcn/ui integration (Field layout, Input, Select, Switch, Checkbox, RadioGroup)](references/shadcn-integration.md)
