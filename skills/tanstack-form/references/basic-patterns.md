@@ -347,6 +347,53 @@ const form = useForm({
 </button>;
 ```
 
+## Field Listeners
+
+Use `listeners` to trigger side effects when field values change:
+
+```tsx
+<form.Field
+  name="country"
+  listeners={{
+    onChange: ({ value }) => {
+      form.setFieldValue('province', '');
+    },
+  }}
+  children={(field) => (
+    <select
+      value={field.state.value}
+      onChange={(e) => field.handleChange(e.target.value)}
+    >
+      <option value="">Select country</option>
+      {countries.map((c) => (
+        <option key={c.code} value={c.code}>
+          {c.name}
+        </option>
+      ))}
+    </select>
+  )}
+/>
+
+<form.Field
+  name="province"
+  children={(field) => (
+    <select
+      value={field.state.value}
+      onChange={(e) => field.handleChange(e.target.value)}
+    >
+      <option value="">Select province</option>
+      {getProvinces(form.getFieldValue('country')).map((p) => (
+        <option key={p.code} value={p.code}>
+          {p.name}
+        </option>
+      ))}
+    </select>
+  )}
+/>
+```
+
+Listeners are for side effects (resetting dependent fields, fetching data). For validation that depends on other fields, use `onChangeListenTo` in validators instead.
+
 ## Set Field Value Programmatically
 
 ```tsx

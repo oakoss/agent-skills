@@ -84,6 +84,7 @@ TanStack Query is an **async state manager**, not a data fetching library. You p
 > If the `tanstack-devtools` skill is available, delegate query cache debugging and inspection to it.
 > If the `tanstack-db` skill is available, delegate reactive client-side database and live query patterns to it.
 > If the `tanstack-virtual` skill is available, delegate list virtualization and infinite scroll rendering to it.
+> If the `tanstack-store` skill is available, delegate shared client-side reactive state management to it.
 
 ## References
 

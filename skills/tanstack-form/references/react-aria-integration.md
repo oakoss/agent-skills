@@ -1,37 +1,39 @@
 ---
-title: Field Components
-description: React Aria component integration, input type patterns, field listeners for side effects, and checkbox group handling
+title: React Aria Integration
+description: Integrating TanStack Form with React Aria components for accessible form controls
 tags:
   [
     react-aria,
     TextField,
+    NumberField,
     Select,
+    ComboBox,
     Switch,
     Checkbox,
     RadioGroup,
-    listeners,
+    DatePicker,
     CheckboxGroup,
   ]
 ---
 
-# Field Components
+# React Aria Integration
 
-## React Aria Component Integration
+## Component Mapping
 
-| Component     | React Aria    | Purpose         |
-| ------------- | ------------- | --------------- |
-| `TextField`   | `TextField`   | Text input      |
-| `NumberField` | `NumberField` | Numeric input   |
-| `Select`      | `Select`      | Dropdown select |
-| `ComboBox`    | `ComboBox`    | Autocomplete    |
-| `Checkbox`    | `Checkbox`    | Boolean toggle  |
-| `Switch`      | `Switch`      | Toggle switch   |
-| `RadioGroup`  | `RadioGroup`  | Single select   |
-| `DatePicker`  | `DatePicker`  | Date selection  |
+| Form Control  | React Aria    | Binding Prop  | Change Handler            |
+| ------------- | ------------- | ------------- | ------------------------- |
+| Text input    | `TextField`   | `value`       | `onChange` (direct value) |
+| Numeric input | `NumberField` | `value`       | `onChange` (direct value) |
+| Dropdown      | `Select`      | `selectedKey` | `onSelectionChange`       |
+| Autocomplete  | `ComboBox`    | `selectedKey` | `onSelectionChange`       |
+| Boolean       | `Checkbox`    | `isSelected`  | `onChange`                |
+| Toggle        | `Switch`      | `isSelected`  | `onChange`                |
+| Single select | `RadioGroup`  | `value`       | `onChange`                |
+| Date          | `DatePicker`  | `value`       | `onChange`                |
 
-## Input Types
+React Aria components handle validation display via `isInvalid` and `errorMessage` props directly — no separate error component needed.
 
-### Text Input
+## Text Input
 
 ```tsx
 <form.Field
@@ -54,7 +56,7 @@ tags:
 />
 ```
 
-### Select
+## Select
 
 ```tsx
 <form.Field
@@ -73,7 +75,7 @@ tags:
 />
 ```
 
-### Switch
+## Switch
 
 ```tsx
 <form.Field
@@ -86,7 +88,7 @@ tags:
 />
 ```
 
-### Checkbox
+## Checkbox
 
 ```tsx
 <form.Field
@@ -99,7 +101,7 @@ tags:
 />
 ```
 
-### Radio Group
+## Radio Group
 
 ```tsx
 const plans = [
@@ -125,53 +127,6 @@ const plans = [
 />;
 ```
 
-## Field Listeners
-
-Use `listeners` to trigger side effects when field values change:
-
-```tsx
-<form.Field
-  name="country"
-  listeners={{
-    onChange: ({ value }) => {
-      form.setFieldValue('province', '');
-    },
-  }}
-  children={(field) => (
-    <Select
-      label="Country"
-      selectedKey={field.state.value}
-      onSelectionChange={(key) => field.handleChange(key as string)}
-    >
-      {countries.map((c) => (
-        <SelectItem key={c.code} id={c.code}>
-          {c.name}
-        </SelectItem>
-      ))}
-    </Select>
-  )}
-/>
-
-<form.Field
-  name="province"
-  children={(field) => (
-    <Select
-      label="Province"
-      selectedKey={field.state.value}
-      onSelectionChange={(key) => field.handleChange(key as string)}
-    >
-      {getProvinces(form.getFieldValue('country')).map((p) => (
-        <SelectItem key={p.code} id={p.code}>
-          {p.name}
-        </SelectItem>
-      ))}
-    </Select>
-  )}
-/>
-```
-
-Listeners are for side effects (resetting dependent fields, fetching data). For validation that depends on other fields, use `onChangeListenTo` in validators instead.
-
 ## Checkbox Group
 
 Use `mode="array"` with `CheckboxGroup` for multi-select checkbox patterns:
@@ -195,3 +150,13 @@ Use `mode="array"` with `CheckboxGroup` for multi-select checkbox patterns:
   )}
 />
 ```
+
+## Key Differences from shadcn/ui
+
+| Concern        | React Aria                              | shadcn/ui                                |
+| -------------- | --------------------------------------- | ---------------------------------------- |
+| Error display  | `isInvalid` + `errorMessage` props      | `<FieldError errors={...} />` component  |
+| Invalid state  | `isInvalid` prop                        | `data-invalid` + `aria-invalid` manually |
+| Layout         | Built into component                    | `Field` + `FieldContent` composition     |
+| Change handler | Consistent `onChange` with direct value | Varies per component                     |
+| Checkbox array | `CheckboxGroup` with `onChange` array   | Manual `pushValue`/`removeValue`         |
