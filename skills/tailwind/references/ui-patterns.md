@@ -438,7 +438,7 @@ Use proper elements:
 ### Button Group
 
 ```tsx
-<div className="inline-flex rounded-md shadow-sm">
+<div className="inline-flex rounded-md shadow-xs">
   <button className="px-4 py-2 bg-primary text-primary-foreground rounded-l-md">
     Left
   </button>
