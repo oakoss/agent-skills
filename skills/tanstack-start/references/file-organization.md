@@ -135,6 +135,39 @@ const logger = createIsomorphicFn()
   .client((msg: string) => console.log(`[CLIENT]: ${msg}`));
 ```
 
+## Server Function File Convention
+
+For larger applications, split server-side code using a three-file naming convention:
+
+| Suffix          | Purpose                          | Safe to import from                           |
+| --------------- | -------------------------------- | --------------------------------------------- |
+| `.ts`           | Client-safe code (types/schemas) | Anywhere                                      |
+| `.server.ts`    | Server-only code (DB, secrets)   | Only inside server function handlers          |
+| `.functions.ts` | `createServerFn` wrappers        | Anywhere (build creates RPC stubs for client) |
+
+```ts
+// users.functions.ts
+import { createServerFn } from '@tanstack/react-start';
+import { findUserById } from './users.server';
+
+export const getUser = createServerFn({ method: 'GET' })
+  .inputValidator((data: { id: string }) => data)
+  .handler(async ({ data }) => {
+    return findUserById(data.id);
+  });
+```
+
+```ts
+// users.server.ts
+import { db } from '@/lib/db.server';
+
+export async function findUserById(id: string) {
+  return db.users.findUnique({ where: { id } });
+}
+```
+
+Static imports of `.functions.ts` files are safe in client components — the build replaces server function implementations with RPC stubs.
+
 ## Environment Variables
 
 `VITE_` prefixed variables are client-accessible. Non-prefixed variables are server-only.

@@ -4,7 +4,7 @@ description: 'Full-stack React framework built on TanStack Router. Type-safe rou
 license: MIT
 metadata:
   author: oakoss
-  version: '1.2'
+  version: '1.3'
   source: 'https://tanstack.com/start/latest/docs'
 ---
 

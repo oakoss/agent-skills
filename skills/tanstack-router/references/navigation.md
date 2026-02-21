@@ -309,6 +309,22 @@ function BackButton() {
 
 Returns `false` when history is at index `0` or after a `reloadDocument` navigation resets the history index.
 
+## Catch-All Splat Route
+
+`routes/$.tsx` catches all unmatched paths. The `_splat` param contains the matched path:
+
+```tsx
+// routes/$.tsx
+export const Route = createFileRoute('/$')({
+  component: CatchAllComponent,
+});
+
+function CatchAllComponent() {
+  const { _splat } = Route.useParams();
+  return <div>Page not found: /{_splat}</div>;
+}
+```
+
 ## History State
 
 Store ephemeral state that survives navigation but not page refresh:

@@ -64,6 +64,16 @@ function PostPage() {
 }
 ```
 
+## `Route.fullPath` for Type Narrowing
+
+`Route.fullPath` provides the full path string for use with hooks in non-route files:
+
+```ts
+const params = useParams({ from: Route.fullPath });
+```
+
+This is equivalent to passing the string literal but keeps it co-located with the route definition.
+
 ## getRouteApi for Code-Split Components
 
 In code-split (`.lazy.tsx`) files that don't have access to the `Route` export:

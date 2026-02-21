@@ -174,24 +174,44 @@ Timing: if navigation completes within `defaultPendingMs`, no pending UI flashes
 
 ## SSR with TanStack Query
 
-Dehydrate Query cache for SSR hydration:
+### Recommended: `@tanstack/react-router-ssr-query`
 
-```tsx
-import { routerWithQueryClient } from '@tanstack/react-router-with-query';
+Automates dehydration/hydration and streaming for SSR with TanStack Query:
 
-export function createAppRouter() {
-  const queryClient = new QueryClient();
+```ts
+import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query';
 
-  const router = routerWithQueryClient(
-    createRouter({
-      routeTree,
-      context: { queryClient },
-    }),
-    queryClient,
-  );
+const queryClient = new QueryClient();
+const router = createRouter({ routeTree, context: { queryClient } });
 
-  return router;
-}
+setupRouterSsrQueryIntegration({ router, queryClient });
 ```
 
-Install `@tanstack/react-router-with-query` for automatic dehydration/hydration of Query cache during SSR.
+Install: `npm install @tanstack/react-router-ssr-query`
+
+The legacy `@tanstack/react-router-with-query` (`routerWithQueryClient`) requires `@tanstack/react-start` and is superseded by this package.
+
+### Manual dehydrate/hydrate/Wrap
+
+For custom SSR integration without the helper package, use `dehydrate`, `hydrate`, and `Wrap` router options:
+
+```ts
+export function createAppRouter() {
+  const queryClient = new QueryClient();
+  return createRouter({
+    routeTree,
+    context: { queryClient },
+    dehydrate: () => ({
+      queryClientState: dehydrate(queryClient),
+    }),
+    hydrate: (dehydrated) => {
+      hydrate(queryClient, dehydrated.queryClientState);
+    },
+    Wrap: ({ children }) => (
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
+    ),
+  });
+}
+```

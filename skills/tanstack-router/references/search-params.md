@@ -36,6 +36,26 @@ export const Route = createFileRoute('/search')({
 
 Use `.catch()` to silently fix malformed params. Use `.default()` + `errorComponent` to show validation errors.
 
+## Manual Validation
+
+Plain function approach without external validators:
+
+```ts
+type ProductSearch = {
+  page: number;
+  sort: 'asc' | 'desc';
+  category?: string;
+};
+
+export const Route = createFileRoute('/products')({
+  validateSearch: (search: Record<string, unknown>): ProductSearch => ({
+    page: Number(search.page) || 1,
+    sort: search.sort === 'desc' ? 'desc' : 'asc',
+    category: typeof search.category === 'string' ? search.category : undefined,
+  }),
+});
+```
+
 ## Validation with Valibot
 
 Valibot is a lighter alternative to Zod with the same adapter pattern:

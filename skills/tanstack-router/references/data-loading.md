@@ -200,6 +200,32 @@ function StatsPanel() {
 }
 ```
 
+## Loader Cause and Preload
+
+Loaders receive `cause` and `preload` to distinguish navigation types:
+
+| `cause`     | Description                          |
+| ----------- | ------------------------------------ |
+| `'preload'` | Triggered by link hover/focus        |
+| `'enter'`   | Initial navigation to route          |
+| `'stay'`    | Route re-entered (search/dep change) |
+
+Use `preload` to conditionally load less data during prefetching:
+
+```ts
+loader: async ({ preload, context: { queryClient } }) => {
+  if (preload) {
+    await queryClient.prefetchQuery(postListOptions);
+    return;
+  }
+  const [posts, stats] = await Promise.all([
+    queryClient.ensureQueryData(postListOptions),
+    queryClient.ensureQueryData(statsOptions),
+  ]);
+  return { posts, stats };
+};
+```
+
 ## Abort Signal
 
 Cancel in-flight requests on navigation:

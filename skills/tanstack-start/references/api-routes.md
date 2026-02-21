@@ -160,6 +160,39 @@ export const Route = createFileRoute('/api/posts')({
 });
 ```
 
+## Factory Form with `createHandlers`
+
+For per-handler middleware, use the `createHandlers` factory instead of the plain object form:
+
+```ts
+import { createFileRoute } from '@tanstack/react-router';
+
+export const Route = createFileRoute('/api/posts')({
+  server: {
+    middleware: [authMiddleware],
+    handlers: ({ createHandlers }) =>
+      createHandlers({
+        GET: {
+          handler: async ({ request }) => {
+            return Response.json(await db.posts.findMany());
+          },
+        },
+        POST: {
+          middleware: [validationMiddleware],
+          handler: async ({ request }) => {
+            const body = await request.json();
+            return Response.json(await db.posts.create({ data: body }), {
+              status: 201,
+            });
+          },
+        },
+      }),
+  },
+});
+```
+
+Route-level middleware runs first for all methods, then per-handler middleware runs before that specific handler.
+
 ## Webhook Handler
 
 ```ts

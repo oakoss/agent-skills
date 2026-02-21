@@ -1,6 +1,6 @@
 ---
 title: Offline Mode
-description: Network mode configuration, fetchStatus vs status, mutation persistence across reloads, cache persistence with localStorage and IndexedDB
+description: Network mode configuration, fetchStatus vs status, mutation persistence across reloads, cache persistence with localStorage and IndexedDB, onlineManager, async storage persister, useIsRestoring
 tags:
   [
     offline,
@@ -10,6 +10,9 @@ tags:
     mutation-defaults,
     resume,
     PersistQueryClientProvider,
+    onlineManager,
+    createAsyncStoragePersister,
+    useIsRestoring,
   ]
 ---
 
@@ -199,4 +202,63 @@ persistOptions={{
   maxAge: 1000 * 60 * 60 * 24,
   buster: BUILD_VERSION,
 }}
+```
+
+## onlineManager
+
+The `onlineManager` singleton controls how TanStack Query detects network state. In v5, online state defaults to `true` and updates via browser `online`/`offline` events.
+
+| Method                        | Purpose                                                |
+| ----------------------------- | ------------------------------------------------------ |
+| `.isOnline()`                 | Check current online state                             |
+| `.setOnline(boolean)`         | Manually override online state (useful for testing)    |
+| `.subscribe(callback)`        | Listen to online/offline changes (returns unsubscribe) |
+| `.setEventListener(listener)` | Replace default network detection                      |
+
+```tsx
+import { onlineManager } from '@tanstack/react-query';
+
+import NetInfo from '@react-native-community/netinfo';
+
+onlineManager.setEventListener((setOnline) => {
+  return NetInfo.addEventListener((state) => {
+    setOnline(!!state.isConnected);
+  });
+});
+```
+
+## Async Storage Persister (React Native)
+
+Use `@tanstack/query-async-storage-persister` with React Native's AsyncStorage:
+
+```tsx
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
+
+const persister = createAsyncStoragePersister({
+  storage: AsyncStorage,
+  throttleTime: 1000,
+});
+```
+
+| Option         | Default                       | Purpose                  |
+| -------------- | ----------------------------- | ------------------------ |
+| `storage`      | (required)                    | AsyncStorage-compatible  |
+| `key`          | `"REACT_QUERY_OFFLINE_CACHE"` | Storage key              |
+| `throttleTime` | `1000`                        | Minimum ms between saves |
+| `serialize`    | `JSON.stringify`              | Custom serializer        |
+| `deserialize`  | `JSON.parse`                  | Custom deserializer      |
+
+## useIsRestoring
+
+Returns `true` while `PersistQueryClientProvider` is restoring the cache from storage. Queries are blocked from firing until restoration completes.
+
+```tsx
+import { useIsRestoring } from '@tanstack/react-query';
+
+function App() {
+  const isRestoring = useIsRestoring();
+  if (isRestoring) return <LoadingScreen />;
+  return <MainApp />;
+}
 ```
