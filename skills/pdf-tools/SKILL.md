@@ -4,7 +4,7 @@ description: 'PDF engineering for extraction, generation, modification, and form
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # PDF Tools
@@ -30,6 +30,12 @@ Full-lifecycle PDF engineering covering extraction, generation, modification, fo
 | Repair corrupted PDF       | qpdf                          | `qpdf input.pdf --replace-input`                                           |
 | Fast text extraction (CLI) | poppler-utils                 | `pdftotext -layout input.pdf -`                                            |
 | Merge thousands of files   | pypdf (Python)                | Lighter than headless browser                                              |
+| Batch queue processing     | BullMQ + unpdf                | Redis-backed with retry, concurrency, progress tracking                    |
+| PDF/A archival compliance  | ghostscript + verapdf         | `gs -dPDFA=2` for conversion; verapdf for validation                       |
+| Tagged PDF (accessibility) | Puppeteer                     | `tagged: true` maps HTML semantics to PDF structure tags                   |
+| Digital signatures         | @signpdf/\*                   | PKCS#7 signing with P12 certificates                                       |
+| PDF comparison             | unpdf + diff / pixelmatch     | Text diff or pixel-level visual diff between versions                      |
+| Secure redaction           | pymupdf (fitz)                | `apply_redactions()` removes content bytes, not just visual overlay        |
 
 ## Common Mistakes
 
@@ -57,3 +63,4 @@ Full-lifecycle PDF engineering covering extraction, generation, modification, fo
 - [High-Fidelity Generation](references/high-fidelity-generation.md) -- Puppeteer HTML-to-PDF, CSS print tips, React templates, browser pooling
 - [Legacy Utilities](references/legacy-utilities.md) -- pdfplumber, pypdf, qpdf, poppler-utils for batch and forensic tasks
 - [Form Filling](references/form-filling.md) -- Fillable field extraction, non-fillable annotation workflow, validation scripts
+- [Batch Processing and Accessibility](references/batch-and-accessibility.md) -- Queue-based batch processing, PDF/A compliance, tagged PDFs, digital signatures, comparison, redaction

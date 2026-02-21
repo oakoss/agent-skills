@@ -4,7 +4,7 @@ description: Optimize application performance and scalability. Use when investig
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Performance Optimizer
@@ -31,14 +31,14 @@ Provides a systematic approach to application performance optimization across th
 
 ### Optimization Phases
 
-| Phase         | Focus                         | Key Action                                       |
-| ------------- | ----------------------------- | ------------------------------------------------ |
-| 1. Profiling  | Identify real bottlenecks     | Chrome DevTools, React Profiler, EXPLAIN ANALYZE |
-| 2. Database   | Eliminate slow queries        | Strategic indexes, fix N+1, connection pooling   |
-| 3. Caching    | Reduce redundant work         | Redis, HTTP headers, CDN for static assets       |
-| 4. Frontend   | Reduce bundle and render time | Code splitting, lazy loading, image optimization |
-| 5. Backend    | Speed up API responses        | Background queues, compression, pagination       |
-| 6. Monitoring | Sustain performance           | APM tools, alerting thresholds, dashboards       |
+| Phase         | Focus                         | Key Action                                                       |
+| ------------- | ----------------------------- | ---------------------------------------------------------------- |
+| 1. Profiling  | Identify real bottlenecks     | Chrome DevTools, React Profiler, EXPLAIN ANALYZE                 |
+| 2. Database   | Eliminate slow queries        | Strategic indexes, fix N+1, connection pooling                   |
+| 3. Caching    | Reduce redundant work         | Redis, HTTP headers, CDN for static assets                       |
+| 4. Frontend   | Reduce bundle and render time | Bundle analysis, code splitting, resource hints, lazy loading    |
+| 5. Backend    | Speed up API responses        | Serverless optimization, streaming, conditional requests, queues |
+| 6. Monitoring | Sustain performance           | APM tools, alerting thresholds, dashboards                       |
 
 ### Caching Layers
 
@@ -75,6 +75,6 @@ When working on performance optimization, delegate to:
 - [Profiling and Measurement](references/profiling.md) -- Chrome DevTools, React Profiler, Node.js/Python profiling, database EXPLAIN
 - [Database Optimization](references/database.md) -- Strategic indexes, N+1 fixes, query optimization, connection pooling
 - [Caching Strategies](references/caching.md) -- Redis patterns, HTTP cache headers, CDN configuration
-- [Frontend Performance](references/frontend.md) -- Code splitting, image optimization, bundle size, React performance
-- [Backend Performance](references/backend.md) -- Background queues, API response optimization, rate limiting
+- [Frontend Performance](references/frontend.md) -- Bundle analysis, code splitting, resource hints, third-party scripts, mobile performance, React patterns
+- [Backend Performance](references/backend.md) -- Serverless optimization, streaming responses, conditional requests, background queues, rate limiting
 - [Monitoring and Alerting](references/monitoring.md) -- APM tools, custom monitoring, dashboards, alert thresholds
