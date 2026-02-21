@@ -11,6 +11,7 @@ tags:
     streaming,
     parallel-loading,
     loaderDeps,
+    useAwaited,
   ]
 ---
 
@@ -150,20 +151,18 @@ function PostPage() {
 }
 ```
 
-## Deferred Data with `defer()`
+## Deferred Data
 
-Stream non-critical data after initial render using `defer()` and `<Await>`:
+Stream non-critical data after initial render by returning unawaited promises from loaders. Promises are handled automatically — `defer()` is no longer required. Consume deferred promises with the `<Await>` component or the `useAwaited` hook:
 
 ```tsx
-import { defer } from '@tanstack/react-router';
-
 export const Route = createFileRoute('/dashboard')({
   loader: async () => {
     const user = await fetchUser();
     return {
       user,
-      stats: defer(fetchStats()),
-      activity: defer(fetchActivity()),
+      stats: fetchStats(),
+      activity: fetchActivity(),
     };
   },
   component: () => {
@@ -185,6 +184,20 @@ export const Route = createFileRoute('/dashboard')({
     );
   },
 });
+```
+
+### `useAwaited` Hook
+
+Hook-based alternative to `<Await>` — suspends until the deferred promise resolves:
+
+```tsx
+import { useAwaited } from '@tanstack/react-router';
+
+function StatsPanel() {
+  const { stats } = Route.useLoaderData();
+  const data = useAwaited({ promise: stats });
+  return <StatsDisplay data={data} />;
+}
 ```
 
 ## Abort Signal

@@ -4,7 +4,7 @@ description: 'Full-stack React framework built on TanStack Router. Type-safe rou
 license: MIT
 metadata:
   author: oakoss
-  version: '1.1'
+  version: '1.2'
   source: 'https://tanstack.com/start/latest/docs'
 ---
 
@@ -12,38 +12,43 @@ metadata:
 
 Full-stack React framework built on TanStack Router. Type-safe server functions via RPC, SSR/streaming, middleware composition, and deployment to Cloudflare Workers, Vercel, Netlify, AWS Lambda, and more.
 
+> **RC:** TanStack Start is currently in Release Candidate status. APIs may still change before the stable 1.0 release.
+
 **Package:** `@tanstack/react-start`
 
 ## Quick Reference
 
-| Pattern                                     | Usage                                                     |
-| ------------------------------------------- | --------------------------------------------------------- |
-| `createServerFn()`                          | GET (default) — idempotent, cacheable data fetching       |
-| `createServerFn({ method: 'POST' })`        | Mutations that change data                                |
-| `.inputValidator(zodSchema)`                | Input validation before handler                           |
-| `.handler(async ({ data, request }) => {})` | Server-side logic with typed data and request context     |
-| `useServerFn(fn)`                           | Wrap server function for component use with pending state |
-| `createMiddleware().server(fn)`             | Request middleware for cross-cutting concerns             |
-| `.middleware([dep])`                        | Compose middleware with dependencies                      |
-| `next({ context: {} })`                     | Pass data downstream through middleware chain             |
-| `createMiddleware({ type: 'function' })`    | Function-level middleware with input validation           |
-| `requestMiddleware: []` in `createStart()`  | Global middleware for all server requests                 |
-| `createIsomorphicFn()`                      | Different implementations per environment                 |
-| `createServerOnlyFn()`                      | Server-only utility — crashes if called from client       |
-| `createClientOnlyFn()`                      | Client-only utility — crashes if called from server       |
-| `useSession()`                              | Cookie-based session with encryption and secure settings  |
-| `session.update()`                          | Update session data                                       |
-| `session.clear()`                           | Clear session (logout)                                    |
-| `beforeLoad`                                | Auth check before route loads                             |
-| `_authenticated.tsx`                        | Pathless layout route for grouped protection              |
-| `throw redirect({ to: '/login' })`          | Redirect with return URL                                  |
-| `await ensureQueryData()`                   | Block SSR on critical data                                |
-| `prefetchQuery()`                           | Start fetch, don't block SSR                              |
-| `<Suspense>` boundaries                     | Define streaming chunks                                   |
-| `head: ({ loaderData }) => ({})`            | Meta tags, Open Graph, favicons                           |
-| `headers: () => ({...})`                    | ISR / cache-control on route definition                   |
-| `server: { handlers: { GET, POST } }`       | API routes on `createFileRoute`                           |
-| `prerender: false`                          | Disable prerendering for dynamic routes                   |
+| Pattern                                    | Usage                                                     |
+| ------------------------------------------ | --------------------------------------------------------- |
+| `createServerFn()`                         | GET (default) — idempotent, cacheable data fetching       |
+| `createServerFn({ method: 'POST' })`       | Mutations that change data                                |
+| `.inputValidator(zodSchema)`               | Input validation before handler                           |
+| `.handler(async ({ data }) => {})`         | Server-side logic with typed input data                   |
+| `getRequest()`                             | Access full incoming `Request` inside handler/middleware  |
+| `getRequestHeader(name)`                   | Read a single request header by name                      |
+| `setResponseHeaders(headers)`              | Set outgoing response headers (caching, cookies)          |
+| `useServerFn(fn)`                          | Wrap server function for component use with pending state |
+| `createMiddleware().server(fn)`            | Request middleware for cross-cutting concerns             |
+| `.middleware([dep])`                       | Compose middleware with dependencies                      |
+| `next({ context: {} })`                    | Pass data downstream through middleware chain             |
+| `createMiddleware({ type: 'function' })`   | Function-level middleware with input validation           |
+| `requestMiddleware: []` in `createStart()` | Global middleware for all server requests                 |
+| `createIsomorphicFn()`                     | Different implementations per environment                 |
+| `createServerOnlyFn()`                     | Server-only utility — crashes if called from client       |
+| `createClientOnlyFn()`                     | Client-only utility — crashes if called from server       |
+| `useSession()`                             | Cookie-based session with encryption and secure settings  |
+| `session.update()`                         | Update session data                                       |
+| `session.clear()`                          | Clear session (logout)                                    |
+| `beforeLoad`                               | Auth check before route loads                             |
+| `_authenticated.tsx`                       | Pathless layout route for grouped protection              |
+| `throw redirect({ to: '/login' })`         | Redirect with return URL                                  |
+| `await ensureQueryData()`                  | Block SSR on critical data                                |
+| `prefetchQuery()`                          | Start fetch, don't block SSR                              |
+| `<Suspense>` boundaries                    | Define streaming chunks                                   |
+| `head: ({ loaderData }) => ({})`           | Meta tags, Open Graph, favicons                           |
+| `headers: () => ({...})`                   | ISR / cache-control on route definition                   |
+| `server: { handlers: { GET, POST } }`      | API routes on `createFileRoute`                           |
+| `prerender: false`                         | Disable prerendering for dynamic routes                   |
 
 ## Execution Boundaries
 

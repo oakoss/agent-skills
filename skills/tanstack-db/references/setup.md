@@ -28,6 +28,12 @@ For Vue applications:
 npm install @tanstack/vue-db
 ```
 
+For Svelte applications (requires Svelte 5 runes):
+
+```bash
+npm install @tanstack/svelte-db
+```
+
 Install collection type packages based on your data source:
 
 ```bash

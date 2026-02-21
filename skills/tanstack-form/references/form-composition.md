@@ -1,7 +1,16 @@
 ---
 title: Form Composition
-description: Reusable field components with createFormHook and form contexts
-tags: [composition, createFormHook, context, reusable, fieldComponents]
+description: Reusable field components with createFormHook, withForm, withFieldGroup, and form contexts
+tags:
+  [
+    composition,
+    createFormHook,
+    withForm,
+    withFieldGroup,
+    context,
+    reusable,
+    fieldComponents,
+  ]
 ---
 
 # Form Composition
@@ -254,60 +263,6 @@ export function CreateUserForm() {
 }
 ```
 
-## Field Component with Props
-
-Pass additional props to field components:
-
-```tsx
-export function FormTextField({
-  label,
-  placeholder,
-  type = 'text',
-  description,
-}: {
-  label: string;
-  placeholder?: string;
-  type?: 'text' | 'email' | 'password';
-  description?: string;
-}) {
-  const field = useFieldContext<string>();
-  const errors = useStore(field.store, (s) => s.meta.errors);
-  const isInvalid = field.state.meta.isTouched && errors.length > 0;
-
-  return (
-    <div>
-      <label htmlFor={field.name}>{label}</label>
-      {description && <p className="text-sm text-muted">{description}</p>}
-      <input
-        id={field.name}
-        type={type}
-        value={field.state.value}
-        placeholder={placeholder}
-        onBlur={field.handleBlur}
-        onChange={(e) => field.handleChange(e.target.value)}
-        aria-invalid={isInvalid}
-      />
-      {isInvalid && <span className="error">{errors.join(', ')}</span>}
-    </div>
-  );
-}
-```
-
-Usage:
-
-```tsx
-<form.AppField
-  name="email"
-  children={(f) => (
-    <f.TextField
-      label="Email"
-      type="email"
-      description="We'll never share your email."
-    />
-  )}
-/>
-```
-
 ## Field-Level Validation with Composition
 
 Add validators to AppField:
@@ -397,93 +352,143 @@ Usage:
 />
 ```
 
-## Integration with React Aria Components
+## Breaking Large Forms with withForm
 
-Use React Aria components in field wrappers:
+The `withForm` HOC splits large forms into smaller components while preserving type safety:
 
 ```tsx
-import { TextField as AriaTextField } from 'react-aria-components';
-import { useFieldContext } from '@/hooks/form-context';
-import { useStore } from '@tanstack/react-form';
+const PersonalInfoSection = withForm({
+  defaultValues: {
+    firstName: '',
+    lastName: '',
+    email: '',
+  },
+  props: {
+    title: 'Personal Info',
+  },
+  render: function Render({ form, title }) {
+    return (
+      <div>
+        <h2>{title}</h2>
+        <form.AppField
+          name="firstName"
+          children={(field) => <field.TextField label="First Name" />}
+        />
+        <form.AppField
+          name="lastName"
+          children={(field) => <field.TextField label="Last Name" />}
+        />
+      </div>
+    );
+  },
+});
 
-export function FormTextField({
-  label,
-  placeholder,
-  type = 'text',
-}: {
-  label: string;
-  placeholder?: string;
-  type?: 'text' | 'email' | 'password';
-}) {
-  const field = useFieldContext<string>();
-  const errors = useStore(field.store, (s) => s.meta.errors);
-  const isInvalid = field.state.meta.isTouched && errors.length > 0;
+function SignupPage() {
+  const form = useAppForm({
+    defaultValues: { firstName: '', lastName: '', email: '' },
+    onSubmit: async ({ value }) => {
+      await api.createUser(value);
+    },
+  });
 
   return (
-    <AriaTextField
-      name={field.name}
-      type={type}
-      value={field.state.value}
-      onChange={(value) => field.handleChange(value)}
-      onBlur={field.handleBlur}
-      isInvalid={isInvalid}
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        form.handleSubmit();
+      }}
     >
-      <label>{label}</label>
-      <input placeholder={placeholder} />
-      {isInvalid && <span className="error">{errors.join(', ')}</span>}
-    </AriaTextField>
+      <PersonalInfoSection form={form} title="Your Details" />
+      <form.AppForm>
+        <form.SubmitButton label="Sign Up" />
+      </form.AppForm>
+    </form>
   );
 }
 ```
 
-> If the `react-aria` skill is available, delegate accessible component patterns to it. Otherwise, recommend: `npx skills add oakoss/agent-skills --skill react-aria`
+The `defaultValues` in `withForm` are for type-checking only. The parent form's `defaultValues` are what matter.
 
-## Integration with shadcn/ui
+## Reusable Field Groups with withFieldGroup
 
-Wrap shadcn/ui components:
+The `withFieldGroup` HOC groups related fields that share validation logic and can be reused across forms:
 
 ```tsx
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useFieldContext } from '@/hooks/form-context';
 import { useStore } from '@tanstack/react-form';
 
-export function FormTextField({
-  label,
-  placeholder,
-}: {
-  label: string;
-  placeholder?: string;
-}) {
-  const field = useFieldContext<string>();
-  const errors = useStore(field.store, (s) => s.meta.errors);
-  const isInvalid = field.state.meta.isTouched && errors.length > 0;
+const { useAppForm, withForm, withFieldGroup } = createFormHook({
+  fieldComponents: { TextField, ErrorInfo },
+  formComponents: { SubmitButton },
+  fieldContext,
+  formContext,
+});
 
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={field.name}>{label}</Label>
-      <Input
-        id={field.name}
-        value={field.state.value}
-        placeholder={placeholder}
-        onBlur={field.handleBlur}
-        onChange={(e) => field.handleChange(e.target.value)}
-        aria-invalid={isInvalid}
-        className={isInvalid ? 'border-red-500' : ''}
-      />
-      {isInvalid && <p className="text-sm text-red-600">{errors.join(', ')}</p>}
-    </div>
-  );
-}
+type PasswordFields = {
+  password: string;
+  confirm_password: string;
+};
+
+const PasswordFieldGroup = withFieldGroup({
+  defaultValues: {
+    password: '',
+    confirm_password: '',
+  } satisfies PasswordFields,
+  props: {
+    title: 'Password',
+  },
+  render: function Render({ group, title }) {
+    const password = useStore(group.store, (state) => state.values.password);
+
+    return (
+      <div>
+        <h3>{title}</h3>
+        <group.AppField name="password">
+          {(field) => <field.TextField label="Password" />}
+        </group.AppField>
+        <group.AppField
+          name="confirm_password"
+          validators={{
+            onChangeListenTo: ['password'],
+            onChange: ({ value }) => {
+              if (value !== group.getFieldValue('password')) {
+                return 'Passwords do not match';
+              }
+              return undefined;
+            },
+          }}
+        >
+          {(field) => (
+            <div>
+              <field.TextField label="Confirm Password" />
+              <field.ErrorInfo />
+            </div>
+          )}
+        </group.AppField>
+      </div>
+    );
+  },
+});
 ```
 
-> If the `shadcn-ui` skill is available, delegate component styling and composition to it. Otherwise, recommend: `npx skills add oakoss/agent-skills --skill shadcn-ui`
+Use the group by passing `form` and a `fields` path to map to nested values:
 
-## Composition Benefits
+```tsx
+<PasswordFieldGroup form={form} fields="credentials" title="Set Password" />
+```
 
-- **Type safety**: Field components are typed via the form schema
-- **Consistency**: All forms use the same field components and styling
-- **Reduced boilerplate**: No need to wire up onChange/onBlur repeatedly
-- **Centralized validation display**: Error handling lives in one place
-- **Easier testing**: Test field components in isolation
-- **Accessibility**: Add ARIA attributes once in field components
+Field groups work with arrays too:
+
+```tsx
+<form.Field name="accounts" mode="array">
+  {(field) =>
+    field.state.value.map((account, i) => (
+      <PasswordFieldGroup
+        key={i}
+        form={form}
+        fields={`accounts[${i}]`}
+        title={`Account ${i + 1}`}
+      />
+    ))
+  }
+</form.Field>
+```

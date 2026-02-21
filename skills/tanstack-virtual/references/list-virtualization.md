@@ -232,22 +232,23 @@ const virtualizer = useVirtualizer({
 
 ## Virtualizer Options Reference
 
-| Option             | Type                        | Default    | Description                           |
-| ------------------ | --------------------------- | ---------- | ------------------------------------- |
-| `count`            | `number`                    | required   | Total number of items                 |
-| `getScrollElement` | `() => Element \| null`     | required   | Returns the scrollable container      |
-| `estimateSize`     | `(index: number) => number` | required   | Estimated item size in pixels         |
-| `overscan`         | `number`                    | `1`        | Extra items rendered outside viewport |
-| `horizontal`       | `boolean`                   | `false`    | Enable horizontal orientation         |
-| `paddingStart`     | `number`                    | `0`        | Padding before first item             |
-| `paddingEnd`       | `number`                    | `0`        | Padding after last item               |
-| `gap`              | `number`                    | `0`        | Space between items                   |
-| `lanes`            | `number`                    | `1`        | Multi-column lane count               |
-| `enabled`          | `boolean`                   | `true`     | Enable or disable the virtualizer     |
-| `isRtl`            | `boolean`                   | `false`    | Right-to-left layout                  |
-| `getItemKey`       | `(index: number) => Key`    | `(i) => i` | Stable key for each item              |
-| `scrollMargin`     | `number`                    | `0`        | Margin for scroll positioning         |
-| `initialOffset`    | `number`                    | `0`        | Starting scroll position              |
+| Option             | Type                         | Default    | Description                           |
+| ------------------ | ---------------------------- | ---------- | ------------------------------------- |
+| `count`            | `number`                     | required   | Total number of items                 |
+| `getScrollElement` | `() => Element \| null`      | required   | Returns the scrollable container      |
+| `estimateSize`     | `(index: number) => number`  | required   | Estimated item size in pixels         |
+| `overscan`         | `number`                     | `1`        | Extra items rendered outside viewport |
+| `horizontal`       | `boolean`                    | `false`    | Enable horizontal orientation         |
+| `paddingStart`     | `number`                     | `0`        | Padding before first item             |
+| `paddingEnd`       | `number`                     | `0`        | Padding after last item               |
+| `gap`              | `number`                     | `0`        | Space between items                   |
+| `lanes`            | `number`                     | `1`        | Multi-column lane count               |
+| `enabled`          | `boolean`                    | `true`     | Enable or disable the virtualizer     |
+| `isRtl`            | `boolean`                    | `false`    | Right-to-left layout                  |
+| `getItemKey`       | `(index: number) => Key`     | `(i) => i` | Stable key for each item              |
+| `rangeExtractor`   | `(range: Range) => number[]` | built-in   | Customize which indices to render     |
+| `scrollMargin`     | `number`                     | `0`        | Margin for scroll positioning         |
+| `initialOffset`    | `number`                     | `0`        | Starting scroll position              |
 
 ## VirtualItem Properties
 

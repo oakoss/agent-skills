@@ -4,8 +4,8 @@ description: 'TanStack DevTools for debugging Query, Router, and Form state in R
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
-  source: 'https://tanstack.com/query/latest/docs/framework/react/devtools'
+  version: '1.1'
+  source: 'https://tanstack.com/devtools/latest/docs'
 ---
 
 # TanStack DevTools

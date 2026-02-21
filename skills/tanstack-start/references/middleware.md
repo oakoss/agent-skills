@@ -24,24 +24,24 @@ tags:
 
 ```ts
 import { createMiddleware } from '@tanstack/react-start';
+import { getRequest } from '@tanstack/react-start/server';
 
-export const logMiddleware = createMiddleware().server(
-  async ({ next, request }) => {
-    const start = Date.now();
-    const requestId = crypto.randomUUID();
+export const logMiddleware = createMiddleware().server(async ({ next }) => {
+  const start = Date.now();
+  const requestId = crypto.randomUUID();
+  const request = getRequest();
 
-    console.log(`[${requestId}] ${request.method} ${request.url}`);
+  console.log(`[${requestId}] ${request.method} ${request.url}`);
 
-    try {
-      const result = await next({ context: { requestId } });
-      console.log(`[${requestId}] Completed in ${Date.now() - start}ms`);
-      return result;
-    } catch (error) {
-      console.error(`[${requestId}] Error:`, error);
-      throw error;
-    }
-  },
-);
+  try {
+    const result = await next({ context: { requestId } });
+    console.log(`[${requestId}] Completed in ${Date.now() - start}ms`);
+    return result;
+  } catch (error) {
+    console.error(`[${requestId}] Error:`, error);
+    throw error;
+  }
+});
 
 export const authMiddleware = createMiddleware().server(async ({ next }) => {
   const session = await getSession();
@@ -150,11 +150,13 @@ export default createStart({
 ## Rate Limiting Middleware
 
 ```ts
+import { getRequestHeader } from '@tanstack/react-start/server';
+
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
 export const rateLimitMiddleware = createMiddleware().server(
-  async ({ next, request }) => {
-    const ip = request.headers.get('x-forwarded-for') ?? 'unknown';
+  async ({ next }) => {
+    const ip = getRequestHeader('x-forwarded-for') ?? 'unknown';
     const now = Date.now();
     const windowMs = 60 * 1000;
     const maxRequests = 100;

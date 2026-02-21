@@ -39,8 +39,10 @@ function App() {
       <TanStackDevtools
         plugins={[
           {
+            id: 'tanstack-form',
             name: 'TanStack Form',
             render: <ReactFormDevtoolsPanel />,
+            defaultOpen: true,
           },
         ]}
       />
@@ -76,14 +78,18 @@ function App() {
       <TanStackDevtools
         plugins={[
           {
+            id: 'tanstack-query',
             name: 'TanStack Query',
             render: <ReactQueryDevtoolsPanel />,
+            defaultOpen: true,
           },
           {
+            id: 'tanstack-router',
             name: 'TanStack Router',
             render: <TanStackRouterDevtoolsPanel router={router} />,
           },
           {
+            id: 'tanstack-form',
             name: 'TanStack Form',
             render: <ReactFormDevtoolsPanel />,
           },
@@ -200,6 +206,7 @@ export function DevtoolsProvider() {
     <TanStackDevtools
       plugins={[
         {
+          id: 'tanstack-query',
           name: 'TanStack Query',
           render: <ReactQueryDevtoolsPanel />,
         },

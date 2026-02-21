@@ -4,7 +4,7 @@ description: 'TanStack Virtual for virtualizing large lists, grids, and tables. 
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: 'https://tanstack.com/virtual/latest'
 ---
 
@@ -35,22 +35,24 @@ TanStack Virtual is a headless UI utility for virtualizing large lists, grids, a
 | Multi-lane layout   | `lanes: 3`                                                  | Masonry-style column layouts                             |
 | Padding             | `paddingStart: 100, paddingEnd: 100`                        | Space before first and after last item                   |
 | RTL support         | `isRtl: true`                                               | Right-to-left horizontal scrolling                       |
+| Range extractor     | `rangeExtractor: (range) => [...]`                          | Customize rendered indices (sticky headers, footers)     |
 | Disable virtualizer | `enabled: false`                                            | Renders nothing, resets internal state                   |
 | Force remeasure     | `virtualizer.measure()`                                     | Call after external layout changes                       |
 
 ## Common Mistakes
 
-| Mistake                                             | Correct Pattern                                                               |
-| --------------------------------------------------- | ----------------------------------------------------------------------------- |
-| Missing `overflow: auto` on scroll container        | Parent element must have `overflow: auto` and a fixed height/width            |
-| Using `virtualItem.index` as React key              | Use `virtualItem.key` which accounts for dynamic reordering                   |
-| Forgetting `position: relative` on inner container  | The total-size container must be `position: relative`                         |
-| Not setting `data-index` with `measureElement`      | Dynamic measurement requires `data-index={virtualItem.index}` on each element |
-| Setting `estimateSize` too small for dynamic items  | Overestimate to prevent scroll jumping; use largest expected size             |
-| Recreating `getScrollElement` on every render       | Use a ref callback: `() => parentRef.current`                                 |
-| Not using `getTotalSize()` for container dimensions | Inner container height/width must equal `virtualizer.getTotalSize()`          |
-| Absolute positioning without `transform`            | Use `transform: translateY(item.start)` for GPU-accelerated positioning       |
-| Using `contain: strict` without fixed dimensions    | `contain: strict` requires explicit width and height on the scroll container  |
+| Mistake                                             | Correct Pattern                                                                                             |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Missing `overflow: auto` on scroll container        | Parent element must have `overflow: auto` and a fixed height/width                                          |
+| Using `virtualItem.index` as React key              | Use `virtualItem.key` which accounts for dynamic reordering                                                 |
+| Forgetting `position: relative` on inner container  | The total-size container must be `position: relative`                                                       |
+| Not setting `data-index` with `measureElement`      | Dynamic measurement requires `data-index={virtualItem.index}` on each element                               |
+| Setting `estimateSize` too small for dynamic items  | Overestimate to prevent scroll jumping; use largest expected size                                           |
+| Recreating `getScrollElement` on every render       | Use a ref callback: `() => parentRef.current`                                                               |
+| Not using `getTotalSize()` for container dimensions | Inner container height/width must equal `virtualizer.getTotalSize()`                                        |
+| Absolute positioning without `transform`            | Use `transform: translateY(item.start)` for GPU-accelerated positioning                                     |
+| Using `contain: strict` without fixed dimensions    | `contain: strict` requires explicit width and height on the scroll container                                |
+| Using with React Compiler without opting out        | Add `'use no memo'` directive to components using `useVirtualizer` — interior mutability breaks memoization |
 
 ## Delegation
 

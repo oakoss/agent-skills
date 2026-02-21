@@ -4,7 +4,7 @@ description: 'TanStack Store for framework-agnostic reactive state management wi
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: 'https://tanstack.com/store/latest'
 ---
 
@@ -58,7 +58,7 @@ Framework packages re-export the core `Store`, `Derived`, `Effect`, and `batch` 
 | Mount derived        | `derived.mount()`                    | Required to activate dependency tracking           |
 | Derived from derived | Nest `Derived` in another `deps`     | Forms a computation graph                          |
 | Batch updates        | `batch(() => { ... })`               | Subscribers notified once after all updates        |
-| Side effects         | `new Effect({ deps, fn })`           | Runs fn when dependencies change                   |
+| Side effects         | `new Effect({ deps, fn, eager? })`   | Runs fn when dependencies change                   |
 | Mount effect         | `effect.mount()`                     | Required to start listening                        |
 | React binding        | `useStore(store, selector?)`         | Re-renders only when selected value changes        |
 | Shallow compare      | `useStore(store, selector, shallow)` | Prevents re-renders for structurally equal objects |

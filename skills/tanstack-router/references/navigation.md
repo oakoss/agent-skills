@@ -11,6 +11,7 @@ tags:
     useBlocker,
     scroll-restoration,
     useMatchRoute,
+    useCanGoBack,
   ]
 ---
 
@@ -288,6 +289,25 @@ function EditForm() {
   );
 }
 ```
+
+## Check Back Navigation
+
+`useCanGoBack` returns whether the router can go back without exiting the application (experimental):
+
+```tsx
+import { useRouter, useCanGoBack } from '@tanstack/react-router';
+
+function BackButton() {
+  const router = useRouter();
+  const canGoBack = useCanGoBack();
+
+  return canGoBack ? (
+    <button onClick={() => router.history.back()}>Go back</button>
+  ) : null;
+}
+```
+
+Returns `false` when history is at index `0` or after a `reloadDocument` navigation resets the history index.
 
 ## History State
 

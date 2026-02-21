@@ -19,8 +19,6 @@ tags:
 ## Basic Mutation
 
 ```tsx
-const queryClient = useQueryClient();
-
 const mutation = useMutation({
   mutationFn: async (newPost: { title: string; body: string }) => {
     const res = await fetch('/api/posts', {
@@ -30,8 +28,8 @@ const mutation = useMutation({
     if (!res.ok) throw new Error('Failed to create post');
     return res.json();
   },
-  onSuccess: async () => {
-    await queryClient.invalidateQueries({ queryKey: ['posts'] });
+  onSuccess: async (_data, _variables, _onMutateResult, context) => {
+    await context.client.invalidateQueries({ queryKey: ['posts'] });
   },
 });
 
@@ -81,8 +79,8 @@ If component unmounts, `mutate()` callbacks may not fire. Place critical logic (
 ```tsx
 const updatePost = useMutation({
   mutationFn: updatePostFn,
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['posts'] });
+  onSuccess: (_data, _variables, _onMutateResult, context) => {
+    context.client.invalidateQueries({ queryKey: ['posts'] });
   },
 });
 
@@ -101,8 +99,8 @@ Return `invalidateQueries` to maintain loading state during refetch:
 ```tsx
 const mutation = useMutation({
   mutationFn: createPost,
-  onSuccess: () => {
-    return queryClient.invalidateQueries({ queryKey: ['posts'] });
+  onSuccess: (_data, _variables, _onMutateResult, context) => {
+    return context.client.invalidateQueries({ queryKey: ['posts'] });
   },
 });
 ```
@@ -114,24 +112,27 @@ Without `return`, `mutation.isPending` becomes false immediately after the mutat
 ```tsx
 const updatePost = useMutation({
   mutationFn: (data: { id: string; title: string }) => updatePostFn(data),
-  onMutate: async (newData) => {
-    await queryClient.cancelQueries({ queryKey: ['posts', newData.id] });
-    const previousPost = queryClient.getQueryData(['posts', newData.id]);
+  onMutate: async (newData, context) => {
+    await context.client.cancelQueries({ queryKey: ['posts', newData.id] });
+    const previousPost = context.client.getQueryData(['posts', newData.id]);
 
-    queryClient.setQueryData(['posts', newData.id], (old) => ({
+    context.client.setQueryData(['posts', newData.id], (old) => ({
       ...old,
       ...newData,
     }));
 
     return { previousPost };
   },
-  onError: (_error, variables, context) => {
-    if (context?.previousPost) {
-      queryClient.setQueryData(['posts', variables.id], context.previousPost);
+  onError: (_error, variables, onMutateResult, context) => {
+    if (onMutateResult?.previousPost) {
+      context.client.setQueryData(
+        ['posts', variables.id],
+        onMutateResult.previousPost,
+      );
     }
   },
-  onSettled: (_data, _error, variables) => {
-    queryClient.invalidateQueries({ queryKey: ['posts', variables.id] });
+  onSettled: (_data, _error, variables, _onMutateResult, context) => {
+    context.client.invalidateQueries({ queryKey: ['posts', variables.id] });
   },
 });
 ```
@@ -150,8 +151,8 @@ function OptimisticTodoList() {
   const addTodo = useMutation({
     mutationKey: ['addTodo'],
     mutationFn: (newTodo: CreateTodoInput) => api.addTodo(newTodo),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['todos'] });
+    onSettled: (_data, _error, _variables, _onMutateResult, context) => {
+      context.client.invalidateQueries({ queryKey: ['todos'] });
     },
   });
 
@@ -182,18 +183,23 @@ Handle rapid mutations with `isMutating()`:
 ```tsx
 const updateTodo = useMutation({
   mutationFn: updateTodoFn,
-  onMutate: async (newData) => {
-    await queryClient.cancelQueries({ queryKey: ['todos', newData.id] });
-    const previous = queryClient.getQueryData(['todos', newData.id]);
-    queryClient.setQueryData(['todos', newData.id], newData);
+  onMutate: async (newData, context) => {
+    await context.client.cancelQueries({ queryKey: ['todos', newData.id] });
+    const previous = context.client.getQueryData(['todos', newData.id]);
+    context.client.setQueryData(['todos', newData.id], newData);
     return { previous };
   },
-  onError: (_error, variables, context) => {
-    queryClient.setQueryData(['todos', variables.id], context?.previous);
+  onError: (_error, variables, onMutateResult, context) => {
+    context.client.setQueryData(
+      ['todos', variables.id],
+      onMutateResult?.previous,
+    );
   },
-  onSettled: (_data, _error, variables) => {
-    if (queryClient.isMutating({ mutationKey: ['todos'] }) === 1) {
-      queryClient.invalidateQueries({ queryKey: ['todos', variables.id] });
+  onSettled: (_data, _error, variables, _onMutateResult, context) => {
+    if (context.client.isMutating({ mutationKey: ['todos'] }) === 1) {
+      context.client.invalidateQueries({
+        queryKey: ['todos', variables.id],
+      });
     }
   },
 });

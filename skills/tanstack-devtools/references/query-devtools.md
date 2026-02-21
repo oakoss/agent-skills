@@ -145,6 +145,7 @@ import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
 <TanStackDevtools
   plugins={[
     {
+      id: 'tanstack-query',
       name: 'TanStack Query',
       render: <ReactQueryDevtoolsPanel />,
     },

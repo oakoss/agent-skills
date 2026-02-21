@@ -7,7 +7,7 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: 'https://tanstack.com/form/latest/docs'
 ---
 
@@ -20,6 +20,8 @@ TanStack Form is a **headless form state manager**, not a UI component library. 
 **When to use:** Complex multi-step forms, reusable form patterns, dynamic field arrays, cross-field validation, async server validation, forms requiring fine-grained performance optimization.
 
 **When NOT to use:** Simple forms with native HTML validation (use plain form elements), server-only validation (use Server Actions), purely static forms with no validation.
+
+**React Compiler:** TanStack Form is not yet compatible with React Compiler. Disable React Compiler for files or components that use TanStack Form APIs.
 
 ## Quick Reference
 
@@ -36,6 +38,8 @@ TanStack Form is a **headless form state manager**, not a UI component library. 
 | Array fields          | `mode="array"`, `pushValue`, `removeValue`           | Dynamic lists with helpers                    |
 | Standard Schema       | Pass Zod/Valibot/ArkType/Yup schema directly         | Native support, no adapter needed             |
 | Form composition      | `createFormHook({ fieldComponents })`                | Reusable fields with context                  |
+| Break up large forms  | `withForm({ defaultValues, render })`                | HOC for form sections with type safety        |
+| Reusable field groups | `withFieldGroup({ defaultValues, render })`          | Grouped fields with shared validation logic   |
 | Subscribe to state    | `form.Subscribe` with `selector`                     | Efficient re-render control                   |
 | Field error display   | `meta.isTouched && meta.errors.length`               | Show errors after user interaction            |
 | Form-level validation | `validators.onSubmit` returning `{ fields }`         | Set errors on specific fields from form level |

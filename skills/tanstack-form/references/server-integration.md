@@ -1,6 +1,6 @@
 ---
 title: Server Integration
-description: Form submission with server functions, mutation cache coordination, optimistic updates, Zod validation, and error handling
+description: Form submission with server functions, mutation cache coordination, optimistic updates, Standard Schema validation, and error handling
 tags:
   [
     form,
@@ -23,7 +23,6 @@ tags:
 
 ```tsx
 import { useForm } from '@tanstack/react-form';
-import { zodValidator } from '@tanstack/zod-form-adapter';
 import { z } from 'zod';
 
 const userSchema = z.object({
@@ -40,7 +39,6 @@ function UserForm() {
     onSubmit: async ({ value }) => {
       await api.createUser(value);
     },
-    validatorAdapter: zodValidator(),
   });
 
   return (
@@ -87,7 +85,6 @@ function UserForm() {
 ```tsx
 const form = useForm({
   defaultValues: { password: '', confirmPassword: '' },
-  validatorAdapter: zodValidator(),
   validators: {
     onChange: z
       .object({

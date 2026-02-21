@@ -169,7 +169,7 @@ function renderWithProviders(route: string) {
 
 ```ts
 // vite.config.ts
-import { tanstackStart } from '@tanstack/start/plugin/vite';
+import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 

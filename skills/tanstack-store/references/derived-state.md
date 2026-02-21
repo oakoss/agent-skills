@@ -205,6 +205,32 @@ unmount();
 
 Effects are useful for synchronizing store state with external systems (DOM, localStorage, analytics).
 
+## Eager Effects
+
+By default, an Effect waits for the first dependency change before running. Set `eager: true` to run the effect immediately when mounted.
+
+```ts
+import { Store, Effect } from '@tanstack/store';
+
+const count = new Store(0);
+
+const effect = new Effect({
+  deps: [count],
+  fn: () => {
+    console.log('Count:', count.state);
+  },
+  eager: true,
+});
+
+const unmount = effect.mount();
+// logs immediately: "Count: 0"
+
+count.setState(() => 1);
+// logs: "Count: 1"
+
+unmount();
+```
+
 ## Effect with Multiple Dependencies
 
 ```ts

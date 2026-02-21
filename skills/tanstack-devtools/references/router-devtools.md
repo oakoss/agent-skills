@@ -164,6 +164,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 <TanStackDevtools
   plugins={[
     {
+      id: 'tanstack-router',
       name: 'TanStack Router',
       render: <TanStackRouterDevtoolsPanel router={router} />,
     },

@@ -4,7 +4,7 @@ description: 'Type-safe, file-based React routing with route loaders, search par
 license: MIT
 metadata:
   author: oakoss
-  version: '1.1'
+  version: '1.2'
   source: 'https://tanstack.com/router/latest/docs'
 ---
 
@@ -16,30 +16,32 @@ Type-safe, file-based routing for React with route-level data loading, search pa
 
 ## Quick Reference
 
-| Pattern                           | Usage                           |
-| --------------------------------- | ------------------------------- |
-| `createFileRoute('/path')`        | Define file-based route         |
-| `createRootRouteWithContext<T>()` | Root route with typed context   |
-| `createLazyFileRoute('/path')`    | Code-split route component      |
-| `zodValidator(schema)`            | Search params validation        |
-| `Route.useLoaderData()`           | Access loader data in component |
-| `Route.useParams()`               | Type-safe route params          |
-| `Route.useSearch()`               | Type-safe search params         |
-| `useNavigate()`                   | Programmatic navigation         |
-| `useBlocker()`                    | Block navigation (dirty forms)  |
-| `notFound()`                      | Throw 404 from loader           |
-| `getRouteApi('/path')`            | Type-safe hooks in split files  |
-| `stripSearchParams(defaults)`     | Clean default values from URLs  |
-| `retainSearchParams(['key'])`     | Preserve params across navs     |
+| Pattern                           | Usage                                   |
+| --------------------------------- | --------------------------------------- |
+| `createFileRoute('/path')`        | Define file-based route                 |
+| `createRootRouteWithContext<T>()` | Root route with typed context           |
+| `createLazyFileRoute('/path')`    | Code-split route component              |
+| `zodValidator(schema)`            | Search params validation                |
+| `Route.useLoaderData()`           | Access loader data in component         |
+| `Route.useParams()`               | Type-safe route params                  |
+| `Route.useSearch()`               | Type-safe search params                 |
+| `useNavigate()`                   | Programmatic navigation                 |
+| `useBlocker()`                    | Block navigation (dirty forms)          |
+| `notFound()`                      | Throw 404 from loader                   |
+| `getRouteApi('/path')`            | Type-safe hooks in split files          |
+| `stripSearchParams(defaults)`     | Clean default values from URLs          |
+| `retainSearchParams(['key'])`     | Preserve params across navs             |
+| `useAwaited({ promise })`         | Suspend until deferred promise resolves |
+| `useCanGoBack()`                  | Check if router can go back safely      |
 
 ## Data Loading
 
-| Method            | Returns | Throws | Use Case                    |
-| ----------------- | ------- | ------ | --------------------------- |
-| `ensureQueryData` | Data    | Yes    | Route loaders (recommended) |
-| `prefetchQuery`   | void    | No     | Background prefetching      |
-| `fetchQuery`      | Data    | Yes    | Immediate data need         |
-| `defer()`         | Promise | No     | Stream non-critical data    |
+| Method               | Returns | Throws | Use Case                                         |
+| -------------------- | ------- | ------ | ------------------------------------------------ |
+| `ensureQueryData`    | Data    | Yes    | Route loaders (recommended)                      |
+| `prefetchQuery`      | void    | No     | Background prefetching                           |
+| `fetchQuery`         | Data    | Yes    | Immediate data need                              |
+| `defer()` (optional) | Promise | No     | Stream non-critical data (promises auto-handled) |
 
 ## Preloading
 

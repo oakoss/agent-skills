@@ -64,10 +64,13 @@ export const Route = createFileRoute('/posts/$postId')({
 ## Authenticated Server Functions
 
 ```ts
+import { getRequestHeader } from '@tanstack/react-start/server';
+
 const deletePost = createServerFn({ method: 'POST' })
   .inputValidator(z.object({ id: z.string() }))
-  .handler(async ({ data, request }) => {
-    const session = await getSession({ headers: request.headers });
+  .handler(async ({ data }) => {
+    const authHeader = getRequestHeader('Authorization');
+    const session = await getSession(authHeader);
 
     if (!session) {
       return { error: 'Authentication required', code: 'AUTH_REQUIRED' };
@@ -87,31 +90,36 @@ const deletePost = createServerFn({ method: 'POST' })
 ## Request Context
 
 ```ts
-const serverFn = createServerFn({ method: 'POST' }).handler(
-  async ({ request }) => {
-    const authHeader = request.headers.get('Authorization');
-    const url = new URL(request.url);
-    const session = await getSession({ headers: request.headers });
-  },
-);
+import { getRequest, getRequestHeader } from '@tanstack/react-start/server';
+
+const serverFn = createServerFn({ method: 'POST' }).handler(async () => {
+  const request = getRequest();
+  const authHeader = getRequestHeader('Authorization');
+  const url = new URL(request.url);
+});
 ```
 
 ## Response Headers and Cookies
 
 ```ts
+import {
+  getRequestHeader,
+  setResponseHeaders,
+} from '@tanstack/react-start/server';
+
 const setTheme = createServerFn({ method: 'POST' })
   .inputValidator(z.object({ theme: z.enum(['light', 'dark']) }))
   .handler(async ({ data }) => {
-    return new Response(JSON.stringify({ success: true }), {
-      headers: {
+    setResponseHeaders(
+      new Headers({
         'Set-Cookie': `theme=${data.theme}; Path=/; HttpOnly; SameSite=Lax`,
-        'Content-Type': 'application/json',
-      },
-    });
+      }),
+    );
+    return { success: true };
   });
 
-const getTheme = createServerFn().handler(async ({ request }) => {
-  const cookies = request.headers.get('cookie') || '';
+const getTheme = createServerFn().handler(async () => {
+  const cookies = getRequestHeader('cookie') ?? '';
   const theme = cookies.match(/theme=(\w+)/)?.[1] || 'light';
   return { theme };
 });
@@ -220,29 +228,30 @@ function CreatePostButton() {
 ## File Uploads
 
 ```ts
-const uploadFile = createServerFn({ method: 'POST' }).handler(
-  async ({ request }) => {
-    const formData = await request.formData();
-    const file = formData.get('file') as File;
+import { getRequest } from '@tanstack/react-start/server';
 
-    if (!file) throw new AppError('No file provided', 'VALIDATION_ERROR');
+const uploadFile = createServerFn({ method: 'POST' }).handler(async () => {
+  const request = getRequest();
+  const formData = await request.formData();
+  const file = formData.get('file') as File;
 
-    const maxSize = 5 * 1024 * 1024;
-    if (file.size > maxSize)
-      throw new AppError('File too large', 'VALIDATION_ERROR');
+  if (!file) throw new AppError('No file provided', 'VALIDATION_ERROR');
 
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
-      throw new AppError('Invalid file type', 'VALIDATION_ERROR');
-    }
+  const maxSize = 5 * 1024 * 1024;
+  if (file.size > maxSize)
+    throw new AppError('File too large', 'VALIDATION_ERROR');
 
-    const buffer = await file.arrayBuffer();
-    const filename = `${Date.now()}-${file.name}`;
-    await writeFile(`./uploads/${filename}`, Buffer.from(buffer));
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  if (!allowedTypes.includes(file.type)) {
+    throw new AppError('Invalid file type', 'VALIDATION_ERROR');
+  }
 
-    return { filename, size: file.size };
-  },
-);
+  const buffer = await file.arrayBuffer();
+  const filename = `${Date.now()}-${file.name}`;
+  await writeFile(`./uploads/${filename}`, Buffer.from(buffer));
+
+  return { filename, size: file.size };
+});
 ```
 
 ## Streaming Responses

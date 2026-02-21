@@ -11,6 +11,9 @@ tags:
     useQueuer,
     useDebouncedCallback,
     useAsyncQueuer,
+    useAsyncDebouncedCallback,
+    useAsyncThrottledCallback,
+    canLeadingExecute,
   ]
 ---
 
@@ -243,17 +246,20 @@ function NotificationQueue() {
 
 ### useQueuedState
 
-Combines queue with React state management:
+Combines queue with React state management. Takes a processing function, queue options, and an optional selector. Returns a tuple of `[items, addItem, queuerInstance]`:
 
 ```tsx
 import { useQueuedState } from '@tanstack/react-pacer';
 
 function TaskProcessor() {
-  const [tasks, setTasks] = useQueuedState<string>({ wait: 500 });
+  const [tasks, addTask] = useQueuedState<string>(
+    (task) => console.log('Processing:', task),
+    { wait: 500 },
+  );
 
   return (
     <div>
-      <button onClick={() => setTasks('new-task')}>Add Task</button>
+      <button onClick={() => addTask('new-task')}>Add Task</button>
       <ul>
         {tasks.map((task, i) => (
           <li key={i}>{task}</li>
@@ -307,6 +313,57 @@ function FileUploader() {
 }
 ```
 
+## Async Callback Hooks
+
+### useAsyncDebouncedCallback
+
+Returns a stable debounced function for async operations. Simpler than `useAsyncDebouncer` but does not expose the underlying instance for manual cancellation or state access:
+
+```tsx
+import { useAsyncDebouncedCallback } from '@tanstack/react-pacer';
+
+function EmailValidator() {
+  const [result, setResult] = useState<string | null>(null);
+
+  const validateEmail = useAsyncDebouncedCallback(
+    async (email: string) => {
+      const res = await fetch(`/api/validate-email?email=${email}`);
+      const data = await res.json();
+      setResult(data.isValid ? 'Valid' : 'Invalid');
+    },
+    { wait: 750 },
+  );
+
+  return <input type="email" onChange={(e) => validateEmail(e.target.value)} />;
+}
+```
+
+### useAsyncThrottledCallback
+
+Returns a stable throttled function for async operations:
+
+```tsx
+import { useAsyncThrottledCallback } from '@tanstack/react-pacer';
+
+function AutoSave({ content }: { content: string }) {
+  const saveContent = useAsyncThrottledCallback(
+    async (text: string) => {
+      await fetch('/api/save', {
+        method: 'POST',
+        body: JSON.stringify({ content: text }),
+      });
+    },
+    { wait: 5000 },
+  );
+
+  useEffect(() => {
+    saveContent(content);
+  }, [content, saveContent]);
+
+  return null;
+}
+```
+
 ## Async Variants
 
 All instance-level hooks have async counterparts:
@@ -321,6 +378,14 @@ All instance-level hooks have async counterparts:
 
 Async hooks add `onSuccess` and `onError` callbacks and return Promises from `maybeExecute`.
 
+Callback-level async hooks:
+
+| Sync Hook                | Async Hook                    |
+| ------------------------ | ----------------------------- |
+| `useDebouncedCallback`   | `useAsyncDebouncedCallback`   |
+| `useThrottledCallback`   | `useAsyncThrottledCallback`   |
+| `useRateLimitedCallback` | `useAsyncRateLimitedCallback` |
+
 ## Selector Pattern
 
 All instance hooks accept an optional third argument: a selector function that controls which state changes trigger re-renders:
@@ -329,13 +394,36 @@ All instance hooks accept an optional third argument: a selector function that c
 const debouncer = useDebouncer(fn, { wait: 500 }, (state) => ({
   isPending: state.isPending,
   executionCount: state.executionCount,
+  canLeadingExecute: state.canLeadingExecute,
 }));
 
 debouncer.state.isPending;
 debouncer.state.executionCount;
+debouncer.state.canLeadingExecute;
 ```
 
 Without a selector, no reactive state subscriptions are made, and the hook does not trigger re-renders on state changes.
+
+### canLeadingExecute
+
+The `canLeadingExecute` state property is available on debouncer, throttler, and their async variants. It indicates whether the next call to `maybeExecute` would trigger a leading-edge execution:
+
+```tsx
+const debouncer = useDebouncer(
+  (query: string) => fetchResults(query),
+  { wait: 500 },
+  (state) => ({ canLeadingExecute: state.canLeadingExecute }),
+);
+
+return (
+  <button
+    disabled={!debouncer.state.canLeadingExecute}
+    onClick={() => debouncer.maybeExecute('search')}
+  >
+    Search
+  </button>
+);
+```
 
 ## Cleanup
 

@@ -123,14 +123,24 @@ Errored queries with no data are always treated as stale (intentional to avoid p
 **Source**: [GitHub Issue #9660](https://github.com/TanStack/query/issues/9660)
 **Affects**: v5.89.0+
 
-`onMutateResult` parameter added between `variables` and `context`, changing callback signatures from 3 to 4 params.
+`onMutateResult` parameter added between `variables` and `context`, and `context` now includes `client` (the `QueryClient` instance). This eliminates the need to close over `useQueryClient()` in callbacks.
 
 ```tsx
-// v5.89.0+ signature
 useMutation({
   mutationFn: addTodo,
-  onError: (error, variables, onMutateResult, context) => { ... },
-  onSuccess: (data, variables, onMutateResult, context) => { ... },
+  onMutate: (variables, context) => {
+    context.client.cancelQueries({ queryKey: ['todos'] });
+    return { previousTodos: context.client.getQueryData(['todos']) };
+  },
+  onError: (error, variables, onMutateResult, context) => {
+    context.client.setQueryData(['todos'], onMutateResult?.previousTodos);
+  },
+  onSuccess: (data, variables, onMutateResult, context) => {
+    context.client.invalidateQueries({ queryKey: ['todos'] });
+  },
+  onSettled: (data, error, variables, onMutateResult, context) => {
+    context.client.invalidateQueries({ queryKey: ['todos'] });
+  },
 });
 ```
 

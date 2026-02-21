@@ -19,6 +19,25 @@ tags:
 
 Live queries run reactively against collections. They automatically update when underlying data changes, powered by differential dataflow for sub-millisecond performance.
 
+Framework adapters: `@tanstack/react-db`, `@tanstack/vue-db`, `@tanstack/svelte-db` (Svelte 5 runes required).
+
+## Return Shape
+
+`useLiveQuery` returns an object with reactive state:
+
+| Property      | Type                 | Description                                         |
+| ------------- | -------------------- | --------------------------------------------------- |
+| `data`        | `TResult[]`          | The query results array                             |
+| `isLoading`   | `boolean`            | `true` while the collection is loading              |
+| `isReady`     | `boolean`            | `true` after data has successfully loaded           |
+| `isError`     | `boolean`            | `true` if an error occurred                         |
+| `isIdle`      | `boolean`            | `true` when not loading or errored                  |
+| `isCleanedUp` | `boolean`            | `true` if the collection has been cleaned up        |
+| `isEnabled`   | `boolean`            | `true` when the live query is enabled               |
+| `status`      | `CollectionStatus`   | Current status: `'loading'`, `'success'`, `'error'` |
+| `state`       | `Map<TKey, TResult>` | Map of the current collection state by key          |
+| `collection`  | `Collection`         | The underlying live query collection instance       |
+
 ## Basic Live Query (React)
 
 ```tsx
@@ -26,12 +45,20 @@ import { useLiveQuery } from '@tanstack/react-db';
 import { eq } from '@tanstack/db';
 
 function Todos() {
-  const { data: todos } = useLiveQuery((q) =>
+  const {
+    data: todos,
+    isLoading,
+    isError,
+    status,
+  } = useLiveQuery((q) =>
     q
       .from({ todo: todoCollection })
       .where(({ todo }) => eq(todo.completed, false))
       .orderBy(({ todo }) => todo.createdAt, 'desc'),
   );
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error: {status}</div>;
 
   return (
     <ul>
@@ -223,6 +250,68 @@ const activeTodos = createLiveQueryCollection((q) =>
     .from({ todos: todoCollection })
     .where(({ todos }) => eq(todos.completed, false)),
 );
+```
+
+## Dependency Arrays
+
+`useLiveQuery` accepts an optional dependency array as a second argument. When any dependency changes, the query re-executes.
+
+### React
+
+```tsx
+import { useLiveQuery } from '@tanstack/react-db';
+import { gt } from '@tanstack/db';
+
+function FilteredTodos({ minPriority }: { minPriority: number }) {
+  const { data: todos } = useLiveQuery(
+    (q) =>
+      q
+        .from({ todo: todoCollection })
+        .where(({ todo }) => gt(todo.priority, minPriority)),
+    [minPriority],
+  );
+
+  return (
+    <ul>
+      {todos.map((todo) => (
+        <li key={todo.id}>{todo.text}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+### Svelte
+
+In Svelte, dependencies are wrapped in getter functions. Avoid destructuring the return value directly as it breaks reactivity -- use dot notation or `$derived`:
+
+```svelte
+<script>
+  import { useLiveQuery } from '@tanstack/svelte-db'
+  import { eq, and } from '@tanstack/db'
+
+  let userId = $state(1)
+  let status = $state('active')
+
+  const query = useLiveQuery(
+    (q) => q.from({ todos: todosCollection })
+           .where(({ todos }) => and(
+             eq(todos.userId, userId),
+             eq(todos.status, status)
+           )),
+    [() => userId, () => status]
+  )
+</script>
+
+{#if query.isLoading}
+  <div>Loading...</div>
+{:else}
+  <ul>
+    {#each query.data as todo (todo.id)}
+      <li>{todo.text}</li>
+    {/each}
+  </ul>
+{/if}
 ```
 
 ## Query Method Chain

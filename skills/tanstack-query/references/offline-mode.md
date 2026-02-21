@@ -77,16 +77,18 @@ Persist mutations across page reloads so they resume when the app restarts:
 ```tsx
 queryClient.setMutationDefaults(['addTodo'], {
   mutationFn: addTodo,
-  onMutate: async (variables) => {
-    const queryClient = useQueryClient();
-    await queryClient.cancelQueries({ queryKey: ['todos'] });
-    const previous = queryClient.getQueryData(['todos']);
-    queryClient.setQueryData(['todos'], (old: Todo[]) => [...old, variables]);
+  onMutate: async (variables, context) => {
+    await context.client.cancelQueries({ queryKey: ['todos'] });
+    const previous = context.client.getQueryData(['todos']);
+    context.client.setQueryData(['todos'], (old: Todo[]) => [
+      ...old,
+      variables,
+    ]);
     return { previous };
   },
-  onError: (_error, _variables, context) => {
-    if (context?.previous) {
-      queryClient.setQueryData(['todos'], context.previous);
+  onError: (_error, _variables, onMutateResult, context) => {
+    if (onMutateResult?.previous) {
+      context.client.setQueryData(['todos'], onMutateResult.previous);
     }
   },
   retry: 3,
