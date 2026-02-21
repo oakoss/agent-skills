@@ -1,10 +1,10 @@
 ---
 name: application-security
-description: 'Comprehensive application security covering threat modeling (STRIDE), OWASP Top 10 (2025), secure coding review, authentication/authorization patterns, input validation, encryption, security headers, supply chain security, compliance (GDPR/HIPAA/SOC2/PCI-DSS), and security monitoring. Use when reviewing code for vulnerabilities, implementing auth patterns, configuring security headers, hardening supply chain, or preparing for compliance audits.'
+description: 'Comprehensive application security covering threat modeling (STRIDE), OWASP Top 10 (2025), OWASP API Security Top 10 (2023), secure coding review, authentication/authorization patterns, input validation, encryption, security headers, supply chain security, compliance (GDPR/HIPAA/SOC2/PCI-DSS), and security monitoring. Use when reviewing code for vulnerabilities, implementing auth patterns, securing APIs, configuring security headers, hardening supply chain, preventing injection attacks, or preparing for compliance audits.'
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Security
@@ -117,7 +117,8 @@ Security is built-in, not bolted-on. Every feature, endpoint, and data flow must
 
 - [Threat Modeling](references/threat-modeling.md) — STRIDE methodology, risk assessment process, trust boundaries
 - [Authentication and Authorization](references/auth.md) — JWT, session-based, OAuth, RBAC, ABAC, IDOR protection
-- [Input Validation](references/input-validation.md) — SQL injection, XSS, Zod schema validation, file upload security
+- [API Security](references/api-security.md) — OWASP API Security Top 10, object-level authorization, rate limiting, SSRF prevention, security testing
+- [Input Validation](references/input-validation.md) — SQL injection, XSS, command injection, path traversal, Zod validation, file upload security
 - [Data Protection](references/data-protection.md) — Password hashing (argon2id/bcrypt), AES-256-GCM encryption, secrets management
 - [Secure Configuration](references/secure-config.md) — Security headers, CORS, Express hardening, rate limiting
 - [Supply Chain Security](references/supply-chain.md) — SBOM generation, dependency scanning, CI/CD hardening, artifact signing

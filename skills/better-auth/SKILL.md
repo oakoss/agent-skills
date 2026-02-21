@@ -3,11 +3,11 @@ name: better-auth
 description: |
   Self-hosted TypeScript auth framework with social auth, 2FA, passkeys, organizations, RBAC, and 15+ plugins. Supports Drizzle/Prisma/Kysely adapters. Self-hosted alternative to Clerk/Auth.js.
 
-  Use when: configuring auth, adding plugins, social OAuth, multi-tenant SaaS, session management, rate limiting, Expo/mobile, D1 adapter errors, TanStack Start integration, additionalFields bugs, admin plugin, migrating from NextAuth, migrating from Clerk, migrating from Supabase Auth, or troubleshooting auth issues.
+  Use when: configuring auth, adding plugins, social OAuth, multi-tenant SaaS, organizations with teams and RBAC, two-factor authentication (TOTP/OTP/backup codes), email verification, password reset flows, session management, rate limiting, CSRF and cookie security, Expo/mobile, D1 adapter errors, TanStack Start integration, additionalFields bugs, admin plugin, migrating from NextAuth, migrating from Clerk, migrating from Supabase Auth, or troubleshooting auth issues.
 license: MIT
 metadata:
   author: oakoss
-  version: '1.1'
+  version: '1.2'
 ---
 
 # better-auth
@@ -72,6 +72,16 @@ Only define `baseURL`/`secret` in config if env vars are NOT set. CLI looks for 
 | JWT               | Standard JWT            | Interoperable     |
 | JWE               | A256CBC-HS512 encrypted | Most secure       |
 
+## Getting Started
+
+For new projects or first-time Better Auth setup, use the official interactive setup skill:
+
+```bash
+npx skills add better-auth/skills -s create-auth-skill
+```
+
+This walks through framework detection, database selection, auth method choices, plugin setup, and generates the initial configuration.
+
 ## Anti-Patterns
 
 | Anti-Pattern                             | Correct Approach                                                               |
@@ -126,7 +136,10 @@ When working on auth, delegate to:
 - [Database Adapters](references/database-adapters.md) — Drizzle, Kysely, Prisma adapters, Cloudflare Workers factory pattern
 - [Session Management](references/sessions.md) — Cookie cache, stateless sessions, storage priority, freshAge constraints
 - [Plugins and Social Auth](references/plugins.md) — Plugin setup, OAuth 2.1 provider, admin RBAC, social provider scopes
-- [Configuration](references/configuration.md) — User/account config, email flows, rate limiting, database hooks, endpoint hooks, security options
+- [Email and Password](references/email-password.md) — Verification, password reset, timing attack prevention, hashing (scrypt, argon2), token security
+- [Two-Factor Authentication](references/two-factor.md) — TOTP, email/SMS OTP, backup codes, trusted devices, 2FA session flow
+- [Organizations](references/organizations.md) — Multi-tenant orgs, teams, invitations, RBAC, dynamic access control, lifecycle hooks
+- [Configuration](references/configuration.md) — User/account config, rate limiting, hooks, CSRF, trusted origins, cookie/OAuth security, production checklist
 - [Framework Integration](references/frameworks.md) — TanStack Start setup, Expo/React Native, client imports, type safety
 - [Migration Guides](references/migration-guides.md) — Migrate from NextAuth/Auth.js, Clerk, or Supabase Auth with schema mappings and session strategies
 - [Troubleshooting](references/troubleshooting.md) — D1 consistency, CORS, OAuth redirect, admin 403, nanostore refresh, known bugs
