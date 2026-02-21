@@ -7,7 +7,7 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: https://code.claude.com/docs/en/sub-agents
 ---
 
@@ -21,13 +21,16 @@ Key constraint: subagents cannot spawn other subagents. Multi-step orchestration
 
 ## Quick Reference
 
-| Pattern                 | Description                                     | When to Use                                  |
-| ----------------------- | ----------------------------------------------- | -------------------------------------------- |
-| Fungible swarm          | Identical agents pick tasks from a shared board | Large-scale software dev, resilient systems  |
-| Sequential pipeline     | Each agent builds on previous output            | Multi-step workflows with clear dependencies |
-| Hierarchical            | Manager decomposes, workers execute in parallel | Complex tasks with independent subtasks      |
-| Peer collaboration      | Agents iterate until consensus                  | Code review, quality-critical outputs        |
-| Orchestrator delegation | Main conversation chains subagents              | Multi-phase workflows, parallel specialists  |
+| Pattern                   | Description                                       | When to Use                                  |
+| ------------------------- | ------------------------------------------------- | -------------------------------------------- |
+| Fungible swarm            | Identical agents pick tasks from a shared board   | Large-scale software dev, resilient systems  |
+| Sequential pipeline       | Each agent builds on previous output              | Multi-step workflows with clear dependencies |
+| Hierarchical              | Manager decomposes, workers execute in parallel   | Complex tasks with independent subtasks      |
+| Peer collaboration        | Agents iterate until consensus                    | Code review, quality-critical outputs        |
+| Orchestrator delegation   | Main conversation chains subagents                | Multi-phase workflows, parallel specialists  |
+| Two-stage review          | Spec compliance check, then code quality check    | High-stakes code, complex requirements       |
+| Question-first delegation | Agent asks clarifying questions before proceeding | Ambiguous tasks, expensive-to-redo work      |
+| Review loop enforcement   | Fix-review cycle with max iteration escalation    | Any review workflow needing convergence      |
 
 | Built-in Subagent | Model    | Tools     | Purpose                                           |
 | ----------------- | -------- | --------- | ------------------------------------------------- |

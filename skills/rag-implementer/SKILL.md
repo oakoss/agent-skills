@@ -1,10 +1,10 @@
 ---
 name: rag-implementer
-description: 'Implements retrieval-augmented generation pipelines. Use when building document retrieval systems, choosing chunking strategies, selecting embedding models, configuring vector stores, implementing hybrid search, or evaluating RAG quality. Use for embedding strategy, vector stores, retrieval pipelines, chunking, hybrid search, re-ranking, and evaluation. For KB architecture selection and governance, use the knowledge-base-manager skill. For knowledge graphs, use the knowledge-graph-builder skill.'
+description: 'Implements retrieval-augmented generation pipelines. Use when building document retrieval systems, choosing chunking strategies, selecting embedding models, configuring vector stores, implementing hybrid search, or evaluating RAG quality. Use for embedding strategy, vector stores, retrieval pipelines, chunking, hybrid search, re-ranking, multi-query retrieval, parent document retrieval, contextual compression, MMR diversity selection, reciprocal rank fusion, and evaluation. For KB architecture selection and governance, use the knowledge-base-manager skill. For knowledge graphs, use the knowledge-graph-builder skill.'
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.2'
   source: https://docs.anthropic.com/en/docs/build-with-claude/retrieval-augmented-generation
 ---
 

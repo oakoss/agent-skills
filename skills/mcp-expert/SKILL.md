@@ -4,7 +4,7 @@ description: 'Architects and orchestrates Model Context Protocol (MCP) ecosystem
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: https://modelcontextprotocol.io
 ---
 
@@ -20,25 +20,30 @@ Definitive resource for building and managing Model Context Protocol ecosystems.
 
 ## Quick Reference
 
-| Pattern                | API/Approach                             | Key Points                                       |
-| ---------------------- | ---------------------------------------- | ------------------------------------------------ |
-| Outcome-oriented tools | Single-call operations                   | Avoid chatty multi-step APIs                     |
-| Argument flattening    | Flat Zod schemas with descriptions       | Reduce model hallucination                       |
-| Progressive disclosure | Return `mcp://` URIs for large data      | Agent reads partially via `resources/read`       |
-| Retryable tools        | Return `retry_with` suggestions          | Help LLM self-correct on bad inputs              |
-| Helpful errors         | Descriptive strings with fix guidance    | Never return raw exceptions or stack traces      |
-| Pagination             | `has_more` + `next_cursor` metadata      | 20-50 records per call maximum                   |
-| Structured outputs     | JSON Schema in `outputSchema`            | Typed tool results for programmatic consumption  |
-| Stdio transport        | Local tools, stderr-only logging         | Never write to stdout except JSON-RPC            |
-| Streamable HTTP        | Remote/cloud tools, single endpoint      | Replaces deprecated SSE transport                |
-| OAuth 2.1 with PKCE    | Enterprise data access                   | MCP server is resource server, not auth server   |
-| Elicitation            | Server-initiated user input              | Flat schema maps to forms, three response states |
-| Async tasks            | `tasks/get`, `tasks/cancel`              | Long-running operations return task handles      |
-| Capability scopes      | `read:docs`, `write:code`, `admin:users` | Granular permission boundaries                   |
-| HITL gate              | `confirmation_required` flag             | Manual approval for destructive actions          |
-| URL elicitation        | Secure credential collection             | Redirects user to browser for sensitive input    |
-| Extensions             | Namespaced capability negotiation        | Optional features without forking the spec       |
-| Sampling with tools    | Server-initiated LLM requests            | Enables server-side agent loops                  |
+| Pattern                | API/Approach                             | Key Points                                        |
+| ---------------------- | ---------------------------------------- | ------------------------------------------------- |
+| Outcome-oriented tools | Single-call operations                   | Avoid chatty multi-step APIs                      |
+| Argument flattening    | Flat Zod schemas with descriptions       | Reduce model hallucination                        |
+| Progressive disclosure | Return `mcp://` URIs for large data      | Agent reads partially via `resources/read`        |
+| Retryable tools        | Return `retry_with` suggestions          | Help LLM self-correct on bad inputs               |
+| Helpful errors         | Descriptive strings with fix guidance    | Never return raw exceptions or stack traces       |
+| Pagination             | `has_more` + `next_cursor` metadata      | 20-50 records per call maximum                    |
+| Structured outputs     | JSON Schema in `outputSchema`            | Typed tool results for programmatic consumption   |
+| Stdio transport        | Local tools, stderr-only logging         | Never write to stdout except JSON-RPC             |
+| Streamable HTTP        | Remote/cloud tools, single endpoint      | Replaces deprecated SSE transport                 |
+| OAuth 2.1 with PKCE    | Enterprise data access                   | MCP server is resource server, not auth server    |
+| Elicitation            | Server-initiated user input              | Flat schema maps to forms, three response states  |
+| Async tasks            | `tasks/get`, `tasks/cancel`              | Long-running operations return task handles       |
+| Capability scopes      | `read:docs`, `write:code`, `admin:users` | Granular permission boundaries                    |
+| HITL gate              | `confirmation_required` flag             | Manual approval for destructive actions           |
+| URL elicitation        | Secure credential collection             | Redirects user to browser for sensitive input     |
+| Extensions             | Namespaced capability negotiation        | Optional features without forking the spec        |
+| Sampling with tools    | Server-initiated LLM requests            | Enables server-side agent loops                   |
+| MCP Inspector          | `npx @modelcontextprotocol/inspector`    | Test tools interactively without an LLM           |
+| Unit testing           | InMemoryTransport + Vitest               | Test tool handlers with mock client               |
+| Evaluation framework   | Schema, error, pagination assertions     | Validate tool quality for LLM consumption         |
+| Tool contract testing  | Schema field descriptions, edge cases    | Every field described, optional params handled    |
+| CI smoke tests         | GitHub Actions + Inspector CLI           | Automated build, test, and transport health check |
 
 ## Spec Versions
 
@@ -104,4 +109,5 @@ Clients should support Stdio whenever possible. Streamable HTTP supports both st
 - [Server development, tool design, argument flattening, pagination, and error handling](references/server-development.md)
 - [Transport configuration: Stdio, Streamable HTTP, and migration from SSE](references/transports.md)
 - [Security, OAuth 2.1 integration, elicitation, capability scopes, and HITL gates](references/security-auth.md)
+- [Testing and evaluation: MCP Inspector, unit tests, contract tests, CI integration](references/testing-and-evaluation.md)
 - [Troubleshooting guide, MCP Inspector, common errors, and transport debugging](references/troubleshooting.md)
