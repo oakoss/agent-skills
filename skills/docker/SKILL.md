@@ -52,11 +52,11 @@ Docker packages applications into isolated containers that run consistently acro
 | Copying source before installing dependencies   | Copy lockfile first, `npm ci`, then copy source for cache reuse  |
 | Running as root in production                   | Create non-root user, `USER` directive in final stage            |
 | Hardcoding secrets in Dockerfile or ENV         | Use build secrets (`--mount=type=secret`) or runtime env         |
-| Using `latest` tag for base images              | Pin to specific version (`node:20-alpine`)                       |
+| Using `latest` tag for base images              | Pin to specific version (`node:24-alpine`)                       |
 | No `.dockerignore` file                         | Exclude `node_modules`, `.git`, `.env`, build artifacts          |
 | Using `npm install` instead of `npm ci`         | `npm ci` for deterministic, lockfile-based installs              |
 | HEALTHCHECK missing                             | Add health check for orchestrator integration                    |
-| Large base images (`node:20`)                   | Use alpine variants (`node:20-alpine`) for smaller images        |
+| Large base images (`node:24`)                   | Use alpine variants (`node:24-alpine`) for smaller images        |
 | Ignoring `.env` file precedence in Compose      | `environment:` in Compose overrides `.env` file values           |
 | Building entire monorepo for one service        | Use `turbo prune --docker` for minimal build context             |
 | No layer caching in CI                          | Use `cache-from`/`cache-to` with GHA or registry backend         |

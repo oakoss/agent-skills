@@ -43,7 +43,7 @@ The `--docker` flag splits output into `json/` and `full/` directories, enabling
 Three-stage build: prune, install + build, runtime.
 
 ```dockerfile
-FROM node:20-alpine AS base
+FROM node:24-alpine AS base
 RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 
@@ -66,7 +66,7 @@ COPY --from=pruner /app/out/full/ .
 RUN pnpm turbo build --filter=api
 
 # Stage 3: Production runtime
-FROM node:20-alpine AS runner
+FROM node:24-alpine AS runner
 WORKDIR /app
 
 RUN addgroup -g 1001 -S appgroup && \
@@ -91,7 +91,7 @@ CMD ["node", "dist/server.js"]
 ## Turborepo + npm Dockerfile
 
 ```dockerfile
-FROM node:20-alpine AS base
+FROM node:24-alpine AS base
 WORKDIR /app
 
 FROM base AS pruner
@@ -150,7 +150,7 @@ Pass credentials as `ARG` (not `ENV`) so they don't persist in the final image.
 For pnpm workspaces without Turborepo, use `pnpm deploy` to extract a single workspace:
 
 ```dockerfile
-FROM node:20-alpine AS base
+FROM node:24-alpine AS base
 RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 
@@ -161,7 +161,7 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
 RUN pnpm --filter api build
 RUN pnpm deploy --filter api --prod /app/deployed
 
-FROM node:20-alpine AS runner
+FROM node:24-alpine AS runner
 WORKDIR /app
 
 RUN addgroup -g 1001 -S appgroup && \

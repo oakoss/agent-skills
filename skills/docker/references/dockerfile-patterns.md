@@ -24,7 +24,7 @@ Separate build-time dependencies from the runtime image. Only copy artifacts nee
 ```dockerfile
 # syntax=docker/dockerfile:1
 
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -33,7 +33,7 @@ RUN --mount=type=cache,target=/root/.npm npm ci
 COPY . .
 RUN npm run build
 
-FROM node:20-alpine AS production
+FROM node:24-alpine AS production
 WORKDIR /app
 
 RUN addgroup -g 1001 -S appgroup && \
@@ -56,7 +56,7 @@ CMD ["node", "dist/server.js"]
 ### Static Site with Nginx
 
 ```dockerfile
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -112,7 +112,7 @@ Docker caches each layer. When a layer changes, all subsequent layers rebuild. O
 
 ```dockerfile
 # 1. Base image (rarely changes)
-FROM node:20-alpine
+FROM node:24-alpine
 WORKDIR /app
 
 # 2. Dependencies (changes when lockfile changes)
@@ -150,8 +150,8 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 | Base Image           | Size    | Use Case                              |
 | -------------------- | ------- | ------------------------------------- |
 | `alpine`             | ~5 MB   | Minimal containers, CLI tools         |
-| `node:20-alpine`     | ~130 MB | Node.js apps, smallest Node base      |
-| `node:20-slim`       | ~200 MB | Node.js when alpine has musl issues   |
+| `node:24-alpine`     | ~130 MB | Node.js apps, smallest Node base      |
+| `node:24-slim`       | ~200 MB | Node.js when alpine has musl issues   |
 | `python:3.12-slim`   | ~150 MB | Python apps, smaller than full image  |
 | `golang:1.23`        | ~800 MB | Go builds (use scratch for runtime)   |
 | `scratch`            | 0 MB    | Static binaries (Go, Rust)            |
@@ -162,10 +162,10 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 
 ```dockerfile
 # Pin to major.minor for stability
-FROM node:20-alpine
+FROM node:24-alpine
 
 # Pin to digest for maximum reproducibility
-FROM node:20-alpine@sha256:abc123...
+FROM node:24-alpine@sha256:abc123...
 
 # Use ARG for flexible version control
 ARG NODE_VERSION=20-alpine

@@ -114,7 +114,7 @@ Docker injects these ARGs automatically in multi-platform builds:
 Use `--platform=$BUILDPLATFORM` on the builder stage to run natively:
 
 ```dockerfile
-FROM --platform=$BUILDPLATFORM node:20-alpine AS builder
+FROM --platform=$BUILDPLATFORM node:24-alpine AS builder
 # Runs natively on host, not emulated
 ```
 
@@ -135,7 +135,7 @@ docker buildx build \
 ## Platform-Specific Dependencies
 
 ```dockerfile
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 ARG TARGETARCH
 
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
