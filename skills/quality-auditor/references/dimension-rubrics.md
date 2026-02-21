@@ -246,7 +246,7 @@ npm audit --json | jq '.vulnerabilities | length'
 
 **Evidence required:**
 
-- WCAG 2.1 AA/AAA audit results
+- WCAG 2.2 AA/AAA audit results
 - Keyboard navigation testing
 - Screen reader compatibility
 - Color contrast ratios
@@ -266,8 +266,7 @@ npm audit --json | jq '.vulnerabilities | length'
 **Evidence required:**
 
 - Pipeline configuration review
-- Deployment frequency and lead time
-- Failure rate and recovery time
+- DORA metrics assessment (deployment frequency, lead time for changes, change failure rate, time to restore service, reliability)
 - Rollback capability verification
 
 ## 12. Innovation (3%)
@@ -319,6 +318,6 @@ Additional factors: one-command simplicity, automatic defaults, clear visual fee
 - **Code Quality:** Clean Code (Martin), Code Complete (McConnell), SonarQube quality gates
 - **Architecture:** Clean Architecture (Martin), Domain-Driven Design (Evans)
 - **Security:** OWASP Top 10, SANS Top 25, CWE/SANS
-- **Accessibility:** WCAG 2.1 (AA/AAA), inclusive design guidelines
+- **Accessibility:** WCAG 2.2 (AA/AAA), inclusive design guidelines
 - **Testing:** Test Pyramid (Cohn), 80% minimum coverage target
 - **Performance:** Core Web Vitals, RAIL model (Google), performance budgets

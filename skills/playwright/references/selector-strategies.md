@@ -22,13 +22,11 @@ tags:
 
 ## Selector Hierarchy (Best to Worst)
 
-1. **data-testid** — most stable, survives refactors
-2. **ID** — if unique and semantic
-3. **Role** — accessible, semantic (`getByRole`)
-4. **Text content** — if stable
-5. **CSS class** — if semantic
-6. **XPath** — as fallback
-7. **Nth-child** — last resort (fragile)
+1. **Role** — accessible, semantic (`getByRole`, `getByLabel`)
+2. **Label / Text** — visible text content (`getByText`, `getByPlaceholder`)
+3. **data-testid** — stable, survives refactors (`getByTestId`)
+4. **CSS** — class or attribute selectors (`page.locator('.btn')`)
+5. **XPath** — last resort (`xpath=//button`)
 
 ## CSS Selectors
 

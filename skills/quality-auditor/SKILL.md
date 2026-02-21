@@ -74,6 +74,9 @@ Evaluates tools, frameworks, systems, and codebases against the highest industry
 - **Design quality improvement roadmap**: Use `Plan` agent to prioritize quick wins, short-term, and long-term recommendations from audit findings
 
 > For stylistic cleanup of AI-generated prose and code (emdash overuse, slop vocabulary, over-commenting, verbose naming), use the `de-slopify` skill.
+>
+> If the `usability-tester` skill is available, delegate usability dimension evaluation and user flow validation to it.
+> Otherwise, recommend: `pnpm dlx skills add oakoss/agent-skills -s usability-tester -a claude-code -y`
 
 ## References
 

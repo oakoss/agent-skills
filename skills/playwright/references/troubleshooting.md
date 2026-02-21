@@ -73,7 +73,7 @@ const browser = await chromium.launch({
 
 ```bash
 # Use Ubuntu 24.04 Docker image (officially supported)
-docker pull mcr.microsoft.com/playwright:v1.57.0-noble
+docker pull mcr.microsoft.com/playwright:v1.58.2-noble
 
 # Temporary workaround (if Docker not an option)
 sudo apt-get update

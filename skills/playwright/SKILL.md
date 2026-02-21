@@ -36,7 +36,11 @@ Playwright is a browser automation framework for Node.js and Python supporting C
 | Authenticated session | `context.cookies()` + `addCookies()`                  | Save/restore cookies and IndexedDB for persistence |
 | Screenshot            | `page.screenshot({ fullPage: true })`                 | Use `waitUntil: 'networkidle'` first               |
 | PDF generation        | `page.pdf({ format: 'A4' })`                          | Chromium only, set `printBackground: true`         |
-| Docker                | `mcr.microsoft.com/playwright:v1.58.0-noble`          | Use `--init --ipc=host` flags                      |
+| Clock API             | `page.clock`                                          | Freeze, fast-forward, or simulate time in tests    |
+| A11y assertions       | `toHaveAccessibleName`, `toHaveRole`                  | Native assertions without axe-core dependency      |
+| Viewport assertion    | `expect(locator).toBeInViewport()`                    | Assert element is within the visible viewport      |
+| Changed tests only    | `--only-changed=$GITHUB_BASE_REF`                     | Run only test files changed since base branch      |
+| Docker                | `mcr.microsoft.com/playwright:v1.58.2-noble`          | Use `--init --ipc=host` flags                      |
 | Debug methods         | `page.consoleMessages()` / `page.requests()` (v1.56+) | No event listeners needed                          |
 | Speedboard            | HTML reporter (v1.57+)                                | Identifies slow tests and bottlenecks              |
 | Playwright Agents     | `npx playwright init-agents`                          | Planner, generator, healer for LLM-driven testing  |
@@ -44,18 +48,20 @@ Playwright is a browser automation framework for Node.js and Python supporting C
 
 ## Common Mistakes
 
-| Mistake                                 | Correct Pattern                                              |
-| --------------------------------------- | ------------------------------------------------------------ |
-| Using CSS selectors over role selectors | Prefer `getByRole`, `getByLabel`, `getByText` for resilience |
-| Not closing browser                     | Always `await browser.close()` in `finally` block            |
-| Using `setTimeout` for waits            | Use `waitForSelector`, `waitForLoadState`, auto-wait         |
-| `page.pause()` left in CI code          | Guard with `if (!process.env.CI)` — hangs CI indefinitely    |
-| Clicking without waiting                | Use `locator().click()` with built-in auto-wait              |
-| Shared state between tests              | Each test gets fresh context via fixtures                    |
-| Testing implementation details          | Assert user-visible behavior, not DOM structure              |
-| Hardcoded waits for dynamic content     | Wait for selector appearance or content stabilization        |
-| Missing `await` on assertions           | All `expect()` assertions return promises — must be awaited  |
-| Same user agent for all scraping        | Rotate user agents for high-volume scraping                  |
+| Mistake                                     | Correct Pattern                                              |
+| ------------------------------------------- | ------------------------------------------------------------ |
+| Using CSS selectors over role selectors     | Prefer `getByRole`, `getByLabel`, `getByText` for resilience |
+| Not closing browser                         | Always `await browser.close()` in `finally` block            |
+| Using `setTimeout` for waits                | Use `waitForSelector`, `waitForLoadState`, auto-wait         |
+| `page.pause()` left in CI code              | Guard with `if (!process.env.CI)` — hangs CI indefinitely    |
+| Clicking without waiting                    | Use `locator().click()` with built-in auto-wait              |
+| Shared state between tests                  | Each test gets fresh context via fixtures                    |
+| Testing implementation details              | Assert user-visible behavior, not DOM structure              |
+| Hardcoded waits for dynamic content         | Wait for selector appearance or content stabilization        |
+| Missing `await` on assertions               | All `expect()` assertions return promises — must be awaited  |
+| Same user agent for all scraping            | Rotate user agents for high-volume scraping                  |
+| Using `setTimeout` for time-dependent tests | Use `page.clock` API to freeze/fast-forward time             |
+| Installing axe-core for simple a11y checks  | Use native `toHaveAccessibleName`/`toHaveRole` assertions    |
 
 ## Delegation
 

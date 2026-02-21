@@ -113,6 +113,13 @@ test('assertion examples', async ({ page }) => {
   // Count
   await expect(page.getByRole('listitem')).toHaveCount(3);
 
+  // Viewport visibility
+  await expect(page.getByRole('button', { name: 'Submit' })).toBeInViewport();
+  await expect(page.getByRole('footer')).toBeInViewport({ ratio: 0.5 });
+
+  // URL with predicate
+  await expect(page).toHaveURL((url) => url.searchParams.has('token'));
+
   // Accessible error message
   await expect(page.getByLabel('Email')).toHaveAccessibleErrorMessage(
     'Invalid email',
@@ -385,6 +392,58 @@ export default defineConfig({
 ```
 
 Tests that fail then pass on retry are flagged as flaky, and the run exits with code 1.
+
+## Accessibility Assertions
+
+Native assertions for checking accessible properties without external dependencies:
+
+```typescript
+test('element accessibility', async ({ page }) => {
+  await page.goto('/form');
+
+  await expect(page.getByRole('textbox')).toHaveAccessibleName('Email address');
+  await expect(page.getByRole('textbox')).toHaveAccessibleDescription(
+    'Enter your work email',
+  );
+  await expect(page.locator('#submit-btn')).toHaveRole('button');
+});
+```
+
+Use these for simple accessibility checks. For full WCAG audits, use `@axe-core/playwright` with `AxeBuilder`.
+
+## Clock API
+
+Control time in tests with `page.clock`:
+
+```typescript
+test('shows expiration warning', async ({ page }) => {
+  await page.clock.install({ time: new Date('2025-01-01T10:00:00') });
+  await page.goto('/session');
+
+  await page.clock.fastForward('25:00');
+
+  await expect(page.getByText('Session expiring soon')).toBeVisible();
+});
+
+test('countdown timer', async ({ page }) => {
+  await page.clock.install();
+  await page.goto('/timer');
+
+  await page.getByRole('button', { name: 'Start' }).click();
+  await page.clock.fastForward(5000);
+
+  await expect(page.getByTestId('timer')).toHaveText('00:05');
+});
+```
+
+| Method                      | Purpose                                    |
+| --------------------------- | ------------------------------------------ |
+| `clock.install()`           | Override Date, setTimeout, setInterval     |
+| `clock.fastForward(ms)`     | Advance time and fire pending timers       |
+| `clock.setFixedTime(date)`  | Freeze time at a specific moment           |
+| `clock.pauseAt(date)`       | Pause at a time, resume with `fastForward` |
+| `clock.resume()`            | Resume real-time progression               |
+| `clock.setSystemTime(date)` | Set current time without firing timers     |
 
 ## Common Test Patterns
 

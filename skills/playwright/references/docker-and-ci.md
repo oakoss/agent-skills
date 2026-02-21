@@ -25,16 +25,16 @@ tags:
 Playwright provides pre-built Docker images with browsers and system dependencies pre-installed:
 
 ```bash
-docker pull mcr.microsoft.com/playwright:v1.58.0-noble
+docker pull mcr.microsoft.com/playwright:v1.58.2-noble
 ```
 
 **Available images:**
 
 | Image                                               | Base         | Use Case                |
 | --------------------------------------------------- | ------------ | ----------------------- |
-| `mcr.microsoft.com/playwright:v1.58.0-noble`        | Ubuntu 24.04 | Node.js tests           |
-| `mcr.microsoft.com/playwright:v1.58.0-jammy`        | Ubuntu 22.04 | Node.js (legacy compat) |
-| `mcr.microsoft.com/playwright/python:v1.58.0-noble` | Ubuntu 24.04 | Python tests            |
+| `mcr.microsoft.com/playwright:v1.58.2-noble`        | Ubuntu 24.04 | Node.js tests           |
+| `mcr.microsoft.com/playwright:v1.58.2-jammy`        | Ubuntu 22.04 | Node.js (legacy compat) |
+| `mcr.microsoft.com/playwright/python:v1.58.2-noble` | Ubuntu 24.04 | Python tests            |
 
 Always pin to a specific version tag. The image version must match the installed `@playwright/test` package version.
 
@@ -43,7 +43,7 @@ Always pin to a specific version tag. The image version must match the installed
 ### Using Official Image (Recommended)
 
 ```dockerfile
-FROM mcr.microsoft.com/playwright:v1.58.0-noble
+FROM mcr.microsoft.com/playwright:v1.58.2-noble
 
 RUN groupadd -r pwuser && useradd -r -g pwuser -G audio,video pwuser
 RUN mkdir -p /home/pwuser && chown -R pwuser:pwuser /home/pwuser

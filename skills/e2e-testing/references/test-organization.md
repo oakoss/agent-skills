@@ -234,6 +234,30 @@ export default defineConfig({
 });
 ```
 
+## Config-Level Test Tags (v1.57+)
+
+Apply tags to all tests in a project via `testConfig.tag`:
+
+```ts
+export default defineConfig({
+  projects: [
+    {
+      name: 'smoke',
+      testMatch: /smoke\/.*\.spec\.ts/,
+      use: { ...devices['Desktop Chrome'] },
+      tag: '@smoke',
+    },
+    {
+      name: 'regression',
+      use: { ...devices['Desktop Chrome'] },
+      tag: '@regression',
+    },
+  ],
+});
+```
+
+Tests in the `smoke` project automatically receive the `@smoke` tag without annotating individual tests. Combine with `--grep @smoke` to run all smoke tests across projects.
+
 ## Folder Structure
 
 ```sh

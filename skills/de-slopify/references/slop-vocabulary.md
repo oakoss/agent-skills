@@ -100,6 +100,54 @@ Three-word sequences that appear unnaturally often in LLM output. These are subt
 | "plays a crucial" | Replace with specific verb        |
 | "it is essential" | State what happens if you skip it |
 
+## Newer Model Patterns
+
+These patterns are less about individual word choice and more about conversational habits baked into RLHF-tuned models. They survive prompt engineering and show up even when vocabulary-level slop is absent.
+
+### Sycophancy
+
+Models reflexively validate the user before answering. The praise is content-free and delays the actual response.
+
+| Pattern                                  | Fix                                         |
+| ---------------------------------------- | ------------------------------------------- |
+| "Great question!"                        | Delete; answer directly                     |
+| "Absolutely!" / "Exactly!"               | Delete or replace with the actual agreement |
+| "That's a really insightful observation" | Delete; engage with the observation         |
+| "You're right to be concerned about..."  | State the concern and address it            |
+
+### False Epistemic Humility
+
+Models hedge with faux-modesty that sounds cautious but says nothing.
+
+| Pattern                           | Fix                                        |
+| --------------------------------- | ------------------------------------------ |
+| "I think it's fair to say..."     | Say it                                     |
+| "It could be argued that..."      | Argue it or attribute it                   |
+| "While I'm not an expert in X..." | Delete; state what you know                |
+| "This is a complex topic, but..." | Delete the throat-clearing; make the point |
+
+### Meta-Commentary
+
+Models narrate their own reasoning process instead of just reasoning.
+
+| Pattern                                      | Fix                         |
+| -------------------------------------------- | --------------------------- |
+| "Let me break this down..."                  | Delete; just break it down  |
+| "Let me think about this step by step"       | Delete; show the steps      |
+| "To answer your question..."                 | Delete; answer the question |
+| "There are several factors to consider here" | Delete; list the factors    |
+
+### Structured Overclarification
+
+Models impose heavy structure on content that reads better as prose. Numbered lists, bold labels, and sub-headers appear where a single sentence would suffice.
+
+| Signal                                       | Fix                                            |
+| -------------------------------------------- | ---------------------------------------------- |
+| Numbered list with 2 trivial items           | Rewrite as a sentence                          |
+| Bold-labeled list restating a simple idea    | Collapse to one sentence                       |
+| Nested sub-headers for a single paragraph    | Remove the sub-header; let the paragraph stand |
+| "Here are the key considerations: 1. ... 2." | State the considerations in running prose      |
+
 ## Using These Lists
 
 ### For Manual Review

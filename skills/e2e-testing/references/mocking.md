@@ -181,6 +181,31 @@ test('receives live notification', async ({ page }) => {
 | `https://api.stripe.com/**` | All Stripe API calls                   |
 | `**/*.{png,jpg}`            | All PNG and JPG files                  |
 
+## MSW Integration
+
+Teams sharing mock definitions between unit tests and E2E tests can use `@msw/playwright`:
+
+```bash
+npm install -D @msw/playwright msw
+```
+
+```ts
+import { test } from '@playwright/test';
+import { createWorkerFixture } from '@msw/playwright';
+import { handlers } from '../mocks/handlers';
+
+const test = base.extend({
+  worker: createWorkerFixture(handlers),
+});
+
+test('uses shared MSW handlers', async ({ page, worker }) => {
+  await page.goto('/dashboard');
+  await expect(page.getByText('Mock User')).toBeVisible();
+});
+```
+
+This avoids duplicating mock definitions across `vitest` (unit) and `playwright` (E2E) test suites.
+
 ## Context-Level Mocking
 
 Apply mocks to all pages within a context:

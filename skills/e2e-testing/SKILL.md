@@ -34,6 +34,9 @@ Covers E2E test architecture and patterns using Playwright — how to structure 
 | Blob reports         | `--reporter=blob` + `merge-reports`      | Merge sharded results into a single report         |
 | Test tags            | `{ tag: ['@smoke'] }`                    | Filter tests by category with `--grep`             |
 | Test steps           | `test.step('name', async () => {})`      | Group actions in trace viewer and reports          |
+| Changed tests only   | `--only-changed=$GITHUB_BASE_REF`        | Run only test files changed since base branch      |
+| Native a11y checks   | `toHaveAccessibleName`, `toHaveRole`     | Lightweight alternative to full axe-core scans     |
+| Git info in reports  | `captureGitInfo` reporter option         | Link test reports to commits for CI debugging      |
 | Web-first assertions | `expect(element).toBeVisible()`          | Auto-wait instead of `waitForTimeout`              |
 
 ## Common Mistakes

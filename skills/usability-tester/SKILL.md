@@ -9,19 +9,27 @@ metadata:
 
 # Usability Tester
 
+## Overview
+
 Validates that users can successfully complete core tasks through systematic observation and expert evaluation. Covers moderated and unmoderated testing, heuristic evaluation, accessibility checks, and issue severity scoring. Not a substitute for analytics or A/B testing -- those measure what happens, usability testing reveals why.
+
+**When to use:** Testing user flows, validating designs, identifying friction points, running heuristic evaluations, ensuring users can complete core tasks, planning and executing usability test sessions.
+
+**When NOT to use:** Analytics or A/B test setup, visual design critique without task-based evaluation, automated UI testing (use a testing framework), performance benchmarking.
 
 ## Quick Reference
 
-| Method                | Best For                             | Participants                | When to Use                        |
-| --------------------- | ------------------------------------ | --------------------------- | ---------------------------------- |
-| Moderated testing     | Deep insights, complex flows         | 5-8 per persona             | Design and prototyping stage       |
-| Unmoderated testing   | Scale, quantitative data             | 20-50+                      | Pre-launch and post-launch         |
-| Guerrilla testing     | Quick validation, early concepts     | 5-10 random                 | Early concept stage                |
-| First-click testing   | Navigation, information architecture | 20-50                       | Any stage, especially IA redesigns |
-| Heuristic evaluation  | Expert review against principles     | 3-5 evaluators              | Before user testing, design audits |
-| Cognitive walkthrough | Task flow analysis                   | 2-3 evaluators              | Early design, new feature review   |
-| Accessibility audit   | Inclusive design validation          | 3-5 users with disabilities | Pre-launch, compliance reviews     |
+| Method                 | Best For                                | Participants                | When to Use                            |
+| ---------------------- | --------------------------------------- | --------------------------- | -------------------------------------- |
+| Moderated testing      | Deep insights, complex flows            | 5-8 per persona             | Design and prototyping stage           |
+| Unmoderated testing    | Scale, quantitative data                | 20-50+                      | Pre-launch and post-launch             |
+| Guerrilla testing      | Quick validation, early concepts        | 5-10 random                 | Early concept stage                    |
+| First-click testing    | Navigation, information architecture    | 20-50                       | Any stage, especially IA redesigns     |
+| Heuristic evaluation   | Expert review against principles        | 3-5 evaluators              | Before user testing, design audits     |
+| Cognitive walkthrough  | Task flow analysis                      | 2-3 evaluators              | Early design, new feature review       |
+| Accessibility audit    | Inclusive design validation             | 3-5 users with disabilities | Pre-launch, compliance reviews         |
+| Synthetic user testing | Scalable task validation with AI agents | N/A (automated)             | Continuous, regression testing         |
+| AI-moderated sessions  | Async moderated testing at scale        | 10-50+                      | When moderator availability is limited |
 
 ## Core Metrics
 
@@ -57,6 +65,9 @@ Severity equals Impact (1-3) multiplied by Frequency (1-3). Critical (8-9): fix 
 - **Metrics analysis and severity scoring**: Use `Task` agent to calculate SUS scores, task success rates, and severity ratings from raw test data
 - **Test report generation**: Use `Task` agent to compile findings into structured reports with prioritized recommendations
 - **Test infrastructure planning**: Use `Plan` agent to select testing methods, define recruitment criteria, and schedule test waves
+
+> If the `quality-auditor` skill is available, delegate full codebase quality audits and scoring to it.
+> Otherwise, recommend: `pnpm dlx skills add oakoss/agent-skills -s quality-auditor -a claude-code -y`
 
 ## References
 

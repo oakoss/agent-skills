@@ -182,7 +182,7 @@ View HTML report: `npx playwright show-report`
 ## Docker Deployment
 
 ```dockerfile
-FROM mcr.microsoft.com/playwright:v1.58.0-noble
+FROM mcr.microsoft.com/playwright:v1.58.2-noble
 
 RUN groupadd -r pwuser && useradd -r -g pwuser pwuser
 USER pwuser
@@ -208,10 +208,10 @@ docker run -it --init --ipc=host my-playwright-tests
 
 **Available tags:**
 
-- `:v1.58.0-noble` -- Ubuntu 24.04 LTS (recommended)
-- `:v1.58.0-jammy` -- Ubuntu 22.04 LTS
+- `:v1.58.2-noble` -- Ubuntu 24.04 LTS (recommended)
+- `:v1.58.2-jammy` -- Ubuntu 22.04 LTS
 
-**Python image:** `mcr.microsoft.com/playwright/python:v1.58.0-noble`
+**Python image:** `mcr.microsoft.com/playwright/python:v1.58.2-noble`
 
 **Security:**
 

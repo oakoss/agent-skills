@@ -171,6 +171,43 @@ Upload traces as artifacts for debugging CI failures:
 
 View traces locally or at `trace.playwright.dev`.
 
+## Running Only Changed Tests
+
+Run tests affected by a PR to get faster feedback:
+
+```bash
+npx playwright test --only-changed=$GITHUB_BASE_REF
+```
+
+In GitHub Actions:
+
+```yaml
+steps:
+  - uses: actions/checkout@v4
+    with:
+      fetch-depth: 0
+  - name: Run changed tests only
+    if: github.event_name == 'pull_request'
+    run: npx playwright test --only-changed=$GITHUB_BASE_REF
+  - name: Run full suite
+    if: github.event_name == 'push'
+    run: npx playwright test
+```
+
+Requires `fetch-depth: 0` for git history access. Useful as a fast-feedback step before the full sharded suite.
+
+## Git Info in Test Reports
+
+Link test reports to the commit that produced them with `captureGitInfo`:
+
+```ts
+export default defineConfig({
+  reporter: [['html', { captureGitInfo: { commit: true, diff: true } }]],
+});
+```
+
+The HTML report will include the commit hash and diff, making it easy to trace CI failures back to the exact change.
+
 ## Playwright Configuration for CI
 
 ```ts

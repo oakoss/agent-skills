@@ -194,6 +194,35 @@ const results = await new AxeBuilder({ page })
 
 Use sparingly. Document why a rule is disabled.
 
+## Native Playwright Accessibility Assertions
+
+For simple accessibility checks, Playwright provides built-in assertions that don't require axe-core:
+
+```ts
+import { test, expect } from '@playwright/test';
+
+test('form elements have accessible names', async ({ page }) => {
+  await page.goto('/form');
+
+  await expect(page.getByRole('textbox')).toHaveAccessibleName('Email address');
+  await expect(page.getByRole('textbox')).toHaveAccessibleDescription(
+    'Enter your work email',
+  );
+  await expect(page.locator('#submit-btn')).toHaveRole('button');
+});
+```
+
+| Assertion                           | Checks                                     |
+| ----------------------------------- | ------------------------------------------ |
+| `toHaveAccessibleName(name)`        | `aria-label`, `aria-labelledby`, `<label>` |
+| `toHaveAccessibleDescription(desc)` | `aria-describedby`, `title`                |
+| `toHaveRole(role)`                  | ARIA role of the element                   |
+
+**When to use native vs axe-core:**
+
+- **Native assertions** -- quick spot checks on specific elements (no install, no overhead)
+- **AxeBuilder** -- full WCAG audits scanning entire pages for all violation types
+
 ## Limitations
 
 - Automated tools detect roughly 30-50% of WCAG issues
