@@ -97,6 +97,7 @@ Vitest is a Vite-native unit testing framework that shares the same configuratio
 - [Mocking: vi.fn, vi.mock, vi.spyOn, module mocking](references/mocking.md)
 - [Component testing: React Testing Library, queries, user-event](references/component-testing.md)
 - [Hook testing: renderHook, async hooks, TanStack patterns](references/hook-testing.md)
+- [Test setup: jest-dom matchers, cleanup, custom render, MSW, polyfills](references/test-setup.md)
 - [Configuration: vitest.config.ts, workspace, coverage, reporters](references/configuration.md)
 - [Advanced patterns: snapshots, concurrent tests, in-source, type testing](references/advanced-patterns.md)
 - [CLI and filtering: commands, watch mode, tags, sharding](references/cli-and-filtering.md)

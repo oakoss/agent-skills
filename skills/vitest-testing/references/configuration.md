@@ -145,17 +145,7 @@ export default defineConfig({
 });
 ```
 
-Example `vitest.setup.ts`:
-
-```ts
-import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
-import { afterEach } from 'vitest';
-
-afterEach(() => {
-  cleanup();
-});
-```
+Files execute in order. See the test-setup reference for setup file contents — jest-dom matchers, cleanup, MSW server lifecycle, and DOM polyfills.
 
 ## Coverage Configuration
 
