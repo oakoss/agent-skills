@@ -109,6 +109,30 @@ test('uses mocked API', async () => {
 
 `vi.mock` calls are hoisted to the top of the file, so they execute before imports.
 
+## Hoisted Mock Variables
+
+`vi.mock` factories are hoisted above imports. Variables declared outside the factory aren't accessible inside it. `vi.hoisted()` runs in the hoisted scope so returned values can be used in mock factories:
+
+```ts
+import { vi } from 'vitest';
+
+const { mockFetch } = vi.hoisted(() => ({
+  mockFetch: vi.fn(),
+}));
+
+vi.mock('./api', () => ({
+  fetchUser: mockFetch,
+}));
+
+import { fetchUser } from './api';
+
+test('uses hoisted mock', async () => {
+  mockFetch.mockResolvedValue({ id: '1', name: 'Alice' });
+  const user = await fetchUser('1');
+  expect(user.name).toBe('Alice');
+});
+```
+
 ## Partial Module Mocking
 
 Mock some exports while keeping others:
@@ -360,6 +384,24 @@ test('uses mocked date', () => {
 });
 ```
 
+## Async Waiting Utilities
+
+`vi.waitFor` retries a callback until it stops throwing:
+
+```ts
+await vi.waitFor(() => {
+  expect(element.textContent).toBe('loaded');
+});
+```
+
+`vi.waitUntil` retries until the callback returns a truthy value:
+
+```ts
+const result = await vi.waitUntil(() => fetchStatus());
+```
+
+Both accept options: `{ timeout: 5000, interval: 100 }`.
+
 ## Mock Assertions
 
 Verify mock behavior:
@@ -411,28 +453,26 @@ test('uses stubbed env vars', () => {
 
 ## Mocking Globals
 
-Replace global objects:
+Replace global objects with `vi.stubGlobal`:
 
 ```ts
-const originalFetch = global.fetch;
-
-beforeEach(() => {
-  global.fetch = vi.fn().mockResolvedValue({
-    ok: true,
-    json: async () => ({ data: 'mocked' }),
-  });
-});
+import { afterEach, expect, test, vi } from 'vitest';
 
 afterEach(() => {
-  global.fetch = originalFetch;
+  vi.unstubAllGlobals();
 });
 
-test('uses mocked fetch', async () => {
-  const response = await fetch('/api/data');
-  const data = await response.json();
+test('stubs fetch', async () => {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ data: 'mocked' }),
+    }),
+  );
 
-  expect(data).toEqual({ data: 'mocked' });
-  expect(global.fetch).toHaveBeenCalledWith('/api/data');
+  const response = await fetch('/api/data');
+  expect(await response.json()).toEqual({ data: 'mocked' });
 });
 ```
 

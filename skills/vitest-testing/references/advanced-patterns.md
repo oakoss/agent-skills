@@ -97,6 +97,20 @@ test('snapshot with dynamic values', () => {
 });
 ```
 
+## Snapshot Hints
+
+Named snapshots produce distinct keys in the snapshot file, making diffs clearer when a test has multiple `toMatchSnapshot` calls. Without hints, snapshots are numbered (1, 2, 3...) which is harder to identify:
+
+```ts
+test('multiple snapshots with hints', () => {
+  const header = renderHeader();
+  const footer = renderFooter();
+
+  expect(header).toMatchSnapshot('header');
+  expect(footer).toMatchSnapshot('footer');
+});
+```
+
 ## Concurrent Tests
 
 Run tests in parallel for faster execution:
@@ -252,6 +266,38 @@ test('assert type', () => {
 });
 ```
 
+## Type Test Files
+
+Dedicated `.test-d.ts` files for type-only testing:
+
+```ts
+// math.test-d.ts
+import { expectTypeOf, test } from 'vitest';
+import { add, type Result } from './math';
+
+test('add returns number', () => {
+  expectTypeOf(add(1, 2)).toEqualTypeOf<number>();
+});
+
+test('Result type', () => {
+  expectTypeOf<Result>().toMatchTypeOf<{ value: number; error?: string }>();
+});
+```
+
+Enable type checking in config:
+
+```ts
+export default defineConfig({
+  test: {
+    typecheck: {
+      enabled: true,
+    },
+  },
+});
+```
+
+`toEqualTypeOf` requires an exact match. `toMatchTypeOf` allows the type to be a subset (structural subtyping).
+
 ## Custom Matchers
 
 Extend expect with custom matchers:
@@ -372,5 +418,57 @@ Randomize test order to detect dependencies:
 describe.shuffle('random order', () => {
   test('test 1', () => {});
   test('test 2', () => {});
+});
+```
+
+## Parameterized Suites
+
+`describe.for` runs an entire suite for each set of parameters:
+
+```ts
+describe.for([
+  { input: 'hello', expected: 'HELLO' },
+  { input: 'world', expected: 'WORLD' },
+])('toUpperCase($input)', ({ input, expected }) => {
+  test('converts to uppercase', () => {
+    expect(input.toUpperCase()).toBe(expected);
+  });
+
+  test('has correct length', () => {
+    expect(input.toUpperCase()).toHaveLength(expected.length);
+  });
+});
+```
+
+`test.for` is the single-test equivalent:
+
+```ts
+test.for([
+  [1, 2, 3],
+  [2, 3, 5],
+])('add(%i, %i) = %i', ([a, b, expected]) => {
+  expect(a + b).toBe(expected);
+});
+```
+
+## Sequential and Shuffled Suites
+
+`describe.sequential` forces tests to run in order even inside a concurrent suite. Useful for tests with dependencies:
+
+```ts
+describe.sequential('database operations', () => {
+  test('creates table', async () => {});
+  test('inserts row', async () => {});
+  test('queries row', async () => {});
+});
+```
+
+## Expected Failures
+
+`test.fails` inverts the result — the test passes if the assertion fails. Useful for documenting known bugs or incomplete features:
+
+```ts
+test.fails('not yet implemented', () => {
+  expect(unfinishedFeature()).toBe(true);
 });
 ```

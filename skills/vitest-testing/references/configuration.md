@@ -196,6 +196,20 @@ Run coverage:
 vitest --coverage
 ```
 
+### Coverage Enhancements
+
+V8 coverage is faster but Istanbul handles edge cases like decorators better. Ignore specific lines with `/* v8 ignore next */` or `/* istanbul ignore next */`. Set `thresholds.autoUpdate: true` to auto-update coverage thresholds as coverage improves:
+
+```ts
+export default defineConfig({
+  test: {
+    coverage: {
+      thresholds: { autoUpdate: true },
+    },
+  },
+});
+```
+
 ## Projects Configuration (v3.2+)
 
 Define multiple test projects in a single config. The `projects` option replaces the deprecated `workspace` and removed `vitest.workspace` file:
@@ -434,36 +448,23 @@ export default defineConfig({
 - `restoreMocks` — restore spies after each test
 - `clearMocks` — clear call history after each test
 
-## In-Source Testing
+For in-source testing patterns, see the advanced-patterns reference.
 
-Enable tests in source files:
+## Provide / Inject
+
+Share values from config to tests:
 
 ```ts
 export default defineConfig({
   test: {
-    includeSource: ['src/**/*.ts'],
-  },
-  define: {
-    'import.meta.vitest': 'undefined',
+    provide: {
+      apiUrl: 'http://localhost:3000',
+    },
   },
 });
 ```
 
-Write tests in source files:
-
-```ts
-export function add(a: number, b: number) {
-  return a + b;
-}
-
-if (import.meta.vitest) {
-  const { it, expect } = import.meta.vitest;
-
-  it('adds numbers', () => {
-    expect(add(1, 2)).toBe(3);
-  });
-}
-```
+Access in tests with `inject('apiUrl')`. See the fixtures-and-context reference for full patterns.
 
 ## TypeScript Configuration
 

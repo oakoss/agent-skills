@@ -272,23 +272,7 @@ Concurrent tests require async functions. Use `test.sequential` inside a concurr
 
 ## Test Context
 
-Share state between hooks and tests:
-
-```ts
-import { beforeEach, expect, it } from 'vitest';
-
-interface LocalTestContext {
-  user: User;
-}
-
-beforeEach<LocalTestContext>(async (context) => {
-  context.user = await createTestUser();
-});
-
-it<LocalTestContext>('has user', ({ user }) => {
-  expect(user.name).toBe('Test User');
-});
-```
+Access test metadata via the context parameter. For reusable setup, prefer `test.extend` fixtures over manual context manipulation — see the fixtures-and-context reference.
 
 ## Assertions with Custom Messages
 
@@ -308,6 +292,58 @@ Invert any matcher with `.not`:
 expect(value).not.toBe(null);
 expect(array).not.toContain(item);
 expect(fn).not.toThrow();
+```
+
+## Soft Assertions
+
+Soft assertions continue executing after failure and collect all failures. The test reports all failing expectations at once instead of stopping at the first failure:
+
+```ts
+import { expect, test } from 'vitest';
+
+test('validates all fields', () => {
+  const user = getUser();
+
+  expect.soft(user.name).toBe('Alice');
+  expect.soft(user.email).toContain('@');
+  expect.soft(user.age).toBeGreaterThan(0);
+});
+```
+
+## Poll Assertions
+
+`expect.poll()` retries the callback until the assertion passes or times out. Useful for testing async state changes without manual retry loops:
+
+```ts
+test('waits for value', async () => {
+  await expect.poll(() => fetchStatus()).toBe('ready');
+
+  await expect
+    .poll(() => getCount(), { interval: 100, timeout: 5000 })
+    .toBeGreaterThan(0);
+});
+```
+
+## In-Test Cleanup Hooks
+
+`onTestFinished` runs after each test completes (pass or fail) — useful for cleanup without `afterEach`. `onTestFailed` runs only on failure — useful for diagnostics. Both are scoped to the current test:
+
+```ts
+import { expect, onTestFailed, onTestFinished, test } from 'vitest';
+
+test('with cleanup', () => {
+  const resource = acquireResource();
+
+  onTestFinished(() => {
+    resource.release();
+  });
+
+  onTestFailed((result) => {
+    console.log('Failed:', result.errors);
+  });
+
+  expect(resource.isActive()).toBe(true);
+});
 ```
 
 ## Type Assertions
