@@ -1,10 +1,10 @@
 ---
 name: data-visualizer
-description: 'Charts, dashboards, and data visualizations using Recharts, Chart.js, and D3.js. Use when building charts, dashboards, or interactive data displays. Use for chart type selection, responsive design, accessibility, and performance optimization.'
+description: 'Charts, dashboards, and data visualizations using Recharts, Chart.js, and D3.js. Use when building charts, dashboards, or interactive data displays. Use for chart type selection, data storytelling, annotation patterns, responsive design, accessibility, and performance optimization.'
 license: MIT
 metadata:
   author: oakoss
-  version: '1.1'
+  version: '1.2'
 ---
 
 # Data Visualizer
@@ -73,3 +73,4 @@ Build charts, dashboards, and interactive data visualizations using modern libra
 - [Design and Accessibility](references/design-and-accessibility.md) — color schemes, colorblind-safe palettes, responsive, animation
 - [Data Formatting and Export](references/data-formatting-and-export.md) — number formatters, CSV export, PNG export
 - [Performance](references/performance.md) — lazy loading, virtualization for large datasets
+- [Storytelling and Annotation](references/storytelling-and-annotation.md) — data narratives, annotations, color strategy, edge states
