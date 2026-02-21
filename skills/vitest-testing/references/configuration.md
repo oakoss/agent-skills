@@ -202,7 +202,11 @@ export default defineConfig({
 
 ## Projects Configuration (v3.2+)
 
-Define multiple test projects in a single config. The `projects` option replaces the deprecated `workspace` and removed `vitest.workspace` file:
+Define multiple test projects in a single config. The `projects` option replaces the deprecated `workspace` and removed `vitest.workspace` file.
+
+### Client / Server Split
+
+Full-stack apps (TanStack Start, Next.js, Remix) need different environments for client and server code:
 
 ```ts
 import { defineConfig } from 'vitest/config';
@@ -212,16 +216,17 @@ export default defineConfig({
     projects: [
       {
         test: {
-          name: 'unit',
-          environment: 'node',
-          include: ['src/**/*.test.ts'],
+          name: 'client',
+          environment: 'jsdom',
+          include: ['src/**/*.test.tsx'],
+          setupFiles: ['./vitest.setup.ts'],
         },
       },
       {
         test: {
-          name: 'browser',
-          environment: 'jsdom',
-          include: ['src/**/*.test.tsx'],
+          name: 'server',
+          environment: 'node',
+          include: ['src/**/*.server.test.ts', 'src/server/**/*.test.ts'],
         },
       },
     ],
@@ -229,7 +234,11 @@ export default defineConfig({
 });
 ```
 
-Or use glob patterns:
+Client tests get jsdom for DOM APIs and React Testing Library. Server tests get Node for server functions, API routes, and database code — no DOM overhead.
+
+### Monorepo with Glob Patterns
+
+Point to package directories and each package provides its own `vitest.config.ts`:
 
 ```ts
 import { defineConfig } from 'vitest/config';
@@ -241,10 +250,12 @@ export default defineConfig({
 });
 ```
 
-Run specific project:
+### Running Projects
 
 ```bash
-vitest --project unit
+vitest --project client
+vitest --project server
+vitest --project client --project server
 ```
 
 ### Legacy Workspace Migration
