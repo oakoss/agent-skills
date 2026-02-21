@@ -54,6 +54,15 @@ function RandomGreeting() {
 // CORRECT: Use a stable seed from server or useId for determinism
 import { useId } from 'react';
 
+function hashString(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return hash;
+}
+
 function RandomGreeting() {
   const id = useId();
   const greetings = ['Hello', 'Hi', 'Hey'];

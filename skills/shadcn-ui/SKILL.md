@@ -20,22 +20,26 @@ Guides building accessible, customizable UI with shadcn/ui as a code generation 
 
 ## Quick Reference
 
-| Pattern           | API / Approach                             | Key Points                                        |
-| ----------------- | ------------------------------------------ | ------------------------------------------------- |
-| Init project      | `npx shadcn@latest init`                   | Auto-detects framework, configures CSS variables  |
-| Add component     | `npx shadcn@latest add [name]`             | Copies source code into your project              |
-| Custom project    | `npx shadcn@latest create`                 | Pick library (Radix/Base UI), style, theme, fonts |
-| Check updates     | `npx shadcn@latest diff [component]`       | Shows upstream changes for your components        |
-| Search registry   | `npx shadcn@latest search @registry`       | Browse and install from namespaced registries     |
-| Build registry    | `npx shadcn@latest build`                  | Generate registry JSON from `registry.json`       |
-| Theme tokens      | `:root` vars + `@theme inline` mapping     | oklch color values, dark mode via `.dark` class   |
-| Dark mode         | `@custom-variant dark (&:is(.dark *))`     | Swaps CSS variables under `.dark` selector        |
-| Component variant | `cva()` from `class-variance-authority`    | Type-safe variant definitions                     |
-| Polymorphic slot  | `asChild` prop with `<Slot>` from Radix    | Merge props onto child element                    |
-| Direct ref        | `ref` as a regular prop                    | `forwardRef` is deprecated in React 19            |
-| Form (current)    | `<Field />` + React Hook Form + Zod        | Replaces legacy `<Form />` component              |
-| Form (legacy)     | `<Form />` + `<FormField />` + Zod         | Still works but no longer actively developed      |
-| Class merging     | `cn()` utility wrapping `clsx` + `twMerge` | Safely merge Tailwind classes without conflicts   |
+| Pattern              | API / Approach                             | Key Points                                            |
+| -------------------- | ------------------------------------------ | ----------------------------------------------------- |
+| Init project         | `npx shadcn@latest init`                   | Auto-detects framework, configures CSS variables      |
+| Add component        | `npx shadcn@latest add [name]`             | Copies source code into your project                  |
+| Custom project       | `npx shadcn@latest create`                 | Pick library (Radix/Base UI), style, theme, fonts     |
+| Check updates        | `npx shadcn@latest diff [component]`       | Shows upstream changes for your components            |
+| Search registry      | `npx shadcn@latest search @registry`       | Browse and install from namespaced registries         |
+| Build registry       | `npx shadcn@latest build`                  | Generate registry JSON from `registry.json`           |
+| Theme tokens         | `:root` vars + `@theme inline` mapping     | oklch color values, dark mode via `.dark` class       |
+| Dark mode            | `@custom-variant dark (&:is(.dark *))`     | Swaps CSS variables under `.dark` selector            |
+| Component variant    | `cva()` from `class-variance-authority`    | Type-safe variant definitions                         |
+| Polymorphic slot     | `asChild` prop with `<Slot>` from Radix    | Merge props onto child element                        |
+| Direct ref           | `ref` as a regular prop                    | `forwardRef` is deprecated in React 19                |
+| Form (current)       | `<Field />` + React Hook Form + Zod        | Replaces legacy `<Form />` component                  |
+| Form (legacy)        | `<Form />` + `<FormField />` + Zod         | Still works but no longer actively developed          |
+| Class merging        | `cn()` utility wrapping `clsx` + `twMerge` | Safely merge Tailwind classes without conflicts       |
+| Toast / notification | Sonner (`npx shadcn@latest add sonner`)    | Default notification approach; auto-dismiss, stacking |
+| Init with blocks     | `npx shadcn@latest init sidebar-01`        | Bootstrap project with pre-built page blocks          |
+| RTL support          | `dir="rtl"` on root element                | Built-in RTL layout support for all components        |
+| New components       | `Spinner`, `Kbd`, `ButtonGroup`            | Recently added utility and layout components          |
 
 ## Common Mistakes
 
@@ -58,6 +62,9 @@ Guides building accessible, customizable UI with shadcn/ui as a code generation 
 - **Theme migration or multi-file refactoring**: Use `Task` agent
 - **Design system architecture planning**: Use `Plan` agent
 - **Registry setup and distribution**: Use `Task` agent
+
+> If the `tanstack-form` skill is available, delegate advanced form state management (array fields, linked fields, async validation) to it.
+> If the `tailwind` skill is available, delegate utility class patterns and design token architecture to it.
 
 ## References
 

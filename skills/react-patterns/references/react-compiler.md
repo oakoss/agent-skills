@@ -18,9 +18,37 @@ tags:
 
 ## How It Works
 
-The React Compiler (previously called "React Forget") automatically applies memoization equivalent to `useMemo`, `useCallback`, and `React.memo`. Code that follows the Rules of React gets optimized without any manual annotations.
+The React Compiler (stable since React 19) automatically applies memoization equivalent to `useMemo`, `useCallback`, and `React.memo`. Code that follows the Rules of React gets optimized without any manual annotations.
 
-Check if the compiler is active: open React DevTools and look for the "Memo" badge next to components.
+Check if the compiler is active: open React DevTools and look for the "Memo ✨" badge next to optimized components.
+
+## Setup
+
+Install as a Babel plugin:
+
+```bash
+npm i -D babel-plugin-react-compiler
+```
+
+For Next.js, enable in `next.config.ts`:
+
+```ts
+const nextConfig: NextConfig = {
+  experimental: {
+    reactCompiler: true,
+  },
+};
+```
+
+For other Babel-based setups, add to your Babel config:
+
+```json
+{
+  "plugins": ["babel-plugin-react-compiler"]
+}
+```
+
+The compiler also has experimental support via SWC and Rspack plugins.
 
 ## Rules for Compiler Compatibility
 

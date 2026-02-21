@@ -15,7 +15,7 @@ metadata:
 
 ## Overview
 
-Zustand v5 is a lightweight global state manager for React built on `useSyncExternalStore`. It provides type-safe stores, atomic selectors for minimal re-renders, composable middleware (persist, devtools, immer, subscribeWithSelector), and a slices pattern for large applications. Use Zustand for client-only global state; use TanStack Query for server-fetched data.
+Zustand v5 is a lightweight global state manager for React built on `useSyncExternalStore`. Requires React 18+ (uses `useSyncExternalStore` internally). When using `createWithEqualityFn`, install `use-sync-external-store` as a peer dependency. It provides type-safe stores, atomic selectors for minimal re-renders, composable middleware (persist, devtools, immer, subscribeWithSelector), and a slices pattern for large applications. Use Zustand for client-only global state; use TanStack Query for server-fetched data.
 
 **When to use:** Client-side global state, persistent user preferences, complex multi-domain stores, cross-component state sharing, vanilla (non-React) state management.
 

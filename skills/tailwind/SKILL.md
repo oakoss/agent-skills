@@ -35,6 +35,14 @@ Tailwind CSS v4 skill covering CSS-first configuration, design tokens, component
 | Reference import     | `@reference "../../app.css";`                         | Use theme in Vue/Svelte scoped styles            |
 | Override defaults    | `--color-*: initial;` inside `@theme`                 | Reset a category before redefining               |
 | Dynamic values       | `grid-cols-(--my-var)`                                | Use CSS variables in utility values              |
+| Text shadows         | `text-shadow-*`                                       | Built-in text shadow utilities                   |
+| Starting styles      | `starting:opacity-0`                                  | `@starting-style` variant for entry animations   |
+| Masks                | `mask-*`                                              | CSS mask utilities for image/gradient masking    |
+| Field sizing         | `field-sizing-content`                                | Auto-sizing textareas and inputs                 |
+| Inset shadows        | `inset-shadow-*`, `inset-ring-*`                      | Inner shadow and ring utilities                  |
+| User validation      | `user-valid:`, `user-invalid:`                        | Form validation after user interaction           |
+| Pointer queries      | `pointer-fine:`, `pointer-coarse:`                    | Target input device precision                    |
+| Inert                | `inert:opacity-50`                                    | Style inert elements                             |
 | Color space          | OKLCH                                                 | Default in v4, sRGB fallbacks generated          |
 
 ## Common Mistakes
@@ -57,6 +65,8 @@ Tailwind CSS v4 skill covering CSS-first configuration, design tokens, component
 - **Class pattern discovery and usage examples**: Use `Explore` agent
 - **v3 to v4 migration across multiple files**: Use `Task` agent
 - **Design token hierarchy and theming architecture**: Use `Plan` agent
+
+> If the `motion` skill is available, delegate complex animation patterns (spring physics, gestures, scroll-linked) to it.
 
 ## References
 

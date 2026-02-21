@@ -32,6 +32,8 @@ Override semantic tokens per theme — components reference semantic tokens and 
 }
 ```
 
+When combining with shadcn/ui, note that shadcn uses `.dark` class-based switching while this design system uses `data-theme` attributes. The ThemeProvider above applies both (`classList.add` and `setAttribute`) for compatibility. Choose one convention per project — `.dark` class is recommended when using shadcn/ui components.
+
 Dark mode checklist:
 
 - Reduce pure white (`#fff`) to off-white (`#f9fafb`)

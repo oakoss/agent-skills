@@ -23,29 +23,30 @@ Comprehensive React skill covering component architecture, performance optimizat
 
 ## Quick Reference
 
-| Pattern               | API / Approach                    | Key Points                                          |
-| --------------------- | --------------------------------- | --------------------------------------------------- |
-| Data fetching         | `use(dataPromise)`                | Replaces useEffect+useState fetch pattern           |
-| Form handling         | `useActionState(action, init)`    | Built-in pending states and error handling          |
-| Optimistic UI         | `useOptimistic(state, updateFn)`  | Instant feedback while server processes             |
-| Non-urgent updates    | `useTransition()`                 | Mark updates as interruptible                       |
-| Effect events         | `useEffectEvent(fn)`              | Reactive values without re-triggering effects       |
-| Form pending status   | `useFormStatus()`                 | Read parent form pending state from child component |
-| Unique IDs            | `useId()`                         | Hydration-safe IDs for accessibility                |
-| Server state          | React Query / `useSuspenseQuery`  | Caching, deduplication, background refetch          |
-| Client state (local)  | `useState` / `useRef`             | Single component or transient values                |
-| Client state (global) | Zustand / Context                 | Cross-component client-only state                   |
-| Derived state         | Compute during render             | Never sync derived values with effects              |
-| Lazy initialization   | `useState(() => expensive())`     | Avoid eager computation on every render             |
-| Component types       | Page, Feature, UI                 | Route entry, business logic, reusable primitives    |
-| Memoization           | Trust React Compiler first        | Manual useMemo/useCallback only when needed         |
-| Ref as prop           | `ref` prop on function components | No `forwardRef` needed in React 19                  |
-| Ref cleanup           | Return function from ref callback | Cleanup runs on detach instead of `null` call       |
-| Code splitting        | `React.lazy()` + Suspense         | Lazy-load heavy components                          |
-| Parallel fetches      | `Promise.all()`                   | Eliminate sequential await waterfalls               |
-| Request dedup         | `React.cache()`                   | Per-request server-side deduplication               |
-| Abort server work     | `cacheSignal()`                   | Cancel expensive async work when client disconnects |
-| State preservation    | `<Activity>`                      | Hide UI while keeping state mounted                 |
+| Pattern               | API / Approach                                    | Key Points                                          |
+| --------------------- | ------------------------------------------------- | --------------------------------------------------- |
+| Data fetching         | `use(dataPromise)`                                | Replaces useEffect+useState fetch pattern           |
+| Form handling         | `useActionState(action, init)`                    | Built-in pending states and error handling          |
+| Optimistic UI         | `useOptimistic(state, updateFn)`                  | Instant feedback while server processes             |
+| Non-urgent updates    | `useTransition()`                                 | Mark updates as interruptible                       |
+| Effect events         | `useEffectEvent(fn)`                              | Reactive values without re-triggering effects       |
+| Form pending status   | `useFormStatus()`                                 | Read parent form pending state from child component |
+| Unique IDs            | `useId()`                                         | Hydration-safe IDs for accessibility                |
+| Server state          | React Query / `useSuspenseQuery`                  | Caching, deduplication, background refetch          |
+| Client state (local)  | `useState` / `useRef`                             | Single component or transient values                |
+| Client state (global) | Zustand / Context                                 | Cross-component client-only state                   |
+| Derived state         | Compute during render                             | Never sync derived values with effects              |
+| Lazy initialization   | `useState(() => expensive())`                     | Avoid eager computation on every render             |
+| Component types       | Page, Feature, UI                                 | Route entry, business logic, reusable primitives    |
+| Memoization           | Trust React Compiler first                        | Manual useMemo/useCallback only when needed         |
+| Ref as prop           | `ref` prop on function components                 | No `forwardRef` needed in React 19                  |
+| Ref cleanup           | Return function from ref callback                 | Cleanup runs on detach instead of `null` call       |
+| Code splitting        | `React.lazy()` + Suspense                         | Lazy-load heavy components                          |
+| Parallel fetches      | `Promise.all()`                                   | Eliminate sequential await waterfalls               |
+| Request dedup         | `React.cache()`                                   | Per-request server-side deduplication               |
+| Abort server work     | `cacheSignal()`                                   | Cancel expensive async work when client disconnects |
+| Resource preloading   | `prefetchDNS`, `preconnect`, `preload`, `preinit` | Optimize resource loading from components           |
+| State preservation    | `<Activity>`                                      | Hide UI while keeping state mounted                 |
 
 ## Common Mistakes
 
@@ -67,6 +68,10 @@ Comprehensive React skill covering component architecture, performance optimizat
 - **Explore component architecture and identify performance bottlenecks**: Use `Explore` agent to profile re-renders, analyze bundle size, and trace data fetching waterfalls
 - **Implement React feature with proper patterns**: Use `Task` agent to build components following Server Component, Suspense, and React 19 conventions
 - **Design frontend architecture and state management strategy**: Use `Plan` agent to structure component hierarchy, select state management, and plan data fetching approach
+
+> If the `shadcn-ui` skill is available, delegate component variant and theming questions to it.
+> If the `tailwind` skill is available, delegate utility-first styling and design token questions to it.
+> If the `zustand` skill is available, delegate global client state management questions to it.
 
 ## References
 

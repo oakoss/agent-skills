@@ -16,7 +16,7 @@ metadata:
 
 ## Overview
 
-Motion (package: `motion`, formerly `framer-motion`) is the standard React animation library. Import from `motion/react`. Provides declarative props for gestures, scroll-linked animations, layout transitions, SVG path drawing, and spring physics. Bundle ranges from 2.3 KB (useAnimate mini) to 34 KB (full), optimizable to 4.6 KB with LazyMotion. Compatible with React 18.2+, React 19, Next.js App Router, and Vite.
+Motion (package: `motion`, formerly `framer-motion`) is the standard React animation library. Import from `motion/react`. Provides declarative props for gestures, scroll-linked animations, layout transitions, SVG path drawing, and spring physics. Uses a hybrid animation engine (WAAPI for transforms/opacity, ScrollTimeline for scroll-linked effects). Bundle ranges from 2.3 KB (useAnimate mini) to 34 KB (full), optimizable to 4.6 KB with LazyMotion. Compatible with React 18.2+, React 19, Next.js App Router, and Vite.
 
 Do NOT use Motion for simple list add/remove animations (use AutoAnimate instead at 3.28 KB). Do NOT use for 3D (use Three.js / React Three Fiber).
 
@@ -34,6 +34,7 @@ Do NOT use Motion for simple list add/remove animations (use AutoAnimate instead
 | Progress indicator     | `scrollYProgress` + `scaleX`                            |
 | Layout animation       | `layout` prop (FLIP technique)                          |
 | Shared element         | `layoutId` (same ID across views)                       |
+| Layout group           | `LayoutGroup` wrapping sibling lists                    |
 | Page transition        | `AnimatePresence` + `key={pathname}`                    |
 | SVG path drawing       | `pathLength` on `motion.path`                           |
 | Animated counter       | `useSpring` + `useTransform`                            |
@@ -61,6 +62,8 @@ Do NOT use Motion for simple list add/remove animations (use AutoAnimate instead
 - **Audit animation performance and bundle size**: Use `Explore` agent to find heavy imports, missing LazyMotion, and reflow-triggering properties
 - **Build complex multi-step animations**: Use `Task` agent for scroll-linked parallax, shared layout transitions, and staggered sequences
 - **Plan animation architecture for a new project**: Use `Plan` agent to evaluate Motion vs AutoAnimate vs CSS-only based on requirements
+
+> If the `design-system` skill is available, delegate animation token definitions and motion design guidelines to it.
 
 ## References
 

@@ -10,6 +10,8 @@ metadata:
 
 # Frontend Builder
 
+## Overview
+
 Builds maintainable, performant React and Next.js frontends using a server-first architecture. Covers component design, state management, data fetching, forms, styling, and performance optimization. Not for backend API design, database schema, or deployment infrastructure.
 
 ## Quick Reference

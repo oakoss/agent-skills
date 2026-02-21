@@ -19,7 +19,7 @@ metadata:
 
 ## Overview
 
-Ensures zero-mismatch integrity between server-rendered HTML and client-side React trees. Covers hydration error diagnosis, selective hydration via Suspense boundaries, deterministic data bridges with the React 19 `use()` hook, `'use cache'` for eliminating data drift, two-pass rendering for client-only content, and automated validation of rendered DOM state.
+Ensures zero-mismatch integrity between server-rendered HTML and client-side React trees. Covers hydration error diagnosis, selective hydration via Suspense boundaries, deterministic data bridges with the React 19 `use()` hook, `'use cache'` for eliminating data drift, two-pass rendering for client-only content, React 19's single-diff hydration error reporting for pinpointing exact mismatches, and automated validation of rendered DOM state.
 
 **When to use:** Debugging hydration mismatch errors, fixing text content mismatches, handling browser extension DOM pollution, implementing deterministic data bridges, optimizing SSR/client hydration performance, setting up error monitoring with `onRecoverableError`.
 
@@ -27,16 +27,18 @@ Ensures zero-mismatch integrity between server-rendered HTML and client-side Rea
 
 ## Quick Reference
 
-| Pattern              | Approach                                   | Key Points                                              |
-| -------------------- | ------------------------------------------ | ------------------------------------------------------- |
-| Selective hydration  | `<Suspense fallback={...}>` boundary       | Hydrates independently; prioritizes user interaction    |
-| Deterministic bridge | `use(serverPromise)` instead of useEffect  | Seamless server-to-client data transition (React 19)    |
-| Cache directive      | `'use cache'` in data fetchers             | Share exact server result with client during hydration  |
-| Two-pass rendering   | `useState` + `useEffect` for client-only   | First render matches server; second adds client content |
-| Client-only skip     | `next/dynamic` with `ssr: false`           | Exclude component from server render entirely           |
-| Error monitoring     | `onRecoverableError` on `hydrateRoot`      | Detect and report silent hydration recovery             |
-| Date/time safety     | UTC normalization or server-synced context | Prevent locale-dependent hydration mismatches           |
-| Extension resilience | Test with common browser extensions active | Detect DOM pollution from translators, dark-mode tools  |
+| Pattern              | Approach                                   | Key Points                                                 |
+| -------------------- | ------------------------------------------ | ---------------------------------------------------------- |
+| Selective hydration  | `<Suspense fallback={...}>` boundary       | Hydrates independently; prioritizes user interaction       |
+| Deterministic bridge | `use(serverPromise)` instead of useEffect  | Seamless server-to-client data transition (React 19)       |
+| Cache directive      | `'use cache'` in data fetchers             | Share exact server result with client during hydration     |
+| Two-pass rendering   | `useState` + `useEffect` for client-only   | First render matches server; second adds client content    |
+| Client-only skip     | `next/dynamic` with `ssr: false`           | Exclude component from server render entirely              |
+| Error monitoring     | `onRecoverableError` on `hydrateRoot`      | Detect and report silent hydration recovery                |
+| Error reporting      | React 19 single-diff error format          | Pinpoints exact mismatch location with unified diff output |
+| Error callbacks      | `onUncaughtError`, `onCaughtError`         | Granular error handling on `createRoot`/`hydrateRoot`      |
+| Date/time safety     | UTC normalization or server-synced context | Prevent locale-dependent hydration mismatches              |
+| Extension resilience | Test with common browser extensions active | Detect DOM pollution from translators, dark-mode tools     |
 
 ## Hydration Error Diagnosis
 

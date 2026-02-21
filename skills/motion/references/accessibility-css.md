@@ -124,37 +124,9 @@ For cases where Motion is not needed.
 }
 ```
 
-### Tailwind Custom Animations
+### Tailwind Custom Animations (v4)
 
-```ts
-// tailwind.config.js
-module.exports = {
-  theme: {
-    extend: {
-      keyframes: {
-        'fade-in': {
-          '0%': { opacity: '0', transform: 'translateY(10px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        'slide-up': {
-          '0%': { opacity: '0', transform: 'translateY(100%)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-      },
-      animation: {
-        'fade-in': 'fade-in 0.5s ease-out',
-        'slide-up': 'slide-up 0.3s ease-out',
-      },
-    },
-  },
-};
-```
-
-Usage: `<div className="animate-fade-in">Fades in</div>`
-
-### Tailwind v4 CSS Theme
-
-In Tailwind v4, define custom animations in CSS:
+Define custom animations in CSS using `@theme` (Tailwind v4+):
 
 ```css
 @theme {
@@ -185,6 +157,8 @@ In Tailwind v4, define custom animations in CSS:
 }
 ```
 
+Usage: `<div className="animate-fade-in">Fades in</div>`
+
 ## When to Use CSS vs Motion
 
 | Use CSS When                     | Use Motion When                      |
@@ -194,3 +168,29 @@ In Tailwind v4, define custom animations in CSS:
 | No JavaScript interaction needed | Scroll-linked values                 |
 | Performance-critical (0 JS)      | Spring physics or layout transitions |
 | Server-rendered static content   | Orchestrated sequences               |
+
+## Reorder (Drag-to-Reorder Lists)
+
+```tsx
+import { Reorder } from 'motion/react';
+
+function ReorderList({
+  items,
+  onReorder,
+}: {
+  items: string[];
+  onReorder: (items: string[]) => void;
+}) {
+  return (
+    <Reorder.Group axis="y" values={items} onReorder={onReorder}>
+      {items.map((item) => (
+        <Reorder.Item key={item} value={item}>
+          {item}
+        </Reorder.Item>
+      ))}
+    </Reorder.Group>
+  );
+}
+```
+
+Limitations: Reorder uses layout animations internally. Avoid wrapping items in `AnimatePresence` — use `layout` prop on items instead for entry/exit effects.

@@ -10,6 +10,8 @@ metadata:
 
 # Design System
 
+## Overview
+
 Single source of truth for visual consistency at scale — a shared language between design and engineering. Covers token architecture, theming infrastructure, component API patterns, accessibility compliance, and governance workflows.
 
 Design systems are not component libraries alone. They unify tokens, patterns, documentation, and contribution processes so teams build once and maintain once.
@@ -52,6 +54,8 @@ Design systems are not component libraries alone. They unify tokens, patterns, d
 - **Migrate a component library to a token-based design system**: Use `Task` agent
 - **Plan a multi-brand theming architecture**: Use `Plan` agent
 - **Review accessibility compliance across components**: Use `Task` agent
+
+> If the `motion` skill is available, delegate animation token integration and motion design patterns to it.
 
 ## References
 

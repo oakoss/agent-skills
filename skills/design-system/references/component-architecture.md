@@ -212,11 +212,18 @@ function FormField({
   error?: string;
   hint?: string;
   required?: boolean;
-  children: React.ReactNode;
+  children: (props: {
+    id: string;
+    'aria-invalid'?: boolean;
+    'aria-describedby'?: string;
+  }) => React.ReactNode;
 }) {
   const id = useId();
   const errorId = `${id}-error`;
   const hintId = `${id}-hint`;
+  const describedBy =
+    [hint ? hintId : null, error ? errorId : null].filter(Boolean).join(' ') ||
+    undefined;
 
   return (
     <div>
@@ -225,13 +232,10 @@ function FormField({
         {required ? <span aria-label="required">*</span> : null}
       </label>
       {hint ? <div id={hintId}>{hint}</div> : null}
-      {cloneElement(children as React.ReactElement, {
+      {children({
         id,
-        'aria-invalid': !!error,
-        'aria-describedby':
-          [hint ? hintId : null, error ? errorId : null]
-            .filter(Boolean)
-            .join(' ') || undefined,
+        'aria-invalid': error ? true : undefined,
+        'aria-describedby': describedBy,
       })}
       {error ? (
         <div id={errorId} role="alert">
