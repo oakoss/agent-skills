@@ -4,7 +4,7 @@ description: 'Knowledge base architecture selection, curation, and governance. U
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Knowledge Base Manager
@@ -30,6 +30,12 @@ Provides a structured methodology for selecting, designing, and governing knowle
 | **Freshness target**   | <30 days average age                               | Automated freshness monitoring + scheduled updates                 |
 | **Consistency target** | >95% conflict-free                                 | Deduplication + single source of truth                             |
 | **Query latency**      | <100ms median                                      | Caching and optimization for common access patterns                |
+| **Storage tech**       | pgvector, Pinecone, Weaviate, Chroma               | pgvector for existing Postgres; Pinecone for managed scale         |
+| **Index types**        | HNSW, IVFFlat                                      | HNSW for recall; IVFFlat for frequently rebuilt indexes            |
+| **Ingestion pipeline** | Load, clean, chunk, embed, store                   | Chunk at semantic boundaries; 512 tokens max; 10-15% overlap       |
+| **Deduplication**      | Content hashing, semantic similarity               | Hash for exact dupes; cosine similarity >0.95 for semantic dupes   |
+| **Quality testing**    | Recall@K, MRR, accuracy sampling                   | 100+ test questions; measure recall@10 >0.8 and MRR >0.7           |
+| **Drift detection**    | Embedding distribution monitoring                  | Track mean shift; alert when >0.1 threshold                        |
 | **Versioning**         | Snapshot, Event-sourced, Git-style                 | Snapshot for simple; event-sourced for audit; git-style for teams  |
 | **Maintenance**        | Daily, Weekly, Monthly, Quarterly                  | Establish schedule from day 1; monitor errors and user feedback    |
 
