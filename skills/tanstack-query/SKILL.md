@@ -77,6 +77,10 @@ TanStack Query is an **async state manager**, not a data fetching library. You p
 - **Cache strategy review**: Use `Task` agent
 - **Code review**: Delegate to `code-reviewer` agent
 
+> If the `tanstack-router` skill is available, delegate route loader and preloading patterns to it.
+> If the `tanstack-form` skill is available, delegate form submission and mutation coordination to it.
+> If the `tanstack-table` skill is available, delegate server-side table patterns to it.
+
 ## References
 
 - [Basic patterns, architecture, and query variants](references/basic-patterns.md)

@@ -96,6 +96,9 @@ TanStack Table is a **headless** table library — it provides state management 
 - **Server integration review**: Use `Task` agent
 - **Code review**: Delegate to `code-reviewer` agent
 
+> If the `tanstack-query` skill is available, delegate data fetching, caching, and infinite query patterns to it.
+> If the `tanstack-virtual` skill is available, delegate standalone virtualization patterns to it.
+
 ## References
 
 - [Column definitions, helpers, visibility, and selection](references/column-definitions.md)

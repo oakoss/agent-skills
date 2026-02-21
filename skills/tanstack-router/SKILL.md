@@ -84,7 +84,7 @@ Type-safe, file-based routing for React with route-level data loading, search pa
 - **TanStack Query patterns** — data fetching, caching, mutations: use `tanstack-query` skill
 - **TanStack Start** — server functions, SSR, server-side auth: use `tanstack-start` skill
 - **TanStack Table** — table rendering with router search params: use `tanstack-table` skill
-- **Router + Query integration** — coordinated patterns: use `tanstack-integration` skill
+- **Router + Query integration** — loader data flow, preloading: see [Loader Data Flow Patterns](references/loader-query-patterns.md)
 
 ## References
 
