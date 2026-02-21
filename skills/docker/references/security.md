@@ -51,7 +51,7 @@ FROM nginxinc/nginx-unprivileged:alpine
 USER nginx
 
 # Distroless (runs as nonroot by default)
-FROM gcr.io/distroless/nodejs20-debian12
+FROM gcr.io/distroless/nodejs24-debian12
 USER nonroot
 ```
 
@@ -213,7 +213,7 @@ RUN npm ci --omit=dev
 COPY . .
 RUN npm run build
 
-FROM gcr.io/distroless/nodejs20-debian12
+FROM gcr.io/distroless/nodejs24-debian12
 WORKDIR /app
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
