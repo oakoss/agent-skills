@@ -7,7 +7,7 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
   source: 'https://docs.docker.com'
 ---
 
@@ -39,6 +39,10 @@ Docker packages applications into isolated containers that run consistently acro
 | Container networking | Custom bridge networks with service discovery  | Containers resolve each other by service name        |
 | Compose watch        | `develop.watch` with sync/rebuild actions      | Live reload without volume mounts                    |
 | Init process         | `--init` flag or `tini` entrypoint             | Proper signal handling and zombie reaping            |
+| Multi-platform       | `docker buildx build --platform`               | ARM (Apple Silicon, Graviton) + x86 in one image     |
+| Monorepo prune       | `turbo prune app --docker`                     | Minimal build context from workspace dependencies    |
+| CI layer caching     | `cache-from`/`cache-to` with GHA or registry   | Avoid full rebuilds in CI pipelines                  |
+| Debug containers     | `docker exec`, `docker logs`, `dive`           | Inspect running containers and image layers          |
 
 ## Common Mistakes
 
@@ -54,6 +58,9 @@ Docker packages applications into isolated containers that run consistently acro
 | HEALTHCHECK missing                             | Add health check for orchestrator integration                    |
 | Large base images (`node:20`)                   | Use alpine variants (`node:20-alpine`) for smaller images        |
 | Ignoring `.env` file precedence in Compose      | `environment:` in Compose overrides `.env` file values           |
+| Building entire monorepo for one service        | Use `turbo prune --docker` for minimal build context             |
+| No layer caching in CI                          | Use `cache-from`/`cache-to` with GHA or registry backend         |
+| Building only for x86 when deploying to ARM     | Use `docker buildx` with `--platform linux/amd64,linux/arm64`    |
 
 ## Delegation
 
@@ -69,3 +76,7 @@ Docker packages applications into isolated containers that run consistently acro
 - [Dockerfile patterns: multi-stage builds, layer caching, and image optimization](references/dockerfile-patterns.md)
 - [Compose: services, networking, volumes, and environment management](references/compose.md)
 - [Security: non-root users, secrets, scanning, and production hardening](references/security.md)
+- [Buildx: multi-platform builds for ARM and x86](references/buildx-and-multiplatform.md)
+- [CI: GitHub Actions caching, registry push, and automated builds](references/ci-caching.md)
+- [Monorepo: Turborepo prune, pnpm workspaces, and selective builds](references/monorepo-builds.md)
+- [Debugging: logs, exec, inspect, layer analysis, and network troubleshooting](references/debugging.md)
