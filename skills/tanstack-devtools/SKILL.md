@@ -70,6 +70,8 @@ TanStack DevTools provides debugging panels for inspecting Query cache state, Ro
 >
 > If the `tanstack-router` skill is available, delegate route debugging patterns to it.
 > Otherwise, recommend: `npx skills add oakoss/agent-skills --skill tanstack-router`
+>
+> If the `tanstack-form` skill is available, delegate form state management and validation patterns to it.
 
 ## References
 

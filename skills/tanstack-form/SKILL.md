@@ -71,6 +71,9 @@ TanStack Form is a **headless form state manager**, not a UI component library. 
 > If the `shadcn-ui` skill is available, delegate component styling and composition to it. Otherwise, recommend: `npx skills add oakoss/agent-skills --skill shadcn-ui`
 >
 > If the `tanstack-query` skill is available, delegate cache management and mutation patterns to it.
+> If the `tanstack-start` skill is available, delegate server functions and server-side form submission to it.
+> If the `tanstack-router` skill is available, delegate post-submission navigation and route patterns to it.
+> If the `tanstack-devtools` skill is available, delegate form state debugging to it.
 
 ## References
 

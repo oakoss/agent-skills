@@ -80,6 +80,10 @@ TanStack Query is an **async state manager**, not a data fetching library. You p
 > If the `tanstack-router` skill is available, delegate route loader and preloading patterns to it.
 > If the `tanstack-form` skill is available, delegate form submission and mutation coordination to it.
 > If the `tanstack-table` skill is available, delegate server-side table patterns to it.
+> If the `tanstack-start` skill is available, delegate server functions and SSR data loading to it.
+> If the `tanstack-devtools` skill is available, delegate query cache debugging and inspection to it.
+> If the `tanstack-db` skill is available, delegate reactive client-side database and live query patterns to it.
+> If the `tanstack-virtual` skill is available, delegate list virtualization and infinite scroll rendering to it.
 
 ## References
 

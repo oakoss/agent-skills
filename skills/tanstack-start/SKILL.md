@@ -92,6 +92,8 @@ Full-stack React framework built on TanStack Router. Type-safe server functions 
 
 Use this skill for TanStack Start server functions, middleware, SSR/streaming, route protection, API routes, and deployment configuration. Delegate to `tanstack-router` for file-based routing, search params, and data loading patterns. Delegate to `tanstack-query` for cache management, optimistic updates, and query patterns.
 
+> If the `tanstack-form` skill is available, delegate form state management, validation, and field patterns to it.
+
 ## References
 
 - [Server Functions](references/server-functions.md) — createServerFn, useServerFn, validation, auth, request context, response headers, file uploads, streaming, TanStack Query integration

@@ -86,6 +86,8 @@ Type-safe, file-based routing for React with route-level data loading, search pa
 - **TanStack Table** — table rendering with router search params: use `tanstack-table` skill
 - **Router + Query integration** — loader data flow, preloading: see [Loader Data Flow Patterns](references/loader-query-patterns.md)
 
+> If the `tanstack-devtools` skill is available, delegate router state debugging and route tree inspection to it.
+
 ## References
 
 - [Setup](references/setup.md) — installation, Vite config, file structure, app setup, router default options

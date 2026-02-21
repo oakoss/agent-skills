@@ -98,6 +98,8 @@ TanStack Table is a **headless** table library — it provides state management 
 
 > If the `tanstack-query` skill is available, delegate data fetching, caching, and infinite query patterns to it.
 > If the `tanstack-virtual` skill is available, delegate standalone virtualization patterns to it.
+> If the `tanstack-router` skill is available, delegate URL search param sync for server-side table state to it.
+> If the `tanstack-start` skill is available, delegate server functions for server-side data loading to it.
 
 ## References
 
