@@ -193,6 +193,18 @@ export default defineConfig({
 
 For non-Vite environments, use `@tailwindcss/postcss` as the PostCSS plugin.
 
+## Webpack Integration
+
+For webpack-based projects (Next.js pages router, Create React App, custom webpack), use `@tailwindcss/webpack`:
+
+```ts
+import tailwindcss from '@tailwindcss/webpack';
+
+export default {
+  plugins: [tailwindcss()],
+};
+```
+
 ## Container Query Breakpoints
 
 Customize container query sizes with theme variables:

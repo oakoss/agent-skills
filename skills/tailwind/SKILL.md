@@ -43,6 +43,13 @@ Tailwind CSS v4 skill covering CSS-first configuration, design tokens, component
 | User validation      | `user-valid:`, `user-invalid:`                        | Form validation after user interaction           |
 | Pointer queries      | `pointer-fine:`, `pointer-coarse:`                    | Target input device precision                    |
 | Inert                | `inert:opacity-50`                                    | Style inert elements                             |
+| Logical spacing      | `pbs-*`, `pbe-*`, `mbs-*`, `mbe-*`                    | Block-direction padding/margin (v4.2)            |
+| Logical sizing       | `inline-*`, `block-*`, `min-inline-*`, `max-block-*`  | Logical width/height utilities (v4.2)            |
+| Logical inset        | `inset-s-*`, `inset-e-*`, `inset-bs-*`, `inset-be-*`  | Logical positioning; replaces `start-*`/`end-*`  |
+| Logical borders      | `border-bs-*`, `border-be-*`                          | Block-direction border utilities (v4.2)          |
+| Font features        | `font-features-['smcp']`                              | OpenType `font-feature-settings` (v4.2)          |
+| New color palettes   | `mauve`, `olive`, `mist`, `taupe`                     | Additional neutral palettes (v4.2)               |
+| Webpack integration  | `@tailwindcss/webpack`                                | Run Tailwind as a webpack plugin (v4.2)          |
 | Color space          | OKLCH                                                 | Default in v4, sRGB fallbacks generated          |
 
 ## Common Mistakes
@@ -59,6 +66,7 @@ Tailwind CSS v4 skill covering CSS-first configuration, design tokens, component
 | `tailwindcss-animate` in v4               | Use `tw-animate-css` instead                     |
 | Missing `@theme inline` with shadcn/ui    | Map all CSS variables in `@theme inline` block   |
 | Using `theme('colors.brand')` in CSS      | Use `var(--color-brand)` native CSS variables    |
+| Using deprecated `start-*`/`end-*` inset  | Use `inset-s-*`/`inset-e-*` logical utilities    |
 
 ## Delegation
 

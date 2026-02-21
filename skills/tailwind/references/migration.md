@@ -208,6 +208,18 @@ Built into v4 core. Remove `@tailwindcss/container-queries` from dependencies.
 
 Built into Tailwind since v3.3. Remove `@tailwindcss/line-clamp` if still installed.
 
+### `start-*`/`end-*` Inset Utilities Deprecated (v4.2)
+
+Replaced by `inset-s-*` and `inset-e-*` logical inset utilities:
+
+```tsx
+{/* Deprecated */}
+<div className="start-0 end-4">
+
+{/* Current */}
+<div className="inset-s-0 inset-e-4">
+```
+
 ## Build Tool Changes
 
 ### Vite Projects
@@ -262,4 +274,5 @@ The `tailwindcss` package itself is no longer a PostCSS plugin.
 - [ ] Update `ring` to `ring-3` where v3 width is expected
 - [ ] Check heading/list styling after Preflight changes
 - [ ] Remove `@tailwindcss/container-queries` plugin
-- [ ] Update build tool (Vite plugin or `@tailwindcss/postcss`)
+- [ ] Update build tool (Vite plugin, `@tailwindcss/postcss`, or `@tailwindcss/webpack`)
+- [ ] Replace `start-*`/`end-*` with `inset-s-*`/`inset-e-*` (deprecated in v4.2)
