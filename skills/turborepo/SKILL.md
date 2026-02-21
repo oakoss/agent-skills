@@ -7,7 +7,7 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Turborepo
@@ -45,6 +45,7 @@ Build system for JavaScript/TypeScript monorepos. Caches task outputs and runs t
 | Code generation         | `turbo generate`                                 | Scaffold new packages and components            |
 | List packages           | `turbo ls`                                       | List all packages in monorepo                   |
 | Devtools                | `turbo devtools`                                 | Visual Package Graph and Task Graph explorer    |
+| Docker pruned workspace | `turbo prune <pkg> --docker`                     | Minimal monorepo slice for container builds     |
 
 ## Decision Trees
 
@@ -99,15 +100,17 @@ Explore repository?
 
 ## Common Mistakes
 
-| Mistake                                                                   | Correct Pattern                                                                                        |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Putting build logic in root `package.json` scripts instead of per-package | Define scripts in each package and use `turbo run` in root to delegate                                 |
-| Using `^build` without declaring `workspace:*` dependency                 | Add the dependency in `package.json` first; `^build` only triggers for declared dependencies           |
-| Chaining turbo tasks with `&&` in package scripts                         | Use `dependsOn` in `turbo.json` to declare task ordering                                               |
-| Not adding environment variables to the `env` key in turbo.json           | Declare all build-affecting env vars in `env` so cache hashes correctly                                |
-| Using `--parallel` flag to bypass dependency ordering                     | Configure `dependsOn` correctly or use transit nodes for parallel tasks with proper cache invalidation |
-| Using outdated schema URL                                                 | Use `https://turborepo.dev/schema.json` in `$schema` field                                             |
-| Overriding inherited arrays in package configs                            | Use `$TURBO_EXTENDS$` in arrays to append instead of replace                                           |
+| Mistake                                                                   | Correct Pattern                                                                                          |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Putting build logic in root `package.json` scripts instead of per-package | Define scripts in each package and use `turbo run` in root to delegate                                   |
+| Using `^build` without declaring `workspace:*` dependency                 | Add the dependency in `package.json` first; `^build` only triggers for declared dependencies             |
+| Chaining turbo tasks with `&&` in package scripts                         | Use `dependsOn` in `turbo.json` to declare task ordering                                                 |
+| Not adding environment variables to the `env` key in turbo.json           | Declare all build-affecting env vars in `env` so cache hashes correctly                                  |
+| Using `--parallel` flag to bypass dependency ordering                     | Configure `dependsOn` correctly or use transit nodes for parallel tasks with proper cache invalidation   |
+| Using outdated schema URL                                                 | Use `https://turborepo.dev/schema.json` in `$schema` field                                               |
+| Overriding inherited arrays in package configs                            | Use `$TURBO_EXTENDS$` in arrays to append instead of replace                                             |
+| Defining tasks in root `turbo.json` that belong to a specific package     | Define tasks inside the package's own `turbo.json` with `extends: ["//"]`                                |
+| Using `turbo <task>` shorthand in scripts or CI                           | Use `turbo run <task>` in `package.json` scripts and CI pipelines; shorthand is for interactive use only |
 
 ## Delegation
 

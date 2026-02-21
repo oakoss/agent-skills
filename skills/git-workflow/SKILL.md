@@ -4,7 +4,7 @@ description: 'Designs git workflows covering branching strategies, trunk-based d
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Git Workflow
@@ -109,3 +109,4 @@ Auto-merge is acceptable for low-risk PRs when pipeline succeeds.
 - [git-internals.md](references/git-internals.md) -- Object model, SHA hashing, index, references, packfiles, garbage collection
 - [automation-scripts.md](references/automation-scripts.md) -- Branch pruning, semantic release, security scanning, stacked PR helpers
 - [issue-templates.md](references/issue-templates.md) -- Bug report, feature request, task, and minimal issue templates
+- [advanced-operations.md](references/advanced-operations.md) -- Commit signing, interactive rebase, worktrees, bisect, reflog recovery, and --force-with-lease

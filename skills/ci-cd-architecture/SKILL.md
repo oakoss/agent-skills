@@ -1,10 +1,10 @@
 ---
 name: ci-cd-architecture
-description: CI/CD pipelines, deployment strategy, and infrastructure. Use when setting up GitHub Actions workflows, choosing deployment platforms, configuring production environments, securing pipelines with OIDC, or optimizing build performance.
+description: CI/CD pipelines, deployment strategy, and infrastructure. Use when setting up GitHub Actions workflows, choosing deployment platforms, configuring production environments, securing pipelines with OIDC, optimizing build performance, building container images, measuring DORA metrics, or setting up Docker multi-stage builds.
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # CI/CD & Deployment
@@ -19,19 +19,29 @@ Covers CI/CD pipeline design, deployment platform selection, and production infr
 
 ## Quick Reference
 
-| Need                      | Solution                                      |
-| ------------------------- | --------------------------------------------- |
-| MVP deploy (< 1K users)   | Vercel, Netlify, Railway, Cloudflare Pages    |
-| Growing product (1K-100K) | AWS Amplify, Cloud Run, Fly.io, Render        |
-| Enterprise (100K+)        | AWS ECS/EKS, GKE, DigitalOcean App Platform   |
-| Static site               | Vercel, Netlify, Cloudflare Pages             |
-| Full-stack + DB           | Railway, Render, AWS Amplify                  |
-| Global low latency        | Cloudflare Workers, Vercel Edge, Fly.io       |
-| Compliance (HIPAA, SOC 2) | AWS, GCP, Azure                               |
-| Cloud auth from CI        | OIDC roles (never long-lived keys)            |
-| Action pinning            | Pin to commit SHA, not tag                    |
-| Bun CI caching            | `~/.bun/install/cache` keyed on lockfile      |
-| Pipeline security         | StepSecurity Harden-Runner for egress control |
+| Need                      | Solution                                            |
+| ------------------------- | --------------------------------------------------- |
+| MVP deploy (< 1K users)   | Vercel, Netlify, Railway, Cloudflare Pages          |
+| Growing product (1K-100K) | AWS Amplify, Cloud Run, Fly.io, Render              |
+| Enterprise (100K+)        | AWS ECS/EKS, GKE, DigitalOcean App Platform         |
+| Static site               | Vercel, Netlify, Cloudflare Pages                   |
+| Full-stack + DB           | Railway, Render, AWS Amplify                        |
+| Global low latency        | Cloudflare Workers, Vercel Edge, Fly.io             |
+| Compliance (HIPAA, SOC 2) | AWS, GCP, Azure                                     |
+| Cloud auth from CI        | OIDC roles (never long-lived keys)                  |
+| Action pinning            | Pin to commit SHA, not tag                          |
+| Bun CI caching            | `~/.bun/install/cache` keyed on lockfile            |
+| Pipeline security         | StepSecurity Harden-Runner for egress control       |
+| Container builds          | Multi-stage Dockerfile: builder + runtime stage     |
+| Docker layer caching      | `--cache-from` + `actions/cache` for buildx         |
+| Multi-platform builds     | `docker buildx` targeting `linux/amd64,linux/arm64` |
+| Image scanning            | Trivy or Snyk in pipeline before push               |
+| Registry push             | GHCR (`ghcr.io`), ECR, Docker Hub                   |
+| Pipeline stages           | build → test → security scan → deploy               |
+| DORA: deploy frequency    | Track deployments per day/week per service          |
+| DORA: lead time           | Commit-to-production time; target < 1 hour          |
+| DORA: change failure rate | % of deploys causing incidents; target < 5%         |
+| DORA: MTTR                | Mean time to restore; target < 1 hour               |
 
 ## Common Mistakes
 
@@ -63,3 +73,4 @@ Covers CI/CD pipeline design, deployment platform selection, and production infr
 - [Deployment patterns: Jamstack, serverless, traditional, microservices](references/deployment-patterns.md)
 - [Platform selection framework, database needs, and cost optimization](references/platform-selection.md)
 - [Monitoring, observability tiers, and deployment checklists](references/monitoring.md)
+- [Container builds: multi-stage Dockerfiles, layer caching, buildx, image scanning, and registry push](references/container-builds.md)

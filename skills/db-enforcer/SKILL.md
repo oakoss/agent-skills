@@ -4,7 +4,7 @@ description: 'Enforces database integrity for PostgreSQL and Prisma systems. Use
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # DB Enforcer

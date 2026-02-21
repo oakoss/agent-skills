@@ -1,10 +1,10 @@
 ---
 name: postgres-tuning
-description: 'PostgreSQL 17/18+ performance tuning and optimization. Covers async I/O configuration, query plan forensics, index strategies, autovacuum tuning, and vector search optimization. Use when diagnosing slow queries, configuring async I/O, tuning autovacuum, optimizing vector indexes, or analyzing execution plans with EXPLAIN BUFFERS.'
+description: 'PostgreSQL 17/18+ performance tuning and optimization. Covers async I/O configuration, query plan forensics, index strategies, autovacuum tuning, vector search optimization, connection pooling, declarative partitioning, and practical query patterns. Use when diagnosing slow queries, configuring async I/O, tuning autovacuum, optimizing vector indexes, analyzing execution plans with EXPLAIN BUFFERS, configuring PgBouncer or connection pooling, setting up table partitioning, implementing cursor pagination, or optimizing queue processing.'
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # PostgreSQL Tuning
@@ -108,3 +108,4 @@ Optimizes PostgreSQL 17/18+ performance across I/O, query execution, indexing, a
 - [Async I/O configuration and storage tuning](references/aio-tuning.md)
 - [Query plan analysis and operator forensics](references/query-plan-analysis.md)
 - [Indexing strategies and bloat management](references/indexing-and-bloat.md)
+- [Connection pooling, partitioning, and query patterns](references/pooling-and-patterns.md)
