@@ -236,6 +236,50 @@ export default defineConfig({
 
 Client tests get jsdom for DOM APIs and React Testing Library. Server tests get Node for server functions, API routes, and database code — no DOM overhead.
 
+### Client / Server / Browser Split
+
+Add a browser project for tests that need a real DOM (canvas, Web Workers, browser-specific APIs):
+
+```ts
+import { defineConfig } from 'vitest/config';
+import { playwright } from '@vitest/browser-playwright';
+
+export default defineConfig({
+  test: {
+    projects: [
+      {
+        test: {
+          name: 'client',
+          environment: 'jsdom',
+          include: ['src/**/*.test.tsx'],
+          setupFiles: ['./vitest.setup.ts'],
+        },
+      },
+      {
+        test: {
+          name: 'server',
+          environment: 'node',
+          include: ['src/server/**/*.test.ts'],
+        },
+      },
+      {
+        test: {
+          name: 'browser',
+          browser: {
+            enabled: true,
+            provider: playwright(),
+            instances: [{ browser: 'chromium' }],
+          },
+          include: ['src/**/*.browser.test.ts'],
+        },
+      },
+    ],
+  },
+});
+```
+
+Most component tests belong in the `client` project with jsdom — it's faster. Reserve the `browser` project for tests that genuinely need a real browser engine.
+
 ### Monorepo with Glob Patterns
 
 Point to package directories and each package provides its own `vitest.config.ts`:
@@ -260,56 +304,9 @@ vitest --project client --project server
 
 ### Legacy Workspace Migration
 
-If migrating from `vitest.workspace.js`, move config into `vitest.config.ts`:
-
-```ts
-// Legacy (deprecated in v3.2, removed in v4)
-// import { defineWorkspace } from 'vitest/config';
-// export default defineWorkspace([...])
-
-// Current approach
-import { defineConfig } from 'vitest/config';
-
-export default defineConfig({
-  test: {
-    projects: ['./packages/*', { test: { name: 'unit' } }],
-  },
-});
-```
+If migrating from the deprecated `vitest.workspace.js` (removed in v4), move workspace entries into `vitest.config.ts` under `test.projects`.
 
 ## Browser Mode
-
-Run tests in real browsers. Use `projects` to run browser and unit tests together:
-
-```ts
-import { defineConfig } from 'vitest/config';
-import { playwright } from '@vitest/browser-playwright';
-
-export default defineConfig({
-  test: {
-    projects: [
-      {
-        test: {
-          name: 'unit',
-          environment: 'node',
-          include: ['tests/unit/**/*.test.ts'],
-        },
-      },
-      {
-        test: {
-          name: 'browser',
-          browser: {
-            enabled: true,
-            provider: playwright(),
-            instances: [{ browser: 'chromium' }],
-          },
-          include: ['tests/browser/**/*.test.ts'],
-        },
-      },
-    ],
-  },
-});
-```
 
 Initialize browser mode quickly:
 
@@ -321,6 +318,8 @@ Available browser providers:
 
 - `@vitest/browser-playwright` — Chromium, Firefox, WebKit
 - `@vitest/browser-webdriverio` — Chrome, Edge, Firefox, Safari
+
+See the Projects Configuration section above for browser project setup with `playwright()`.
 
 ## Reporters
 
