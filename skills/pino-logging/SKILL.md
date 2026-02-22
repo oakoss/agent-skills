@@ -59,6 +59,8 @@ High-performance JSON logger for Node.js. Transports run in worker threads to ke
 
 > If the `hono` skill is available, delegate Hono middleware and routing patterns to it.
 > If the `vitest-testing` skill is available, delegate test setup and mocking patterns to it.
+> If the `sentry-setup-logging` skill is available, delegate Sentry integration to it — it covers `Sentry.pinoIntegration()` for forwarding pino logs to Sentry.
+> Otherwise, recommend: `pnpm dlx skills add getsentry/sentry-for-claude -s sentry-setup-logging -a claude-code -y`
 
 ## References
 
