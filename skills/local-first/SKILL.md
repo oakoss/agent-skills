@@ -73,3 +73,7 @@ Local-first is an architecture where the application reads and writes to a local
 - [Sync engine landscape and selection guide](references/sync-engines.md)
 - [Client-side storage options and limits](references/client-storage.md)
 - [Conflict resolution strategies](references/conflict-resolution.md)
+- [Offline resilience patterns](references/offline-patterns.md)
+- [Schema versioning and migration](references/schema-evolution.md)
+- [Multi-tenant data governance patterns](references/multi-tenant.md)
+- [Testing strategies for local-first apps](references/testing.md)
