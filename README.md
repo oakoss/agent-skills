@@ -1,6 +1,6 @@
 # agent-skills
 
-A curated collection of 111 [agent skills](https://agentskills.io) for Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code, GitHub Copilot, Windsurf, Goose, and [27+ other agents](https://agentskills.io). Each skill is hand-written and enriched against official documentation — not auto-generated from docs.
+A curated collection of 112 [agent skills](https://agentskills.io) for Claude Code, Cursor, Gemini CLI, OpenAI Codex, VS Code, GitHub Copilot, Windsurf, Goose, and [27+ other agents](https://agentskills.io). Each skill is hand-written and enriched against official documentation — not auto-generated from docs.
 
 ## Install
 
@@ -128,12 +128,13 @@ pnpm dlx skills add oakoss/agent-skills --list
 
 ### Backend & API
 
-| Skill                                           | Description                                                   |
-| ----------------------------------------------- | ------------------------------------------------------------- |
-| [hono](skills/hono)                             | Hono ultrafast web framework for edge and server runtimes     |
-| [resend](skills/resend)                         | Resend email API for transactional and marketing emails       |
-| [react-email](skills/react-email)               | Build responsive HTML emails with React Email components      |
-| [stripe-integration](skills/stripe-integration) | Stripe payment integration, subscriptions, webhooks, Elements |
+| Skill                                           | Description                                                     |
+| ----------------------------------------------- | --------------------------------------------------------------- |
+| [hono](skills/hono)                             | Hono ultrafast web framework for edge and server runtimes       |
+| [resend](skills/resend)                         | Resend email API for transactional and marketing emails         |
+| [react-email](skills/react-email)               | Build responsive HTML emails with React Email components        |
+| [stripe-integration](skills/stripe-integration) | Stripe payment integration, subscriptions, webhooks, Elements   |
+| [pino-logging](skills/pino-logging)             | Pino high-performance JSON logger with transports and redaction |
 
 ### Build Tools & Publishing
 
