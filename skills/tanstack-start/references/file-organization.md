@@ -168,23 +168,78 @@ export async function findUserById(id: string) {
 
 Static imports of `.functions.ts` files are safe in client components — the build replaces server function implementations with RPC stubs.
 
+## Import Protection Pitfalls
+
+### Loaders Run on Both Server AND Client
+
+Route loaders execute on the server during SSR and on the client during client-side navigation. Never access `process.env` directly in a loader — it leaks secrets to the client bundle:
+
+```tsx
+// ❌ Loader runs on BOTH server and client — secret exposed
+export const Route = createFileRoute('/users')({
+  loader: () => {
+    const secret = process.env.SECRET; // Bundled into client code
+    return fetch(`/api/users?key=${secret}`);
+  },
+});
+
+// ✅ Use a server function — secret stays on server
+const getUsers = createServerFn().handler(async () => {
+  const secret = process.env.SECRET;
+  return fetch(`/api/users?key=${secret}`);
+});
+
+export const Route = createFileRoute('/users')({
+  loader: () => getUsers(),
+});
+```
+
+### Direct process.env Access Outside Server Functions
+
+Any `process.env` reference outside of `createServerFn` or `createServerOnlyFn` risks client exposure:
+
+```ts
+// ❌ Top-level — bundled into client
+const apiKey = process.env.SECRET_KEY;
+
+// ✅ Wrapped in server-only function
+const apiKey = createServerOnlyFn(() => process.env.SECRET_KEY);
+```
+
+### Safe Import Patterns
+
+| Import Source               | Safe in Client? | Why                      |
+| --------------------------- | --------------- | ------------------------ |
+| `.functions.ts`             | Yes             | Build creates RPC stubs  |
+| `.server.ts`                | No              | Contains raw server code |
+| `.ts` (types/schemas)       | Yes             | No server-only code      |
+| `createServerFn` return     | Yes             | Serialized RPC call      |
+| `createServerOnlyFn` return | No              | Throws on client         |
+
 ## Environment Variables
 
-`VITE_` prefixed variables are client-accessible. Non-prefixed variables are server-only.
+`VITE_` prefixed variables are inlined into the client bundle at build time. Non-prefixed variables are server-only — accessing them via `import.meta.env` on the client returns `undefined` (security feature).
 
 ```bash
 # .env
-# Server-only (no prefix)
+# Server-only (no prefix) — never sent to browser
 DATABASE_URL=postgresql://user:pass@localhost:5432/mydb
 JWT_SECRET=super-secret-key
 STRIPE_SECRET_KEY=sk_live_...
 
-# Client-safe (VITE_ prefix)
+# Client-safe (VITE_ prefix) — inlined into client bundle
 VITE_APP_NAME=My App
 VITE_API_URL=https://api.example.com
+VITE_SENTRY_DSN=https://...
 ```
 
-Access patterns:
+### Access Patterns
+
+| Context            | Access                     | Available Variables              |
+| ------------------ | -------------------------- | -------------------------------- |
+| Server function    | `process.env.VAR`          | All variables                    |
+| Client component   | `import.meta.env.VITE_VAR` | Only `VITE_` prefixed            |
+| Loader (runs both) | Neither directly           | Use `createServerFn` for secrets |
 
 ```ts
 // Server function — can access any variable
@@ -197,9 +252,31 @@ const getUser = createServerFn().handler(async () => {
 export function AppHeader() {
   return <h1>{import.meta.env.VITE_APP_NAME}</h1>;
 }
+
+// Feature flags via VITE_ prefix
+export function FeatureGated({ children }: { children: React.ReactNode }) {
+  if (import.meta.env.VITE_ENABLE_NEW_DASHBOARD !== 'true') return null;
+  return <>{children}</>;
+}
 ```
 
-Validated environment with Zod (recommended for server-side):
+### Build-Time Inlining
+
+`VITE_` variables must be available at build time. They are statically replaced during the build — not read at runtime:
+
+```bash
+# ❌ Variable not set during build — inlined as undefined
+npm run build
+
+# ✅ Variable available at build time
+VITE_API_URL=https://api.example.com npm run build
+```
+
+Restart the dev server after changing `.env` files — Vite only reads them on startup.
+
+### Validated Environment (Zod)
+
+Validate server-side variables at startup to fail fast on misconfiguration:
 
 ```ts
 // src/lib/env.server.ts
@@ -217,7 +294,7 @@ const envSchema = z.object({
 export const env = envSchema.parse(process.env);
 ```
 
-Use `*.server.ts` suffix for files that must never be imported by client code. Vite tree-shakes server-only imports, but the suffix makes intent explicit and prevents accidental bundling:
+Use `*.server.ts` suffix for env files to prevent accidental client import:
 
 ```ts
 // src/lib/db.server.ts — only importable in server context
@@ -227,7 +304,7 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 export const db = drizzle(env.DATABASE_URL);
 ```
 
-Type-safe environment variables:
+### TypeScript Declarations
 
 ```ts
 // env.d.ts
@@ -236,6 +313,8 @@ Type-safe environment variables:
 interface ImportMetaEnv {
   readonly VITE_APP_NAME: string;
   readonly VITE_API_URL: string;
+  readonly VITE_SENTRY_DSN?: string;
+  readonly VITE_ENABLE_NEW_DASHBOARD?: string;
 }
 
 interface ImportMeta {
@@ -255,103 +334,33 @@ declare global {
 export {};
 ```
 
-## Feature-Based Structure
+## Project Structure
 
-For medium-to-large applications, organize code by feature:
+Organize by feature for medium-to-large applications. Use `@/*` path aliases to avoid deep relative imports.
 
 ```sh
 src/
 ├── features/
 │   ├── auth/
-│   │   ├── api/
-│   │   │   ├── index.ts
-│   │   │   ├── auth.queries.ts
-│   │   │   └── auth.mutations.ts
-│   │   ├── components/
-│   │   │   ├── LoginForm.tsx
-│   │   │   └── AuthGuard.tsx
-│   │   ├── hooks/
-│   │   │   └── useAuth.ts
+│   │   ├── api/              # queries, mutations, server functions
+│   │   ├── components/       # LoginForm.tsx, AuthGuard.tsx
+│   │   ├── hooks/            # useAuth.ts
 │   │   ├── types.ts
-│   │   └── index.ts
+│   │   └── index.ts          # barrel export (public API)
 │   └── users/
-│       ├── api/
-│       ├── components/
-│       ├── hooks/
-│       └── index.ts
-├── shared/
-│   ├── components/
-│   │   ├── ui/
-│   │   └── layout/
-│   ├── hooks/
-│   ├── utils/
-│   └── types/
-├── lib/
-│   ├── api-client.ts
-│   └── query-client.ts
-└── config/
-    ├── env.ts
-    └── constants.ts
+├── shared/                   # cross-feature components, hooks, utils
+├── lib/                      # api-client.ts, query-client.ts
+└── config/                   # env.ts, constants.ts
 ```
 
-## File Naming Rules
+### Naming Conventions
 
-```sh
-Components:     PascalCase.tsx       -> UserCard.tsx
-Hooks:          camelCase.ts         -> useUserProfile.ts
-Utils:          kebab-case.ts        -> format-date.ts
-Types:          kebab-case.ts        -> user.types.ts
-Queries:        feature.queries.ts   -> users.queries.ts
-Mutations:      feature.mutations.ts -> users.mutations.ts
-Routes:         kebab-case.tsx       -> user-profile.tsx
-```
-
-## Import Path Aliases
-
-```json
-{
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"],
-      "@/features/*": ["./src/features/*"],
-      "@/shared/*": ["./src/shared/*"]
-    }
-  }
-}
-```
-
-Use absolute imports to avoid deep relative paths:
-
-```ts
-import { UserCard } from '@/features/users';
-import { Button } from '@/shared/components/ui';
-```
-
-## Barrel Exports
-
-```ts
-// features/users/index.ts — PUBLIC API
-export { UserCard } from './components/UserCard';
-export { UserList } from './components/UserList';
-export { userQueries } from './api/users.queries';
-export type { User, UserFilter } from './types';
-```
-
-## Module Boundaries
-
-```sh
-features/auth/ can import from:
-  @/shared/*
-  @/lib/*
-  @/features/users/*  (cross-feature — avoid when possible)
-
-If cross-feature imports grow, lift shared code to shared/
-```
-
-## When to Split Files
-
-- Types shared across 3+ files: extract to `types.ts`
-- More than 5 queries: split by domain
-- Component over 200 lines: extract sub-components
-- Hook used in 3+ places: move to `shared/hooks/`
-- Keep component and its props type colocated when only used together
+| Category    | Convention           | Example              |
+| ----------- | -------------------- | -------------------- |
+| Components  | `PascalCase.tsx`     | `UserCard.tsx`       |
+| Hooks       | `camelCase.ts`       | `useUserProfile.ts`  |
+| Utils       | `kebab-case.ts`      | `format-date.ts`     |
+| Queries     | `feature.queries.ts` | `users.queries.ts`   |
+| Routes      | `kebab-case.tsx`     | `user-profile.tsx`   |
+| Server code | `*.server.ts`        | `db.server.ts`       |
+| Server fns  | `*.functions.ts`     | `users.functions.ts` |

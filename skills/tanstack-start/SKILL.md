@@ -75,21 +75,22 @@ Full-stack React framework built on TanStack Router. Type-safe server functions 
 
 ## Common Mistakes
 
-| Mistake                                      | Fix                                                   |
-| -------------------------------------------- | ----------------------------------------------------- |
-| No `.inputValidator()` on server functions   | Always validate with Zod schemas                      |
-| Raw fetch instead of `createServerFn`        | Loses type safety, serialization, and code splitting  |
-| Mixing server/client code without boundaries | Use `createServerOnlyFn` / `createClientOnlyFn`       |
-| Checking auth in every handler               | Use middleware composition or `beforeLoad`            |
-| Awaiting all data in loader                  | Only await critical data, prefetch the rest           |
-| `Date.now()` in render                       | Pass timestamp from loader (hydration mismatch)       |
-| Missing `nodejs_compat` flag                 | Required in `wrangler.toml` for Cloudflare            |
-| GET for mutations                            | Use POST for create/update/delete                     |
-| Cookies not forwarded to external APIs       | Use `getRequestHeaders()` or `createIsomorphicFn`     |
-| Unvalidated server env vars                  | Validate with Zod in `.server.ts` files               |
-| Storing auth tokens in localStorage          | Use HTTP-only cookies via `useSession`                |
-| Exposing raw DB errors to client             | Catch and return user-friendly messages, log details  |
-| No structured data for content pages         | Add JSON-LD via `head.scripts` for AI discoverability |
+| Mistake                                      | Fix                                                    |
+| -------------------------------------------- | ------------------------------------------------------ |
+| No `.inputValidator()` on server functions   | Always validate with Zod schemas                       |
+| Raw fetch instead of `createServerFn`        | Loses type safety, serialization, and code splitting   |
+| Mixing server/client code without boundaries | Use `createServerOnlyFn` / `createClientOnlyFn`        |
+| Checking auth in every handler               | Use middleware composition or `beforeLoad`             |
+| Awaiting all data in loader                  | Only await critical data, prefetch the rest            |
+| `Date.now()` in render                       | Pass timestamp from loader (hydration mismatch)        |
+| Missing `nodejs_compat` flag                 | Required in `wrangler.toml` for Cloudflare             |
+| GET for mutations                            | Use POST for create/update/delete                      |
+| Cookies not forwarded to external APIs       | Use `getRequestHeaders()` or `createIsomorphicFn`      |
+| `process.env` in loader (runs on both)       | Wrap in `createServerFn` — loaders run client-side too |
+| Unvalidated server env vars                  | Validate with Zod in `.server.ts` files                |
+| Storing auth tokens in localStorage          | Use HTTP-only cookies via `useSession`                 |
+| Exposing raw DB errors to client             | Catch and return user-friendly messages, log details   |
+| No structured data for content pages         | Add JSON-LD via `head.scripts` for AI discoverability  |
 
 ## Delegation
 
