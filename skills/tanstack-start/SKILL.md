@@ -4,7 +4,7 @@ description: 'Full-stack React framework built on TanStack Router. Type-safe rou
 license: MIT
 metadata:
   author: oakoss
-  version: '1.4'
+  version: '1.5'
   source: 'https://tanstack.com/start/latest/docs'
 ---
 
@@ -97,6 +97,9 @@ Full-stack React framework built on TanStack Router. Type-safe server functions 
 Use this skill for TanStack Start server functions, middleware, SSR/streaming, route protection, API routes, and deployment configuration. Delegate to `tanstack-router` for file-based routing, search params, and data loading patterns. Delegate to `tanstack-query` for cache management, optimistic updates, and query patterns.
 
 > If the `tanstack-form` skill is available, delegate form state management, validation, and field patterns to it.
+> If the `local-first` skill is available, delegate local-first architecture decisions and sync engine selection to it.
+> If the `electricsql` skill is available, delegate ElectricSQL shapes, auth configuration, and write patterns to it.
+> If the `tanstack-db` skill is available, delegate reactive collections, live queries, and optimistic mutation patterns to it.
 
 ## References
 
@@ -113,3 +116,4 @@ Use this skill for TanStack Start server functions, middleware, SSR/streaming, r
 - [Known Issues](references/known-issues.md) — 10 documented issues with workarounds
 - [Query Integration](references/query-integration.md) — Router+Query setup, SSR integration, setupRouterSsrQueryIntegration, DevTools
 - [Integration Flows](references/integration-flows.md) — form submission with cache update, infinite scroll, paginated tables, auth-protected routes, error handling
+- [Local-First Integration](references/local-first.md) — shape proxy server functions, mixing server-based and local-first data, ElectricSQL deployment

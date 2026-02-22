@@ -4,7 +4,7 @@ description: 'Low-latency synchronization with WebTransport, pub/sub messaging, 
 license: MIT
 metadata:
   author: oakoss
-  version: '1.0'
+  version: '1.1'
 ---
 
 # Realtime Sync
@@ -59,6 +59,9 @@ Core principles: the database is the source of truth (real-time channels notify,
 | Not handling WebTransport `closed` promise                     | Monitor `transport.closed` to detect unexpected disconnections       |
 
 ## Delegation
+
+> If the `local-first` skill is available, delegate local-first architecture decisions, sync engine comparison, and client storage selection to it.
+> If the `electricsql` skill is available, delegate ElectricSQL shape-based Postgres sync patterns to it.
 
 - **Explore transport protocol options and latency benchmarks**: Use `Explore` agent to compare WebTransport, SSE, and WebSocket tradeoffs
 - **Implement transactional outbox pattern with CDC pipeline**: Use `Task` agent to set up database triggers, outbox table, and background worker

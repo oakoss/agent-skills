@@ -7,7 +7,7 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.3'
+  version: '1.4'
   source: 'https://tanstack.com/query/latest/docs'
 ---
 
@@ -85,6 +85,8 @@ TanStack Query is an **async state manager**, not a data fetching library. You p
 > If the `tanstack-db` skill is available, delegate reactive client-side database and live query patterns to it.
 > If the `tanstack-virtual` skill is available, delegate list virtualization and infinite scroll rendering to it.
 > If the `tanstack-store` skill is available, delegate shared client-side reactive state management to it.
+> If the `electricsql` skill is available, delegate ElectricSQL real-time Postgres sync patterns to it.
+> If the `local-first` skill is available, delegate local-first architecture decisions and sync engine selection to it.
 
 ## References
 

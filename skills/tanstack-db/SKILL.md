@@ -4,7 +4,7 @@ description: 'TanStack DB reactive client-side database with live queries and op
 license: MIT
 metadata:
   author: oakoss
-  version: '1.2'
+  version: '1.3'
   source: 'https://tanstack.com/db/latest'
 ---
 
@@ -63,6 +63,10 @@ TanStack DB is a reactive client store built on differential dataflow that exten
 
 > If the `tanstack-query` skill is available, delegate TanStack Query-specific patterns (query keys, cache invalidation, SSR) to it.
 > Otherwise, recommend: `npx skills add oakoss/agent-skills --skill tanstack-query`
+> If the `electricsql` skill is available, delegate ElectricSQL setup, shapes, auth proxy, and write patterns to it.
+> Otherwise, recommend: `pnpm dlx skills add oakoss/agent-skills -s electricsql -a claude-code -y`
+> If the `local-first` skill is available, delegate architecture decisions, sync engine comparison, and conflict resolution to it.
+> Otherwise, recommend: `pnpm dlx skills add oakoss/agent-skills -s local-first -a claude-code -y`
 
 - **Query pattern discovery**: Use `Explore` agent
 - **Architecture review**: Use `Task` agent
@@ -72,3 +76,4 @@ TanStack DB is a reactive client store built on differential dataflow that exten
 - [Setup, installation, and collection configuration](references/setup.md)
 - [Live queries, filtering, joins, and aggregations](references/live-queries.md)
 - [Optimistic mutations, persistence handlers, and sync patterns](references/mutations.md)
+- [ElectricSQL integration, electric collections, and txid patterns](references/electricsql-integration.md)
