@@ -4,7 +4,7 @@ description: 'Changesets for versioning and changelog management in monorepos. U
 license: MIT
 metadata:
   author: oakoss
-  version: '1.1'
+  version: '1.2'
   source: 'https://github.com/changesets/changesets'
 ---
 
@@ -92,10 +92,11 @@ Changesets is a versioning and changelog management tool focused on multi-packag
 
 ## Delegation
 
-- **Monorepo build tooling**: If the `turborepo` skill is available, delegate build orchestration to it
 - **CI pipeline debugging**: Use `Explore` agent for repository-specific workflow discovery
 - **npm publishing issues**: Use `Task` agent for debugging publish and registry authentication failures
-- **Code review**: Delegate to `code-reviewer` agent for changeset content review
+
+> If the `turborepo` skill is available, delegate build orchestration, task caching, and CI optimization to it.
+> If the `pnpm-workspace` skill is available, delegate workspace setup, dependency linking, catalogs, and Docker deployment to it. See its monorepo integration reference for the end-to-end release pipeline.
 
 ## References
 

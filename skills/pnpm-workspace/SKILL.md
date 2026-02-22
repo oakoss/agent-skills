@@ -4,7 +4,7 @@ description: 'pnpm workspace monorepo management with filtering, catalogs, and s
 license: MIT
 metadata:
   author: oakoss
-  version: '1.1'
+  version: '1.2'
   source: https://pnpm.io/workspaces
 ---
 
@@ -60,10 +60,13 @@ pnpm workspaces provide built-in monorepo support through `pnpm-workspace.yaml`,
 
 - **Workspace scaffolding**: Use `Explore` agent to discover existing package structure
 - **Dependency auditing**: Use `Task` agent to check version consistency across packages
-- **Build orchestration**: Pair with Turborepo or Nx for task caching and parallel builds
+
+> If the `turborepo` skill is available, delegate build orchestration, task caching, and CI optimization to it.
+> If the `changesets` skill is available, delegate versioning, changelog generation, and npm publishing to it.
 
 ## References
 
 - [Workspace setup, workspace protocol, and catalogs](references/workspace-setup.md)
 - [Filtering packages for targeted commands](references/filtering.md)
 - [Shared configuration across workspace packages](references/shared-configs.md)
+- [Monorepo integration: pnpm + Turborepo + Changesets pipeline](references/monorepo-integration.md)

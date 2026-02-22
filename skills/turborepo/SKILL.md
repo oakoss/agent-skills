@@ -7,7 +7,7 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.1'
+  version: '1.2'
 ---
 
 # Turborepo
@@ -117,6 +117,9 @@ Explore repository?
 - **Monorepo structure exploration**: Use `Explore` agent to discover packages, workspace layout, and dependency relationships
 - **Pipeline configuration and optimization**: Use `Task` agent to set up turbo.json tasks, configure caching, and debug cache misses
 - **Monorepo architecture planning**: Use `Plan` agent to design package boundaries, shared libraries, and CI optimization strategy
+
+> If the `pnpm-workspace` skill is available, delegate workspace setup, dependency linking, catalogs, and `pnpm deploy` to it.
+> If the `changesets` skill is available, delegate versioning, changelog generation, and npm publishing to it.
 
 ## References
 
