@@ -238,6 +238,16 @@ def adaptive_cot(problem, initial_depth=3):
 
 **Skip CoT for**: Simple factual queries, direct lookups, creative writing, latency-sensitive applications.
 
+### When CoT Helps vs Hurts
+
+| Helps                              | Hurts or wastes tokens               |
+| ---------------------------------- | ------------------------------------ |
+| Math and arithmetic                | Simple factual recall                |
+| Multi-step logic                   | Classification with clear categories |
+| Code debugging and analysis        | Translation tasks                    |
+| Complex reasoning with constraints | Short-form generation                |
+| Ambiguous problems needing nuance  | Tasks where speed matters most       |
+
 ### Diminishing Returns with Reasoning Models
 
 Models with native reasoning capabilities (OpenAI o-series, Claude with extended thinking) already perform internal chain-of-thought. Adding explicit CoT prompts to these models is redundant and can degrade performance. Reserve explicit CoT for standard models without native reasoning. Research shows CoT requests add 20-80% more latency for often negligible accuracy gains on modern models that reason by default.

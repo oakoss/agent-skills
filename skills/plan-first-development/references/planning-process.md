@@ -76,6 +76,52 @@ agree with, which you somewhat agree with, and which you disagree with:
 | Has tasks               | Has tasks with dependencies and rationale |
 | ~500 lines              | ~3,500+ lines after refinement            |
 
+## When to Plan vs Just Build
+
+| Signal                                  | Action     |
+| --------------------------------------- | ---------- |
+| Touches 1-2 files, clear pattern exists | Just build |
+| Touches 3+ files or modules             | Plan first |
+| Unfamiliar codebase or library          | Plan first |
+| Multiple viable approaches              | Plan first |
+| Architectural or data model changes     | Plan first |
+| Performance-critical path               | Plan first |
+| Well-understood bug fix                 | Just build |
+| Refactor with existing test coverage    | Light plan |
+| Cross-team or cross-service changes     | Plan first |
+| Reversible change with feature flag     | Light plan |
+
+**Planning depth by complexity:**
+
+| Complexity | Planning depth                                       |
+| ---------- | ---------------------------------------------------- |
+| Low        | Mental model, no written plan needed                 |
+| Medium     | Quick decomposition, list dependencies               |
+| High       | Full decomposition, approach comparison, risk matrix |
+| Very high  | Spike first, then full plan with phased execution    |
+
+## Goal Decomposition
+
+Breaking "build feature X" into concrete, ordered steps. Start from the desired outcome and work backward.
+
+### The Decomposition Process
+
+1. **Define the outcome** -- what does "done" look like from the user's perspective?
+2. **Identify the layers** -- which systems, modules, or files are involved?
+3. **Extract prerequisites** -- what must exist before each piece can be built?
+4. **Order by dependency** -- what blocks what?
+5. **Size the steps** -- each step should be completable and testable independently
+
+### Decomposition Patterns
+
+| Pattern        | When to use                    | How it works                                           |
+| -------------- | ------------------------------ | ------------------------------------------------------ |
+| Layer-by-layer | Full-stack features            | Database, then API, then UI                            |
+| Outside-in     | UI-driven features             | Start with the interface, stub dependencies, fill in   |
+| Inside-out     | Core logic changes             | Start with the domain model, build outward             |
+| Vertical slice | Features that touch all layers | Build one thin path end-to-end, then widen             |
+| Risk-first     | High-uncertainty features      | Build the riskiest piece first to validate feasibility |
+
 ## Essential Plan Elements
 
 1. **Self-contained** -- never need external docs to understand

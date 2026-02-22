@@ -10,7 +10,7 @@ description: |
 license: MIT
 metadata:
   author: oakoss
-  version: '1.1'
+  version: '1.2'
 ---
 
 # Planning
@@ -41,6 +41,11 @@ Plan-first development methodology where 80%+ of time goes to planning before im
 | UI             | Components, forms, state, styling     | 4-8       | 4-8 hours |
 | Integration    | Third-party services, webhooks        | 2-4       | 3-5 hours |
 | Testing        | E2E tests, integration tests          | varies    | 3-6 hours |
+
+| Pattern               | Purpose                             | Key Points                              |
+| --------------------- | ----------------------------------- | --------------------------------------- |
+| When to plan vs build | Decision tree by complexity signals | Match planning depth to task complexity |
+| Risk assessment       | Probability x impact matrix         | Focus on high-risk items first          |
 
 | Session Lifecycle | Action                                                        |
 | ----------------- | ------------------------------------------------------------- |
@@ -81,6 +86,8 @@ Plan-first development methodology where 80%+ of time goes to planning before im
 | No verification criteria on phases                  | Every phase needs specific, testable exit criteria (status codes, user flows, constraints)    |
 | Skeleton-first coding before a plan exists          | One comprehensive plan beats incremental skeleton-first coding                                |
 | Planning without prototyping unknown tech           | Build a spike first for unfamiliar frameworks, then create the plan                           |
+| Over-planning simple tasks                          | Match planning depth to complexity; skip for trivial work                                     |
+| Not validating assumptions early                    | Run a spike for the riskiest assumption first                                                 |
 
 ## Delegation
 

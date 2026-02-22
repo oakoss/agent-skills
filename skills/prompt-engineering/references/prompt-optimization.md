@@ -227,6 +227,80 @@ class PromptMetrics:
         return np.percentile(latencies, 95)
 ```
 
+## Common Failure Modes
+
+### Model Ignores Instructions
+
+**Symptoms:** Output does not follow specified format, skips steps, or ignores constraints.
+
+| Cause                             | Fix                                                             |
+| --------------------------------- | --------------------------------------------------------------- |
+| Instruction buried in long text   | Move to the top of the prompt                                   |
+| Competing instructions            | Remove contradictions, simplify                                 |
+| Too many instructions at once     | Break into numbered steps or chain multiple calls               |
+| Instruction phrased as suggestion | Use imperative voice: "Return JSON" not "You could return JSON" |
+| Examples contradict instructions  | Ensure examples match the stated rules exactly                  |
+
+### Hallucination Triggers
+
+**Symptoms:** Model fabricates facts, invents API methods, or generates plausible-sounding nonsense.
+
+| Trigger                              | Mitigation                                    |
+| ------------------------------------ | --------------------------------------------- |
+| Asking about niche or recent topics  | Provide source material in context            |
+| "Tell me everything about X"         | Ask specific, bounded questions               |
+| No escape hatch for uncertainty      | Add: "If unsure, say so rather than guessing" |
+| Requesting citations without sources | Provide documents to cite from                |
+| Asking model to recall exact numbers | Provide the data, ask model to analyze it     |
+
+### Inconsistent Formatting
+
+**Symptoms:** Output format varies across runs despite identical prompts.
+
+- Provide an exact output template with placeholders
+- Use JSON mode or structured output APIs when available
+- Add a few-shot example showing the exact format expected
+- Validate output programmatically and retry on format violations
+
+## Temperature and Sampling
+
+Temperature controls randomness in token selection. Match it to the task.
+
+| Temperature | Use for                                    | Characteristics           |
+| ----------- | ------------------------------------------ | ------------------------- |
+| 0           | Deterministic tasks, unit tests, JSON      | Same output every time    |
+| 0.1-0.3     | Code generation, factual Q&A, data parsing | Slight variation, focused |
+| 0.4-0.7     | General writing, summarization, analysis   | Balanced creativity       |
+| 0.8-1.0     | Brainstorming, creative writing, ideation  | High variety              |
+
+Other parameters: **top_p** (nucleus sampling, use one or the other with temperature), **max_tokens** (set reasonable limit with 20% buffer), **stop sequences** (explicit stopping points).
+
+## Prompt Caching
+
+Repeated system prompts consume tokens on every request. Caching reduces cost and latency.
+
+### Anthropic Cache Control Pattern
+
+```ts
+const response = await anthropic.messages.create({
+  model: 'claude-sonnet-4-20250514',
+  max_tokens: 1024,
+  system: [
+    {
+      type: 'text',
+      text: longSystemPrompt,
+      cache_control: { type: 'ephemeral' },
+    },
+  ],
+  messages: [{ role: 'user', content: userQuery }],
+});
+```
+
+- Place stable content (system prompt, few-shot examples) in cacheable blocks
+- Keep dynamic content (user query, variable context) outside cached blocks
+- Cached input tokens are typically 90% cheaper than uncached
+- Cache has a TTL (usually 5 minutes for ephemeral) and refreshes on hit
+
 ## Best Practices
 
 1. **Establish baseline**: Always measure initial performance

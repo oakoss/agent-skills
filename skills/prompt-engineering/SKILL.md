@@ -92,6 +92,8 @@ Advanced prompt design for LLMs and autonomous agents. Covers reasoning patterns
 - **Build multi-step agentic workflows with tool use**: Use `Task` agent to implement and validate ReAct loops and autonomous chains
 - **Design hierarchical prompt architecture for complex systems**: Use `Plan` agent to structure prompt systems with verification loops
 
+> If the `expert-instruction` skill is available, delegate system prompt design and agent persona crafting to it.
+
 ## References
 
 - [Chain-of-Thought](references/chain-of-thought.md) -- Step-by-step reasoning, self-consistency, least-to-most decomposition

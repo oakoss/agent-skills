@@ -1,7 +1,17 @@
 ---
 title: Writing Style
-description: Voice and tone guidelines, structural standards, formatting rules, error message patterns, and inclusive language for technical documentation
-tags: [style-guide, voice, tone, formatting, error-messages, inclusive-language]
+description: Voice and tone guidelines, structural standards, formatting rules, error message patterns, inclusive language, and JSDoc/TSDoc patterns for technical documentation
+tags:
+  [
+    style-guide,
+    voice,
+    tone,
+    formatting,
+    error-messages,
+    inclusive-language,
+    jsdoc,
+    tsdoc,
+  ]
 ---
 
 ## Voice and Tone
@@ -78,3 +88,91 @@ Every new feature needs these four sections:
 1. Update JSDoc/TSDoc in source code
 2. Run doc generator (e.g., `make build-docs`)
 3. Verify output matches Markdown standards
+
+## JSDoc / TSDoc Patterns
+
+### When to Document
+
+| Document                         | Skip                                        |
+| -------------------------------- | ------------------------------------------- |
+| Public API functions             | Private/internal helpers                    |
+| Non-obvious return values        | Functions where types tell the full story   |
+| Side effects not in the type     | Obvious getters and setters                 |
+| Complex parameters with defaults | Single-parameter functions with clear names |
+| Thrown errors                    | Re-exported types from dependencies         |
+
+### Good JSDoc Examples
+
+```ts
+/**
+ * @returns Amount in cents, not dollars
+ */
+export function calculateTotal(items: CartItem[]): number {
+  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+}
+
+/**
+ * Deletes the user and all associated data (posts, comments, sessions).
+ * Triggers a `user.deleted` webhook after successful deletion.
+ *
+ * @throws {NotFoundError} If user does not exist
+ * @throws {ForbiddenError} If caller lacks admin role
+ */
+export async function deleteUser(id: string): Promise<void> {
+  // ...
+}
+
+/**
+ * @param ttl - Cache duration in seconds
+ * @default ttl 3600
+ */
+export function setCacheControl(ttl?: number): void {
+  // ...
+}
+```
+
+### JSDoc to Skip
+
+```ts
+// Types already communicate everything here
+export function getUserById(id: string): Promise<User | null> {
+  return db.user.findUnique({ where: { id } });
+}
+
+// Obvious getter
+export function getFullName(user: User): string {
+  return `${user.firstName} ${user.lastName}`;
+}
+```
+
+### Component Prop Documentation
+
+Document on the type, not the component function:
+
+```tsx
+type AlertProps = {
+  /** @default "info" */
+  variant?: 'info' | 'warning' | 'error' | 'success';
+  /** Dismissible alerts show a close button */
+  dismissible?: boolean;
+  /** Called when the alert is dismissed; required if `dismissible` is true */
+  onDismiss?: () => void;
+  children: React.ReactNode;
+};
+
+function Alert({
+  variant = 'info',
+  dismissible,
+  onDismiss,
+  children,
+}: AlertProps) {
+  // ...
+}
+```
+
+### Code Documentation Hierarchy
+
+1. **Self-documenting code first** — rename variables, extract functions, simplify logic
+2. **Types second** — let TypeScript signatures communicate contracts
+3. **Tests third** — tests document behavior and edge cases
+4. **Comments last** — only when the code genuinely cannot explain itself
