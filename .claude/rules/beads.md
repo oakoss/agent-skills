@@ -103,6 +103,6 @@ bd update <id> --status=in_progress
 
 ```bash
 bd close <completed-ids>    # Close finished work
-bd sync --from-main         # Pull beads updates
+bd sync                     # Export beads to JSONL for git
 git add . && git commit     # Commit changes
 ```

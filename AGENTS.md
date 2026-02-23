@@ -11,7 +11,7 @@ bd ready              # Find available work
 bd show <id>          # View issue details
 bd update <id> --status in_progress  # Claim work
 bd close <id>         # Complete work
-bd sync               # Sync with git
+bd sync               # Export beads to JSONL for git
 ```
 
 ## Landing the Plane (Session Completion)
