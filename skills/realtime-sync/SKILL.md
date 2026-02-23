@@ -75,3 +75,4 @@ Core principles: the database is the source of truth (real-time channels notify,
 - [Pub/sub messaging and guaranteed delivery](references/pubsub-delivery.md)
 - [CRDTs and collaborative editing](references/crdt-collaboration.md)
 - [AI stream orchestration patterns](references/ai-stream-orchestration.md)
+- [Collaborative undo and redo patterns](references/undo-redo.md)

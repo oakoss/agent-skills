@@ -77,3 +77,6 @@ Local-first is an architecture where the application reads and writes to a local
 - [Schema versioning and migration](references/schema-evolution.md)
 - [Multi-tenant data governance patterns](references/multi-tenant.md)
 - [Testing strategies for local-first apps](references/testing.md)
+- [End-to-end encryption for synced data](references/encryption.md)
+- [DevTools and debugging utilities](references/devtools-debugging.md)
+- [Server-first to local-first migration guide](references/migration-guide.md)

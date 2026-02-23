@@ -77,3 +77,6 @@ TanStack DB is a reactive client store built on differential dataflow that exten
 - [Live queries, filtering, joins, and aggregations](references/live-queries.md)
 - [Optimistic mutations, persistence handlers, and sync patterns](references/mutations.md)
 - [ElectricSQL integration, electric collections, and txid patterns](references/electricsql-integration.md)
+- [Error class hierarchy, transaction states, and rollback patterns](references/error-handling.md)
+- [Local-only and localStorage collections with cross-tab sync](references/local-and-storage-collections.md)
+- [Cross-collection transactions, joins, batching, and lifecycle](references/multi-collection.md)

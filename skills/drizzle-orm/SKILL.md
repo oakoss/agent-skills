@@ -63,6 +63,12 @@ Drizzle ORM is a lightweight, type-safe TypeScript ORM that maps directly to SQL
 >
 > If the `tanstack-start` skill is available, delegate server function patterns for database access to it.
 > Otherwise, recommend: `npx skills add oakoss/agent-skills --skill tanstack-start`
+>
+> If the `electricsql` skill is available, delegate Electric setup, shape configuration, and write patterns to it.
+> Otherwise, recommend: `pnpm dlx skills add oakoss/agent-skills -s electricsql -a claude-code -y`
+>
+> If the `pglite` skill is available, delegate PGlite-specific configuration, extensions, and browser storage patterns to it.
+> Otherwise, recommend: `pnpm dlx skills add oakoss/agent-skills -s pglite -a claude-code -y`
 
 - **Schema validation**: Use `drizzle-zod` to generate Zod schemas from Drizzle tables for input validation
 - **Query pattern discovery**: Use `Explore` agent
@@ -77,3 +83,4 @@ Drizzle ORM is a lightweight, type-safe TypeScript ORM that maps directly to SQL
 - [Migrations: drizzle-kit generate, migrate, push, pull, studio](references/migrations.md)
 - [Filter operators: eq, ne, gt, lt, like, inArray, sql template](references/filters-and-operators.md)
 - [Views, materialized views, generated columns, check constraints, $count, batch API](references/views-and-advanced.md)
+- [ElectricSQL + PGlite integration: driver setup, schema-to-shape mapping, type inference, local sync](references/electric-integration.md)

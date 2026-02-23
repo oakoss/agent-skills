@@ -117,3 +117,4 @@ Use this skill for TanStack Start server functions, middleware, SSR/streaming, r
 - [Query Integration](references/query-integration.md) — Router+Query setup, SSR integration, setupRouterSsrQueryIntegration, DevTools
 - [Integration Flows](references/integration-flows.md) — form submission with cache update, infinite scroll, paginated tables, auth-protected routes, error handling
 - [Local-First Integration](references/local-first.md) — shape proxy server functions, mixing server-based and local-first data, ElectricSQL deployment
+- [Electric Middleware](references/electric-middleware.md) — auth middleware for shape proxies, global middleware config, sendContext, function-level validation

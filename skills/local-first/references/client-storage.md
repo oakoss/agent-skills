@@ -497,6 +497,107 @@ worker.onmessage = (event) => {
 
 **Use indexes for frequent queries.** Without indexes, IndexedDB scans every record.
 
+## Storage Quota Management
+
+### StorageManager API
+
+```ts
+async function getStorageInfo(): Promise<{
+  usage: number;
+  quota: number;
+  percentUsed: number;
+  persisted: boolean;
+}> {
+  const estimate = await navigator.storage.estimate();
+  const persisted = (await navigator.storage.persisted?.()) ?? false;
+
+  return {
+    usage: estimate.usage ?? 0,
+    quota: estimate.quota ?? 0,
+    percentUsed: ((estimate.usage ?? 0) / (estimate.quota ?? 1)) * 100,
+    persisted,
+  };
+}
+
+async function requestPersistentStorage(): Promise<boolean> {
+  if (!navigator.storage?.persist) return false;
+  return navigator.storage.persist();
+}
+```
+
+### Browser-Specific Limits
+
+| Browser | Quota                       | Eviction Behavior                                 |
+| ------- | --------------------------- | ------------------------------------------------- |
+| Chrome  | 60% of total disk space     | LRU by origin, entire origin evicted at once      |
+| Firefox | 10% of disk or 10 GiB max   | LRU by origin, entire origin evicted at once      |
+| Safari  | 60% of disk, 1 GiB soft cap | 7-day ITP cap: evicts after 7 days no interaction |
+
+Safari's Intelligent Tracking Prevention (ITP) proactively evicts all storage for origins that haven't been interacted with in 7 days. This applies to IndexedDB, OPFS, Cache API, and localStorage. PWAs added to the home screen are exempt.
+
+### QuotaExceededError Handling
+
+```ts
+async function safeWrite(
+  db: IDBDatabase,
+  storeName: string,
+  data: unknown,
+): Promise<boolean> {
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction(storeName, 'readwrite');
+      tx.objectStore(storeName).put(data);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+    return true;
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+      await evictOldData(db, storeName);
+      return safeWrite(db, storeName, data);
+    }
+    throw error;
+  }
+}
+```
+
+### Eviction Strategies
+
+Browsers evict entire origins at once based on LRU (least recently used). Within your application, implement your own eviction to stay under quota.
+
+```ts
+async function evictOldData(
+  db: IDBDatabase,
+  storeName: string,
+  maxAge = 30 * 24 * 60 * 60 * 1000,
+): Promise<number> {
+  const cutoff = Date.now() - maxAge;
+  let evicted = 0;
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(storeName, 'readwrite');
+    const store = tx.objectStore(storeName);
+    const index = store.index('createdAt');
+    const range = IDBKeyRange.upperBound(new Date(cutoff).toISOString());
+    const request = index.openCursor(range);
+
+    request.onsuccess = () => {
+      const cursor = request.result;
+      if (cursor) {
+        cursor.delete();
+        evicted++;
+        cursor.continue();
+      }
+    };
+
+    tx.oncomplete = () => resolve(evicted);
+    tx.onerror = () => reject(tx.error);
+  });
+}
+```
+
+**Use indexes for frequent queries.** Without indexes, IndexedDB scans every record.
+
 ```ts
 // Create indexes during upgrade
 request.onupgradeneeded = () => {

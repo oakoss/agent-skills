@@ -73,3 +73,4 @@ ElectricSQL is a sync engine that streams partial replicas of Postgres data to l
 - [Write patterns from online to through-the-DB](references/write-patterns.md)
 - [Observability and monitoring](references/monitoring.md)
 - [Sync performance optimization](references/sync-performance.md)
+- [Error handling, retry patterns, txid flow, and control messages](references/error-handling.md)
