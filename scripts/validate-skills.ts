@@ -2,9 +2,11 @@ import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { join, resolve, basename, dirname } from 'path';
 
 const SKILLS_DIR = 'skills';
-const MAX_LINES = 750;
-const WARN_LINES = 500;
+const SKILL_MAX_LINES = 500;
+const SKILL_WARN_LINES = 400;
 const SKILL_TARGET_LINES = 150;
+const REF_MAX_LINES = 750;
+const REF_WARN_LINES = 500;
 const SKILLS_CLI_EXCLUDED = new Set(['README.md', 'metadata.json']);
 const MIN_NAME_LENGTH = 4;
 const RESERVED_WORDS = ['anthropic', 'claude'];
@@ -410,13 +412,13 @@ function validateSkillMd(filePath: string, content: string): ValidationResult {
     }
   }
 
-  if (lineCount > MAX_LINES) {
+  if (lineCount > SKILL_MAX_LINES) {
     errors.push(
-      `SKILL.md is ${lineCount} lines (max ${MAX_LINES}). Split to references/`,
+      `SKILL.md is ${lineCount} lines (max ${SKILL_MAX_LINES}). Split to references/`,
     );
-  } else if (lineCount > WARN_LINES) {
+  } else if (lineCount > SKILL_WARN_LINES) {
     warnings.push(
-      `SKILL.md is ${lineCount} lines (target ~${SKILL_TARGET_LINES}, max ${MAX_LINES})`,
+      `SKILL.md is ${lineCount} lines (target ~${SKILL_TARGET_LINES}, max ${SKILL_MAX_LINES})`,
     );
   }
 
@@ -463,11 +465,11 @@ function validateReferenceMd(
   const lineCount = lines.length;
   const fileName = basename(filePath);
 
-  if (lineCount > MAX_LINES) {
-    errors.push(`${fileName}: ${lineCount} lines (max ${MAX_LINES})`);
-  } else if (lineCount > WARN_LINES) {
+  if (lineCount > REF_MAX_LINES) {
+    errors.push(`${fileName}: ${lineCount} lines (max ${REF_MAX_LINES})`);
+  } else if (lineCount > REF_WARN_LINES) {
     warnings.push(
-      `${fileName}: ${lineCount} lines (consider splitting at ~${WARN_LINES})`,
+      `${fileName}: ${lineCount} lines (consider splitting at ~${REF_WARN_LINES})`,
     );
   }
 

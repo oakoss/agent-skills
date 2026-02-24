@@ -101,7 +101,7 @@ This is why SKILL.md should be a lean index — it's loaded in full on activatio
 | File           | Target        | Warn | Max |
 | -------------- | ------------- | ---- | --- |
 | SKILL.md       | 100-150 lines | 400  | 500 |
-| Reference file | —             | 400  | 500 |
+| Reference file | —             | 500  | 750 |
 
 Skills under 500 lines can remain as a single SKILL.md without `references/`.
 
