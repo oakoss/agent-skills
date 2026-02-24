@@ -64,15 +64,23 @@ Approach: Add auth middleware, login/logout endpoints, bcrypt password hashing.
 Files: src/middleware/, src/routes/auth/, src/models/user.ts" -p 1
 ```
 
-Break down into tasks with dependencies:
+Break down into tasks with detailed descriptions and dependencies:
 
 ```bash
 trekker task create -t "Create user model" -d "Define User schema with email and password hash" -e EPIC-1 -p 1
-trekker task create -t "Add auth middleware" -d "JWT verification middleware for Authorization header" -e EPIC-1 -p 1
+trekker task create -t "Add auth middleware" -d "Create JWT verification middleware.
+Steps:
+1. Create src/middleware/auth.ts
+2. Verify token from Authorization header
+3. Attach decoded user to request
+4. Return 401 for invalid/missing tokens
+Accept: All /api/* routes protected, tests pass" -e EPIC-1 -p 1 --tags "auth,middleware"
 trekker task create -t "Add login endpoint" -d "POST /auth/login with bcrypt verification" -e EPIC-1 -p 1
 trekker dep add TREK-3 TREK-1
 trekker dep add TREK-2 TREK-1
 ```
+
+Task descriptions should include implementation steps, files to modify, and acceptance criteria. Epic descriptions should include goal, success criteria, approach, and key files.
 
 Then use `trekker ready` to work tasks in dependency order.
 
@@ -148,49 +156,6 @@ Include in every checkpoint:
 | `completed`   | Done, verified, summary comment added                   |
 | `wont_fix`    | Decided this will never be done (invalid, out of scope) |
 | `archived`    | Deferred, superseded, or no longer relevant             |
-
-## Writing Effective Descriptions
-
-### Epic Descriptions
-
-Include goal, success criteria, approach, and key files:
-
-```bash
-trekker epic create -t "Implement JWT Authentication" -d "Goal: Secure all API endpoints with JWT tokens.
-Success: All /api/* routes require valid token.
-Approach: Add auth middleware, login/logout endpoints, bcrypt password hashing.
-Files: src/middleware/, src/routes/auth/, src/models/user.ts" -p 1
-```
-
-### Task Descriptions
-
-Include specific steps, files, and acceptance criteria:
-
-```bash
-trekker task create -t "Add auth middleware" -d "Create JWT verification middleware.
-Steps:
-1. Create src/middleware/auth.ts
-2. Verify token from Authorization header
-3. Attach decoded user to request
-4. Return 401 for invalid/missing tokens
-Accept: All /api/* routes protected, tests pass" -e EPIC-1 -p 1 --tags "auth,middleware"
-```
-
-## Dependency Workflow
-
-Create tasks with dependencies to enforce execution order:
-
-```bash
-trekker task create -t "Create user model" -d "Define User schema with email and password hash"
-trekker task create -t "Add login endpoint" -d "POST /auth/login with bcrypt verification"
-trekker dep add TREK-2 TREK-1
-```
-
-Check what blocks a task:
-
-```bash
-trekker dep list TREK-2
-```
 
 ## Multi-Agent Handoff
 
