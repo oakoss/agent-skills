@@ -95,6 +95,8 @@ argument-hint: [type] [name]
 
 ### disable-model-invocation
 
+Claude Code only — other agents ignore this field.
+
 Prevents Claude from automatically loading this command. Use for commands with side effects (deploy, commit, send messages) where you want explicit control over timing.
 
 ```yaml
@@ -107,7 +109,9 @@ When set to `true`, the description is not loaded into Claude context at all, re
 
 ### user-invocable
 
-Set to `false` to hide from the `/` menu. Use for background knowledge that Claude should apply automatically but users should not invoke directly.
+Claude Code only — other agents ignore this field.
+
+Set to `false` to hide from the `/` menu. Use for reference/knowledge skills where `/skill-name` isn't a meaningful user action. Claude can still auto-load the skill when relevant.
 
 ```yaml
 ---
@@ -165,7 +169,9 @@ hooks:
 ---
 ```
 
-## Invocation control matrix
+## Invocation control matrix (Claude Code)
+
+These settings only affect Claude Code. Other agents treat all skills as default (both user and agent can invoke).
 
 | Frontmatter                      | User can invoke | Claude can invoke | Context cost                  |
 | -------------------------------- | --------------- | ----------------- | ----------------------------- |

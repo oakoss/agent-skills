@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering
+user-invocable: false
 ---
 
 # Prompt Engineering

@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.1'
   source: 'https://docs.docker.com'
+user-invocable: false
 ---
 
 # Docker

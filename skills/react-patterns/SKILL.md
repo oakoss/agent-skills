@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.1'
   source: 'https://react.dev'
+user-invocable: false
 ---
 
 # React

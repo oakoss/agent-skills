@@ -5,6 +5,7 @@ license: MIT
 metadata:
   author: oakoss
   version: '1.0'
+user-invocable: false
 ---
 
 # Secure AI

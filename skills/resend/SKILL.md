@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.1'
   source: https://resend.com/docs
+user-invocable: false
 ---
 
 # Resend

@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://ui.shadcn.com/docs'
+user-invocable: false
 ---
 
 # shadcn/ui

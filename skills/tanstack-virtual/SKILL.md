@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.1'
   source: 'https://tanstack.com/virtual/latest'
+user-invocable: false
 ---
 
 # TanStack Virtual

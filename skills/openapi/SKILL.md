@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.1'
   source: 'https://spec.openapis.org/oas/v3.1.0'
+user-invocable: false
 ---
 
 # OpenAPI

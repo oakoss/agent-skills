@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://valkey.io/commands/'
+user-invocable: false
 ---
 
 # Valkey

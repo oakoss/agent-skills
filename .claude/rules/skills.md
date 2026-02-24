@@ -45,6 +45,8 @@ skill-name/
 | `hooks`                    | Claude Code   | Hooks scoped to skill lifecycle                           |
 | `argument-hint`            | Claude Code   | Hint for autocomplete (e.g., `[issue-number]`)            |
 
+> Claude Code fields are safe to include in distributed skills — agents that don't support them ignore unknown frontmatter.
+
 **Project-required fields** — all skills in this repo MUST include:
 
 ```yaml

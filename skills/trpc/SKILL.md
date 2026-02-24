@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://trpc.io/docs'
+user-invocable: false
 ---
 
 # tRPC

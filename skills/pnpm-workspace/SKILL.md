@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.2'
   source: https://pnpm.io/workspaces
+user-invocable: false
 ---
 
 # pnpm Workspace

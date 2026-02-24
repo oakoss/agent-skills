@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://www.remotion.dev/docs'
+user-invocable: false
 ---
 
 # Remotion

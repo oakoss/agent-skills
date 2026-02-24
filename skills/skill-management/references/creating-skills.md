@@ -87,6 +87,8 @@ allowed-tools: Bash(git:*) Read Write
 
 ### Optional Fields (Claude Code Extensions)
 
+These fields are Claude Code-specific. Other agents ignore unknown frontmatter.
+
 | Field                      | Description                                    |
 | -------------------------- | ---------------------------------------------- |
 | `disable-model-invocation` | Prevent automatic loading, manual `/name` only |

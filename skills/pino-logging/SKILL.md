@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://github.com/pinojs/pino'
+user-invocable: false
 ---
 
 # Pino Logging

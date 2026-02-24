@@ -217,19 +217,27 @@ hooks:
 
 ### user-invocable
 
+Claude Code only — other agents ignore this field.
+
 Set to `false` to hide from the `/` slash menu. The skill can still be auto-discovered and invoked by the agent:
 
 ```yaml
 user-invocable: false
 ```
 
+Use for reference/knowledge skills (framework docs, technology patterns) where `/skill-name` isn't a meaningful user action.
+
 ### disable-model-invocation
+
+Claude Code only — other agents ignore this field.
 
 Set to `true` to prevent the agent from invoking the skill automatically. Only users can invoke it via `/skill-name`:
 
 ```yaml
 disable-model-invocation: true
 ```
+
+Use for skills with side effects (creating files, deploying, sending messages) where you want explicit user control.
 
 ### argument-hint
 
@@ -239,7 +247,9 @@ Hint text shown in autocomplete when users type `/skill-name`:
 argument-hint: '[issue-number]'
 ```
 
-## Visibility Matrix
+## Visibility Matrix (Claude Code)
+
+These settings only affect Claude Code. Other agents treat all skills as default (visible, agent-invocable).
 
 | Setting                          | Slash Menu | Agent Invocation | Auto-discovery |
 | -------------------------------- | ---------- | ---------------- | -------------- |

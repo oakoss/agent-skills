@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://code.claude.com/docs/en/hooks'
+disable-model-invocation: true
 ---
 
 # Hook Creator

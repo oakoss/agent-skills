@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://svelte.dev/docs'
+user-invocable: false
 ---
 
 # Svelte

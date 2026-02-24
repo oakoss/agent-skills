@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.1'
   source: https://developers.cloudflare.com/workers
+user-invocable: false
 ---
 
 # Cloudflare

@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://tailwindcss.com/docs'
+user-invocable: false
 ---
 
 # Tailwind CSS (v4+)

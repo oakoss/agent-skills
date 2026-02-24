@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: https://code.claude.com/docs/en/sub-agents
+disable-model-invocation: true
 ---
 
 # Custom Agent Creator

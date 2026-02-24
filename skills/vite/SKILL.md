@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://vite.dev/guide/'
+user-invocable: false
 ---
 
 # Vite

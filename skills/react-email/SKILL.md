@@ -12,6 +12,7 @@ metadata:
   author: oakoss
   version: '1.1'
   source: https://react.email/docs
+user-invocable: false
 ---
 
 # React Email

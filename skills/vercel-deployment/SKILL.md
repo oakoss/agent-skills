@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.1'
   source: 'https://vercel.com/docs'
+user-invocable: false
 ---
 
 # Vercel Deployment

@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://designtokens.org'
+user-invocable: false
 ---
 
 # Design System

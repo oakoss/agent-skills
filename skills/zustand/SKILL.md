@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://zustand.docs.pmnd.rs'
+user-invocable: false
 ---
 
 # Zustand State Management

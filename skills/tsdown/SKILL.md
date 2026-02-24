@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.1'
   source: 'https://tsdown.dev/'
+user-invocable: false
 ---
 
 # tsdown

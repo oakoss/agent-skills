@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.1'
   source: https://storybook.js.org/docs
+user-invocable: false
 ---
 
 # Storybook Stories

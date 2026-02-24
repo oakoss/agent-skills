@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.2'
   source: 'https://github.com/changesets/changesets'
+user-invocable: false
 ---
 
 # Changesets

@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.1'
   source: 'https://threejs.org/docs'
+user-invocable: false
 ---
 
 # Three.js

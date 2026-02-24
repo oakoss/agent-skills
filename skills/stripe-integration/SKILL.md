@@ -11,6 +11,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: https://docs.stripe.com
+user-invocable: false
 ---
 
 # Stripe Integration

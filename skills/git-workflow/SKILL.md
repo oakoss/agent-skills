@@ -5,6 +5,7 @@ license: MIT
 metadata:
   author: oakoss
   version: '1.1'
+user-invocable: false
 ---
 
 # Git Workflow

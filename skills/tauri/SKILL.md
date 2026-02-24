@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://v2.tauri.app'
+user-invocable: false
 ---
 
 # Tauri

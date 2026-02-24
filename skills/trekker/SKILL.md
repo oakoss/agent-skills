@@ -10,6 +10,7 @@ metadata:
   version: '1.0'
   runtime: bun
   storage: .trekker/trekker.db
+user-invocable: false
 ---
 
 # Trekker

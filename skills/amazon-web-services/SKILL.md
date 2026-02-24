@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://docs.aws.amazon.com/'
+user-invocable: false
 ---
 
 # Amazon Web Services

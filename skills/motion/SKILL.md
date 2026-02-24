@@ -10,6 +10,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://motion.dev/docs'
+user-invocable: false
 ---
 
 # Motion

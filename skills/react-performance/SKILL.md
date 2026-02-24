@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://react.dev/learn/react-compiler'
+user-invocable: false
 ---
 
 # React Performance

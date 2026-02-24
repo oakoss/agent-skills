@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.3'
   source: 'https://tanstack.com/db/latest'
+user-invocable: false
 ---
 
 # TanStack DB

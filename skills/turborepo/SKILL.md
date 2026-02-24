@@ -8,6 +8,7 @@ license: MIT
 metadata:
   author: oakoss
   version: '1.2'
+user-invocable: false
 ---
 
 # Turborepo

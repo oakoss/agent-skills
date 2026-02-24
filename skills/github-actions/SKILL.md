@@ -13,6 +13,7 @@ metadata:
   author: oakoss
   version: '1.1'
   source: 'https://docs.github.com/en/actions'
+user-invocable: false
 ---
 
 # GitHub Actions

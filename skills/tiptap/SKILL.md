@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://tiptap.dev/docs'
+user-invocable: false
 ---
 
 # Tiptap Rich Text Editor

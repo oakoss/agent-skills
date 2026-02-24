@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: https://agentskills.io
+disable-model-invocation: true
 ---
 
 # Meta Skill Creator

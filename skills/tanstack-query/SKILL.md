@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.4'
   source: 'https://tanstack.com/query/latest/docs'
+user-invocable: false
 ---
 
 # TanStack Query

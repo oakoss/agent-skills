@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.2'
   source: 'https://vitest.dev/'
+user-invocable: false
 ---
 
 # Vitest Testing

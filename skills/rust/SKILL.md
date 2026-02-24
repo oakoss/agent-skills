@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://doc.rust-lang.org/book/'
+user-invocable: false
 ---
 
 # Rust

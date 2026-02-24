@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://electric-sql.com/docs'
+user-invocable: false
 ---
 
 # ElectricSQL

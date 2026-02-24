@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_animations'
+user-invocable: false
 ---
 
 # CSS Animation Patterns

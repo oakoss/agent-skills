@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.1'
   source: https://bun.sh/docs
+user-invocable: false
 ---
 
 # Bun Runtime

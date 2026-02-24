@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://docs.expo.dev'
+user-invocable: false
 ---
 
 # React Native with Expo

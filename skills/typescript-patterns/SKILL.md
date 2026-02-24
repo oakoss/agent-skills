@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.1'
   source: 'https://www.typescriptlang.org/docs/'
+user-invocable: false
 ---
 
 # TypeScript Patterns

@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.1'
   source: 'https://orm.drizzle.team/docs/overview'
+user-invocable: false
 ---
 
 # Drizzle ORM

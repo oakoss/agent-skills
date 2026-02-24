@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary'
+user-invocable: false
 ---
 
 # React Error Handling

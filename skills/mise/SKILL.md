@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://mise.jdx.dev'
+user-invocable: false
 ---
 
 # Mise

@@ -6,6 +6,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://github.com/BurntSushi/ripgrep'
+user-invocable: false
 ---
 
 # Utility Pro

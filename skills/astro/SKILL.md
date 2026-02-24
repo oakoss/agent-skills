@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.0'
   source: 'https://docs.astro.build'
+user-invocable: false
 ---
 
 # Astro

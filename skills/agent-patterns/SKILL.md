@@ -9,6 +9,7 @@ metadata:
   author: oakoss
   version: '1.1'
   source: https://code.claude.com/docs/en/sub-agents
+user-invocable: false
 ---
 
 # Agent Patterns
