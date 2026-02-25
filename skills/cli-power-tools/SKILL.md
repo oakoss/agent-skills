@@ -44,7 +44,7 @@ Masters the command-line environment by turning raw text and unstructured data i
 | Advanced regex search    | `rg -P "(?<=function\s)\w+" --only-matching`                             | PCRE2 for lookahead/lookbehind patterns            |
 | Git-aware file listing   | `eza -la --git --icons`                                                  | Show file metadata with inline git status          |
 
-## Tool Landscape
+## Tool Overview
 
 | Category         | Modern Tool    | Replaces              | Key Advantage                            |
 | ---------------- | -------------- | --------------------- | ---------------------------------------- |

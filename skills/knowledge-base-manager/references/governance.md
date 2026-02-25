@@ -9,12 +9,12 @@ tags:
 
 ## Maintenance Schedule
 
-| Frequency | Tasks                                                                             |
-| --------- | --------------------------------------------------------------------------------- |
-| Daily     | Monitor errors, review user feedback, address urgent corrections                  |
-| Weekly    | Review new submissions, update time-sensitive knowledge, run quality checks       |
-| Monthly   | Audit freshness, resolve conflicts, analyze usage, update stale content           |
-| Quarterly | Comprehensive quality audit, schema review, performance optimization, user survey |
+| Frequency | Tasks                                                                       |
+| --------- | --------------------------------------------------------------------------- |
+| Daily     | Monitor errors, review user feedback, address urgent corrections            |
+| Weekly    | Review new submissions, update time-sensitive knowledge, run quality checks |
+| Monthly   | Audit freshness, resolve conflicts, analyze usage, update stale content     |
+| Quarterly | Full quality audit, schema review, performance optimization, user survey    |
 
 ## Roles and Responsibilities
 

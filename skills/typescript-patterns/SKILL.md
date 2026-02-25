@@ -13,7 +13,7 @@ user-invocable: false
 
 ## Overview
 
-Advanced TypeScript patterns that leverage the type system to prevent runtime errors. Focuses on strict mode TypeScript with patterns for type inference, narrowing, and compile-time validation. **Not** a beginner tutorial.
+Advanced TypeScript patterns that use the type system to prevent runtime errors. Focuses on strict mode TypeScript with patterns for type inference, narrowing, and compile-time validation. **Not** a beginner tutorial.
 
 **When to use:** Building type-safe APIs, complex data transformations, library authoring, preventing runtime errors through types, working with strict mode flags.
 

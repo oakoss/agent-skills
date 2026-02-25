@@ -18,7 +18,7 @@ The TL;DR Expert skill produces clear, concise summaries of technical content. I
 
 **When to use:** Writing PR descriptions, summarizing code changes for reviewers, creating executive briefs for stakeholders, distilling long discussions into decisions and action items, or generating release notes.
 
-**When NOT to use:** Writing comprehensive documentation (use the `docs` skill), producing marketing copy, creating detailed tutorials, or writing specifications that require exhaustive coverage.
+**When NOT to use:** Writing full documentation (use the `docs` skill), producing marketing copy, creating detailed tutorials, or writing specifications that require exhaustive coverage.
 
 ## Quick Reference
 
@@ -52,7 +52,7 @@ The TL;DR Expert skill produces clear, concise summaries of technical content. I
 - **Detailed review**: Use `Task` agent for thorough analysis before summarizing
 - **Code review**: Delegate to `code-reviewer` agent for change impact assessment
 
-> If the `docs` skill is available, delegate comprehensive documentation tasks to it.
+> If the `docs` skill is available, delegate full documentation tasks to it.
 
 ## References
 

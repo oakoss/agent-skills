@@ -97,7 +97,7 @@ Prisma uses the TypeScript/WASM engine by default, eliminating the need for bulk
 
 ## Native Distinct and Skip Scan
 
-Leverage PostgreSQL performance improvements by using native Prisma filters:
+Use PostgreSQL performance improvements with native Prisma filters:
 
 ```ts
 const uniqueUsers = await prisma.user.findMany({

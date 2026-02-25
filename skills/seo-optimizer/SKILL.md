@@ -40,7 +40,7 @@ Optimizes digital visibility through entity-based SEO, structured data, and cont
 | Publishing generic AI-generated content without expert review       | Lead with first-hand experience and E-E-A-T signals                           |
 | Ignoring Core Web Vitals (LCP, CLS, INP) impact on rankings         | Implement performance-first design and monitor vitals continuously            |
 | Using hidden or incomplete JSON-LD schema markup                    | Define explicit, complete structured data that maps entities clearly          |
-| Building thin affiliate pages without topical depth                 | Create pillar pages with comprehensive cluster coverage                       |
+| Building thin affiliate pages without topical depth                 | Create pillar pages with full cluster coverage                                |
 | Writing definitions longer than 60 words for snippet targeting      | Keep definition paragraphs to 40-60 words for featured snippet eligibility    |
 | Using non-descriptive anchor text like "click here" or "read more"  | Use keyword-rich descriptive anchor text that describes the destination       |
 | Missing primary keyword from title, description, or first 100 words | Place primary keyword in title, meta description, first paragraph, and one H2 |

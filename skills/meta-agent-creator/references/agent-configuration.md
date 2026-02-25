@@ -187,7 +187,7 @@ Claude Code includes several built-in subagents that are used automatically:
 
 ### Explore Thoroughness Levels
 
-When invoking Explore, specify a thoroughness level: **quick** for targeted lookups, **medium** for balanced exploration, or **very thorough** for comprehensive analysis.
+When invoking Explore, specify a thoroughness level: **quick** for targeted lookups, **medium** for balanced exploration, or **very thorough** for deep analysis.
 
 ## Foreground vs Background Execution
 

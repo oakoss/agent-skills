@@ -60,7 +60,7 @@ function validateUser(input: unknown): ValidationResult {
 }
 ```
 
-One public function, one test surface. Internal validation helpers are private — they can change freely. Tests cover the behavior: valid input passes, invalid input returns specific errors.
+One public function, one test surface. Internal validation helpers are private. They can change freely. Tests cover the behavior: valid input passes, invalid input returns specific errors.
 
 ```ts
 describe('validateUser', () => {

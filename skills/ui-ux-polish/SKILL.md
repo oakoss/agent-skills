@@ -9,9 +9,9 @@ metadata:
 
 # UI/UX Polish
 
-Iterative enhancement workflow that elevates working web applications from decent to world-class. Covers desktop and mobile optimization as separate modalities, visual design patterns, and accessibility standards.
+Iterative enhancement workflow that takes working web applications from decent to world-class. Covers desktop and mobile optimization as separate modalities, visual design patterns, and accessibility standards.
 
-**When to use**: The app works correctly with basic styling in place and you want to elevate visual quality through iterative refinement. Also use for applying specific design patterns (glassmorphism, neumorphism, bento grids) or auditing accessibility.
+**When to use**: The app works correctly with basic styling in place and you want to improve visual quality through iterative refinement. Also use for applying specific design patterns (glassmorphism, neumorphism, bento grids) or auditing accessibility.
 
 **When NOT to use**: The app is broken or buggy (fix bugs first), styling is fundamentally wrong (needs complete overhaul), or no basic design system exists yet.
 
@@ -52,7 +52,7 @@ Iterative enhancement workflow that elevates working web applications from decen
 - **Desktop and mobile polish in parallel**: Use `Task` agent to run separate polish passes for each modality
 - **Visual regression verification**: Use `Explore` agent to check that polish iterations have not broken layout or accessibility
 - **Design system alignment planning**: Use `Plan` agent to establish spacing, typography, and color patterns before polishing
-- **Comprehensive accessibility audits**: Delegate to `accessibility` skill for in-depth WCAG compliance, ARIA patterns, focus management, and screen reader testing
+- **Full accessibility audits**: Delegate to `accessibility` skill for in-depth WCAG compliance, ARIA patterns, focus management, and screen reader testing
 
 ## References
 

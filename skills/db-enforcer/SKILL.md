@@ -15,7 +15,7 @@ Enforces data integrity and architectural consistency between the TypeScript app
 
 **When to use:** Schema design, migration planning, RLS policy authoring, Prisma model mapping, constraint auditing, zero-downtime deployments.
 
-**When NOT to use:** Application-level business logic, frontend state management, non-PostgreSQL databases. For comprehensive RLS auditing, performance tuning, and compliance validation, use the `database-security` skill instead.
+**When NOT to use:** Application-level business logic, frontend state management, non-PostgreSQL databases. For full RLS auditing, performance tuning, and compliance validation, use the `database-security` skill instead.
 
 ## Quick Reference
 
@@ -95,7 +95,7 @@ Migrations follow a strict pipeline order:
 
 ## Relationship to Other Skills
 
-- **`database-security`**: Covers comprehensive RLS auditing, PGAudit configuration, Supabase-specific patterns, Convex auth guards, and compliance validation. Use `database-security` for in-depth policy review and access simulation. Use `db-enforcer` for schema design and migration patterns that include RLS as part of the integrity workflow.
+- **`database-security`**: Covers full RLS auditing, PGAudit configuration, Supabase-specific patterns, Convex auth guards, and compliance validation. Use `database-security` for in-depth policy review and access simulation. Use `db-enforcer` for schema design and migration patterns that include RLS as part of the integrity workflow.
 
 ## Delegation
 

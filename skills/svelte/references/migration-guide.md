@@ -1,6 +1,6 @@
 ---
 title: Migration Guide
-description: Comprehensive guide for migrating from Svelte 4 to Svelte 5, covering stores to runes, slots to snippets, events, and component API changes
+description: Migrating from Svelte 4 to Svelte 5, covering stores to runes, slots to snippets, events, and component API changes
 tags:
   [
     migration,

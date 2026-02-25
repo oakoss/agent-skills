@@ -16,7 +16,7 @@ user-invocable: false
 
 ## Overview
 
-Comprehensive React skill covering component architecture, performance optimization, state management, data fetching, and modern React 19+ APIs. Prioritizes React Compiler compatibility, Server Components, and elimination of data fetching waterfalls.
+Covers component architecture, performance optimization, state management, data fetching, and modern React 19+ APIs. Prioritizes React Compiler compatibility, Server Components, and elimination of data fetching waterfalls.
 
 **When to use:** Building React applications, optimizing performance, choosing state management, implementing data fetching, reviewing component architecture.
 

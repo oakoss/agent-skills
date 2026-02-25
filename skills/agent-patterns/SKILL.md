@@ -14,7 +14,7 @@ user-invocable: false
 
 # Agent Patterns
 
-Comprehensive guide to multi-agent design, delegation, and orchestration in Claude Code and AI-assisted development. Default to fungible agents for large-scale software dev; use specialized agents only for peer review or discourse-based workflows.
+Multi-agent design, delegation, and orchestration in Claude Code and AI-assisted development. Default to fungible agents for large-scale software dev; use specialized agents only for peer review or discourse-based workflows.
 
 Subagents in Claude Code are specialized AI assistants that run in isolated context windows with custom system prompts, specific tool access, and independent permissions. They preserve main conversation context by keeping exploration, test runs, and verbose operations out of the primary thread.
 

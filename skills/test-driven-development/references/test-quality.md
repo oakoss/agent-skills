@@ -82,7 +82,7 @@ Tests survive internal refactors. They describe what the caller experiences.
 | Skip                         | Why                                        |
 | ---------------------------- | ------------------------------------------ |
 | Private methods              | Tested implicitly through public interface |
-| Getters/setters              | Trivial — no logic to verify               |
+| Getters/setters              | Trivial; no logic to verify                |
 | Framework internals          | Trust the framework; test your code        |
 | Third-party library behavior | Not your responsibility                    |
 | Type-level constraints       | TypeScript enforces these at compile time  |
@@ -174,6 +174,6 @@ Functions that are hard to test reveal design problems. The fix is not a more cl
 | Test needs 10+ lines of setup    | Function has too many dependencies   | Extract a focused function with fewer inputs     |
 | Must mock internal collaborators | Tight coupling between modules       | Inject dependencies; split responsibilities      |
 | Test breaks on unrelated changes | Function does too many things        | Single responsibility — split into smaller units |
-| Cannot test without side effects | Logic mixed with I/O                 | Separate pure computation from I/O boundaries    |
+| Cannot test without side effects | Logic mixed with I/O                 | Separate pure computation from I/O               |
 | Asserting on call sequences      | Testing implementation, not behavior | Assert on outputs and observable state           |
 | Need to access private state     | Public interface is incomplete       | Expose behavior through public methods           |

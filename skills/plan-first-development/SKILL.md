@@ -1,7 +1,7 @@
 ---
 name: plan-first-development
 description: |
-  Comprehensive planning methodology and session management for software projects.
+  Planning methodology and session management for software projects.
   Covers markdown plan creation, iterative refinement, multi-model blending,
   phase-based implementation docs, and cross-session progress tracking.
 
@@ -84,7 +84,7 @@ Plan-first development methodology where 80%+ of time goes to planning before im
 | Copying code into session docs                      | Reference file paths and line numbers instead of pasting code                                 |
 | Duplicating planning doc content in session doc     | Link to sections with anchors; session doc is a navigation hub                                |
 | No verification criteria on phases                  | Every phase needs specific, testable exit criteria (status codes, user flows, constraints)    |
-| Skeleton-first coding before a plan exists          | One comprehensive plan beats incremental skeleton-first coding                                |
+| Skeleton-first coding before a plan exists          | One thorough plan beats incremental skeleton-first coding                                     |
 | Planning without prototyping unknown tech           | Build a spike first for unfamiliar frameworks, then create the plan                           |
 | Over-planning simple tasks                          | Match planning depth to complexity; skip for trivial work                                     |
 | Not validating assumptions early                    | Run a spike for the riskiest assumption first                                                 |

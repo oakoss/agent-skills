@@ -48,7 +48,7 @@ Last reviewed: January 2026._
 
 ## Authoritativeness
 
-**Pillar page strategy:** Build comprehensive pages (2,000+ words) that establish the site as a definitive source for a topic cluster. Each pillar page should:
+**Pillar page strategy:** Build thorough pages (2,000+ words) that establish the site as a definitive source for a topic cluster. Each pillar page should:
 
 - Cover the topic exhaustively from multiple angles
 - Link to 5-10 supporting cluster articles

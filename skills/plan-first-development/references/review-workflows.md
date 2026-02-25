@@ -37,7 +37,7 @@ best of all the plans with every good idea included:
 | -------------------------------------------------- | -------------------------------------------- | ----------------------------------------------------- |
 | Starting implementation too early                  | 3 hours of planning saves 30 hours of rework | Finish all planning phases first                      |
 | Single-round review                                | Improvements continue through round 6+       | Iterate until suggestions plateau                     |
-| Skeleton-first coding                              | Loses big-picture coherence                  | One comprehensive plan, then implement                |
+| Skeleton-first coding                              | Loses big-picture coherence                  | One thorough plan, then implement                     |
 | Vague next actions                                 | "Continue API" gives no direction            | "Implement POST /api/tasks in src/routes/tasks.ts:47" |
 | SESSION.md over 200 lines                          | Defeats the purpose of quick reference       | Collapse completed phases, reference planning docs    |
 | Copying code into SESSION.md                       | Bloats the file, goes stale                  | Reference file paths and line numbers                 |

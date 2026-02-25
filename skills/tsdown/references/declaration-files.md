@@ -206,7 +206,7 @@ Use the built-in `--attw` flag (Are The Types Wrong) to validate that declaratio
 npx tsdown --attw
 ```
 
-Combine with `--publint` for comprehensive package validation:
+Combine with `--publint` for full package validation:
 
 ```bash
 npx tsdown --publint --attw

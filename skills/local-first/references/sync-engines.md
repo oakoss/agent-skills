@@ -1,6 +1,6 @@
 ---
 title: Sync Engines
-description: Landscape comparison of sync engines for local-first apps including ElectricSQL, Zero, PowerSync, Replicache, LiveStore, and Triplit
+description: Comparison of sync engines for local-first apps including ElectricSQL, Zero, PowerSync, Replicache, LiveStore, and Triplit
 tags:
   [
     sync,
@@ -32,7 +32,7 @@ tags:
 
 Postgres-native sync engine that streams partial replication (Shapes) from Postgres to clients. The read path syncs data to the client via Shapes. The write path is your own API — Electric does not sync writes back to Postgres.
 
-**Key differentiator:** Leverages Postgres logical replication directly. No separate sync server to manage. Reads sync automatically; writes go through your existing API.
+**Key differentiator:** Uses Postgres logical replication directly. No separate sync server to manage. Reads sync automatically; writes go through your existing API.
 
 **Best fit:** Apps with an existing Postgres backend that want to add real-time sync for reads while keeping server-authoritative writes.
 
@@ -135,7 +135,7 @@ Sync engine focused on Postgres (and MongoDB) with SQLite on the client. Strong 
 
 **Key differentiator:** SQLite on the client gives full SQL query capability. Strong mobile-first focus with offline-first design.
 
-**Best fit:** Mobile-first apps (React Native, Flutter) that need robust offline support with Postgres or MongoDB backends.
+**Best fit:** Mobile-first apps (React Native, Flutter) that need reliable offline support with Postgres or MongoDB backends.
 
 ```ts
 import { PowerSyncDatabase, column, Schema, Table } from '@powersync/web';

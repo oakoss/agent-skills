@@ -139,4 +139,4 @@ Design for temporary and situational disabilities:
 
 ## Further Reading
 
-For comprehensive WCAG compliance, ARIA widget patterns, focus management, screen reader testing, and form accessibility, delegate to the `accessibility` skill.
+For full WCAG compliance, ARIA widget patterns, focus management, screen reader testing, and form accessibility, delegate to the `accessibility` skill.

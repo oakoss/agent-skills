@@ -88,7 +88,7 @@ Vitest is a Vite-native unit testing framework that shares the same configuratio
 ## Delegation
 
 - **Test discovery**: For finding untested code paths, use `Explore` agent
-- **Coverage analysis**: For comprehensive coverage review, use `Task` agent
+- **Coverage analysis**: For full coverage review, use `Task` agent
 - **E2E testing**: If `playwright` skill is available, delegate E2E testing to it
 - **Code review**: After writing tests, delegate to `code-reviewer` agent
 

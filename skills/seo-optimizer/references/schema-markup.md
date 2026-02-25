@@ -47,7 +47,7 @@ For blog posts, guides, and documentation pages:
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": "How to Optimize React Performance",
-    "description": "A comprehensive guide to React performance optimization techniques",
+    "description": "A guide to React performance optimization techniques",
     "datePublished": "2026-01-15",
     "dateModified": "2026-01-28",
     "author": {

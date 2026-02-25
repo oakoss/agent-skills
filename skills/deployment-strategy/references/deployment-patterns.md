@@ -162,7 +162,7 @@ Routes a small percentage of traffic to the new version while the majority conti
 
 - High-traffic services where full rollout risk is unacceptable
 - Releases requiring real-world validation under production load
-- Services with comprehensive monitoring and alerting
+- Services with thorough monitoring and alerting
 
 ### Canary Progression Example
 

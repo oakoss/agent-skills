@@ -28,7 +28,7 @@ ls | where type == "file" | select name size | sort-by size -r | first 10
 
 ## Working with APIs
 
-Nushell makes HTTP requests and JSON handling seamless.
+Nushell handles HTTP requests and JSON natively.
 
 ```bash
 # Fetch a JSON API and extract a field
@@ -47,7 +47,7 @@ open config.yaml | to json
 
 ## Scripting with Nushell
 
-Nushell scripts are typed and robust, eliminating common shell scripting bugs like word splitting and globbing.
+Nushell scripts are typed, eliminating common shell scripting bugs like word splitting and globbing.
 
 ```bash
 # Typed function with error handling

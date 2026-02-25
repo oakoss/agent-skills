@@ -1,6 +1,6 @@
 ---
 name: application-security
-description: 'Comprehensive application security covering threat modeling (STRIDE), OWASP Top 10 (2025), OWASP API Security Top 10 (2023), secure coding review, authentication/authorization patterns, input validation, encryption, security headers, supply chain security, compliance (GDPR/HIPAA/SOC2/PCI-DSS), and security monitoring. Use when reviewing code for vulnerabilities, implementing auth patterns, securing APIs, configuring security headers, hardening supply chain, preventing injection attacks, or preparing for compliance audits.'
+description: 'Application security covering threat modeling (STRIDE), OWASP Top 10 (2025), OWASP API Security Top 10 (2023), secure coding review, authentication/authorization patterns, input validation, encryption, security headers, supply chain security, compliance (GDPR/HIPAA/SOC2/PCI-DSS), and security monitoring. Use when reviewing code for vulnerabilities, implementing auth patterns, securing APIs, configuring security headers, hardening supply chain, preventing injection attacks, or preparing for compliance audits.'
 license: MIT
 metadata:
   author: oakoss

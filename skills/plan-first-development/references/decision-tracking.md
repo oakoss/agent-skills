@@ -30,16 +30,16 @@ Keep best practices guides in your project folder and reference them in AGENTS.m
 
 ## Real-World Example Plan Documents
 
-| Project                  | Description                                                               |
-| ------------------------ | ------------------------------------------------------------------------- |
-| CASS Memory System       | Comprehensive plan covering system architecture and implementation phases |
-| CASS GitHub Pages Export | Plan for creating a web export application                                |
+| Project                  | Description                                                      |
+| ------------------------ | ---------------------------------------------------------------- |
+| CASS Memory System       | Full plan covering system architecture and implementation phases |
+| CASS GitHub Pages Export | Plan for creating a web export application                       |
 
 ## FAQ
 
 **Q: Should I code a skeleton first?**
 
-You get a better result faster by creating one big comprehensive, detailed, granular plan. That is the only way to get models to understand the entire system at once. Once you start turning it into code, it gets too big to understand.
+You get a better result faster by creating one big detailed, granular plan. That is the only way to get models to understand the entire system at once. Once you start turning it into code, it gets too big to understand.
 
 **Q: What about problems I did not anticipate?**
 
@@ -47,7 +47,7 @@ Finding the flaws and fixing them is the whole point of all the iterations and b
 
 **Q: How do I divide tasks for agents?**
 
-Each agent uses the task board to find the next optimal task and marks it in-progress. Distributed, robust, fungible agents.
+Each agent uses the task board to find the next optimal task and marks it in-progress. Distributed, fungible agents.
 
 **Q: Do agents need specialization?**
 

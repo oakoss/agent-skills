@@ -34,7 +34,7 @@ Core principles: the database is the source of truth (real-time channels notify,
 | CRDT collaboration    | Yjs (text) or Automerge (JSON state)         | Conflict-free concurrent editing without locks           |
 | CRDT awareness        | `y-protocols/awareness` module               | Tracks cursors, selections, and user presence            |
 | CRDT undo/redo        | `Y.UndoManager` with `trackedOrigins`        | Tracks only local user operations for selective undo     |
-| Presence              | Heartbeat-based user tracking                | Epidemic broadcast for robust zombie cleanup             |
+| Presence              | Heartbeat-based user tracking                | Epidemic broadcast for reliable zombie cleanup           |
 | AI stream batching    | `requestAnimationFrame` for token rendering  | Prevents UI jitter from high-frequency updates           |
 | Buffer-and-batch      | `useTransition` for sync-triggered updates   | Defers non-urgent re-renders during sync bursts          |
 | Backpressure          | Buffer size limit with forced flush          | Prevents memory buildup when tokens outpace rendering    |

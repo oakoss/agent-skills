@@ -16,7 +16,7 @@ user-invocable: false
 
 ## Overview
 
-TanStack Config provides opinionated tooling to build, version, and publish JavaScript/TypeScript packages with minimal configuration and consistent results. It leverages Vite for library builds with automatic dual ESM/CJS output and type generation, plus automated publishing with conventional-commit-based versioning.
+TanStack Config provides opinionated tooling to build, version, and publish JavaScript/TypeScript packages with minimal configuration and consistent results. It uses Vite for library builds with automatic dual ESM/CJS output and type generation, plus automated publishing with conventional-commit-based versioning.
 
 **When to use:** Building TanStack libraries or packages that follow TanStack conventions, contributing to TanStack open-source projects, setting up dual ESM/CJS library builds with Vite, automating package publishing with conventional commits.
 

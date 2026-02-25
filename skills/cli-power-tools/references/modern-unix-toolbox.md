@@ -1,6 +1,6 @@
 ---
 title: Modern Unix Toolbox
-description: Deep dive into Rust-powered CLI tools including ripgrep, fd, bat, zoxide, fzf, and eza with advanced usage patterns
+description: Rust-powered CLI tools including ripgrep, fd, bat, zoxide, fzf, and eza with advanced usage patterns
 tags: [ripgrep, fd, bat, zoxide, fzf, eza, rust-cli, unix-tools]
 ---
 

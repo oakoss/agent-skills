@@ -114,7 +114,7 @@ Resources:
 
 ## Health Checks
 
-Health checks verify that application instances are functioning correctly. Configure three types of probes for comprehensive health monitoring.
+Health checks verify that application instances are functioning correctly. Configure three types of probes for thorough health monitoring.
 
 ### Probe Types
 

@@ -89,13 +89,13 @@ rg "^\s{16,}" -g "*.ts" -c | sort -t: -k2 -rn
 
 **Evaluate:** Completeness, clarity, accuracy, organization, practical examples, API docs, troubleshooting guides, architecture docs.
 
-| Score | Criteria                                         |
-| ----- | ------------------------------------------------ |
-| 10    | Comprehensive, crystal clear, excellent examples |
-| 8     | Very good coverage, clear, good examples         |
-| 6     | Adequate coverage, some gaps                     |
-| 4     | Poor coverage, confusing, lacks examples         |
-| 2     | Minimal or misleading documentation              |
+| Score | Criteria                                    |
+| ----- | ------------------------------------------- |
+| 10    | Thorough, crystal clear, excellent examples |
+| 8     | Very good coverage, clear, good examples    |
+| 6     | Adequate coverage, some gaps                |
+| 4     | Poor coverage, confusing, lacks examples    |
+| 2     | Minimal or misleading documentation         |
 
 **Evidence required:**
 
@@ -179,13 +179,13 @@ npm audit --json | jq '.vulnerabilities | length'
 
 **Evaluate:** Coverage (unit/integration/e2e), test quality, automation, CI integration, test organization, mocking strategies, performance tests, security tests.
 
-| Score | Criteria                                |
-| ----- | --------------------------------------- |
-| 10    | Comprehensive, automated, >90% coverage |
-| 8     | Very good, automated, >80% coverage     |
-| 6     | Adequate, >60% coverage                 |
-| 4     | Poor, <40% coverage                     |
-| 2     | Minimal or no tests                     |
+| Score | Criteria                            |
+| ----- | ----------------------------------- |
+| 10    | Thorough, automated, >90% coverage  |
+| 8     | Very good, automated, >80% coverage |
+| 6     | Adequate, >60% coverage             |
+| 4     | Poor, <40% coverage                 |
+| 2     | Minimal or no tests                 |
 
 **Evidence required:**
 

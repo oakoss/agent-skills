@@ -427,7 +427,7 @@ const fullStream = new ShapeStream({
 
 ## Measuring Sync Performance
 
-### Comprehensive Sync Monitor
+### Sync Monitor
 
 ```ts
 type SyncMetrics = {

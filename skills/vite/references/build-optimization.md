@@ -153,7 +153,7 @@ Each entry gets its own chunk graph. During dev, navigate directly to the HTML f
 
 ## Tree-Shaking
 
-Vite leverages Rollup's tree-shaking by default. To maximize effectiveness:
+Vite uses Rollup's tree-shaking by default. To maximize effectiveness:
 
 ```ts
 import { defineConfig } from 'vite';

@@ -30,7 +30,7 @@ Ensures zero-mismatch integrity between server-rendered HTML and client-side Rea
 | Pattern              | Approach                                   | Key Points                                                 |
 | -------------------- | ------------------------------------------ | ---------------------------------------------------------- |
 | Selective hydration  | `<Suspense fallback={...}>` boundary       | Hydrates independently; prioritizes user interaction       |
-| Deterministic bridge | `use(serverPromise)` instead of useEffect  | Seamless server-to-client data transition (React 19)       |
+| Deterministic bridge | `use(serverPromise)` instead of useEffect  | Direct server-to-client data transition (React 19)         |
 | Cache directive      | `'use cache'` in data fetchers             | Share exact server result with client during hydration     |
 | Two-pass rendering   | `useState` + `useEffect` for client-only   | First render matches server; second adds client content    |
 | Client-only skip     | `next/dynamic` with `ssr: false`           | Exclude component from server render entirely              |

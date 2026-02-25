@@ -54,12 +54,12 @@ Responsive images serve the right image size and format based on viewport, devic
 
 ## Format Comparison
 
-| Format | Quality   | File Size | Browser Support | Use Case                        |
-| ------ | --------- | --------- | --------------- | ------------------------------- |
-| JPEG   | Good      | Medium    | 100%            | Photos, complex images          |
-| PNG    | Lossless  | Large     | 100%            | Logos, transparency             |
-| WebP   | Excellent | Small     | 96%+            | Modern browsers, photos         |
-| AVIF   | Excellent | Smallest  | 93%+            | Cutting-edge, fallback required |
+| Format | Quality   | File Size | Browser Support | Use Case                         |
+| ------ | --------- | --------- | --------------- | -------------------------------- |
+| JPEG   | Good      | Medium    | 100%            | Photos, complex images           |
+| PNG    | Lossless  | Large     | 100%            | Logos, transparency              |
+| WebP   | Excellent | Small     | 96%+            | Modern browsers, photos          |
+| AVIF   | Excellent | Smallest  | 93%+            | Newest format, fallback required |
 
 ## Common Mistakes
 

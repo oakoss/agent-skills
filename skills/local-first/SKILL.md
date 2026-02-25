@@ -71,7 +71,7 @@ Local-first is an architecture where the application reads and writes to a local
 ## References
 
 - [Architecture patterns and decision framework](references/architecture-patterns.md)
-- [Sync engine landscape and selection guide](references/sync-engines.md)
+- [Sync engine comparison and selection guide](references/sync-engines.md)
 - [Client-side storage options and limits](references/client-storage.md)
 - [Conflict resolution strategies](references/conflict-resolution.md)
 - [Offline resilience patterns](references/offline-patterns.md)
