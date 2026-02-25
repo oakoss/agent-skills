@@ -80,6 +80,11 @@ This project requires the Node.js version specified in `.nvmrc`.
 
 Pre-commit hooks auto-stage fixes, so markdown lint and Prettier corrections are included in the commit automatically. If the skill validator or commitlint fails, the commit is rejected — fix the issue and commit again.
 
+## Plan Mode
+
+- Make plans extremely concise. Sacrifice grammar for concision.
+- End each plan with a list of unresolved questions, if any.
+
 ## Code Style Rules
 
 `.claude/rules/` contains coding convention rules scoped to skill reference files. These ensure code examples follow consistent patterns (TypeScript strict mode, React conventions, testing patterns, etc.). Rules use glob-based path scoping — they only load when editing files that match by skill name or reference filename.
