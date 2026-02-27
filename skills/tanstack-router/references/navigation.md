@@ -280,7 +280,7 @@ function EditForm() {
       <form>{/* form fields */}</form>
       {status === 'blocked' ? (
         <dialog open>
-          <p>Leave for {next.pathname}? You have unsaved changes.</p>
+          <p>Leave for {next?.pathname}? You have unsaved changes.</p>
           <button onClick={reset}>Stay</button>
           <button onClick={proceed}>Leave</button>
         </dialog>
