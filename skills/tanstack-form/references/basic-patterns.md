@@ -170,13 +170,16 @@ const form = useForm({
   defaultValues: { name: '', email: '' },
   onSubmit: async ({ value, formApi }) => {
     try {
-      await api.createUser(value);
+      const result = await api.createUser(value);
+      if ('error' in result) {
+        formApi.setErrorMap({ onSubmit: result.error });
+        return;
+      }
       formApi.reset();
     } catch (error) {
-      formApi.setFieldMeta('email', (prev) => ({
-        ...prev,
-        errors: ['Email already exists'],
-      }));
+      formApi.setErrorMap({
+        onSubmit: error instanceof Error ? error.message : 'Submission failed',
+      });
     }
   },
 });

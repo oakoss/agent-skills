@@ -213,7 +213,7 @@ Display submission errors and reset:
 ## Custom Field Components
 
 ```tsx
-import { useFieldContext } from '@tanstack/react-form';
+import { useFieldContext } from '@/hooks/form-context';
 
 interface TextFieldProps {
   label: string;
@@ -342,7 +342,7 @@ function CreatePostForm() {
       createPost({ data: values }),
     onSuccess: (result) => {
       if ('error' in result) {
-        form.setErrorMap({ onServer: result.error });
+        form.setErrorMap({ onSubmit: result.error });
         return;
       }
       queryClient.invalidateQueries({ queryKey: ['posts'] });
