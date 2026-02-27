@@ -93,7 +93,6 @@ function InfiniteUsersTable() {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // Flatten all pages into single array for the table
   const flatData = useMemo(
     () => data?.pages.flatMap((page) => page.items) ?? [],
     [data],
@@ -181,7 +180,6 @@ function VirtualInfiniteTable() {
     overscan: 10,
   });
 
-  // Fetch more when scrolled near bottom
   useEffect(() => {
     const lastItem = virtualizer.getVirtualItems().at(-1);
     if (!lastItem) return;
@@ -205,8 +203,9 @@ function VirtualInfiniteTable() {
     <div ref={parentRef} className="h-[600px] overflow-auto">
       <table className="w-full">
         <thead className="sticky top-0 bg-background z-10">
-          {/* header rows */}
+          {/* header rendering omitted (see InfiniteUsersTable above) */}
         </thead>
+        {/* display: grid + absolute rows bypass table layout for virtualization */}
         <tbody
           style={{
             height: `${virtualizer.getTotalSize()}px`,

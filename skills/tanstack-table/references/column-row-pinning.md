@@ -44,7 +44,7 @@ const table = useReactTable({
 Use CSS `position: sticky` on pinned cells within a single `<table>`:
 
 ```tsx
-import { type Column, type Header, type Cell } from '@tanstack/react-table';
+import { type Column } from '@tanstack/react-table';
 
 function getCommonPinningStyles<T>(column: Column<T>): React.CSSProperties {
   const isPinned = column.getIsPinned();
