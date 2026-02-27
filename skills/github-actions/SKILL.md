@@ -37,8 +37,8 @@ GitHub Actions is a CI/CD platform that automates build, test, and deployment pi
 | Job dependencies    | `needs: [build, test]`                           | Run jobs in sequence or parallel            |
 | Conditional job     | `if: github.ref == 'refs/heads/main'`            | Expression-based job/step filtering         |
 | Matrix strategy     | `strategy: matrix: node: [18, 20, 22]`           | Generates jobs for each combination         |
-| Dependency cache    | `actions/cache@v4`                               | Hash-based keys with restore-keys fallback  |
-| Setup with cache    | `actions/setup-node@v4` with `cache: 'pnpm'`     | Built-in caching for package managers       |
+| Dependency cache    | `actions/cache@v5`                               | Hash-based keys with restore-keys fallback  |
+| Setup with cache    | `actions/setup-node@v6` with `cache: 'pnpm'`     | Built-in caching for package managers       |
 | Upload artifact     | `actions/upload-artifact@v4`                     | Share data between jobs or preserve outputs |
 | Download artifact   | `actions/download-artifact@v4`                   | Retrieve artifacts from earlier jobs        |
 | Reusable workflow   | `uses: ./.github/workflows/reusable.yml`         | Called with `workflow_call` trigger         |
@@ -69,7 +69,7 @@ GitHub Actions is a CI/CD platform that automates build, test, and deployment pi
 
 | Mistake                                      | Correct Pattern                                                            |
 | -------------------------------------------- | -------------------------------------------------------------------------- |
-| Using `actions/checkout@v4` or older tags    | Pin to current major version (`@v6`) or commit SHA                         |
+| Using outdated action major versions         | Pin to current major version (`@v6`) or commit SHA                         |
 | Missing `persist-credentials: false`         | Set on checkout when using custom tokens or OIDC                           |
 | Broad `permissions` at workflow level        | Set `permissions: {}` at workflow level, grant per-job                     |
 | Cache key without dependency file hash       | Include `hashFiles('**/pnpm-lock.yaml')` in cache key                      |

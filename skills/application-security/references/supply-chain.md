@@ -88,7 +88,7 @@ permissions:
 
 ```bash
 # Pin action versions by SHA, not mutable tags
-# BAD: uses: actions/checkout@v4 (mutable tag)
+# BAD: uses: actions/checkout@v6 (mutable tag)
 # GOOD: uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
 ```
 

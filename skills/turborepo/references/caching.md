@@ -98,7 +98,7 @@ jobs:
 If you can't use remote cache:
 
 ```yaml
-- uses: actions/cache@v4
+- uses: actions/cache@v5
   with:
     path: .turbo
     key: turbo-${{ runner.os }}-${{ hashFiles('**/turbo.json', '**/package-lock.json') }}

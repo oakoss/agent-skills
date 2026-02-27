@@ -42,7 +42,7 @@ jobs:
         run: npm ci
 
       - name: Cache Playwright Browsers
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
@@ -131,7 +131,7 @@ Cache downloaded browser binaries to speed up CI:
 
 ```yaml
 - name: Cache Playwright Browsers
-  uses: actions/cache@v4
+  uses: actions/cache@v5
   with:
     path: ~/.cache/ms-playwright
     key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}

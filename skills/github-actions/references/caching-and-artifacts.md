@@ -27,11 +27,11 @@ The simplest approach uses built-in caching in setup actions. This handles cache
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v6
 
   - uses: pnpm/action-setup@v4
 
-  - uses: actions/setup-node@v4
+  - uses: actions/setup-node@v6
     with:
       node-version: 22
       cache: 'pnpm'
@@ -43,9 +43,9 @@ steps:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v6
 
-  - uses: actions/setup-node@v4
+  - uses: actions/setup-node@v6
     with:
       node-version: 22
       cache: 'npm'
@@ -57,9 +57,9 @@ steps:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v6
 
-  - uses: actions/setup-node@v4
+  - uses: actions/setup-node@v6
     with:
       node-version: 22
       cache: 'yarn'
@@ -71,7 +71,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v6
 
   - uses: actions/setup-python@v5
     with:
@@ -85,7 +85,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v6
 
   - uses: actions/setup-go@v5
     with:
@@ -99,9 +99,9 @@ steps:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v6
 
-  - uses: actions/cache@v4
+  - uses: actions/cache@v5
     with:
       path: |
         ~/.cargo/bin/
@@ -116,15 +116,15 @@ steps:
 
 ## Manual Caching with actions/cache
 
-Use `actions/cache@v4` when setup actions do not cover your use case or you need fine-grained control.
+Use `actions/cache@v5` when setup actions do not cover your use case or you need fine-grained control.
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v6
 
   - name: Cache node_modules
     id: cache-deps
-    uses: actions/cache@v4
+    uses: actions/cache@v5
     with:
       path: node_modules
       key: deps-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -153,7 +153,7 @@ restore-keys: |
 ### Multiple Cache Paths
 
 ```yaml
-- uses: actions/cache@v4
+- uses: actions/cache@v5
   with:
     path: |
       ~/.pnpm-store
@@ -266,7 +266,7 @@ When `merge-multiple` is true, all artifacts are downloaded and merged into the 
 
 ```yaml
 steps:
-  - uses: actions/cache@v4
+  - uses: actions/cache@v5
     with:
       path: .next/cache
       key: nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('src/**') }}
