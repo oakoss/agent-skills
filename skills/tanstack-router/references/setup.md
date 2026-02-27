@@ -79,7 +79,7 @@ export function getRouter() {
     defaultErrorComponent: DefaultCatchBoundary,
     defaultNotFoundComponent: DefaultNotFound,
     scrollRestoration: true,
-    // Preserves referential identity for unchanged loader data (requires JSON-serializable data)
+    // WARNING: only works with JSON-serializable data (no Date, Map, Set, class instances)
     defaultStructuralSharing: true,
     defaultPendingComponent: () => <div className="loading-bar" />,
     defaultPendingMinMs: 200,
