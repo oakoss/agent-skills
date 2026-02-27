@@ -44,8 +44,8 @@ docker run --shm-size=2gb your-image
 Wait for content to load before capturing:
 
 ```typescript
-await page.goto(url, { waitUntil: 'networkidle' });
-await page.waitForTimeout(1000); // Extra buffer for lazy-loaded content
+await page.goto(url);
+await page.locator('main').waitFor(); // Wait for key content element
 await page.screenshot({ path: 'output.png' });
 ```
 

@@ -46,15 +46,11 @@ try {
 - **Fix:**
 
 ```typescript
-// Explicit wait
-const button = await page.waitForSelector('button.submit', {
-  state: 'visible',
-  timeout: 10000,
-});
-await button.click();
-
-// Or use locator with auto-wait
+// Locators auto-wait for elements to appear
 await page.locator('button.submit').click();
+
+// With custom timeout
+await page.locator('button.submit').click({ timeout: 10000 });
 ```
 
 ## Issue 3: Navigation Timeout
@@ -82,13 +78,12 @@ try {
 - **Error:** `Error: Execution context was destroyed, most likely because of a navigation.`
 - **Source:** [GitHub Issue #3934](https://github.com/microsoft/playwright/issues/3934)
 - **Cause:** SPA navigation re-rendered the element
-- **Fix:** Re-query element after navigation
+- **Fix:** Use locators (they re-query automatically) and wait for navigation
 
 ```typescript
 async function safeClick(page, selector) {
-  await page.waitForSelector(selector);
-  await page.click(selector);
-  await page.waitForLoadState('networkidle');
+  await page.locator(selector).click();
+  await page.waitForLoadState('domcontentloaded');
 }
 ```
 
@@ -106,7 +101,7 @@ async function safeClick(page, selector) {
 ```typescript
 const [download] = await Promise.all([
   page.waitForEvent('download'),
-  page.click('a.download-link'),
+  page.locator('a.download-link').click(),
 ]);
 
 await download.saveAs('./downloads/' + download.suggestedFilename());

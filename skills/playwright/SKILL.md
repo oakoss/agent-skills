@@ -35,7 +35,7 @@ Playwright is a browser automation framework for Node.js and Python supporting C
 | Test step             | `test.step('name', async (step) => {})`               | Timeout, skip, and attachments (v1.50+)            |
 | Stealth mode          | `playwright-extra` + stealth plugin                   | Patches 20+ detection vectors                      |
 | Authenticated session | `context.cookies()` + `addCookies()`                  | Save/restore cookies and IndexedDB for persistence |
-| Screenshot            | `page.screenshot({ fullPage: true })`                 | Use `waitUntil: 'networkidle'` first               |
+| Screenshot            | `page.screenshot({ fullPage: true })`                 | Wait for key elements to load first                |
 | PDF generation        | `page.pdf({ format: 'A4' })`                          | Chromium only, set `printBackground: true`         |
 | Clock API             | `page.clock`                                          | Freeze, fast-forward, or simulate time in tests    |
 | A11y assertions       | `toHaveAccessibleName`, `toHaveRole`                  | Native assertions without axe-core dependency      |
@@ -53,7 +53,7 @@ Playwright is a browser automation framework for Node.js and Python supporting C
 | ------------------------------------------- | ------------------------------------------------------------ |
 | Using CSS selectors over role selectors     | Prefer `getByRole`, `getByLabel`, `getByText` for resilience |
 | Not closing browser                         | Always `await browser.close()` in `finally` block            |
-| Using `setTimeout` for waits                | Use `waitForSelector`, `waitForLoadState`, auto-wait         |
+| Using `setTimeout` for waits                | Use locator auto-wait or `waitForLoadState`                  |
 | `page.pause()` left in CI code              | Guard with `if (!process.env.CI)` — hangs CI indefinitely    |
 | Clicking without waiting                    | Use `locator().click()` with built-in auto-wait              |
 | Shared state between tests                  | Each test gets fresh context via fixtures                    |

@@ -33,9 +33,9 @@ async function scrapeWithAuth() {
 
   // Login
   await page.goto('https://example.com/login');
-  await page.fill('input[name="email"]', process.env.EMAIL);
-  await page.fill('input[name="password"]', process.env.PASSWORD);
-  await page.click('button[type="submit"]');
+  await page.locator('input[name="email"]').fill(process.env.EMAIL);
+  await page.locator('input[name="password"]').fill(process.env.PASSWORD);
+  await page.locator('button[type="submit"]').click();
   await page.waitForURL('**/dashboard', { timeout: 10000 });
 
   // Save session for reuse
@@ -150,18 +150,17 @@ Chromium only — Firefox and WebKit do not support `page.pdf()`.
 
 ```typescript
 async function fillFormWithValidation(page) {
-  await page.fill('input[name="firstName"]', 'John');
-  await page.fill('input[name="lastName"]', 'Doe');
-  await page.fill('input[name="email"]', 'john@example.com');
+  await page.locator('input[name="firstName"]').fill('John');
+  await page.locator('input[name="lastName"]').fill('Doe');
+  await page.locator('input[name="email"]').fill('john@example.com');
 
-  await page.selectOption('select[name="country"]', 'US');
-  await page.check('input[name="terms"]');
+  await page.locator('select[name="country"]').selectOption('US');
+  await page.locator('input[name="terms"]').check();
 
-  // Wait for client-side validation
-  await page.waitForSelector('input[name="email"]:valid');
-
-  await page.click('button[type="submit"]');
-  await page.waitForSelector('.success-message', { timeout: 10000 });
+  await page.locator('button[type="submit"]').click();
+  await expect(page.locator('.success-message')).toBeVisible({
+    timeout: 10000,
+  });
 }
 ```
 
@@ -198,7 +197,8 @@ Wait for content to stop changing before extracting:
 
 ```typescript
 async function waitForStableContent(page, selector: string) {
-  await page.waitForSelector(selector);
+  const locator = page.locator(selector);
+  await locator.waitFor();
 
   let previousContent = '';
   let stableCount = 0;

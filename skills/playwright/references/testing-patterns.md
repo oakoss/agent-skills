@@ -206,7 +206,7 @@ Authenticate once and reuse across tests:
 
 ```typescript
 // auth.setup.ts
-import { test as setup, expect } from '@playwright/test';
+import { setup, expect } from '@playwright/test';
 
 setup('authenticate', async ({ page }) => {
   await page.goto('/login');

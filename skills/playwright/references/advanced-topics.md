@@ -263,7 +263,8 @@ Wait for content to stabilize (no changes for 2 seconds):
 
 ```typescript
 async function waitForDynamicContent(page, selector: string) {
-  await page.waitForSelector(selector);
+  const locator = page.locator(selector);
+  await locator.waitFor();
 
   let previousContent = '';
   let stableCount = 0;

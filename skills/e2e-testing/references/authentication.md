@@ -49,7 +49,7 @@ export default defineConfig({
 Create `tests/auth.setup.ts` to perform login once and save the auth state:
 
 ```ts
-import { test as setup, expect } from '@playwright/test';
+import { setup, expect } from '@playwright/test';
 
 const authFile = 'playwright/.auth/user.json';
 
@@ -73,7 +73,7 @@ All tests in projects that depend on `setup` automatically receive the authentic
 For faster setup, authenticate via API instead of UI:
 
 ```ts
-import { test as setup } from '@playwright/test';
+import { setup } from '@playwright/test';
 
 const authFile = 'playwright/.auth/user.json';
 
@@ -116,7 +116,7 @@ export default defineConfig({
 Auth setup file for multiple roles:
 
 ```ts
-import { test as setup } from '@playwright/test';
+import { setup } from '@playwright/test';
 
 setup('authenticate as admin', async ({ page }) => {
   await page.goto('/auth/login');

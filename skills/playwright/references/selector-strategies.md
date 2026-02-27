@@ -32,25 +32,25 @@ tags:
 
 ```typescript
 // Basic
-await page.click('button'); // Tag
-await page.click('#submit'); // ID
-await page.click('.btn-primary'); // Class
-await page.click('[type="submit"]'); // Attribute
+await page.locator('button').click(); // Tag
+await page.locator('#submit').click(); // ID
+await page.locator('.btn-primary').click(); // Class
+await page.locator('[type="submit"]').click(); // Attribute
 
 // Combinators
-await page.click('form > button'); // Child
-await page.click('form button'); // Descendant
-await page.click('label + input'); // Adjacent sibling
+await page.locator('form > button').click(); // Child
+await page.locator('form button').click(); // Descendant
+await page.locator('label + input').click(); // Adjacent sibling
 
 // Pseudo-classes
-await page.click('button:first-child');
-await page.click('button:nth-child(2)');
-await page.click('input:checked');
+await page.locator('button:first-child').click();
+await page.locator('button:nth-child(2)').click();
+await page.locator('input:checked').click();
 
 // Attribute patterns
-await page.click('[href^="https"]'); // Starts with
-await page.click('[href$=".pdf"]'); // Ends with
-await page.click('[href*="example"]'); // Contains
+await page.locator('[href^="https"]').click(); // Starts with
+await page.locator('[href$=".pdf"]').click(); // Ends with
+await page.locator('[href*="example"]').click(); // Contains
 ```
 
 ## XPath Selectors
@@ -58,21 +58,23 @@ await page.click('[href*="example"]'); // Contains
 Prefix with `xpath=`:
 
 ```typescript
-await page.click('xpath=//button[text()="Submit"]');
-await page.click('xpath=//button[contains(text(), "Sub")]');
-await page.click('xpath=//button[@class="submit"]');
-await page.click('xpath=(//button)[1]'); // First
-await page.click('xpath=(//button)[last()]'); // Last
-await page.click('xpath=//button[@type="submit" and contains(text(), "Save")]');
+await page.locator('xpath=//button[text()="Submit"]').click();
+await page.locator('xpath=//button[contains(text(), "Sub")]').click();
+await page.locator('xpath=//button[@class="submit"]').click();
+await page.locator('xpath=(//button)[1]').click(); // First
+await page.locator('xpath=(//button)[last()]').click(); // Last
+await page
+  .locator('xpath=//button[@type="submit" and contains(text(), "Save")]')
+  .click();
 ```
 
 ## Text Selectors
 
 ```typescript
-await page.click('text=Submit'); // Exact match
-await page.click('text="Submit form"'); // Full string
-await page.click('text=/submit/i'); // Case-insensitive
-await page.click('text=/^Submit/'); // Regex
+await page.locator('text=Submit').click(); // Exact match
+await page.locator('text="Submit form"').click(); // Full string
+await page.locator('text=/submit/i').click(); // Case-insensitive
+await page.locator('text=/^Submit/').click(); // Regex
 ```
 
 ## Role Selectors (getByRole)
@@ -86,18 +88,18 @@ await page.getByRole('textbox', { name: 'Email' }).fill('user@example.com');
 
 ```typescript
 // has-text: element containing text
-await page.click('button:has-text("Submit")');
-await page.click('article:has-text("Breaking News")');
+await page.locator('button:has-text("Submit")').click();
+await page.locator('article:has-text("Breaking News")').click();
 
 // has: element containing selector
-await page.click('article:has(img.thumbnail)');
-await page.click('div:has(> button.primary)');
+await page.locator('article:has(img.thumbnail)').click();
+await page.locator('div:has(> button.primary)').click();
 
 // is: filter match
-await page.click('button:is(.submit, .confirm)');
+await page.locator('button:is(.submit, .confirm)').click();
 
 // not: exclude match
-await page.click('button:not(.disabled)');
+await page.locator('button:not(.disabled)').click();
 ```
 
 ## Chaining Selectors
@@ -163,10 +165,10 @@ For high-volume scraping, prefer CSS selectors.
 
 ## Common Pitfalls
 
-| Problem                 | Cause                    | Fix                                    |
-| ----------------------- | ------------------------ | -------------------------------------- |
-| Selector finds multiple | Not specific enough      | Add parent context or unique attribute |
-| Element not found       | Wrong selector or timing | Use `waitForSelector()` first          |
-| Stale element           | DOM re-rendered          | Re-query after navigation              |
-| Slow selectors          | Complex XPath            | Simplify or use CSS                    |
-| Flaky tests             | Timing issues            | Add explicit waits                     |
+| Problem                 | Cause                    | Fix                                       |
+| ----------------------- | ------------------------ | ----------------------------------------- |
+| Selector finds multiple | Not specific enough      | Add parent context or unique attribute    |
+| Element not found       | Wrong selector or timing | Use locator API (auto-waits for elements) |
+| Stale element           | DOM re-rendered          | Re-query after navigation                 |
+| Slow selectors          | Complex XPath            | Simplify or use CSS                       |
+| Flaky tests             | Timing issues            | Add explicit waits                        |

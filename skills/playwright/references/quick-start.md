@@ -2,17 +2,7 @@
 title: Quick Start
 description: Installation, basic page scraping, local vs Cloudflare comparison, and critical setup rules
 tags:
-  [
-    install,
-    setup,
-    chromium,
-    launch,
-    goto,
-    headless,
-    networkidle,
-    close,
-    browser,
-  ]
+  [install, setup, chromium, launch, goto, headless, locator, close, browser]
 ---
 
 # Quick Start
@@ -45,9 +35,9 @@ import { chromium } from 'playwright';
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage();
 
-await page.goto('https://example.com', { waitUntil: 'networkidle' });
+await page.goto('https://example.com');
 const title = await page.title();
-const content = await page.textContent('body');
+const content = await page.locator('body').textContent();
 
 await browser.close();
 console.log({ title, content });
@@ -56,7 +46,7 @@ console.log({ title, content });
 **Critical rules:**
 
 - Always close browser with `await browser.close()` to avoid zombie processes
-- Use `waitUntil: 'networkidle'` for dynamic content (SPAs)
+- For SPAs, wait for specific elements rather than `networkidle` (flaky with WebSockets/long-polling)
 - Default timeout is 30 seconds — adjust with `timeout: 60000` if needed
 
 ## Local vs Cloudflare Browser Rendering
@@ -77,18 +67,19 @@ console.log({ title, content });
 
 ### Always Do
 
-- Use `waitUntil: 'networkidle'` for SPAs (React, Vue, Angular)
+- Use locator API (`page.getByRole()`, `page.locator()`) — locators auto-wait for elements
+- For SPAs, wait for specific elements (`expect(locator).toBeVisible()`) instead of `networkidle`
 - Close browsers with `await browser.close()` to prevent memory leaks
 - Wrap automation in try/catch/finally blocks
 - Set explicit timeouts for unreliable sites
 - Save screenshots on errors for debugging
-- Use `page.waitForSelector()` before interacting with elements
 - Test with `headless: false` first, then switch to `headless: true`
 
 ### Never Do
 
-- Use `page.click()` without waiting for element
-- Rely on fixed `setTimeout()` for waits — use `waitForSelector`, `waitForLoadState`
+- Use `page.click('selector')` — use `page.locator('selector').click()` or `page.getByRole().click()`
+- Rely on fixed `setTimeout()` for waits — locators auto-wait, use `waitForLoadState` if needed
+- Use `waitUntil: 'networkidle'` for SPAs — flaky with WebSockets and long-polling apps
 - Scrape without rate limiting — add delays between requests
 - Use same user agent for all requests — rotate agents
 - Ignore navigation errors — catch and retry with backoff

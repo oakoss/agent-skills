@@ -73,9 +73,9 @@ for (const query of queries) {
 
 ```typescript
 await page.goto('https://www.linkedin.com/login');
-await page.fill('#username', process.env.LINKEDIN_EMAIL);
-await page.fill('#password', process.env.LINKEDIN_PASSWORD);
-await page.click('[type="submit"]');
+await page.locator('#username').fill(process.env.LINKEDIN_EMAIL);
+await page.locator('#password').fill(process.env.LINKEDIN_PASSWORD);
+await page.locator('[type="submit"]').click();
 await page.waitForURL('**/feed/', { timeout: 10000 });
 
 // Respect limits: 80-100 profile views/day, 20 connections/day, 3-5s between actions
