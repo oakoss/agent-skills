@@ -155,13 +155,14 @@ When using TanStack Query, call `useQueryErrorResetBoundary().reset()` before th
 
 Pass context to the not-found component:
 
-```ts
+```tsx
 export const Route = createFileRoute('/posts/$postId')({
   loader: async ({ params }) => {
     const post = await fetchPost(params.postId);
     if (!post) throw notFound({ data: { postId: params.postId } });
     return { post };
   },
+  // data is typed unknown — cast to match the shape passed to notFound()
   notFoundComponent: ({ data }) => {
     const { postId } = data as { postId: string };
     return <div>Post {postId} not found</div>;
