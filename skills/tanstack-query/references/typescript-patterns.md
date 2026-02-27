@@ -74,7 +74,25 @@ function UserProfile({ userId }: { userId: string | undefined }) {
 
 No need for `enabled` option. TypeScript understands the query won't run when `userId` is undefined, and the `queryFn` closure properly narrows `userId` to `string`.
 
-`skipToken` is not compatible with `useSuspenseQuery` or `useSuspenseQueries` — it will throw a runtime error because suspense queries must always fetch.
+`skipToken` is not compatible with `useSuspenseQuery` or `useSuspenseQueries` — it will throw a runtime error because suspense queries must always fetch. Use component composition instead:
+
+```tsx
+function UserDetailContainer({ userId }: { userId: string | undefined }) {
+  if (!userId) return <div>Select a user</div>;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <UserDetail userId={userId} />
+    </Suspense>
+  );
+}
+
+function UserDetail({ userId }: { userId: string }) {
+  const { data } = useSuspenseQuery({
+    queryKey: ['user', userId],
+    queryFn: () => fetchUser(userId),
+  });
+}
+```
 
 ## Runtime Validation with Zod
 
