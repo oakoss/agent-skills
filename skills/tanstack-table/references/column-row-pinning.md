@@ -41,86 +41,60 @@ const table = useReactTable({
 
 ## Rendering Pinned Columns
 
-Use separate header/cell groups for left, center, and right sections:
+Use CSS `position: sticky` on pinned cells within a single `<table>`:
 
 ```tsx
+import { type Column, type Header, type Cell } from '@tanstack/react-table';
+
+function getCommonPinningStyles<T>(column: Column<T>): React.CSSProperties {
+  const isPinned = column.getIsPinned();
+  return {
+    left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
+    right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
+    position: isPinned ? 'sticky' : 'relative',
+    width: column.getSize(),
+    zIndex: isPinned ? 1 : 0,
+  };
+}
+
 function PinnedTable({ table }) {
   return (
-    <div className="flex">
-      {/* Left pinned columns */}
-      <div className="sticky left-0 bg-background z-10">
-        {table.getLeftHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th key={header.id}>
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext(),
-                )}
-              </th>
-            ))}
-          </tr>
-        ))}
-        {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
-            {row.getLeftVisibleCells().map((cell) => (
-              <td key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </div>
-
-      {/* Center scrollable columns */}
-      <div className="overflow-x-auto">
-        {table.getCenterHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th key={header.id}>
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext(),
-                )}
-              </th>
-            ))}
-          </tr>
-        ))}
-        {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
-            {row.getCenterVisibleCells().map((cell) => (
-              <td key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </div>
-
-      {/* Right pinned columns */}
-      <div className="sticky right-0 bg-background z-10">
-        {table.getRightHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th key={header.id}>
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext(),
-                )}
-              </th>
-            ))}
-          </tr>
-        ))}
-        {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
-            {row.getRightVisibleCells().map((cell) => (
-              <td key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </div>
+    <div className="overflow-x-auto">
+      <table className="w-full">
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th
+                  key={header.id}
+                  style={getCommonPinningStyles(header.column)}
+                  className="bg-background"
+                >
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext(),
+                  )}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <td
+                  key={cell.id}
+                  style={getCommonPinningStyles(cell.column)}
+                  className="bg-background"
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

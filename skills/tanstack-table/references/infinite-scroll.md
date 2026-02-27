@@ -207,41 +207,36 @@ function VirtualInfiniteTable() {
         <thead className="sticky top-0 bg-background z-10">
           {/* header rows */}
         </thead>
-        <tbody>
-          <tr
-            style={{
-              height: `${virtualizer.getTotalSize()}px`,
-              position: 'relative',
-            }}
-          >
-            <td colSpan={columns.length}>
-              {virtualizer.getVirtualItems().map((virtualRow) => {
-                const row = rows[virtualRow.index];
-                return (
-                  <tr
-                    key={row.id}
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: `${virtualRow.size}px`,
-                      transform: `translateY(${virtualRow.start}px)`,
-                    }}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="border p-2">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })}
-            </td>
-          </tr>
+        <tbody
+          style={{
+            height: `${virtualizer.getTotalSize()}px`,
+            position: 'relative',
+            display: 'grid',
+          }}
+        >
+          {virtualizer.getVirtualItems().map((virtualRow) => {
+            const row = rows[virtualRow.index];
+            return (
+              <tr
+                key={row.id}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: `${virtualRow.size}px`,
+                  transform: `translateY(${virtualRow.start}px)`,
+                  display: 'flex',
+                }}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className="border p-2" style={{ flex: 1 }}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
