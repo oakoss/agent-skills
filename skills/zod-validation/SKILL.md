@@ -5,6 +5,7 @@ license: MIT
 metadata:
   author: oakoss
   version: '1.1'
+  source: https://zod.dev
 user-invocable: false
 ---
 

@@ -179,8 +179,8 @@ const CategorySchema: z.ZodType<Category> = z.object({
 ## Branded Types
 
 ```ts
-const UserId = z.string().uuid().brand<'UserId'>();
-const PostId = z.string().uuid().brand<'PostId'>();
+const UserId = z.uuid().brand<'UserId'>();
+const PostId = z.uuid().brand<'PostId'>();
 
 type UserId = z.infer<typeof UserId>;
 type PostId = z.infer<typeof PostId>;

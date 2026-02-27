@@ -94,34 +94,6 @@ const CreateUserBody = z.object({
 const bodySchema = z.toJSONSchema(CreateUserBody);
 ```
 
-## File Validation (v4)
-
-Validate JavaScript `File` instances with size and MIME type constraints:
-
-```ts
-const ImageSchema = z
-  .file()
-  .max(5_000_000) // 5MB max
-  .mime(['image/png', 'image/jpeg', 'image/webp']);
-
-const DocumentSchema = z
-  .file()
-  .min(1) // Non-empty
-  .max(10_000_000) // 10MB max
-  .mime(['application/pdf']);
-
-// File upload form schema
-const UploadFormSchema = z.object({
-  title: z.string().min(1),
-  attachment: z.file().max(25_000_000),
-  thumbnail: z
-    .file()
-    .max(2_000_000)
-    .mime(['image/png', 'image/jpeg'])
-    .optional(),
-});
-```
-
 ## Zod Mini
 
 A lighter variant for smaller bundle sizes:
