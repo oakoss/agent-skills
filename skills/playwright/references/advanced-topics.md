@@ -119,7 +119,7 @@ await page.route('**/api/**', (route) =>
 );
 ```
 
-Note: as of v1.55, glob patterns in `page.route()` no longer support `?` and `[]`. Use regex instead:
+Note: as of v1.52, glob patterns in `page.route()` no longer support `?` and `[]`. Use regex instead:
 
 ```typescript
 await page.route(/\/api\/items\/\d+/, (route) => route.fulfill({ body: '{}' }));
