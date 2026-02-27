@@ -142,10 +142,13 @@ Apply middleware to all server functions in `src/start.ts`:
 ```ts
 import { createStart } from '@tanstack/react-start';
 
-export default createStart({
+export const startInstance = createStart(() => ({
   requestMiddleware: [logMiddleware, authMiddleware],
-});
+  functionMiddleware: [],
+}));
 ```
+
+`requestMiddleware` runs on every server request (SSR, server functions, and API routes). `functionMiddleware` runs only on server function calls — use it for input validation or function-specific concerns.
 
 ## Rate Limiting Middleware
 

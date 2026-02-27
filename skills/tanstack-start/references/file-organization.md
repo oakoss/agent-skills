@@ -29,7 +29,7 @@ tags:
 
 ## Entry Points
 
-Every TanStack Start app requires three entry files:
+TanStack Start has three entry files, all optional. If omitted, defaults are auto-generated:
 
 ```ts
 // src/client.tsx — Client entry point (hydrates the app)
@@ -60,9 +60,10 @@ export default createServerEntry({
 // src/start.ts — Global configuration (optional)
 import { createStart } from '@tanstack/react-start';
 
-export default createStart({
+export const startInstance = createStart(() => ({
   requestMiddleware: [],
-});
+  functionMiddleware: [],
+}));
 ```
 
 ## Plugin Configuration

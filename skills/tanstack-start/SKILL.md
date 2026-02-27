@@ -19,39 +19,40 @@ Full-stack React framework built on TanStack Router. Type-safe server functions 
 
 ## Quick Reference
 
-| Pattern                                    | Usage                                                     |
-| ------------------------------------------ | --------------------------------------------------------- |
-| `createServerFn()`                         | GET (default) — idempotent, cacheable data fetching       |
-| `createServerFn({ method: 'POST' })`       | Mutations that change data                                |
-| `.inputValidator(zodSchema)`               | Input validation before handler                           |
-| `.handler(async ({ data }) => {})`         | Server-side logic with typed input data                   |
-| `getRequest()`                             | Access full incoming `Request` inside handler/middleware  |
-| `getRequestHeader(name)`                   | Read a single request header by name                      |
-| `setResponseHeaders(headers)`              | Set outgoing response headers (caching, cookies)          |
-| `useServerFn(fn)`                          | Wrap server function for component use with pending state |
-| `createMiddleware().server(fn)`            | Request middleware for cross-cutting concerns             |
-| `.middleware([dep])`                       | Compose middleware with dependencies                      |
-| `next({ context: {} })`                    | Pass data downstream through middleware chain             |
-| `createMiddleware({ type: 'function' })`   | Function-level middleware with input validation           |
-| `requestMiddleware: []` in `createStart()` | Global middleware for all server requests                 |
-| `createIsomorphicFn()`                     | Different implementations per environment                 |
-| `createServerOnlyFn()`                     | Server-only utility — crashes if called from client       |
-| `createClientOnlyFn()`                     | Client-only utility — crashes if called from server       |
-| `useSession()`                             | Cookie-based session with encryption and secure settings  |
-| `session.update()`                         | Update session data                                       |
-| `session.clear()`                          | Clear session (logout)                                    |
-| `beforeLoad`                               | Auth check before route loads                             |
-| `_authenticated.tsx`                       | Pathless layout route for grouped protection              |
-| `throw redirect({ to: '/login' })`         | Redirect with return URL                                  |
-| `await ensureQueryData()`                  | Block SSR on critical data                                |
-| `prefetchQuery()`                          | Start fetch, don't block SSR                              |
-| `<Suspense>` boundaries                    | Define streaming chunks                                   |
-| `head: ({ loaderData }) => ({})`           | Meta tags, Open Graph, favicons                           |
-| `head.scripts` + JSON-LD                   | Structured data for LLMO (schema.org)                     |
-| `llms.txt` server route                    | AI system guidance file                                   |
-| `headers: () => ({...})`                   | ISR / cache-control on route definition                   |
-| `server: { handlers: { GET, POST } }`      | API routes on `createFileRoute`                           |
-| `prerender: false`                         | Disable prerendering for dynamic routes                   |
+| Pattern                                  | Usage                                                     |
+| ---------------------------------------- | --------------------------------------------------------- |
+| `createServerFn()`                       | GET (default) — idempotent, cacheable data fetching       |
+| `createServerFn({ method: 'POST' })`     | Mutations that change data                                |
+| `.inputValidator(zodSchema)`             | Input validation before handler                           |
+| `.handler(async ({ data }) => {})`       | Server-side logic with typed input data                   |
+| `getRequest()`                           | Access full incoming `Request` inside handler/middleware  |
+| `getRequestHeader(name)`                 | Read a single request header by name                      |
+| `setResponseHeaders(headers)`            | Set outgoing response headers (caching, cookies)          |
+| `useServerFn(fn)`                        | Wrap server function for component use with pending state |
+| `createMiddleware().server(fn)`          | Request middleware for cross-cutting concerns             |
+| `.middleware([dep])`                     | Compose middleware with dependencies                      |
+| `next({ context: {} })`                  | Pass data downstream through middleware chain             |
+| `createMiddleware({ type: 'function' })` | Function-level middleware with input validation           |
+| `requestMiddleware` in `createStart()`   | Global middleware for all requests (SSR, fns, routes)     |
+| `functionMiddleware` in `createStart()`  | Global middleware for server functions only               |
+| `createIsomorphicFn()`                   | Different implementations per environment                 |
+| `createServerOnlyFn()`                   | Server-only utility — crashes if called from client       |
+| `createClientOnlyFn()`                   | Client-only utility — crashes if called from server       |
+| `useSession()`                           | Cookie-based session with encryption and secure settings  |
+| `session.update()`                       | Update session data                                       |
+| `session.clear()`                        | Clear session (logout)                                    |
+| `beforeLoad`                             | Auth check before route loads                             |
+| `_authenticated.tsx`                     | Pathless layout route for grouped protection              |
+| `throw redirect({ to: '/login' })`       | Redirect with return URL                                  |
+| `await ensureQueryData()`                | Block SSR on critical data                                |
+| `prefetchQuery()`                        | Start fetch, don't block SSR                              |
+| `<Suspense>` boundaries                  | Define streaming chunks                                   |
+| `head: ({ loaderData }) => ({})`         | Meta tags, Open Graph, favicons                           |
+| `head.scripts` + JSON-LD                 | Structured data for LLMO (schema.org)                     |
+| `llms.txt` server route                  | AI system guidance file                                   |
+| `headers: () => ({...})`                 | ISR / cache-control on route definition                   |
+| `server: { handlers: { GET, POST } }`    | API routes on `createFileRoute`                           |
+| `ssr: false`                             | Disable SSR for specific routes (SPA mode)                |
 
 ## Execution Boundaries
 
@@ -86,7 +87,7 @@ Full-stack React framework built on TanStack Router. Type-safe server functions 
 | `Date.now()` in render                       | Pass timestamp from loader (hydration mismatch)        |
 | Missing `nodejs_compat` flag                 | Required in `wrangler.toml` for Cloudflare             |
 | GET for mutations                            | Use POST for create/update/delete                      |
-| Cookies not forwarded to external APIs       | Use `getRequestHeaders()` or `createIsomorphicFn`      |
+| Cookies not forwarded to external APIs       | Use `getRequestHeader()` or `createIsomorphicFn`       |
 | `process.env` in loader (runs on both)       | Wrap in `createServerFn` — loaders run client-side too |
 | Unvalidated server env vars                  | Validate with Zod in `.server.ts` files                |
 | Storing auth tokens in localStorage          | Use HTTP-only cookies via `useSession`                 |
