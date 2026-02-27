@@ -1,6 +1,6 @@
 ---
 title: Known Issues
-description: 20 documented TanStack Router issues with fixes covering build/setup, routing, search params, loaders, SSR, deployment, and anti-patterns to avoid
+description: 16 documented TanStack Router issues with fixes covering build/setup, routing, search params, loaders, SSR, deployment, and anti-patterns to avoid
 tags:
   [
     issues,
@@ -27,8 +27,6 @@ tags:
 
 **#4: Loader not running** — Loader function not called on navigation. Fix: Ensure route exports `Route` constant from `createFileRoute`.
 
-**#5: Memory leak with TanStack Form** — Fixed in latest versions. Update `@tanstack/form` and `@tanstack/react-start`.
-
 ## Routing and Navigation
 
 **#6: Virtual routes index/layout conflict** — `route.tsx` and `index.tsx` conflict when using `physical()`. Fix: Use pathless route `_layout.tsx` + `_layout.index.tsx`.
@@ -42,23 +40,6 @@ tags:
 ## Search Params and Validation
 
 **#7: Search params type inference** — `zodSearchValidator` broken since v1.81.5. Fix: Use `zodValidator` from `@tanstack/zod-adapter`.
-
-**#8: TanStack Start validators on reload** — `validateSearch` fails on direct page load. Works on client-side navigation only.
-
-**#9: Server function validation errors lose structure** — Zod errors from `inputValidator` are stringified, losing structure. Workaround:
-
-```ts
-try {
-  await mutation.mutate({ data: invalidData });
-} catch (error) {
-  if (error.message.startsWith('[')) {
-    const issues = JSON.parse(error.message);
-    issues.forEach((issue: { path: string[]; message: string }) => {
-      console.log(issue.path, issue.message);
-    });
-  }
-}
-```
 
 **#10: useParams({ strict: false }) returns unparsed values** — After navigation, params are strings instead of parsed types. Fix: Use strict mode (default) or manually parse:
 
@@ -93,8 +74,6 @@ errorComponent: ({ error, reset }) => {
 **#17: Route head() executes before loader finishes** — Meta tags generated with incomplete data. Workaround: guard against undefined loaderData in `head()` function.
 
 ## SSR and Deployment
-
-**#13: Vitest useState null error** — `tanstackStart()` conflicts with Vitest. Workaround: Disable plugin for tests or use separate Vite config for testing.
 
 **#14: Streaming SSR loader crash** — Unawaited promise rejections crash dev server. Fix: Always `await` or `try/catch` in loaders. Never use `void` with promise chains that may throw.
 

@@ -353,14 +353,26 @@ const router = createRouter({
 });
 ```
 
-Custom element scroll restoration:
+Custom element scroll restoration with `useElementScrollRestoration`:
 
-```ts
-export const Route = createFileRoute('/posts')({
-  scrollRestoration: {
-    getElement: () => document.getElementById('posts-container'),
-  },
-});
+```tsx
+import { useElementScrollRestoration } from '@tanstack/react-router';
+
+function PostsComponent() {
+  const scrollEntry = useElementScrollRestoration({ id: 'posts-container' });
+
+  return (
+    <div
+      id="posts-container"
+      ref={(el) => {
+        if (el) el.scrollTop = scrollEntry?.scrollY ?? 0;
+      }}
+      data-scroll-restoration-id="posts-container"
+    >
+      {/* content */}
+    </div>
+  );
+}
 ```
 
 Preserve scroll when updating filters:
