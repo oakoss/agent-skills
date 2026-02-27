@@ -106,7 +106,7 @@ Common mistake -- using `catch` without re-throwing returns a successful Promise
 useQuery({
   queryKey: ['todos'],
   queryFn: fetchTodos,
-  retry: 3, // Default
+  retry: 3, // Default for queries
   retry: false, // Disable retries
   retry: (failureCount, error) => {
     if (error.response?.status === 404) return false;
