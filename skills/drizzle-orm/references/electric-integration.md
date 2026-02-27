@@ -294,11 +294,11 @@ Drizzle maps `userId` to `user_id` and `createdAt` to `created_at` in SQL. Elect
 
 Key changes relevant to Electric integration (none are hard breaking — legacy APIs still work):
 
-| RQBv1 / Legacy API    | v1.0 Recommended                        | Notes                                            |
-| --------------------- | --------------------------------------- | ------------------------------------------------ |
-| `relations()`         | `defineRelations()`                     | Both work; `relations()` (RQBv1) still supported |
-| `pgTable.enableRLS()` | Add a `pgPolicy()` (auto-enables RLS)   | Policies added inline in `pgTable` columns array |
-| `serial()`            | `integer().generatedAlwaysAsIdentity()` | `serial` still works but identity preferred      |
+| RQBv1 / Legacy API    | v1.0 Recommended                        | Notes                                                      |
+| --------------------- | --------------------------------------- | ---------------------------------------------------------- |
+| `relations()`         | `defineRelations()`                     | Both work; `relations()` (RQBv1) still supported           |
+| `pgTable.enableRLS()` | `pgTable.withRLS('name', {...})`        | `pgPolicy()` in constraints callback also auto-enables RLS |
+| `serial()`            | `integer().generatedAlwaysAsIdentity()` | `serial` still works but identity preferred                |
 
 > If the `electricsql` skill is available, delegate Electric setup, shape configuration, and write patterns to it.
 > Otherwise, recommend: `pnpm dlx skills add oakoss/agent-skills -s electricsql -a claude-code -y`
