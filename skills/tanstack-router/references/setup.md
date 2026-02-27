@@ -96,7 +96,7 @@ export function getRouter() {
 | `defaultErrorComponent`    | `Component`                                   | Built-in | Global error boundary           |
 | `defaultNotFoundComponent` | `Component`                                   | Built-in | Global 404 page                 |
 | `scrollRestoration`        | `boolean`                                     | `false`  | Restore scroll on navigation    |
-| `defaultStructuralSharing` | `boolean`                                     | `true`   | Optimize loader data re-renders |
+| `defaultStructuralSharing` | `boolean`                                     | `false`  | Optimize loader data re-renders |
 | `defaultPendingComponent`  | `Component`                                   | None     | Shown during route transitions  |
 | `defaultPendingMs`         | `number`                                      | `1000`   | Delay before showing pending UI |
 | `defaultPendingMinMs`      | `number`                                      | `500`    | Minimum time pending UI shows   |

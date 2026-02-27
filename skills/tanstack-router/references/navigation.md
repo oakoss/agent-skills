@@ -56,7 +56,7 @@ Reserve `useNavigate()` for side effects: form submissions, auth redirects, prog
 | `activeProps`   | `object`                                      | Props applied when link is active     |
 | `inactiveProps` | `object`                                      | Props applied when link is inactive   |
 | `activeOptions` | `ActiveLinkOptions`                           | Control active matching behavior      |
-| `mask`          | `NavigateFn`                                  | Display different URL (route masking) |
+| `mask`          | `MaskOptions`                                 | Display different URL (route masking) |
 
 ## Disabled Links
 
@@ -266,7 +266,7 @@ Advanced blocking with custom UI using `withResolver`:
 function EditForm() {
   const [isDirty, setIsDirty] = useState(false);
 
-  const { proceed, reset, status } = useBlocker({
+  const { proceed, reset, status, next } = useBlocker({
     shouldBlockFn: ({ current, next }) => {
       if (!isDirty) return false;
       return true;
@@ -280,7 +280,7 @@ function EditForm() {
       <form>{/* form fields */}</form>
       {status === 'blocked' ? (
         <dialog open>
-          <p>You have unsaved changes.</p>
+          <p>Leave for {next.pathname}? You have unsaved changes.</p>
           <button onClick={reset}>Stay</button>
           <button onClick={proceed}>Leave</button>
         </dialog>

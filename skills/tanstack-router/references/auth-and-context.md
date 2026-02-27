@@ -162,8 +162,9 @@ export const Route = createFileRoute('/posts/$postId')({
     if (!post) throw notFound({ data: { postId: params.postId } });
     return { post };
   },
-  notFoundComponent: ({ data }) => (
-    <div>Post {data.postId} not found</div>
-  ),
+  notFoundComponent: ({ data }) => {
+    const { postId } = data as { postId: string };
+    return <div>Post {postId} not found</div>;
+  },
 });
 ```
