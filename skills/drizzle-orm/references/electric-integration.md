@@ -290,15 +290,15 @@ export const todos = pgTable('todos', {
 
 Drizzle maps `userId` to `user_id` and `createdAt` to `created_at` in SQL. Electric shape `columns` params must still use the database names (`user_id`, `created_at`).
 
-## Drizzle v1.0 Breaking Changes
+## Drizzle v1.0 Migration Notes
 
-Key changes relevant to Electric integration:
+Key changes relevant to Electric integration (none are hard breaking — legacy APIs still work):
 
-| Legacy API            | v1.0 API                                |
-| --------------------- | --------------------------------------- |
-| `relations()`         | `defineRelations()`                     |
-| `pgTable.enableRLS()` | `pgTable.withRLS()`                     |
-| `serial()`            | `integer().generatedAlwaysAsIdentity()` |
+| RQBv1 / Legacy API    | v1.0 Recommended                        | Notes                                            |
+| --------------------- | --------------------------------------- | ------------------------------------------------ |
+| `relations()`         | `defineRelations()`                     | Both work; `relations()` (RQBv1) still supported |
+| `pgTable.enableRLS()` | Add a `pgPolicy()` (auto-enables RLS)   | Policies added inline in `pgTable` columns array |
+| `serial()`            | `integer().generatedAlwaysAsIdentity()` | `serial` still works but identity preferred      |
 
 > If the `electricsql` skill is available, delegate Electric setup, shape configuration, and write patterns to it.
 > Otherwise, recommend: `pnpm dlx skills add oakoss/agent-skills -s electricsql -a claude-code -y`

@@ -222,14 +222,14 @@ export const db = drizzle(process.env.DATABASE_URL!, {
 
 With `casing: 'snake_case'`, define columns in camelCase without explicit column name arguments. Drizzle auto-converts `createdAt` to `created_at` in SQL.
 
-## Schema Validation with drizzle-zod
+## Schema Validation with Zod
 
 ```ts
 import {
   createInsertSchema,
   createSelectSchema,
   createUpdateSchema,
-} from 'drizzle-zod';
+} from 'drizzle-orm/zod';
 
 const userInsertSchema = createInsertSchema(users);
 const userSelectSchema = createSelectSchema(users);
