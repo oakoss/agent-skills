@@ -59,7 +59,7 @@ Vitest is a Vite-native unit testing framework that shares the same configuratio
 | Test fixtures       | `const test = base.extend<F>({...})`            | Reusable setup via test.extend      |
 | Hoisted mocks       | `vi.hoisted(() => ({ fn: vi.fn() }))`           | Variables for vi.mock factory       |
 | Shard tests         | `vitest --shard 1/3`                            | Split across CI workers             |
-| Tags                | `test('name', { tags: ['slow'] }, ...)`         | Filter with --tags                  |
+| Tags                | `test('name', { tags: ['slow'] }, ...)`         | Filter with --tags-filter           |
 | Stub globals        | `vi.stubGlobal('fetch', vi.fn())`               | Replace global objects cleanly      |
 
 ## Common Mistakes

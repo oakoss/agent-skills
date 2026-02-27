@@ -1,8 +1,8 @@
 ---
 title: Fixtures and Context
-description: Test fixtures with test.extend, fixture scoping, auto fixtures, composable fixtures, test.scoped, and config-injected fixtures
+description: Test fixtures with test.extend, fixture scoping, auto fixtures, composable fixtures, test.override, and config-injected fixtures
 tags:
-  [fixtures, test.extend, scope, auto, inject, provide, test.scoped, context]
+  [fixtures, test.extend, scope, auto, inject, provide, test.override, context]
 ---
 
 # Fixtures and Context
@@ -181,12 +181,12 @@ test('fetches user profile', async ({ api }) => {
 
 The `api` fixture receives `token` from the auth layer automatically.
 
-## `test.scoped`
+## `test.override`
 
 Override fixture values within a `describe` block:
 
 ```ts
-import { expect } from 'vitest';
+import { describe, expect } from 'vitest';
 
 const test = base.extend<{ locale: string }>({
   locale: async ({}, use) => {
@@ -198,14 +198,16 @@ test('default locale', ({ locale }) => {
   expect(locale).toBe('en-US');
 });
 
-const frenchTest = test.scoped({ locale: 'fr-FR' });
+describe('French locale', () => {
+  test.override({ locale: 'fr-FR' });
 
-frenchTest('french locale', ({ locale }) => {
-  expect(locale).toBe('fr-FR');
+  test('uses french locale', ({ locale }) => {
+    expect(locale).toBe('fr-FR');
+  });
 });
 ```
 
-Scoped overrides apply to all tests using that scoped variant.
+`test.override` must be called at the top level of a `describe` block. It overrides fixture values for all tests in that suite.
 
 ## Injected Fixtures from Config
 
@@ -338,7 +340,7 @@ Advantages of fixtures over `beforeEach`:
 
 ## Fixture with Parameterized Tests
 
-Combine fixtures with `test.each`:
+Use `test.for` (not `test.each`) to combine fixtures with parameterized data. `test.for` provides `TestContext` as the second argument, giving access to fixtures:
 
 ```ts
 const test = base.extend<{ parser: Parser }>({
@@ -348,11 +350,13 @@ const test = base.extend<{ parser: Parser }>({
   },
 });
 
-test.each([
+test.for([
   { input: '42', expected: 42 },
   { input: '3.14', expected: 3.14 },
   { input: '-1', expected: -1 },
-])('parses "$input"', async ({ parser }, { input, expected }) => {
+])('parses "$input"', ({ input, expected }, { parser }) => {
   expect(parser.parse(input)).toBe(expected);
 });
 ```
+
+`test.each` does not support fixture context — always use `test.for` when combining parameterized data with fixtures.

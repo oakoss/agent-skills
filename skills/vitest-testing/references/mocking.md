@@ -212,7 +212,7 @@ Auto-mocked functions return `undefined` by default. Configure them in your test
 vi.mocked(api.fetchUser).mockResolvedValue({ id: '1', name: 'Alice' });
 ```
 
-## Spy-Only Module Mocking (v3.2+)
+## Spy-Only Module Mocking (v2.1+)
 
 Spy on all exports without replacing them. Useful in browser mode where module objects are sealed:
 

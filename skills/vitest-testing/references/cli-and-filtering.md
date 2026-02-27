@@ -146,37 +146,32 @@ describe('payment processing', { tags: ['integration', 'slow'] }, () => {
 
 ### Running by Tag
 
-Include tests matching a tag:
+Filter tests by tag expression:
 
 ```bash
-vitest run --tags db
-vitest run --tags "unit|fast"
+vitest run --tags-filter db
+vitest run --tags-filter "unit or fast"
+vitest run --tags-filter "integration and not slow"
+vitest run --tags-filter "!flaky"
 ```
 
-Exclude tests with a tag:
-
-```bash
-vitest run --exclude-tags slow
-```
-
-Combine include and exclude:
-
-```bash
-vitest run --tags integration --exclude-tags slow
-```
+Use `and`, `or`, `not`, and `!` operators within `--tags-filter`. List all defined tags with `--list-tags`.
 
 ### Strict Tags Config
 
-Require all tests to have tags — prevents untagged tests from running:
+Require all tests to use pre-defined tags:
 
 ```ts
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    tags: {
-      strict: true,
-    },
+    strictTags: true,
+    tags: [
+      { name: 'unit' },
+      { name: 'integration' },
+      { name: 'slow', timeout: 30_000 },
+    ],
   },
 });
 ```
@@ -307,32 +302,36 @@ export default defineConfig({
 });
 ```
 
-## Workspace Project Filtering
+## Project Filtering
 
-In a monorepo with Vitest workspaces, run tests for specific projects:
+In a monorepo with multiple test projects, run tests for specific projects:
 
 ```bash
 vitest run --project=unit
 vitest run --project=integration --project=e2e
 ```
 
-Projects are defined in `vitest.workspace.ts`:
+Projects are defined in `vitest.config.ts` using the `projects` option (v3.2+):
 
 ```ts
-import { defineWorkspace } from 'vitest/config';
+import { defineConfig } from 'vitest/config';
 
-export default defineWorkspace([
-  {
-    test: {
-      name: 'unit',
-      include: ['src/**/*.test.ts'],
-    },
+export default defineConfig({
+  test: {
+    projects: [
+      {
+        test: {
+          name: 'unit',
+          include: ['src/**/*.test.ts'],
+        },
+      },
+      {
+        test: {
+          name: 'integration',
+          include: ['tests/integration/**/*.test.ts'],
+        },
+      },
+    ],
   },
-  {
-    test: {
-      name: 'integration',
-      include: ['tests/integration/**/*.test.ts'],
-    },
-  },
-]);
+});
 ```
