@@ -192,6 +192,75 @@ export const test = base.extend<{}, { workerStorageState: string }>({
 export { expect } from '@playwright/test';
 ```
 
+## Session Storage Gotcha
+
+`storageState` persists cookies and localStorage but NOT sessionStorage. Inject sessionStorage via `addInitScript()`:
+
+```ts
+const sessionData = await page.evaluate(() => JSON.stringify(sessionStorage));
+const newContext = await browser.newContext({
+  storageState: 'playwright/.auth/user.json',
+});
+await newContext.addInitScript((data) => {
+  for (const [key, value] of Object.entries(JSON.parse(data))) {
+    sessionStorage.setItem(key, value as string);
+  }
+}, sessionData);
+```
+
+## Sign-Out Tests
+
+Do NOT rely on storageState for tests that sign out. Sign-out invalidates the server-side session, making shared storageState unreliable. Each sign-out test should sign in via UI to create its own fresh session.
+
+## Two Roles in One Test
+
+When testing interactions between two authenticated users (e.g., admin approves user request), create concurrent browser contexts:
+
+```ts
+test('admin approves user request', async ({ browser }) => {
+  const userCtx = await browser.newContext({
+    storageState: 'playwright/.auth/user.json',
+  });
+  const adminCtx = await browser.newContext({
+    storageState: 'playwright/.auth/admin.json',
+  });
+  const userPage = await userCtx.newPage();
+  const adminPage = await adminCtx.newPage();
+  // ... test interactions between both
+  await userCtx.close();
+  await adminCtx.close();
+});
+```
+
+Manually created contexts must be explicitly closed.
+
+## Context Emulation
+
+`browser.newContext()` and `test.use()` accept emulation options beyond storageState:
+
+```ts
+const context = await browser.newContext({
+  locale: 'de-DE',
+  timezoneId: 'Europe/Berlin',
+  geolocation: { latitude: 52.52, longitude: 13.405 },
+  permissions: ['geolocation'],
+  colorScheme: 'dark',
+  ...devices['iPhone 15 Pro Max'],
+});
+```
+
+Additional options: `offline`, `ignoreHTTPSErrors`, `httpCredentials` (HTTP Basic Auth), `bypassCSP`, `extraHTTPHeaders`, `isMobile`, `deviceScaleFactor`, `userAgent`, `javaScriptEnabled: false` (verify SSR output).
+
+## Runtime Viewport and Media Changes
+
+```ts
+await page.setViewportSize({ width: 375, height: 812 });
+await expect(page.getByRole('button', { name: 'Menu' })).toBeVisible();
+
+await page.emulateMedia({ media: 'print' });
+await page.emulateMedia({ reducedMotion: 'reduce' });
+```
+
 ## Security
 
 - Add `playwright/.auth/` to `.gitignore` to avoid committing session data

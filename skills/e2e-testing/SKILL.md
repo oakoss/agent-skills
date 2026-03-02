@@ -67,6 +67,7 @@ Covers E2E test architecture and patterns using Playwright — how to structure 
 
 - [Role-based locators, auto-waiting, chaining, filtering, and locator strategy](references/locators.md)
 - [Page Object Model architecture, fixtures integration, and base page patterns](references/page-objects.md)
+- [Fixtures: scoping, composition, auto fixtures, options, and data-driven tests](references/fixtures.md)
 - [Authentication with storageState, setup projects, and multi-role testing](references/authentication.md)
 - [Network mocking, route interception, HAR replay, and WebSocket mocking](references/mocking.md)
 - [Accessibility auditing with AxeBuilder, WCAG tags, and reusable fixtures](references/accessibility.md)

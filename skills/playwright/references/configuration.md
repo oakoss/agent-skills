@@ -14,6 +14,12 @@ tags:
     workers,
     retries,
     reporter,
+    teardown,
+    serial,
+    parallel,
+    maxFailures,
+    codegen,
+    globalTimeout,
   ]
 ---
 
@@ -269,3 +275,83 @@ docker run -it --init --ipc=host my-playwright-tests
 ## Browser Versions (v1.58)
 
 Chromium 145.0.7632.6 | Firefox 146.0.1 | WebKit 26.0
+
+## webServer.url vs use.baseURL
+
+- `webServer.url` -- readiness probe; Playwright polls until 2xx or 403, then starts tests
+- `use.baseURL` -- what tests use for relative `page.goto('/')` calls
+- Usually the same value but independent settings
+
+## Multiple Web Servers
+
+```typescript
+export default defineConfig({
+  webServer: [
+    {
+      name: 'app',
+      command: 'npm run dev',
+      url: 'http://localhost:3000',
+      reuseExistingServer: !process.env.CI,
+    },
+    {
+      name: 'mock-smtp',
+      command: 'npm run mock:smtp',
+      url: 'http://localhost:1080',
+      reuseExistingServer: !process.env.CI,
+    },
+  ],
+});
+```
+
+The `name` field labels log lines when `stdout: 'pipe'` is set.
+
+## Parallel Execution Modes
+
+Per-describe overrides with `test.describe.configure()`:
+
+```typescript
+test.describe.configure({ mode: 'parallel' });
+test.describe.configure({ mode: 'serial' });
+test.describe.configure({ mode: 'default' });
+```
+
+- `parallel` -- individual tests in parallel
+- `serial` -- sequential, skip rest if one fails; retries the entire block together
+- `default` -- opt out of `fullyParallel`
+
+## maxFailures
+
+```typescript
+export default defineConfig({ maxFailures: 5 });
+```
+
+CLI: `--max-failures=5` or `-x` (stop after first failure).
+
+## Teardown Projects
+
+```typescript
+projects: [
+  { name: 'setup db', testMatch: '**/db.setup.ts', teardown: 'cleanup db' },
+  { name: 'cleanup db', testMatch: '**/db.teardown.ts' },
+  { name: 'tests', dependencies: ['setup db'] },
+],
+```
+
+Teardown runs after all dependents complete, regardless of pass/fail.
+
+## globalTimeout
+
+```typescript
+export default defineConfig({ globalTimeout: 30 * 60 * 1000 });
+```
+
+Hard cap on entire test run. Prevents runaway CI jobs.
+
+## Codegen Options
+
+```bash
+npx playwright codegen http://localhost:3000
+npx playwright codegen --load-storage=playwright/.auth/user.json http://localhost:3000
+npx playwright codegen --device="iPhone 15 Pro Max" http://localhost:3000
+npx playwright codegen --color-scheme=dark http://localhost:3000
+```

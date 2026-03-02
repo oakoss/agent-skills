@@ -85,4 +85,7 @@ Playwright is a browser automation framework for Node.js and Python supporting C
 - [Known issues and solutions](references/known-issues.md)
 - [Site-specific blocking and bypasses](references/blocking-and-bypasses.md)
 - [Troubleshooting common problems](references/troubleshooting.md)
+- [Network testing, mocking, and API patterns](references/network-testing.md)
+- [Input patterns, actionability, and test modifiers](references/input-and-actions.md)
+- [Advanced assertions, polling, custom matchers, and annotations](references/advanced-assertions.md)
 - [Advanced topics: MCP, AI agents, parallel contexts](references/advanced-topics.md)
