@@ -46,23 +46,35 @@ Playwright is a browser automation framework for Node.js and Python supporting C
 | Speedboard            | HTML reporter (v1.57+)                                | Identifies slow tests and bottlenecks              |
 | Playwright Agents     | `npx playwright init-agents`                          | Planner, generator, healer for LLM-driven testing  |
 | Flaky test detection  | `--fail-on-flaky-tests` (v1.50+)                      | Exit code 1 on flaky tests in CI                   |
+| Modify live responses | `route.fetch()` + `route.fulfill()`                   | Intercept real response, tweak JSON, return it     |
+| Soft assertions       | `expect.soft(locator)`                                | Don't stop test on failure, report all at end      |
+| Retry block           | `expect(async () => {}).toPass()`                     | Default timeout is 0 (forever) — always set one    |
+| Custom matchers       | `expect.extend()` / `mergeExpects()`                  | Define or combine custom assertion methods         |
+| Actionability matrix  | Per-action auto-wait checks                           | click: all 5 checks, fill: 3, focus/blur: none     |
+| Test modifiers        | `test.fixme()` / `test.fail()` / `test.slow()`        | fixme=skip+track, fail=assert failure, slow=3x     |
+| Parallel modes        | `test.describe.configure({ mode: 'serial' })`         | serial, parallel, or default per-describe block    |
+| Teardown projects     | `teardown` option on setup projects                   | Auto-cleanup after all dependents finish           |
 
 ## Common Mistakes
 
-| Mistake                                     | Correct Pattern                                              |
-| ------------------------------------------- | ------------------------------------------------------------ |
-| Using CSS selectors over role selectors     | Prefer `getByRole`, `getByLabel`, `getByText` for resilience |
-| Not closing browser                         | Always `await browser.close()` in `finally` block            |
-| Using `setTimeout` for waits                | Use locator auto-wait or `waitForLoadState`                  |
-| `page.pause()` left in CI code              | Guard with `if (!process.env.CI)` — hangs CI indefinitely    |
-| Clicking without waiting                    | Use `locator().click()` with built-in auto-wait              |
-| Shared state between tests                  | Each test gets fresh context via fixtures                    |
-| Testing implementation details              | Assert user-visible behavior, not DOM structure              |
-| Hardcoded waits for dynamic content         | Wait for selector appearance or content stabilization        |
-| Missing `await` on assertions               | All `expect()` assertions return promises — must be awaited  |
-| Same user agent for all scraping            | Rotate user agents for high-volume scraping                  |
-| Using `setTimeout` for time-dependent tests | Use `page.clock` API to freeze/fast-forward time             |
-| Installing axe-core for simple a11y checks  | Use native `toHaveAccessibleName`/`toHaveRole` assertions    |
+| Mistake                                         | Correct Pattern                                                                                |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Using CSS selectors over role selectors         | Prefer `getByRole`, `getByLabel`, `getByText` for resilience                                   |
+| Not closing browser                             | Always `await browser.close()` in `finally` block                                              |
+| Using `setTimeout` for waits                    | Use locator auto-wait or `waitForLoadState`                                                    |
+| `page.pause()` left in CI code                  | Guard with `if (!process.env.CI)` — hangs CI indefinitely                                      |
+| Clicking without waiting                        | Use `locator().click()` with built-in auto-wait                                                |
+| Shared state between tests                      | Each test gets fresh context via fixtures                                                      |
+| Testing implementation details                  | Assert user-visible behavior, not DOM structure                                                |
+| Hardcoded waits for dynamic content             | Wait for selector appearance or content stabilization                                          |
+| Missing `await` on assertions                   | All `expect()` assertions return promises — must be awaited                                    |
+| Same user agent for all scraping                | Rotate user agents for high-volume scraping                                                    |
+| Using `setTimeout` for time-dependent tests     | Use `page.clock` API to freeze/fast-forward time                                               |
+| Installing axe-core for simple a11y checks      | Use native `toHaveAccessibleName`/`toHaveRole` assertions                                      |
+| Using `toPass()` without explicit timeout       | Always pass `{ timeout: 10_000 }` — default is 0 (forever)                                     |
+| Service worker silently blocking `page.route()` | Set `serviceWorkers: 'block'` in context config when using MSW                                 |
+| Using `fill()` for autocomplete/debounce inputs | Use `pressSequentially()` with optional delay for per-keystroke handling                       |
+| `storageState` losing sessionStorage            | `storageState` only saves cookies + localStorage — inject sessionStorage via `addInitScript()` |
 
 ## Delegation
 
