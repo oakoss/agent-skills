@@ -191,15 +191,10 @@ Manually trigger hydration in a `useEffect`:
 
 ```ts
 const useStore = create<MyStore>()(
-  persist(
-    (set) => ({
-      /* ... */
-    }),
-    {
-      name: 'app-storage',
-      skipHydration: true,
-    },
-  ),
+  persist((set) => ({/* ... */}), {
+    name: 'app-storage',
+    skipHydration: true,
+  }),
 );
 
 // In client component

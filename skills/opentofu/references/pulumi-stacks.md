@@ -182,8 +182,7 @@ new policy.PolicyPack('aws-policies', {
       enforcementLevel: 'mandatory',
       validateResource: (args, reportViolation) => {
         const tags = (args.props as Record<string, unknown>).tags as
-          | Record<string, string>
-          | undefined;
+          Record<string, string> | undefined;
         if (tags && !tags['Environment']) {
           reportViolation('All resources must have an Environment tag.');
         }

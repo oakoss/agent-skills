@@ -16,14 +16,14 @@
     "validate:skills": "node scripts/validate-skills.ts"
   },
   "devDependencies": {
-    "@commitlint/config-conventional": "^20.4.2",
+    "@commitlint/config-conventional": "^21.2.2",
     "@types/node": "^25.3.0",
-    "commitlint": "^20.4.2",
-    "cz-git": "^1.12.0",
-    "lefthook": "^2.1.1",
-    "markdownlint-cli2": "^0.21.0",
-    "prettier": "^3.8.1",
-    "prettier-plugin-packagejson": "^3.0.0",
+    "commitlint": "^21.2.2",
+    "cz-git": "^1.13.2",
+    "lefthook": "^2.1.10",
+    "markdownlint-cli2": "^0.23.2",
+    "prettier": "^3.9.6",
+    "prettier-plugin-packagejson": "^3.0.2",
     "typescript": "^5.9.3"
   },
   "packageManager": "pnpm@10.30.2+sha512.36cdc707e7b7940a988c9c1ecf88d084f8514b5c3f085f53a2e244c2921d3b2545bc20dd4ebe1fc245feec463bb298aecea7a63ed1f7680b877dc6379d8d0cb4"

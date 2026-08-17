@@ -88,11 +88,11 @@ something in more detail."
 When participants ask questions or make statements, reflect them back instead of answering.
 
 ```yaml
-Participant: "Should I click this button?"
-Moderator: "What do you think that button does?"
+Participant: 'Should I click this button?'
+Moderator: 'What do you think that button does?'
 
-Participant: "Is this the right page?"
-Moderator: "What were you expecting to see?"
+Participant: 'Is this the right page?'
+Moderator: 'What were you expecting to see?'
 
 Participant: "I don't know what to do next."
 Moderator: "What would you try if I weren't here?"

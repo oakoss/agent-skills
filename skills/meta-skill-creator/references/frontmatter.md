@@ -45,10 +45,10 @@ name: code-review
 Invalid examples:
 
 ```yaml
-name: PDF-Processing    # uppercase not allowed
-name: -pdf              # cannot start with hyphen
-name: pdf--processing   # consecutive hyphens not allowed
-name: ab                # too short (min 4 chars for some validators)
+name: PDF-Processing # uppercase not allowed
+name: -pdf # cannot start with hyphen
+name: pdf--processing # consecutive hyphens not allowed
+name: ab # too short (min 4 chars for some validators)
 ```
 
 ### description

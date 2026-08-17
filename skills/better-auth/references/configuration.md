@@ -22,9 +22,7 @@ tags:
 export const auth = betterAuth({
   user: {
     modelName: 'user',
-    additionalFields: {
-      /* custom fields */
-    },
+    additionalFields: {/* custom fields */},
     changeEmail: { enabled: true },
     deleteUser: { enabled: true },
   },

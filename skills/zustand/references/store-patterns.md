@@ -42,14 +42,10 @@ const increase = useBearStore((state) => state.increase);
 
 ```ts
 // Bad - breaks middleware type inference
-const useStore = create<MyStore>((set) => ({
-  /* ... */
-}));
+const useStore = create<MyStore>((set) => ({/* ... */}));
 
 // Good - always use double parentheses
-const useStore = create<MyStore>()((set) => ({
-  /* ... */
-}));
+const useStore = create<MyStore>()((set) => ({/* ... */}));
 ```
 
 The currying syntax `create<T>()()` enables middleware type inference in TypeScript. Always use it even without middleware for future-proofing.

@@ -204,8 +204,7 @@ export const deletePost = createServerFn({ method: 'POST' })
 
 ```ts
 type Result<T> =
-  | { ok: true; data: T }
-  | { ok: false; error: string; code: string };
+  { ok: true; data: T } | { ok: false; error: string; code: string };
 
 export const deletePost = createServerFn({ method: 'POST' })
   .inputValidator(z.object({ id: z.string() }))

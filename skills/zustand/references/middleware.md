@@ -54,26 +54,21 @@ const useStore = create<UserPreferences>()(
 ### Schema Versioning and Migration
 
 ```ts
-persist(
-  (set) => ({
-    /* ... */
-  }),
-  {
-    name: 'app-storage',
-    version: 2,
-    migrate: (persistedState: any, version: number) => {
-      if (version === 0) {
-        persistedState.position = { x: persistedState.x, y: persistedState.y };
-        delete persistedState.x;
-        delete persistedState.y;
-      }
-      if (version === 1) {
-        return { ...persistedState, newField: 'default' };
-      }
-      return persistedState;
-    },
+persist((set) => ({/* ... */}), {
+  name: 'app-storage',
+  version: 2,
+  migrate: (persistedState: any, version: number) => {
+    if (version === 0) {
+      persistedState.position = { x: persistedState.x, y: persistedState.y };
+      delete persistedState.x;
+      delete persistedState.y;
+    }
+    if (version === 1) {
+      return { ...persistedState, newField: 'default' };
+    }
+    return persistedState;
   },
-);
+});
 ```
 
 ### Partial Persistence
@@ -209,12 +204,7 @@ store.subscribe(
 ```ts
 const useStore = create<MyStore>()(
   devtools(
-    persist(
-      (set) => ({
-        /* state */
-      }),
-      { name: 'storage' },
-    ),
+    persist((set) => ({/* state */}), { name: 'storage' }),
     { name: 'MyStore' },
   ),
 );

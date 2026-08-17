@@ -1,2 +1,10 @@
 onlyBuiltDependencies:
   - lefthook
+
+# Transitive deps whose advisories the direct dependencies still resolve to
+# vulnerable versions. Scoped per major so v2 consumers aren't forced onto v4.
+overrides:
+  fast-uri@3: ^3.1.5
+  js-yaml@4: ^4.3.1
+  picomatch@2: ^2.3.2
+  picomatch@4: ^4.0.4

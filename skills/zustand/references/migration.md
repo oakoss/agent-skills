@@ -111,14 +111,10 @@ const count = useStore((state) => state.count);
 
 ```ts
 // v4
-const useStore = create<Store>((set) => ({
-  /* ... */
-}));
+const useStore = create<Store>((set) => ({/* ... */}));
 
 // v5 - double parentheses required
-const useStore = create<Store>()((set) => ({
-  /* ... */
-}));
+const useStore = create<Store>()((set) => ({/* ... */}));
 ```
 
 #### 2. Persist Middleware
@@ -126,27 +122,15 @@ const useStore = create<Store>()((set) => ({
 ```ts
 // v4
 import { persist } from 'zustand/middleware';
-const useStore = create(
-  persist(
-    (set) => ({
-      /* ... */
-    }),
-    { name: 'storage' },
-  ),
-);
+const useStore = create(persist((set) => ({/* ... */}), { name: 'storage' }));
 
 // v5 - explicit createJSONStorage
 import { persist, createJSONStorage } from 'zustand/middleware';
 const useStore = create<Store>()(
-  persist(
-    (set) => ({
-      /* ... */
-    }),
-    {
-      name: 'storage',
-      storage: createJSONStorage(() => localStorage),
-    },
-  ),
+  persist((set) => ({/* ... */}), {
+    name: 'storage',
+    storage: createJSONStorage(() => localStorage),
+  }),
 );
 ```
 

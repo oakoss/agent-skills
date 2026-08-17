@@ -80,12 +80,7 @@ Traditional SBOMs do not capture the full scope of AI supply chain risk. Models,
 ```ts
 interface AiBomEntry {
   componentType:
-    | 'model'
-    | 'dataset'
-    | 'embedding'
-    | 'mcp-server'
-    | 'sdk'
-    | 'prompt';
+    'model' | 'dataset' | 'embedding' | 'mcp-server' | 'sdk' | 'prompt';
   name: string;
   version: string;
   source: string;
