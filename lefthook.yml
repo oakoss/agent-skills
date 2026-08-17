@@ -4,9 +4,22 @@ output:
   - failure # Only show failed steps
   - execution_out # Show command output for failures
 
+# Beads integration delegates to .lefthook/bd-hook.sh, which wraps
+# `bd hooks run <event>` with exit-code and timeout handling:
+#   - exit 3   → beads db not initialized; swallow (no-op)
+#   - exit 124 → timeout; swallow (proceed without beads)
+# lefthook owns the git hooks; beads must not install its own, or the two
+# overwrite each other. Env vars per command: BD_GIT_HOOK=1 signals beads
+# it's in a hook; TERM=dumb suppresses TTY escape codes.
+
 pre-commit:
   parallel: true
   commands:
+    beads:
+      env:
+        BD_GIT_HOOK: '1'
+        TERM: dumb
+      run: .lefthook/bd-hook.sh pre-commit
     lint-md:
       glob: '*.md'
       run: pnpm markdownlint-cli2 --fix {staged_files}
@@ -23,3 +36,37 @@ commit-msg:
   commands:
     commitlint:
       run: pnpm dlx commitlint --edit "$1"
+
+prepare-commit-msg:
+  commands:
+    beads:
+      env:
+        BD_GIT_HOOK: '1'
+        TERM: dumb
+      run: .lefthook/bd-hook.sh prepare-commit-msg {1} {2} {3}
+
+post-merge:
+  commands:
+    beads:
+      env:
+        BD_GIT_HOOK: '1'
+        TERM: dumb
+      run: .lefthook/bd-hook.sh post-merge {1}
+
+post-checkout:
+  commands:
+    beads:
+      env:
+        BD_GIT_HOOK: '1'
+        TERM: dumb
+      run: .lefthook/bd-hook.sh post-checkout {1} {2} {3}
+
+# No bd-dolt-push.sh counterpart here: this repo has no Dolt sync remote
+# configured, unlike linesmith.
+pre-push:
+  commands:
+    beads:
+      env:
+        BD_GIT_HOOK: '1'
+        TERM: dumb
+      run: .lefthook/bd-hook.sh pre-push {1} {2}

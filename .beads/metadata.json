@@ -1,6 +1,7 @@
 {
   "database": "dolt",
-  "jsonl_export": "issues.jsonl",
   "backend": "dolt",
-  "dolt_database": "beads_agent-skills"
+  "dolt_mode": "embedded",
+  "dolt_database": "beads_agent_skills",
+  "project_id": "7ffd4d65-5d56-4fc2-80f4-b60a3b6b2967"
 }
