@@ -25,3 +25,7 @@ yarn-error.log*
 
 # Temporary source material
 .claude/plans/
+
+# review-cycle (local review state)
+.claude/.review-mark
+.claude/.no-review-gate
