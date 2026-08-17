@@ -35,31 +35,31 @@ Mise resolves tool versions by checking these sources in priority order:
 
 ## Quick Reference
 
-| Pattern               | Command / Config                         | Key Points                                  |
-| --------------------- | ---------------------------------------- | ------------------------------------------- |
-| Install tools         | `mise install`                           | Reads mise.toml, installs all listed tools  |
-| Pin tool version      | `mise use node@22`                       | Writes to mise.toml in current directory    |
-| Pin globally          | `mise use -g node@22`                    | Writes to ~/.config/mise/config.toml        |
-| Run a task            | `mise run build`                         | Runs task defined in mise.toml              |
-| Run with args         | `mise run test -- --watch`               | Passes args after `--` to the task          |
-| Watch mode            | `mise watch build`                       | Re-runs task when sources change            |
-| List tasks            | `mise tasks`                             | Shows all available tasks                   |
-| Set env vars          | `[env]` section in mise.toml             | Per-directory, auto-activated on cd         |
-| Load .env file        | `_.file = ".env"`                        | Loads dotenv into environment               |
-| Extend PATH           | `_.path = ["./bin"]`                     | Prepends directories to PATH                |
-| List installed        | `mise ls`                                | Shows all installed tool versions           |
-| Outdated tools        | `mise outdated`                          | Shows tools with newer versions             |
-| Upgrade tools         | `mise upgrade`                           | Upgrades tools to latest within constraints |
-| Trust config          | `mise trust`                             | Trusts mise.toml in current directory       |
-| Tool backends         | `"npm:prettier"` / `"cargo:cargo-watch"` | Install from npm, cargo, pipx, GitHub, etc. |
-| Task dependencies     | `depends = ["lint", "test"]`             | Prerequisite tasks run first                |
-| Incremental build     | `sources` + `outputs` on task            | Skips task if outputs newer than sources    |
-| Exec without activate | `mise exec -- node app.js`               | Runs command with mise-managed tools        |
-| Diagnostics           | `mise doctor`                            | Check installation and config health        |
-| Prune unused          | `mise prune`                             | Remove tool versions not in any config      |
-| Generate hook         | `mise generate git-pre-commit`           | Generate git pre-commit hook for tasks      |
-| Env-specific config   | `.mise.staging.toml`                     | Activated via `MISE_ENV=staging`            |
-| Shims for IDEs        | `mise settings set shims_on_path true`   | PATH-based shims for IDE compatibility      |
+| Pattern               | Command / Config                           | Key Points                                  |
+| --------------------- | ------------------------------------------ | ------------------------------------------- |
+| Install tools         | `mise install`                             | Reads mise.toml, installs all listed tools  |
+| Pin tool version      | `mise use node@22`                         | Writes to mise.toml in current directory    |
+| Pin globally          | `mise use -g node@22`                      | Writes to ~/.config/mise/config.toml        |
+| Run a task            | `mise run build`                           | Runs task defined in mise.toml              |
+| Run with args         | `mise run test -- --watch`                 | Passes args after `--` to the task          |
+| Watch mode            | `mise watch build`                         | Re-runs task when sources change            |
+| List tasks            | `mise tasks`                               | Shows all available tasks                   |
+| Set env vars          | `[env]` section in mise.toml               | Per-directory, auto-activated on cd         |
+| Load .env file        | `_.file = ".env"`                          | Loads dotenv into environment               |
+| Extend PATH           | `_.path = ["./bin"]`                       | Prepends directories to PATH                |
+| List installed        | `mise ls`                                  | Shows all installed tool versions           |
+| Outdated tools        | `mise outdated`                            | Shows tools with newer versions             |
+| Upgrade tools         | `mise upgrade`                             | Upgrades tools to latest within constraints |
+| Trust config          | `mise trust`                               | Trusts mise.toml in current directory       |
+| Tool backends         | `"npm:prettier"` / `"cargo:cargo-machete"` | Install from npm, cargo, pipx, GitHub, etc. |
+| Task dependencies     | `depends = ["lint", "test"]`               | Prerequisite tasks run first                |
+| Incremental build     | `sources` + `outputs` on task              | Skips task if outputs newer than sources    |
+| Exec without activate | `mise exec -- node app.js`                 | Runs command with mise-managed tools        |
+| Diagnostics           | `mise doctor`                              | Check installation and config health        |
+| Prune unused          | `mise prune`                               | Remove tool versions not in any config      |
+| Generate hook         | `mise generate git-pre-commit`             | Generate git pre-commit hook for tasks      |
+| Env-specific config   | `.mise.staging.toml`                       | Activated via `MISE_ENV=staging`            |
+| Shims for IDEs        | `mise settings set shims_on_path true`     | PATH-based shims for IDE compatibility      |
 
 ## Common Mistakes
 

@@ -83,7 +83,7 @@ rust = "1.77"
 "pipx:ruff" = "latest"
 
 # Cargo crates
-"cargo:cargo-watch" = "latest"
+"cargo:cargo-machete" = "latest"
 "cargo:ripgrep" = "14"
 
 # GitHub releases
